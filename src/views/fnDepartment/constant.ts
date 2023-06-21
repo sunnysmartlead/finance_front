@@ -1,197 +1,239 @@
 // 单价库表头
-const unitCols = [
+export const unitCols = [
   {
-    name: "单据号",
-    key: "dorderNumber"
+    name: "价格主数据号",
+    key: "priceMasterDataNumber"
   },
   {
-    name: "凭证号",
-    key: "voucherNumber"
+    name: "采购组编码",
+    key: "procurementGroupCode"
   },
   {
-    name: "单据状态",
-    key: "billsState"
+    name: "采购组名称",
+    key: "procurementGroupName"
   },
   {
-    name: "采购分类",
-    key: "purchaseClassify"
+    name: "工厂编码",
+    key: "factoryCode"
   },
   {
-    name: "供应商编号",
+    name: "工厂名称",
+    key: "factoryName"
+  },
+  {
+    name: "供应商编码",
     key: "supplierCode"
+  },
+  {
+    name: "供应商优先级",
+    key: "supplierPriority"
+  },
+  {
+    name: "供应商ERP编码",
+    key: "supplierErpCode"
   },
   {
     name: "供应商名称",
     key: "supplierName"
   },
   {
-    name: "物料编号",
-    key: "stockNumber"
+    name: "一级物料簇编码",
+    key: "firstLevelMaterialClusterCode"
+  },
+  {
+    name: "一级物料簇名称",
+    key: "firstLevelMaterialClusterName"
+  },
+  {
+    name: "二级物料簇编码",
+    key: "secondaryMaterialClusterCode"
+  },
+  {
+    name: "二级物料簇名称",
+    key: "secondaryMaterialClusterName"
+  },
+  {
+    name: "物料编码",
+    key: "materialCode"
   },
   {
     name: "物料名称",
-    key: "stockName"
+    key: "materialName"
   },
   {
-    name: "工厂",
-    key: "plant"
+    name: "采购类别",
+    key: "purchaseCategory"
   },
   {
-    name: "工厂图号",
-    key: "plantNumber"
+    name: "基本单位",
+    key: "basicUnit"
   },
   {
-    name: "税码",
-    key: "taxCode"
+    name: "是否客户指定",
+    key: "isItSpecifiedByTheCustomer"
   },
   {
-    name: "货币代码",
-    key: "currencies"
+    name: "是否冻结",
+    key: "freezeOrNot"
   },
   {
-    name: "原净价",
-    key: "rowNetPrice"
+    name: "同步PO状态",
+    key: "synchronizePOstatus"
   },
   {
-    name: "总净价（不含税）",
-    key: "sumNetPrice"
+    name: "物料冻结",
+    key: "materialFreezing"
   },
   {
-    name: "返利类型",
-    key: "rebatesType"
+    name: "采购订单冻结",
+    key: "purchaseOrderFreeze"
   },
   {
-    name: "返利金额",
-    key: "rebateAmount"
+    name: "收获冻结",
+    key: "harvestFreeze"
   },
   {
-    name: "净价",
-    key: "netPrice"
+    name: "付款冻结",
+    key: "paymentFreeze"
+  },
+  {
+    name: "创建人",
+    key: "founder"
+  },
+  {
+    name: "生效日期",
+    key: "effectiveDate"
+  },
+  {
+    name: "失效日期",
+    key: "expirationDate"
+  },
+  {
+    name: "价格基数",
+    key: "priceBase"
+  },
+  {
+    name: "定价单位",
+    key: "pricingUnit"
+  },
+  {
+    name: "货币编码",
+    key: "currencyCode"
   },
   {
     name: "税率",
     key: "taxRate"
   },
   {
+    name: "未税价",
+    key: "untaxedPrice"
+  },
+  {
     name: "含税价",
     key: "priceIncludingTax"
   },
   {
-    name: "价格单位",
-    key: "priceUnit"
+    name: "成本基价",
+    key: "costBasePrice"
   },
   {
-    name: "内部核算价",
-    key: "internalValuation"
+    name: "返利未税价",
+    key: "rebateBeforeTaxPrice"
   },
   {
-    name: "供应商报价",
-    key: "vendorOffer"
+    name: "返利含税价",
+    key: "rebatePriceIncludingTax"
   },
   {
-    name: "供应商优先级",
-    key: "priority"
+    name: "过量交货限度%",
+    key: "excessiveDeliveryLimit"
   },
   {
-    name: "有效开始日期",
-    key: "effectiveDate"
+    name: "交货不足限度%",
+    key: "insufficientDeliveryLimit"
   },
   {
-    name: "有效结束日期",
-    key: "effectiveEndDate"
+    name: "计划天数",
+    key: "plannedDays"
   },
   {
-    name: "价格变动类",
-    key: "typePriceChange"
+    name: "关税",
+    key: "tariff"
   },
   {
-    name: "是否客户指定",
-    key: "ifClientSpecify"
+    name: "原净价",
+    key: "originalNetPrice"
   },
   {
-    name: "库存单位",
-    key: "sku"
+    name: "价格变动类型",
+    key: "typeOfPriceChange"
   },
   {
-    name: "采购单位",
-    key: "puom"
+    name: "原有效日期",
+    key: "originalEffectiveDate"
   },
   {
-    name: "货期",
-    key: "delivery"
+    name: "原失效日期",
+    key: "originalExpirationDate"
   },
   {
-    name: "允许超收",
-    key: "allowExcess"
+    name: "返利模式",
+    key: "rebateMode"
   },
   {
-    name: "更改原因说明",
-    key: "reasonForChange"
+    name: "返点信息",
+    key: "rebateInformation"
   },
   {
-    name: "采购组织",
-    key: "purchaseOrg"
+    name: "创建方式",
+    key: "creationMethod"
   },
   {
-    name: "采购组",
-    key: "procurementSection"
+    name: "版本号",
+    key: "versionNumber"
   },
   {
-    name: "报价单类型",
-    key: "typeQuotation"
+    name: "备注",
+    key: "remarks"
   },
   {
-    name: "变动类型",
-    key: "changeType"
+    name: "报价类型",
+    key: "quotationType"
   },
   {
-    name: "所属部门",
-    key: "theirDepartment"
+    name: "阶梯/批量起始数量",
+    key: "batchStartQuantity"
   },
   {
-    name: "登记人",
-    key: "registrant"
-  },
-  {
-    name: "登记日期",
-    key: "recordDate"
-  },
-  {
-    name: "冻结状态",
-    key: "frozenState"
-  },
-  {
-    name: "下限",
-    key: "floor"
-  },
-  {
-    name: "上限",
-    key: "upper"
-  },
-  {
-    name: "总净价（不含税）",
-    key: "netAmount"
-  },
-  // {
-  //   name: "返利金额",
-  //   key: ""
-  // },
-  // {
-  //   name: "净价",
-  //   key: ""
-  // },
-  {
-    name: "ECCN码",
-    key: "eccnCode"
-  },
-  {
-    name: "冻结状态显示",
-    key: "displayFrozenState"
-  },
-  {
-    name: "最新变动日期",
-    key: "dateLastChange"
+    name: "阶梯/批量未税价（当期价格）",
+    key: "bulkUntaxedPrice"
   }
 ]
 
-export default unitCols
+export const unitCols2 = [
+
+  {
+    name: "阶梯/批量含税价",
+    key: "batchPriceIncludingTax"
+  },
+  {
+    name: "阶梯/批量返利未税价",
+    key: "batchRebateWithoutTaxPrice"
+  },
+  {
+    name: "阶梯/批量返利含税价",
+    key: "batchRebateIncludingTaxPrice"
+  },
+  {
+    name: "原产地信息",
+    key: "originInformation"
+  },
+  {
+    name: "物料管制状态",
+    key: "materialControlStatus"
+  },
+  {
+    name: "MOQ",
+    key: "moq"
+  }
+]

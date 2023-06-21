@@ -1,0 +1,180 @@
+{
+  "versionManageList": [
+    {
+      "versionBasicInfo": {
+        "auditFlowId": 0,
+        "projectName": "string",
+        "version": 0,
+        "number": "string",
+        "draftTime": "2022-08-27T10:09:14.951Z",
+        "finishedTime": "2022-08-27T10:09:14.951Z"
+      },
+      "priceEvaluationTableList": [
+        {
+          "title": "string",
+          "date": "2022-08-27T10:09:14.951Z",
+          "inputCount": 0,
+          "requiredCount": 0,
+          "material": [
+            {
+              "id": "string",
+              "index": 0,
+              "superType": "string",
+              "categoryName": "string",
+              "typeName": "string",
+              "sap": "string",
+              "materialName": "string",
+              "assemblyCount": 0,
+              "materialPrice": 0,
+              "currencyText": "string",
+              "exchangeRate": 0,
+              "materialPriceCyn": 0,
+              "totalMoneyCyn": 0,
+              "loss": 0,
+              "materialCost": 0,
+              "inputCount": 0,
+              "purchaseCount": 0,
+              "moqShareCount": 0,
+              "moq": 0,
+              "availableInventory": 0,
+              "remarks": "string"
+            }
+          ],
+          "manufacturingCost": {
+            "id": 0,
+            "gradientKy": 0,
+            "manufacturingCostDirect": {
+              "id": 0,
+              "directLabor": 0,
+              "equipmentDepreciation": 0,
+              "lineChangeCost": 0,
+              "manufacturingExpenses": 0,
+              "subtotal": 0
+            },
+            "manufacturingCostIndirect": {
+              "id": 0,
+              "directLabor": 0,
+              "equipmentDepreciation": 0,
+              "manufacturingExpenses": 0,
+              "subtotal": 0
+            },
+            "subtotal": 0
+          },
+          "lossCost": [
+            {
+              "id": 0,
+              "name": "string",
+              "wastageCost": 0,
+              "moqShareCount": 0
+            }
+          ],
+          "otherCostItem": {
+            "id": 0,
+            "fixture": 0,
+            "logisticsFee": 0,
+            "productCategory": "string",
+            "costProportion": 0,
+            "qualityCost": 0,
+            "accountingPeriod": 0,
+            "capitalCostRate": 0,
+            "taxCost": 0,
+            "total": 0
+          },
+          "totalCost": 0,
+          "preparedDate": "2022-08-27T10:09:14.951Z",
+          "auditDate": "2022-08-27T10:09:14.951Z",
+          "approvalDate": "2022-08-27T10:09:14.951Z"
+        }
+      ],
+      "quotationTable": {
+        "date": "2022-08-27T10:09:14.951Z",
+        "recordNumber": "string",
+        "versions": 0,
+        "offerForm": "string",
+        "sampleQuotationType": "string",
+        "directCustomerName": "string",
+        "clientNature": "string",
+        "terminalCustomerName": "string",
+        "terminalClientNature": "string",
+        "developmentPlan": "string",
+        "sopTime": 0,
+        "projectCycle": 0,
+        "forSale": "string",
+        "modeOfTrade": "string",
+        "paymentMethod": "string",
+        "quoteCurrency": "string",
+        "exchangeRate": 0,
+        "motionMessage": [
+          {
+            "messageName": "string",
+            "sop": [
+              {
+                "year": 0,
+                "value": 0
+              }
+            ]
+          }
+        ],
+        "projectName": "string",
+        "coreComponent": [
+          {
+            "modelCountId": 0,
+            "componentName": "string",
+            "productSubclass": [
+              {
+                "coreComponent": "string",
+                "model": "string",
+                "type": "string",
+                "remark": "string"
+              }
+            ]
+          }
+        ],
+        "nreCost": [
+          {
+            "modelCountId": 0,
+            "nreCostModuleName": "string",
+            "nreCostModels": [
+              {
+                "name": "string",
+                "cost": 0
+              }
+            ]
+          }
+        ],
+        "pricingMessage": [
+          {
+            "modelCountId": 0,
+            "pricingMessageName": "string",
+            "pricingMessageModels": [
+              {
+                "name": "string",
+                "costValue": 0
+              }
+            ]
+          }
+        ],
+        "biddingStrategy": [
+          {
+            "modelCountId": 0,
+            "product": "string",
+            "cost": 0,
+            "grossMargin": 0,
+            "price": 0
+          }
+        ],
+        "expensesStatement": [
+          {
+            "formName": "string",
+            "pricingMoney": 0,
+            "offerCoefficient": 0,
+            "offerMoney": 0,
+            "remark": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "isSuccess": true,
+  "message": "string"
+}

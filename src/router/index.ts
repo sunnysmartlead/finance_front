@@ -1,0 +1,907 @@
+// import { createRouter, createWebHashHistory, RouteRecordRaw, createWebHistory } from "vue-router"
+import { createRouter, RouteRecordRaw, createWebHistory } from "vue-router"
+
+const Layout = () => import("@/layout/index.vue")
+
+/** 常驻路由 */
+export const constantRoutes: Array<RouteRecordRaw> = [
+  {
+    path: "/redirect",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/redirect/:path(.*)",
+        component: () => import("@/views/redirect/index.vue")
+      }
+    ]
+  },
+  {
+    path: "/login",
+    component: () => import("@/views/login/index.vue"),
+    meta: {
+      hidden: true
+    }
+  },
+  {
+    path: "/",
+    redirect: "/todoCenter/index",
+    component: Layout,
+    meta: {
+      title: "首页"
+    },
+    children: [
+      {
+        path: "/todoCenter/index",
+        component: () => import("@/views/todoCenter/index.vue"),
+        name: "todoCenter",
+        meta: {
+          title: "待办中心"
+        }
+      }
+    ]
+  },
+  {
+    path: "/",
+    redirect: "/createProcess/index",
+    component: Layout,
+    meta: {
+      title: "新建流程"
+    },
+    children: [
+      {
+        path: "/createProcess/index",
+        component: () => import("@/views/createProcess/index.vue"),
+        name: "createProcess",
+        meta: {
+          title: "新建流程"
+        }
+      }
+    ]
+  },
+  {
+    path: "/nupriceManagement",
+    redirect: "/demandApply/index",
+    component: Layout,
+    meta: {
+      title: "核价管理",
+      hidden: false
+    },
+    children: [
+      {
+        path: "/demandApply/index",
+        component: () => import("@/views/demandApply/index.vue"),
+        name: "demandApply",
+        meta: {
+          title: "营销部录入"
+        }
+      },
+      {
+        path: "/demandApplyAudit/index",
+        component: () => import("@/views/demandApplyAudit/index.vue"),
+        name: "demandApplyAudit",
+        meta: {
+          title: "营销部审核"
+        }
+      },
+      {
+        path: "/pddAudit/index",
+        component: () => import("@/views/pddAudit/index.vue"),
+        name: "pddAudit",
+        meta: {
+          title: "产品开发部审核"
+        }
+      },
+      // {
+      //   path: "/partEntry/managerOperate",
+      //   component: () => import("@/views/partEntry/managerOperate.vue"),
+      //   name: "managerOperate",
+      //   meta: {
+      //     title: "项目经理录入"
+      //   }
+      // },
+      // {
+      //   path: "/trAudit/index",
+      //   component: () => import("@/views/trAudit/index.vue"),
+      //   name: "trAudit",
+      //   meta: {
+      //     title: "Tr主方案"
+      //   }
+      // },
+      // {
+      //   path: "productPriceList",
+      //   component: () => import("@/views/productPriceList/index.vue"),
+      //   name: "ProductPriceList",
+      //   meta: {
+      //     title: "项目核价表"
+      //   }
+      // },
+      // {
+      //   path: "/demandApply/result",
+      //   component: () => import("@/views/demandApply/result.vue"),
+      //   name: "demandApplyResult",
+      //   meta: {
+      //     title: "营销部报价表"
+      //   }
+      // }
+    ]
+  },
+  {
+    path: "/electronicImport",
+    redirect: "/electronicImport/index",
+    component: Layout,
+    meta: {
+      hidden: false
+    },
+    children: [
+      {
+        path: "/electronicImport/index",
+        component: () => import("@/views/electronicImport/index.vue"),
+        name: "electronicImport",
+        meta: {
+          title: "电子料导入"
+        }
+      }
+    ]
+  },
+  {
+    path: "/structuralMaterialImport",
+    redirect: "/structuralMaterialImport/index",
+    component: Layout,
+    meta: {
+      hidden: false
+    },
+    children: [
+      {
+        path: "/structuralMaterialImport/index",
+        component: () => import("@/views/structuralMaterialImport/index.vue"),
+        name: "structuralMaterialImport",
+        meta: {
+          title: "结构料导入"
+        }
+      }
+    ]
+  },
+  {
+    path: "/resourcesDepartment",
+    redirect: "/resourcesDepartment/index",
+    component: Layout,
+    meta: {
+      title: "BOM单价录入",
+      hidden: true
+    },
+    children: [
+      {
+        path: "/resourcesDepartment/electronic",
+        component: () => import("@/views/resourcesDepartment/electronic.vue"),
+        name: "electronic",
+        meta: {
+          title: "电子料单价录入"
+        }
+      },
+      {
+        path: "/resourcesDepartment/construction",
+        component: () => import("@/views/resourcesDepartment/construction.vue"),
+        name: "construction",
+        meta: {
+          title: "结构BOM单价录入"
+        }
+      },
+      {
+        path: "/resourcesDepartment/moduleNumber",
+        component: () => import("@/views/resourcesDepartment/moduleNumber.vue"),
+        name: "moduleNumber",
+        meta: {
+          title: "项目走量",
+          hidden: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/bomVerify",
+    redirect: "/bomVerify/construction",
+    component: Layout,
+    meta: {
+      title: "BOM单价审核",
+      hidden: true
+    },
+    children: [
+      {
+        path: "/bomVerify/electronic",
+        component: () => import("@/views/bomVerify/electronic.vue"),
+        name: "bomVerifyElectronic",
+        meta: {
+          title: "电子料单价审核"
+        }
+      },
+      {
+        path: "/bomVerify/construction",
+        component: () => import("@/views/bomVerify/construction.vue"),
+        name: "bomVerifyConstruction",
+        meta: {
+          title: "结构BOM单价审核"
+        }
+      }
+    ]
+  },
+  {
+    path: "/bomLoss",
+    redirect: "/bomLoss/indexElec",
+    component: Layout,
+    meta: {
+      title: "BOM损耗率表单",
+      hidden: true
+    },
+    children: [
+      {
+        path: "/bomLoss/indexElec",
+        component: () => import("@/views/bomLoss/indexElec.vue"),
+        name: "bomLossElec",
+        meta: {
+          title: "电子BOM损耗率表单"
+        }
+      },
+      {
+        path: "/bomLoss/indexStruct",
+        component: () => import("@/views/bomLoss/indexStruct.vue"),
+        name: "bomLossStruct",
+        meta: {
+          title: "结构BOM损耗率表单"
+        }
+      }
+    ]
+  },
+  {
+    path: "/processImport",
+    redirect: "/processImport/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/processImport/index",
+        component: () => import("@/views/processImport/index.vue"),
+        name: "processImport",
+        meta: {
+          title: "工序导入"
+        }
+      }
+    ]
+  },
+  {
+    path: "/manufacturingCost",
+    redirect: "/manufacturingCost/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/manufacturingCost/index",
+        component: () => import("@/views/manufacturingCost/index.vue"),
+        name: "manufacturingCost",
+        meta: {
+          title: "制造成本录入"
+        }
+      }
+    ]
+  },
+  {
+    path: "/pmDepartment",
+    redirect: "/pmDepartment/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/pmDepartment/index",
+        component: () => import("@/views/pmDepartment/index.vue"),
+        name: "pmDepartment",
+        meta: {
+          title: "生管部录入"
+        }
+      }
+    ]
+  },
+  {
+    path: "/nre",
+    redirect: "/nre/nreProjectManageMent",
+    component: Layout,
+    meta: {
+      title: "NRE",
+      hidden: true
+    },
+    children: [
+      {
+        path: "/nre/nreProjectManageMent",
+        component: () => import("@/views/nre/nreProjectManageMent.vue"),
+        name: "nreProjectManageMent",
+        meta: {
+          title: "项目管理部NRE"
+        }
+      },
+      {
+        path: "/nre/nrePilotprojects",
+        component: () => import("@/views/nre/nrePilotprojects.vue"),
+        name: "nrePilotprojects",
+        meta: {
+          title: "产品部NRE"
+        }
+      },
+      {
+        path: "/nre/nreResourcesDepartment",
+        component: () => import("@/views/nre/nreResourcesDepartment.vue"),
+        name: "nreResourcesDepartment",
+        meta: {
+          title: "资源部NRE"
+        }
+      },
+      {
+        path: "/nre/nreExperimentItems",
+        component: () => import("@/views/nre/nreExperimentItems.vue"),
+        name: "nreExperimentItems",
+        meta: {
+          title: "品保部实验NRE"
+        }
+      },
+      {
+        path: "/nre/nreQCDepartment",
+        component: () => import("@/views/nre/nreQCDepartment.vue"),
+        name: "nreQCDepartment",
+        meta: {
+          title: "品保部-检具NRE"
+        }
+      },
+      {
+        path: "/nre/nreMarketingDepartment",
+        component: () => import("@/views/nre/nreMarketingDepartment.vue"),
+        name: "nreMarketingDepartment",
+        meta: {
+          title: "营销部NRE"
+        }
+      },
+      {
+        path: "/nre/nrePricelist",
+        component: () => import("@/views/nre/nrePricelist.vue"),
+        name: "nrePricelist",
+        meta: {
+          title: "核价表NRE"
+        }
+      }
+      // {
+      //   path: "/nre/engineeringDepartment",
+      //   component: () => import("@/views/nre/engineeringDepartment.vue"),
+      //   name: "engineeringDepartment",
+      //   meta: {
+      //     title: "工程部NRE"
+      //   }
+      // },
+      // {
+      //   path: "/nre/costInformation",
+      //   component: () => import("@/views/nre/costInformation.vue"),
+      //   name: "costInformation",
+      //   meta: {
+      //     title: "成本信息表"
+      //   }
+      // }
+    ]
+  },
+  {
+    path: "/dashboard",
+    redirect: "/dashboard/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/dashboard/index",
+        component: () => import("@/views/dashboard/index.vue"),
+        name: "Dashboard",
+        meta: {
+          title: "核价看板"
+        }
+      },
+      {
+        path: "/projectPriceAudit/index",
+        component: () => import("@/views/dashboard/projectPriceAudit/index.vue"),
+        name: "ProjectPriceAudit",
+        meta: {
+          title: "项目部核价审核界面"
+        }
+      },
+      {
+        path: "/financePriceAudit/index",
+        component: () => import("@/views/dashboard/financePriceAudit/index.vue"),
+        name: "FinancePriceAudit",
+        meta: {
+          title: "财务部核价审核界面"
+        }
+      }
+    ]
+  },
+  {
+    path: "/tradeCompliance",
+    redirect: "/tradeCompliance/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/tradeCompliance/index",
+        component: () => import("@/views/tradeCompliance/index.vue"),
+        name: "tradeCompliance",
+        meta: {
+          title: "贸易合规"
+        }
+      }
+    ]
+  },
+  {
+    path: "/quoteAnalysis",
+    redirect: "/quoteAnalysis/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/quoteAnalysis/index",
+        component: () => import("@/views/quoteAnalysis/index.vue"),
+        name: "quoteAnalysis",
+        meta: {
+          title: "报价分析看板"
+        }
+      }
+    ]
+  },
+  {
+    path: "/marketingQuotation",
+    redirect: "/marketingQuotation/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/marketingQuotation/index",
+        component: () => import("@/views/marketingQuotation/index.vue"),
+        name: "marketingQuotation",
+        meta: {
+          title: "总经理审批"
+        }
+      }
+    ]
+  },
+  {
+    path: "/bomView",
+    redirect: "/bomView/index",
+    component: Layout,
+    meta: {
+      title: "BOM查看",
+      hidden: true
+    },
+    children: [
+      {
+        path: "/bomView/elec",
+        component: () => import("@/views/bomView/elec.vue"),
+        name: "elecView",
+        meta: {
+          title: "电子料BOM查看"
+        }
+      },
+      {
+        path: "/bomView/struc",
+        component: () => import("@/views/bomView/struc.vue"),
+        name: "strucView",
+        meta: {
+          title: "结构料BOM查看"
+        }
+      },
+      {
+        path: "/bomView/index",
+        component: () => import("@/views/bomView/index.vue"),
+        name: "bomView",
+        meta: {
+          title: "BOM查看"
+        }
+      }
+    ]
+  },
+
+  {
+    path: "/summaryTable",
+    redirect: "/summaryTable/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/summaryTable/index",
+        component: () => import("@/views/summaryTable/index.vue"),
+        name: "summaryTable",
+        meta: {
+          title: "汇总表"
+        }
+      }
+    ]
+  },
+
+  {
+    path: "/archive",
+    redirect: "/archive/index",
+    component: Layout,
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: "/archive/index",
+        component: () => import("@/views/archive/index.vue"),
+        name: "archive",
+        meta: {
+          title: "归档"
+        }
+      }
+    ]
+  }
+]
+
+/**
+ * 动态路由
+ * 用来放置有权限（roles 属性）的路由
+ * 必须带有 name 属性
+ */
+export const asyncRoutes: Array<RouteRecordRaw> = [
+  {
+    path: "/timeliness",
+    redirect: "/timeliness/index",
+    component: Layout,
+    meta: {
+      roles: ["timeliness"],
+    },
+    children: [
+      {
+        path: "/timeliness/index",
+        component: () => import("@/views/versionManagement/timeliness.vue"),
+        name: "timeliness",
+        meta: {
+          title: "时效性查询"
+        }
+      },
+      {
+        path: "/timeliness/operationRecord",
+        component: () => import("@/views/versionManagement/operationRecord.vue"),
+        name: "timelinessOperationRecord",
+        meta: {
+          title: "时效性管理",
+          hidden: true
+        }
+      },
+    ]
+  },
+  {
+    path: "/",
+    redirect: "/todoCenter/index",
+    component: Layout,
+    meta: {
+      title: "关闭流程",
+      roles: ["closeFlow"],
+    },
+    children: [
+      {
+        path: "/timeliness/closeFlow",
+        component: () => import("@/views/versionManagement/closeFlow.vue"),
+        name: "closeFlowPage",
+        meta: {
+          title: "关闭流程",
+        },
+      },
+    ]
+  },
+  {
+    path: "/versionManagement",
+    redirect: "/versionManagement/index",
+    component: Layout,
+    meta: {
+      title: "版本管理",
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/versionManagement/index",
+        component: () => import("@/views/versionManagement/index.vue"),
+        name: "versionManagement",
+        meta: {
+          title: "版本管理"
+        }
+      },
+      {
+        path: "/versionManagement/operationRecord",
+        component: () => import("@/views/versionManagement/operationRecord.vue"),
+        name: "operationRecord",
+        meta: {
+          title: "时效性管理",
+          hidden: true
+        }
+      },
+      {
+        path: "/versionManagement/reportQuery",
+        component: () => import("@/views/versionManagement/reportQuery.vue"),
+        name: "reportQuery",
+        meta: {
+          title: "报表查询"
+        }
+      }
+    ]
+  },
+  {
+    path: "/departmentManage",
+    redirect: "/departmentManage/index",
+    component: Layout,
+    meta: {
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/departmentManage/index",
+        component: () => import("@/views/departmentManage/index.vue"),
+        name: "departmentManage",
+        meta: {
+          title: "部门管理"
+        }
+      }
+    ]
+  },
+  {
+    path: "/role",
+    redirect: "/role/index",
+    component: Layout,
+    meta: {
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/role/index",
+        component: () => import("@/views/role/index.vue"),
+        name: "role",
+        meta: {
+          title: "角色管理"
+        }
+      }
+    ]
+  },
+  {
+    path: "/user",
+    redirect: "/user/index",
+    component: Layout,
+    meta: {
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/user/index",
+        component: () => import("@/views/user/index.vue"),
+        name: "user",
+        meta: {
+          title: "用户管理"
+        }
+      }
+    ]
+  },
+  {
+    path: "/E-mail",
+    redirect: "/E-mail/index",
+    component: Layout,
+    meta: {
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/E-mail/index",
+        component: () => import("@/views/E-mail/index.vue"),
+        name: "E-mail",
+        meta: {
+          title: "邮箱管理"
+        }
+      }
+    ]
+  },
+  {
+    path: "/dictionary",
+    redirect: "/dictionary/index",
+    component: Layout,
+    meta: {
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/dictionary/index",
+        component: () => import("@/views/dictionary/index.vue"),
+        name: "dictionary",
+        meta: {
+          title: "字典管理"
+        }
+      },
+      {
+        path: "/dictionary/detailList",
+        component: () => import("@/views/dictionary/detailList.vue"),
+        name: "detailList",
+        meta: {
+          title: "字典管理明细表",
+          hidden: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/fnDepartment",
+    redirect: "/fnDepartment/index",
+    component: Layout,
+    meta: {
+      title: "财务参数管理",
+      roles: ["finance"]
+    },
+    name: "fnDepartment",
+    children: [
+      {
+        path: "/fnDepartment/qualityCost",
+        component: () => import("@/views/fnDepartment/qualityCost.vue"),
+        name: "qualityCost",
+        meta: {
+          title: "质量成本比例录入"
+        }
+      },
+      {
+        path: "/fnDepartment/exchangeRate",
+        component: () => import("@/views/fnDepartment/exchangeRate.vue"),
+        name: "exchangeRate",
+        meta: {
+          title: "汇率"
+        }
+      },
+      {
+        path: "/fnDepartment/grossProfitMargin",
+        component: () => import("@/views/fnDepartment/grossProfitMargin.vue"),
+        name: "grossProfitMargin",
+        meta: {
+          title: "毛利率"
+        }
+      },
+      {
+        path: "/fnDepartment/unitPriceImport",
+        component: () => import("@/views/fnDepartment/unitPriceImport.vue"),
+        name: "unitPriceImport",
+        meta: {
+          title: "单价库导入"
+        }
+      },
+      {
+        path: "/fnDepartment/fulllifeCycle",
+        component: () => import("@/views/fnDepartment/fulllifeCycle.vue"),
+        name: "fulllifeCycle",
+        meta: {
+          title: "制造成本计算参数维护"
+        }
+      },
+      {
+        path: "/fnDepartment/rateEntry",
+        component: () => import("@/views/fnDepartment/rateEntry.vue"),
+        name: "rateEntry",
+        meta: {
+          title: "作业价格"
+        }
+      }
+    ]
+  },
+  {
+    path: "/",
+    redirect: "/UpdateLogInfo/index",
+    component: Layout,
+    meta: {
+      title: "更新日志"
+    },
+    children: [
+      {
+        path: "/UpdateLogInfo/index",
+        component: () => import("@/views/UpdateLogInfo/index.vue"),
+        name: "UpdateLogInfo",
+        meta: {
+          title: "更新日志"
+        }
+      }
+    ]
+  },
+  // {
+  //   path: "/permission",
+  //   component: Layout,
+  //   redirect: "/permission/page",
+  //   name: "Permission",
+  //   meta: {
+  //     title: "权限管理",
+  //     icon: "lock",
+  //     roles: ["admin", "editor"], // 可以在根路由中设置角色
+  //     alwaysShow: true // 将始终显示根菜单
+  //   },
+  //   children: [
+  //     {
+  //       path: "page",
+  //       component: () => import("@/views/permission/page.vue"),
+  //       name: "PagePermission",
+  //       meta: {
+  //         title: "页面权限",
+  //         roles: ["admin"] // 或者在子导航中设置角色
+  //       }
+  //     },
+  //     {
+  //       path: "directive",
+  //       component: () => import("@/views/permission/directive.vue"),
+  //       name: "DirectivePermission",
+  //       meta: {
+  //         title: "指令权限" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
+  //       }
+  //     }
+  //   ]
+  // },
+  {
+    path: "/:pathMatch(.*)*", // 必须将 'ErrorPage' 路由放在最后, Must put the 'ErrorPage' route at the end
+    component: Layout,
+    redirect: "/404",
+    name: "ErrorPage",
+    meta: {
+      title: "错误页面",
+      icon: "404",
+      hidden: true
+    },
+    children: [
+      {
+        path: "401",
+        component: () => import("@/views/error-page/401.vue"),
+        name: "401",
+        meta: {
+          title: "401"
+        }
+      },
+      {
+        path: "404",
+        component: () => import("@/views/error-page/404.vue"),
+        name: "404",
+        meta: {
+          title: "404"
+        }
+      }
+    ]
+  }
+]
+
+const router = createRouter({
+  // history: createWebHashHistory(),
+  history: createWebHistory(),
+  routes: constantRoutes
+})
+
+/** 重置路由 */
+export function resetRouter() {
+  ;``
+  // 注意：所有动态路由路由必须带有 name 属性，否则可能会不能完全重置干净
+  try {
+    router.getRoutes().forEach((route) => {
+      const { name, meta } = route
+      if (name && meta.roles?.length) {
+        router.hasRoute(name) && router.removeRoute(name)
+      }
+    })
+  } catch (error) {
+    // 强制刷新浏览器，不过体验不是很好
+    window.location.reload()
+  }
+}
+
+export default router

@@ -811,10 +811,10 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "/publicMaterial",
-        component: () => import("@/views/BasicLibrary/publicMaterial.vue"),
+        component: () => import("@/views/basicLibrary/publicMaterial.vue"),
         name: "publicMaterial",
         meta: {
-          title: "公共物料库"
+          title: "共用物料库"
         }
       }
     ]

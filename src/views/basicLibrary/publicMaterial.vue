@@ -11,6 +11,8 @@
           </el-form-item>
         </el-form>
       </div>
+    </div>
+    <el-card>
       <el-form :inline="true">
         <el-form-item label="">
           <el-upload
@@ -27,14 +29,11 @@
           <el-button type="primary" @click="data.setVisible = true">模板文件下载</el-button>
         </el-form-item> -->
       </el-form>
-    </div>
-
-    <el-card>
       <el-table :data="data.tableData" border style="width: 100%" height="700">
         <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols" :key="col.key" width="150" />
         <el-table-column label="模组走量" prop="moduleThroughputs" width="175">
           <el-table-column
-            v-for="(item, iIndex) in filter(data.moduleThroughputs, (k) => k?.uInitPriceFormType === 0)"
+            v-for="(item, iIndex) in data.moduleThroughputs"
             :key="iIndex"
             :prop="`moduleThroughputs.${iIndex}.value`"
             :label="item.year"
@@ -49,6 +48,7 @@
         :page-size="20"
         v-model:currentPage="data.pageNo"
         @update:current-page="handlePageChange"
+        style="margin-top: 10px"
       />
     </el-card>
   </div>
@@ -57,7 +57,7 @@
 import { reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElMessageBox } from "element-plus"
-import { unitCols, unitCols2 } from "./constant"
+import { unitCols } from "./common/const"
 import { getQueryPublicMaterialWarehouse } from "./service"
 import { filter } from "lodash"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"

@@ -30,6 +30,34 @@
     </div>
     <el-table :data="data.tableData" border style="width: 100%" height="700">
       <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols" :key="col.key" width="150" />
+      <el-table-column label="返点率" prop="uInitPriceFormYearOrValueModes" width="175">
+        <el-table-column
+          v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 0)"
+          :key="iIndex"
+          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
+          :label="item.year"
+          :formatter="formatDatas"
+        />
+      </el-table-column>
+      <el-table-column label="年降率" width="175">
+        <el-table-column
+          v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 1)"
+          :key="iIndex"
+          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
+          :label="item.year"
+          :formatter="formatDatas"
+        />
+      </el-table-column>
+      <el-table-column label="年未税价" width="300">
+        <el-table-column
+          v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 2)"
+          :key="iIndex"
+          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
+          :label="item.year"
+          :formatter="formatDatas"
+        />
+      </el-table-column>
+      <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols2" :key="col.key" width="150" />
     </el-table>
     <div>
       <el-pagination
@@ -47,11 +75,12 @@
 import { reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElMessageBox } from "element-plus"
-import unitCols from "./constant"
+import { unitCols, unitCols2 } from "./constant"
 import { getUInitPrice } from "./service"
+import { filter } from "lodash"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 
-const data = reactive({
+const data = reactive<any>({
   tableData: [],
   setVisible: false,
   downloadSetForm: {
@@ -63,7 +92,8 @@ const data = reactive({
     Filter: ""
   },
   pageNo: 1,
-  total: 0
+  total: 0,
+  uInitPriceFormYearOrValueModes: []
 })
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
@@ -105,19 +135,31 @@ const getList = async () => {
   let { searchForm } = data
   searchForm.skipCount = (data.pageNo - 1) * searchForm.maxResultCount
   let res: any = await getUInitPrice(searchForm)
-  data.tableData = res.result.items
-  data.total = res.result.totalCount
+  data.uInitPriceFormYearOrValueModes = res.result.items[0]?.uInitPriceFormYearOrValueModes
+  console.log(data.uInitPriceFormYearOrValueModes, "data.uInitPriceFormYearOrValueModes")
+  setTimeout(() => {
+    data.tableData = res.result.items
+    data.total = res.result.totalCount
+  }, 300)
 }
+
 const search = () => {
   getList()
 }
+
 const handlePageChange = () => {
   getList()
 }
+
 onMounted(() => {
   getList()
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
+
+const formatDatas = (record: any, _row: any, cellValue: any) => {
+  return cellValue.toFixed(2)
+}
+
 </script>
 <style lang="scss" scoped>
 .unitPrice-import {

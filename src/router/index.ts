@@ -802,6 +802,24 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/basicLibrary",
+    redirect: "/basicLibrary/publicMaterial",
+    component: Layout,
+    meta: {
+      title: "基础库管理"
+    },
+    children: [
+      {
+        path: "/publicMaterial",
+        component: () => import("@/views/BasicLibrary/publicMaterial.vue"),
+        name: "publicMaterial",
+        meta: {
+          title: "公共物料库"
+        }
+      }
+    ]
+  },
+  {
     path: "/",
     redirect: "/UpdateLogInfo/index",
     component: Layout,

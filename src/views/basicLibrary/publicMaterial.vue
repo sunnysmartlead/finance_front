@@ -13,23 +13,31 @@
       </div>
     </div>
     <el-card>
-      <el-form :inline="true">
-        <el-form-item label="">
-          <el-upload
-            :action="$baseUrl + 'api/services/app/UnitPriceLibrary/ImportPublicMaterialWarehouse'"
-            :on-success="handleSuccess"
-            show-file-list
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError"
-          >
-            <el-button type="primary">共用库导入</el-button>
-          </el-upload>
-        </el-form-item>
-        <!-- <el-form-item label="">
-          <el-button type="primary" @click="data.setVisible = true">模板文件下载</el-button>
-        </el-form-item> -->
-      </el-form>
-      <el-table :data="data.tableData" border style="width: 100%" height="700">
+      <el-row>
+        <el-form :inline="true">
+          <el-form-item label="">
+            <el-upload
+              :action="$baseUrl + 'api/services/app/UnitPriceLibrary/ImportPublicMaterialWarehouse'"
+              :on-success="handleSuccess"
+              show-file-list
+              :on-progress="handleGetUploadProgress"
+              :on-error="handleUploadError"
+            >
+              <el-button type="primary">共用库导入</el-button>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+        <el-button type="danger" @click="handleDelete">批量删除</el-button>
+      </el-row>
+      <el-table
+        ref="multipleTableRef"
+        :data="data.tableData"
+        @selection-change="handleSelectionChange"
+        border
+        style="width: 100%"
+        height="700"
+      >
+        <el-table-column type="selection" width="55" />
         <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols" :key="col.key" width="150" />
         <el-table-column label="模组走量" prop="moduleThroughputs" width="175">
           <el-table-column
@@ -54,13 +62,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive, onMounted } from "vue"
+import { reactive, onMounted, ref } from "vue"
 import type { UploadProps } from "element-plus"
-import { ElMessageBox } from "element-plus"
+import { ElMessageBox, ElTable, ElMessage } from "element-plus"
 import { unitCols } from "./common/const"
-import { getQueryPublicMaterialWarehouse } from "./service"
-import { filter } from "lodash"
+import { getQueryPublicMaterialWarehouse, deleteMultiplePublicMaterials } from "./service"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
+import { isEmpty, map } from "lodash"
+
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
 
 const data = reactive<any>({
   tableData: [],
@@ -71,8 +81,13 @@ const data = reactive<any>({
     maxResultCount: 20,
     Filter: ""
   },
-  moduleThroughputs: []
+  moduleThroughputs: [],
+  deleteIds: []
 })
+
+const handleSelectionChange = (val: string[]) => {
+  data.deleteIds = val
+}
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   console.log(res)
@@ -89,6 +104,31 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
     ElMessageBox.alert(res.error.message, "提醒", {
       type: "warning",
       confirmButtonText: "OK"
+    })
+  }
+}
+
+const handleDelete = async () => {
+  if (isEmpty(data.deleteIds)) {
+    ElMessage({
+      type: "warning",
+      message: "请选择物料后再删除"
+    })
+  } else {
+    ElMessageBox.confirm("您确定要删除这些物料嘛！", "请注意", {
+      confirmButtonText: "OK",
+      cancelButtonText: "Cancel",
+      type: "warning"
+    }).then(async () => {
+      const ids = map(data.deleteIds, (c: any) => c.materialCode)
+      const { success } = await deleteMultiplePublicMaterials({ ids })
+      if (success) {
+        ElMessage({
+          type: "success",
+          message: "删除成功！"
+        })
+        getList()
+      }
     })
   }
 }

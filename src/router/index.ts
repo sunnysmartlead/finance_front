@@ -810,7 +810,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     },
     children: [
       {
-        path: "/publicMaterial",
+        path: "publicMaterial",
         component: () => import("@/views/basicLibrary/publicMaterial.vue"),
         name: "publicMaterial",
         meta: {

@@ -121,7 +121,7 @@ const handleDelete = async () => {
       type: "warning"
     }).then(async () => {
       const ids = map(data.deleteIds, (c: any) => c.materialCode)
-      const { success } = await deleteMultiplePublicMaterials({ ids })
+      const { success } = await deleteMultiplePublicMaterials(ids)
       if (success) {
         ElMessage({
           type: "success",

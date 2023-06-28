@@ -2,7 +2,7 @@
   <div>
     <el-table :data="specifyTableData" style="width: 100%" border>
       <el-table-column prop="productType" label="类型" />
-      <el-table-column prop="productName" label="产品名称" />
+      <el-table-column prop="productName" label="零件名称" />
       <el-table-column prop="main" label="核心部件" />
       <el-table-column prop="type" label="品牌/型号" />
       <el-table-column prop="price" label="单价" />

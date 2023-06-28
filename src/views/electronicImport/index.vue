@@ -95,17 +95,19 @@ import { ref, reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom } from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom, getBoardInfomation } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
-import ProductInfo from "@/components/ProductInfo/index.vue"
+// import ProductInfo from "@/components/ProductInfo/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-let Host: string = "ElectronicBomImport"
+const Host = "ElectronicBomImport"
+
 let auditFlowId: any = null
 let productId: any = null
+
 const platePart: any = ref([
   {
     date: "2016-05-03",
@@ -113,6 +115,7 @@ const platePart: any = ref([
     address: "No. 189, Grove St, Los Angeles"
   }
 ])
+
 const data = reactive({
   activeIndex: 0,
   productList: [],
@@ -121,7 +124,8 @@ const data = reactive({
   downloadSetForm: {
     number: 0
   },
-  auditFlowId: null as any
+  auditFlowId: null as any,
+  SolutionId: null as any // 方案id
 })
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
@@ -136,6 +140,17 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
     })
   }
 }
+
+const queryBoardInfomation = async () => {
+  const { success, result } = await getBoardInfomation({
+    auditFlowId: auditFlowId,
+    SolutionId: data.SolutionId
+  })
+  if (success && result?.length) {
+    platePart.value = result
+  }
+}
+
 const downLoadTemplate = async () => {
   let res: any = await DownloadFile(Number(data.downloadSetForm.number))
   const blob = res
@@ -153,12 +168,15 @@ const downLoadTemplate = async () => {
   }
   data.setVisible = false
 }
+
 const addPlatePart = async () => {
   platePart.value.push({})
 }
+
 const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
+
 const submit = async () => {
   const loading = ElLoading.service({
     lock: true,
@@ -174,7 +192,8 @@ const submit = async () => {
     let { success }: any = await SaveElectronicBom({
       auditFlowId,
       productId,
-      electronicBomDtos: data.tableData
+      electronicBomDtos: data.tableData,
+      boardDtos: platePart.value
     })
     loading.close()
     success && ElMessage.success("提交成功！")
@@ -182,14 +201,22 @@ const submit = async () => {
     loading.close()
   }
 }
+
+const init = async () => {
+  let resElectronic: any = await GetElectronicBom({ auditFlowId, productId })
+  data.tableData = resElectronic.result
+
+}
+
 onMounted(async () => {
   let query = getQuery()
   auditFlowId = Number(query.auditFlowId) || null
   productId = Number(query.productId) || null
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
+  data.SolutionId = Number(query.SolutionId) || null
   if (auditFlowId && productId) {
-    let resElectronic: any = await GetElectronicBom({ auditFlowId, productId })
-    data.tableData = resElectronic.result
+    init()
+    queryBoardInfomation()
   }
 })
 </script>

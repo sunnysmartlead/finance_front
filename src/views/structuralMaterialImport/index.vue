@@ -4,36 +4,18 @@
     <CustomerSpecificity />
     <TrDownLoad />
     <customerTargetPrice />
-    <div class="electronic-import__btn-container">
-      <el-form :inline="true">
-        <el-form-item label="">
-          <el-upload
-            :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
-            :on-success="handleSuccess"
-            show-file-list
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError"
-          >
-            <el-button type="primary">结构料上传</el-button>
-          </el-upload>
-        </el-form-item>
-        <!-- <el-form-item label="">
-          <el-upload
-            :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-            :on-success="handleSuccess3D"
-            show-file-list
-          >
-            <el-button type="primary">附件上传：3D爆炸图</el-button>
-          </el-upload>
-        </el-form-item> -->
-        <el-form-item label="">
-          <el-button type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
-        </el-form-item>
-        <el-form-item label="">
-          <ProductInfo :auditFlowId="data.auditFlowId" />
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-row class="electronic-import__btn-container">
+      <el-upload :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'" :on-success="handleSuccess" show-file-list
+        :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
+        <el-button type="primary">结构料上传</el-button>
+      </el-upload>
+      <el-upload  :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess3D"
+        show-file-list>
+        <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
+      </el-upload>
+      <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
+      <ProductInfo :auditFlowId="data.auditFlowId" />
+    </el-row>
 
     <h5>结构料导入</h5>
     <el-table :data="data.tableData" border style="width: 100%" height="700">
@@ -130,11 +112,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input
-            v-model="data.logisticsForm.remarks"
-            type="textarea"
-            placeholder="若无具体包装数据,填写参考的具体项目及产品"
-          />
+          <el-input v-model="data.logisticsForm.remarks" type="textarea" placeholder="若无具体包装数据,填写参考的具体项目及产品" />
         </el-form-item>
       </el-form>
       <div style="float: right; margin: 20px 0">
@@ -206,9 +184,9 @@ onMounted(async () => {
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
 
   if (auditFlowId && productId) {
-    let resStruction: any = await GetStructionBom({ auditFlowId, productId })
+    let resStruction: any = await GetStructionBom({ auditFlowId, solutionId: productId })
     data.tableData = resStruction.result
-    let resForm: any = await getProductDevelopmentInput({ auditFlowId, productId })
+    let resForm: any = await getProductDevelopmentInput({ auditFlowId, solutionId: productId })
     Object.keys(data.logisticsForm).forEach((key: string) => {
       data.logisticsForm[key] = resForm.result[key]
     })
@@ -256,13 +234,7 @@ const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      if (!data.logisticsForm.picture3DFileId) {
-        ElMessage({
-          message: "3d爆炸图必传",
-          type: "error"
-        })
-        return
-      }
+
       const loading = ElLoading.service({
         lock: true,
         text: "加载中",
@@ -270,7 +242,7 @@ const submit = async (formEl: FormInstance | undefined) => {
       })
       try {
         let params: SaveBOM = Object.assign(
-          { auditFlowId, productId, structureBomDtos: data.tableData },
+          { auditFlowId, solutionId: productId, structureBomDtos: data.tableData },
           data.logisticsForm
         )
         let res: any = await SaveStructionBom(params)
@@ -300,6 +272,9 @@ const submit = async (formEl: FormInstance | undefined) => {
   &__btn-container {
     margin: 20px 0;
     position: relative;
+  }
+  .gap {
+    margin: 0 5px;
   }
 }
 </style>

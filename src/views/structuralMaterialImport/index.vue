@@ -206,9 +206,9 @@ onMounted(async () => {
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
 
   if (auditFlowId && productId) {
-    let resStruction: any = await GetStructionBom({ auditFlowId, productId })
+    let resStruction: any = await GetStructionBom({ auditFlowId, solutionId: productId })
     data.tableData = resStruction.result
-    let resForm: any = await getProductDevelopmentInput({ auditFlowId, productId })
+    let resForm: any = await getProductDevelopmentInput({ auditFlowId, solutionId: productId })
     Object.keys(data.logisticsForm).forEach((key: string) => {
       data.logisticsForm[key] = resForm.result[key]
     })
@@ -256,13 +256,7 @@ const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      if (!data.logisticsForm.picture3DFileId) {
-        ElMessage({
-          message: "3d爆炸图必传",
-          type: "error"
-        })
-        return
-      }
+
       const loading = ElLoading.service({
         lock: true,
         text: "加载中",
@@ -270,7 +264,7 @@ const submit = async (formEl: FormInstance | undefined) => {
       })
       try {
         let params: SaveBOM = Object.assign(
-          { auditFlowId, productId, structureBomDtos: data.tableData },
+          { auditFlowId, solutionId: productId, structureBomDtos: data.tableData },
           data.logisticsForm
         )
         let res: any = await SaveStructionBom(params)

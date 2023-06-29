@@ -83,6 +83,7 @@ export interface SaveBOM {
   sorPath?: null | string
   structureBomDtos?: StructureBOMDto[] | null
   boardDtos: any
+  solutionId: number
 }
 
 /**

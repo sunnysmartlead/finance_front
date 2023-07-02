@@ -25,8 +25,8 @@ const emit = defineEmits(["change"])
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
-const state = reactive({
-  productId: null as any,
+const state = reactive<any>({
+  productId: null,
   auditFlowId: ""
 })
 
@@ -40,14 +40,16 @@ watch(
     } else showPanel.value = false
   }
 )
-watch(
-  () => productStore.productList,
-  (newV) => {
-    state.productId = newV[0]?.id
-    handleChange(newV[0]?.id)
-  },
-  { deep: true }
-)
+// watch(
+//   () => productStore.productList,
+//   (newV) => {
+//     if (newV) {
+//       state.productId = newV[0]?.id
+//       handleChange(newV[0]?.id)
+//     }
+//   },
+//   { deep: true }
+// )
 onMounted(() => {
   // 判断当前页面路由是否在白名单内
   if (wahiteRotes.includes(route.name)) {
@@ -61,12 +63,15 @@ const init = async () => {
   try {
     state.productId = null
     const { productId, auditFlowId } = route.query
+    
     if (auditFlowId) {
       await productStore.setProductList(Number(auditFlowId))
     }
     if (productId) {
       //如url中存在productId则选中
+      
       state.productId = Number(productId)
+      console.log(Number(productId), 'productId')
       window.sessionStorage.setItem("productId", String(state.productId))
     } else {
       // const intro = IntroJs().setOptions({
@@ -79,7 +84,8 @@ const init = async () => {
       // })
       // intro.start()
     }
-    let isUnfoldValue=JSON.parse(localStorage.getItem("isUnfold")||"")
+    const isUnfoldData = localStorage.getItem("isUnfold") || ''
+    let isUnfoldValue=JSON.parse([null, undefined, 'null'].includes(isUnfoldData) ? '' : isUnfoldData)
     isUnfold.value = isUnfoldValue
 
   } catch (err) {

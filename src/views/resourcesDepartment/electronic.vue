@@ -13,88 +13,75 @@
         <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
         <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
         <el-table-column prop="sapItemName" label="材料名称" width="120" fixed="left" />
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="120" fixed="left" />
         <el-table-column prop="materialsUseCount" label="项目物料的使用量">
-          <el-table-column
-            v-for="(item, index) in allColums?.materialsUseCountYears"
-            :key="item"
-            :label="`${item}`"
-            :prop="`materialsUseCount[${index}].value`"
-            width="80"
-          />
+          <el-table-column align="center" :class-name="`column-class-${index}`"
+            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount" width="175"
+            :label="`${item.kv} K/Y`">
+            <el-table-column width="100" v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+              :prop="`materialsUseCount.${index}.yearOrValueModes.${iIndex}.value`"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" :formatter="formatDatas" />
+          </el-table-column>
         </el-table-column>
         <el-table-column prop="currency" label="币种" width="100">
           <template #default="scope">
             <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
-              <el-option
-                v-for="item in exchangeSelectOptions"
-                :key="item.id"
-                :label="item.exchangeRateKind"
-                :value="item.exchangeRateKind"
-              />
+              <el-option v-for="item in exchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
+                :value="item.exchangeRateKind" />
             </el-select>
           </template>
         </el-table-column>
         <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
-          <el-table-column
-            v-for="(item, index) in allColums?.systemiginalCurrencyYears"
-            :key="item"
-            :label="`${item}`"
-            :prop="`systemiginalCurrency[${index}].value`"
-            width="100"
-          />
+          <el-table-column v-for="(item, index) in allColums?.systemiginalCurrencyYears" align="center"
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
+            <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175">
+              <template #default="scope">
+                <el-input-number v-if="scope.row.isEdit"
+                  v-model="scope.row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
+                  :min="0" @keyup.enter="handleCalculation(scope.row, scope.$index)" />
+                <span v-if="!scope.row.isEdit">{{
+                  scope.row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5) }}</span>
+              </template>
+            </el-table-column>
+          </el-table-column>
         </el-table-column>
         <el-table-column prop="inTheRate" label="年降率">
-          <el-table-column
-            v-for="(item, index) in allColums?.inTheRateYears"
-            :key="item"
-            :label="`${item}`"
-            :prop="`inTheRate[${index}].value`"
-            width="150"
-          >
-            <template #default="scope">
-              <el-input
-                v-if="scope.row.isEdit"
-                v-model="scope.row.inTheRate[index].value"
-                @keyup.enter="handleCalculation(scope.row, scope.$index)"
-                type="number"
-              >
-                <template #append> % </template>
-              </el-input>
-              <span v-else>{{ scope.row?.inTheRate[index]?.value }}</span>
-            </template>
+          <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
+            <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175">
+              <template #default="scope">
+                <el-input v-if="scope.row.isEdit" v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value"
+                  type="number">
+                  <template #append> % </template>
+                </el-input>
+                <span v-else>{{ scope.row.inTheRate[index].yearOrValueModes[iIndex].value }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
         </el-table-column>
         <el-table-column prop="iginalCurrency" label="原币">
-          <el-table-column
-            v-for="(item, index) in allColums?.iginalCurrencyYears"
-            :key="item"
-            :label="`${item?.toString()}`"
-            :prop="`iginalCurrency[${index}].value`"
-            width="120"
-          >
-            <template #default="scope">
-              <el-input-number
-                v-if="scope.row.isEdit"
-                v-model="scope.row.iginalCurrency[index].value"
-                controls-position="right"
-                :min="0"
-                @keyup.enter="handleCalculationIginalCurrency(scope.row, scope.$index)"
-              />
-              <span v-if="!scope.row.isEdit">{{ scope.row.iginalCurrency[index].value.toFixed(5) }}</span>
-            </template>
+          <el-table-column v-for="(item, index) in allColums?.iginalCurrencyYears" align="center"
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
+            <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175" :formatter="formatDatas">
+              <template #default="scope">
+                <el-input-number v-if="scope.row.isEdit"
+                  v-model="scope.row.iginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
+                  :min="0" />
+                <span v-if="!scope.row.isEdit">{{
+                  scope.row.iginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5) }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
         </el-table-column>
         <el-table-column prop="standardMoney" label="本位币">
-          <el-table-column
-            v-for="(item, index) in allColums?.standardMoneyYears"
-            :key="item"
-            :label="`${item?.toString()}`"
-            :prop="`standardMoney[${index}].value`"
-            width="120"
-          >
-            <template #default="{ row }">
-              {{ row.standardMoney[index]?.value?.toFixed(5) || 0 }}
-            </template>
+          <el-table-column v-for="(item, index) in allColums?.standardMoneyYears" align="center"
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
+            <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175"
+              :prop="`standardMoney.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterStandardMoney" />
           </el-table-column>
         </el-table-column>
         <el-table-column prop="moq" label="MOQ" width="120">
@@ -104,10 +91,18 @@
           </template>
         </el-table-column>
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
-          <template #default="{ row }">
+          <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} K/Y`"
+            width="175">
+            <template #default="{ row }">
+              <el-input-number v-if="row.isEdit" v-model="row.rebateMoney[index].value" controls-position="right"
+                :min="0" />
+              <span v-if="!row.isEdit">{{ row.rebateMoney[index]?.value }}</span>
+            </template>
+          </el-table-column>
+          <!-- <template #default="{ row }">
             <el-input-number v-if="row.isEdit" v-model="row.rebateMoney" controls-position="right" :min="0" />
             <span v-if="!row.isEdit">{{ row.rebateMoney }}</span>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="备注" width="100">
           <template #default="{ row }">
@@ -128,46 +123,42 @@
         <el-table-column prop="peopleName" label="确认人" />
         <el-table-column label="操作" fixed="right" width="180">
           <template #default="scope">
-            <el-button
-              link
-              :disabled="scope.row.isSubmit"
-              @click="handleSubmit(scope.row, 0, scope.$index)"
-              type="danger"
-              v-havedone
-              >确认</el-button
-            >
-            <el-button
-              v-if="scope.row.isEntering"
-              link
-              :disabled="scope.row.isSubmit"
-              @click="handleSubmit(scope.row, 1, scope.$index)"
-              type="warning"
-              v-havedone
-            >
+            <el-button link :disabled="scope.row.isSubmit" @click="handleSubmit(scope.row, 0, scope.$index)" type="danger"
+              v-havedone>确认</el-button>
+            <el-button v-if="scope.row.isEntering" link :disabled="scope.row.isSubmit"
+              @click="handleSubmit(scope.row, 1, scope.$index)" type="warning" v-havedone>
               提交
             </el-button>
-            <el-button
-              v-if="!scope.row.isEdit"
-              :disabled="scope.row.isSubmit"
-              link
-              @click="handleEdit(scope.row, true)"
-              type="primary"
-              v-havedone
-            >
+            <el-button v-if="!scope.row.isEdit" :disabled="scope.row.isSubmit" link @click="handleEdit(scope.row, true)"
+              type="primary" v-havedone>
               修改
             </el-button>
             <el-button v-if="scope.row.isEdit" link @click="handleEdit(scope.row, false)" v-havedone>取消</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item v-for="item in allColums?.standardMoneyYears" :key="item" :label="`${item} 本位币汇总`">
-          {{ allStandardMoney[item].toFixed(5) || 0 }}
+      <!-- <el-descriptions :column="2" border>
+        <el-descriptions-item v-for="item in allColums?.standardMoneyYears" :key="item" :label="`${`${item.kv}K/Y`} 本位币汇总`">
+          <el-descriptions-item v-for="yearItem in item?.yearOrValueModes" :key="item" :label="`${yearItem.kv + upDownEunm[yearItem.upDown]} 本位币汇总`">
+            {{ allStandardMoney.value }}
+          </el-descriptions-item>
         </el-descriptions-item>
-      </el-descriptions>
+      </el-descriptions> -->
       <!-- <el-row justify="end">
         <el-button class="margin-top" @click="handleCalculation" type="primary"> 计算 </el-button>
       </el-row> -->
+      <div>
+          <h5>本位币汇总：</h5>
+          <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
+            <span class="descriptions-label">{{ `${c.kv} K/Y` }}</span>
+            <el-descriptions  direction="vertical" :column="c.yearOrValueModes.length" border>
+              <el-descriptions-item  v-for="yearItem in c.yearOrValueModes"
+                :key="yearItem.year" :label="yearItem.year + upDownEunm[yearItem.upDown]">
+                {{ yearItem.value }}
+              </el-descriptions-item>
+            </el-descriptions>
+          </el-row>
+        </div>
     </el-card>
   </div>
 </template>
@@ -186,8 +177,16 @@ import {
 import { getExchangeRate } from "./../demandApply/service"
 import getQuery from "@/utils/getQuery"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
+import { cloneDeep } from 'lodash'
+
 let Host: string = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()
+
+enum upDownEunm {
+  '全年',
+  '上半年',
+  '下半年'
+}
 
 // // 获取仓库的值
 // const store = useUserStore()
@@ -195,7 +194,7 @@ const { auditFlowId = 1, productId }: any = getQuery()
 const tableLoading = ref(false)
 
 // 电子料 - table数据
-const electronicBomList = ref<ElectronicDto[]>([])
+const electronicBomList = ref<any>([])
 
 // 计算总值
 const reduceArr = (arr: any[]) => {
@@ -204,19 +203,29 @@ const reduceArr = (arr: any[]) => {
 }
 
 const allStandardMoney = computed(() => {
-  let obj: any = {}
-  const standardMoney = electronicBomList.value?.map((item: any) => item.standardMoney) || []
-  const flatArr = standardMoney.flat(Infinity)
-  allColums?.standardMoneyYears.forEach((item: any) => {
-    const arr: any = []
-    flatArr.forEach((y: any) => {
-      if (y.year === item) {
-        arr.push(y.value || 0)
-      }
-    })
-    obj[item] = reduceArr(arr)
+  try {
+    const arr = electronicBomList.value
+    const rowOne = cloneDeep(arr?.[0]?.standardMoney) || []
+    console.log(arr, 'allStandardMoney')
+    arr?.forEach?.((item:any, index: number) => {
+    if (index > 1) {
+      const { standardMoney } = item
+      standardMoney?.forEach((s: any, sIndex: number) => {
+        const { yearOrValueModes } = s
+        yearOrValueModes.forEach((y: any, yIndex: number) => {
+          rowOne[sIndex].yearOrValueModes[yIndex].value += y.value
+        })
+      })
+    }
   })
-  return obj
+
+  
+  
+  return rowOne
+  } catch(err) {
+    console.log(err, '报错啦13123')
+    return []
+  }
 })
 
 // 表单子列数据
@@ -225,7 +234,8 @@ const allColums = reactive<any>({
   systemiginalCurrencyYears: [], // 系统单价（原币）
   inTheRateYears: [], // 年降率
   iginalCurrencyYears: [], // 原币
-  standardMoneyYears: [] // 本位币
+  standardMoneyYears: [], // 本位币
+  rebateMoneyYears: [] // 物料返利金额
 })
 
 const exchangeSelectOptions = ref<any>([])
@@ -249,18 +259,21 @@ onMounted(() => {
 
 // 获取初始化数据
 const fetchInitData = async () => {
+  tableLoading.value = true
   const { result } = await GetElectronic(auditFlowId, productId)
   if (!result) return false
   console.log(result, "获取初始化数据")
 
   // 初始化表头数据
-  const { materialsUseCount, systemiginalCurrency, inTheRate, iginalCurrency, standardMoney } = result[0] || {}
-  allColums.materialsUseCountYears = materialsUseCount?.map((item: any) => item.year) || []
-  allColums.systemiginalCurrencyYears = systemiginalCurrency?.map((item: any) => item.year) || []
-  allColums.inTheRateYears = inTheRate?.map((item: any) => item.year) || []
-  allColums.iginalCurrencyYears = iginalCurrency?.map((item: any) => item.year) || []
-  allColums.standardMoneyYears = standardMoney?.map((item: any) => item.year) || []
+  const { materialsUseCount, systemiginalCurrency, inTheRate, iginalCurrency, standardMoney, rebateMoney } = result[0] || {}
+  allColums.materialsUseCountYears = materialsUseCount || []
+  allColums.systemiginalCurrencyYears = systemiginalCurrency || []
+  allColums.inTheRateYears = inTheRate || []
+  allColums.iginalCurrencyYears = iginalCurrency || []
+  allColums.standardMoneyYears = standardMoney || []
+  allColums.rebateMoneyYears = rebateMoney || []
   electronicBomList.value = result
+  tableLoading.value = false
 }
 
 // 提交电子料单价行数据
@@ -270,34 +283,10 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
     await submitFun(record, isSubmit, index)
   } else {
     //确认
-    await handleSubmitcalculate(record, isSubmit, index)
-  }
-}
-
-const handleSubmitcalculate = async (record: ElectronicDto, isSubmit: number, index: number) => {
-  //判断是根据年将率计算还是根据原币计算
-  var iszero = false
-  electronicBomList.value[index].iginalCurrency
-    ?.map((item: any) => {
-      return item.value
-    })
-    ?.forEach((a) => {
-      if (a) {
-        iszero = true
-      }
-      return iszero
-    })
-
-  if (iszero) {
-    //根据原币计算
-    await handleCalculationIginalCurrency(record, index).then(async () => {
-      await SubmitJudge(record, isSubmit, index)
-    })
-  } else {
+    // await handleSubmitcalculate(record, isSubmit, index)
     await handleCalculation(record, index).then(async () => {
       await SubmitJudge(record, isSubmit, index)
     })
-    //根据年将率计算
   }
 }
 
@@ -342,22 +331,16 @@ const handleEdit = (row: any, isEdit: boolean) => {
   row.isEdit = isEdit
 }
 
-// 根据汇率计算
-const handleCalculation = async (row: any, index: number) => {
-  try {
-    tableLoading.value = true
-    const { success, result } = await PostElectronicMaterialCalculate(row)
-    if (!success && !result.length) throw Error()
-    electronicBomList.value[index] = { ...(result || {}), isEdit: true }
-    tableLoading.value = false
-  } catch (err) {
-    ElMessage.error("计算失败~")
-    tableLoading.value = false
-  }
+const formatDatas = (record: any, _row: any, cellValue: any) => {
+  return cellValue || ''
+}
+
+const filterStandardMoney = (record: any, _row: any, cellValue: any) => {
+  return cellValue.toFixed(5) || ''
 }
 
 // 根据原币计算
-const handleCalculationIginalCurrency = async (row: any, index: number) => {
+const handleCalculation = async (row: any, index: number) => {
   try {
     tableLoading.value = true
     const { success, result } = await PosToriginalCurrencyCalculate(row)
@@ -370,8 +353,9 @@ const handleCalculationIginalCurrency = async (row: any, index: number) => {
     ElMessage.error("计算失败~")
   }
 }
+
 </script>
-<style>
+<style lang="scss">
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -381,5 +365,60 @@ const handleCalculationIginalCurrency = async (row: any, index: number) => {
 .card-span {
   color: red;
   font-weight: bold;
+}
+
+.descriptions {
+  &-box {
+    width: 100%;
+    height: 80px;
+    align-items: center;
+
+    .el-descriptions {
+      width: calc(100% - 100px);
+    }
+  }
+
+  &-label {
+    display: block;
+    line-height: 80px;
+    text-align: center;
+    width: 100px;
+    border: 1px solid #f5f5f5;
+    background-color: #f5f7fa;
+  }
+}
+
+.column-class {
+  &-0 {
+    background-color: aliceblue !important
+  }
+
+  &-1 {
+    background-color: rgb(194, 220, 242) !important;
+  }
+
+  &-2 {
+    background-color: rgb(182, 215, 243) !important;
+  }
+
+  &-3 {
+    background-color: rgb(167, 207, 242) !important;
+  }
+
+  &-4 {
+    background-color: rgb(151, 200, 242) !important;
+  }
+
+  &-5 {
+    background-color: rgb(140, 197, 247) !important;
+  }
+
+  &-6 {
+    background-color: rgb(116, 122, 128) !important;
+  }
+
+  &-7 {
+    background-color: rgb(109, 141, 168) !important;
+  }
 }
 </style>

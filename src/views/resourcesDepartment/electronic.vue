@@ -61,7 +61,7 @@
             </el-table-column>
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="iginalCurrency" label="原币">
+        <!-- <el-table-column prop="iginalCurrency" label="原币">
           <el-table-column v-for="(item, index) in allColums?.iginalCurrencyYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
@@ -75,7 +75,7 @@
               </template>
             </el-table-column>
           </el-table-column>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="standardMoney" label="本位币">
           <el-table-column v-for="(item, index) in allColums?.standardMoneyYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">

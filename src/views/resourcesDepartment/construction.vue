@@ -84,7 +84,7 @@
               <span v-if="!scope.row.isEdit">{{ scope.row.materialsSystemPrice }}</span>
             </template>
           </el-table-column> -->
-          <el-table-column prop="iginalCurrency" label="原币">
+          <!-- <el-table-column prop="iginalCurrency" label="原币">
             <el-table-column v-for="(c, i) in item.structureMaterial[0]?.iginalCurrency" align="center"
               :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">
               <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
@@ -98,7 +98,7 @@
                 </template>
               </el-table-column>
             </el-table-column>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="standardMoney" label="本位币">
             <el-table-column v-for="(c, i) in item.structureMaterial[0]?.standardMoney" align="center"
               :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">

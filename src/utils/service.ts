@@ -119,7 +119,7 @@ function createRequestFunction(service: AxiosInstance) {
         "Content-Type": get(config, "headers.Content-Type", "application/json")
       },
       timeout: 300000,
-      baseURL: import.meta.env.VITE_BASE_API,
+      baseURL: "https://localhost:44311/",   //import.meta.env.VITE_BASE_API,
       data: {},
       onDownloadProgress: function (progressEvent: any) {
         // 对原生进度事件的处理

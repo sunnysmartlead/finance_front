@@ -11,3 +11,4 @@ const locale = zhCn // element-plus 设置为中文
     <router-view />
   </ElConfigProvider>
 </template>
+

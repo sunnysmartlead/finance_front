@@ -607,6 +607,24 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/processHoursExport",
+    redirect: "/processHoursExport/index",
+    component: Layout,
+    meta: {
+      roles: ["admin"]
+    },
+    children: [
+      {
+        path: "/processHoursExport/index",
+        component: () => import("@/views/processHoursExport/index.vue"),
+        name: "processHoursExport",
+        meta: {
+          title: "工序工时导入"
+        }
+      }
+    ]
+  },
+  {
     path: "/versionManagement",
     redirect: "/versionManagement/index",
     component: Layout,

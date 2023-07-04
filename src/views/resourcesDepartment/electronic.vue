@@ -56,7 +56,7 @@
                   type="number">
                   <template #append> % </template>
                 </el-input>
-                <span v-else>{{ scope.row.inTheRate[index].yearOrValueModes[iIndex].value }}</span>
+                <span v-else>{{ scope.row.inTheRate?.[index]?.yearOrValueModes?.[iIndex]?.value }}</span>
               </template>
             </el-table-column>
           </el-table-column>
@@ -137,28 +137,18 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <el-descriptions :column="2" border>
-        <el-descriptions-item v-for="item in allColums?.standardMoneyYears" :key="item" :label="`${`${item.kv}K/Y`} 本位币汇总`">
-          <el-descriptions-item v-for="yearItem in item?.yearOrValueModes" :key="item" :label="`${yearItem.kv + upDownEunm[yearItem.upDown]} 本位币汇总`">
-            {{ allStandardMoney.value }}
-          </el-descriptions-item>
-        </el-descriptions-item>
-      </el-descriptions> -->
-      <!-- <el-row justify="end">
-        <el-button class="margin-top" @click="handleCalculation" type="primary"> 计算 </el-button>
-      </el-row> -->
       <div>
-          <h5>本位币汇总：</h5>
-          <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
-            <span class="descriptions-label">{{ `${c.kv} K/Y` }}</span>
-            <el-descriptions  direction="vertical" :column="c.yearOrValueModes.length" border>
-              <el-descriptions-item  v-for="yearItem in c.yearOrValueModes"
-                :key="yearItem.year" :label="yearItem.year + upDownEunm[yearItem.upDown]">
-                {{ yearItem.value }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-row>
-        </div>
+        <h5>本位币汇总：</h5>
+        <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
+          <span class="descriptions-label">{{ `${c.kv} K/Y` }}</span>
+          <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
+            <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]">
+              {{ yearItem.value }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-row>
+      </div>
     </el-card>
   </div>
 </template>
@@ -207,22 +197,20 @@ const allStandardMoney = computed(() => {
     const arr = electronicBomList.value
     const rowOne = cloneDeep(arr?.[0]?.standardMoney) || []
     console.log(arr, 'allStandardMoney')
-    arr?.forEach?.((item:any, index: number) => {
-    if (index > 1) {
-      const { standardMoney } = item
-      standardMoney?.forEach((s: any, sIndex: number) => {
-        const { yearOrValueModes } = s
-        yearOrValueModes.forEach((y: any, yIndex: number) => {
-          rowOne[sIndex].yearOrValueModes[yIndex].value += y.value
+    arr?.forEach?.((item: any, index: number) => {
+      if (index > 1) {
+        const { standardMoney } = item
+        standardMoney?.forEach((s: any, sIndex: number) => {
+          const { yearOrValueModes } = s
+          yearOrValueModes.forEach((y: any, yIndex: number) => {
+            rowOne[sIndex].yearOrValueModes[yIndex].value += y.value
+          })
         })
-      })
-    }
-  })
+      }
+    })
 
-  
-  
-  return rowOne
-  } catch(err) {
+    return rowOne
+  } catch (err) {
     console.log(err, '报错啦13123')
     return []
   }
@@ -284,16 +272,22 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
   } else {
     //确认
     // await handleSubmitcalculate(record, isSubmit, index)
-    await handleCalculation(record, index).then(async () => {
-      await SubmitJudge(record, isSubmit, index)
-    })
+    await SubmitJudge(record, isSubmit, index)
   }
 }
 
-const SubmitJudge = async (record: ElectronicDto, isSubmit: number, index: number) => {
-  const prop = electronicBomList.value[index].standardMoney?.filter((p: any) => !p.value).length
-  if (prop) {
-    ElMessageBox.confirm("该条数据本位币数据有0的存在,是否继续执行", "确认提醒", {
+const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
+  const { systemiginalCurrency } = record
+  let label = ''
+  const isPass = systemiginalCurrency.every((s: any) => {
+    const isRight = s.yearOrValueModes.every((y: any, i: number) => {
+      if (!y.value) label = `系统单价（原币）的 ${s.kv} K/Y 下第${i + 1}列的值为0`
+      return y.value
+    })
+    return isRight
+  })
+  if (!isPass) {
+    ElMessageBox.confirm(`${label},是否继续执行`, "确认提醒", {
       // if you want to disable its autofocus
       // autofocus: false,
       confirmButtonText: "确认",
@@ -301,11 +295,13 @@ const SubmitJudge = async (record: ElectronicDto, isSubmit: number, index: numbe
       type: "warning"
     })
       .then(async () => {
-        await submitFun(record, isSubmit, index)
+          await handleCalculation(record, index).then(async () => {
+            await submitFun(record, isSubmit, index)
+          })
       })
-      .catch(async () => {
-        fetchInitData()
-      })
+      // .catch(async () => {
+      //   fetchInitData()
+      // })
   } else {
     await submitFun(record, isSubmit, index)
   }

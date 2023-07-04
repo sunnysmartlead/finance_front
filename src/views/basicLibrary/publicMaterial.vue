@@ -14,62 +14,44 @@
     </div>
     <el-card>
       <el-row>
-        <el-form :inline="true">
-          <el-form-item label="">
-            <el-upload
-              :action="$baseUrl + 'api/services/app/UnitPriceLibrary/ImportPublicMaterialWarehouse'"
-              :on-success="handleSuccess"
-              show-file-list
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadError"
-            >
-              <el-button type="primary">共用库导入</el-button>
-            </el-upload>
-          </el-form-item>
-        </el-form>
-        <el-button type="danger" @click="handleDelete">批量删除</el-button>
+        <el-upload :action="$baseUrl + 'api/services/app/UnitPriceLibrary/ImportPublicMaterialWarehouse'"
+          :on-success="handleSuccess" show-file-list :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
+          <el-button type="primary">共用库导入</el-button>
+        </el-upload>
+        <el-button type="warning" style="margin-left: 12px" @click="handleExportPublicMateial">共用库导出</el-button>
+        <el-button type="danger" @click="handleDelete" >批量删除</el-button>
       </el-row>
-      <el-table
-        ref="multipleTableRef"
-        :data="data.tableData"
-        @selection-change="handleSelectionChange"
-        border
-        style="width: 100%"
-        height="700"
-      >
+      <el-table ref="multipleTableRef" :data="data.tableData" @selection-change="handleSelectionChange" border
+        style="width: 100%" height="700">
         <el-table-column type="selection" width="55" />
         <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols" :key="col.key" width="150" />
         <el-table-column label="模组走量" prop="moduleThroughputs" width="175">
-          <el-table-column
-            v-for="(item, iIndex) in data.moduleThroughputs"
-            :key="iIndex"
-            :prop="`moduleThroughputs.${iIndex}.value`"
-            :label="item.year"
-            :formatter="formatDatas"
-          />
+          <el-table-column v-for="(item, iIndex) in data.moduleThroughputs" :key="iIndex"
+            :prop="`moduleThroughputs.${iIndex}.value`" :label="item.year" :formatter="formatDatas" />
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="data.total"
-        :page-size="20"
-        v-model:currentPage="data.pageNo"
-        @update:current-page="handlePageChange"
-        style="margin-top: 10px"
-      />
+      <el-pagination background layout="prev, pager, next" :total="data.total" :page-size="20"
+        v-model:currentPage="data.pageNo" @update:current-page="handlePageChange" style="margin-top: 10px" />
     </el-card>
   </div>
 </template>
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue"
+import { useRoute } from "vue-router"
 import type { UploadProps } from "element-plus"
 import { ElMessageBox, ElTable, ElMessage } from "element-plus"
 import { unitCols } from "./common/const"
-import { getQueryPublicMaterialWarehouse, deleteMultiplePublicMaterials } from "./service"
+import { getQueryPublicMaterialWarehouse, deleteMultiplePublicMaterials, exportSharedMaterialWarehouse } from "./service"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { isEmpty, map } from "lodash"
+import { CommonDownloadFile } from "@/api/bom"
 
+/**
+ * 路由对象
+ */
+const route = useRoute()
+
+let { auditFlowId, productId } = route.query
 const multipleTableRef = ref<InstanceType<typeof ElTable>>()
 
 const data = reactive<any>({
@@ -151,6 +133,25 @@ const search = () => {
 
 const handlePageChange = () => {
   getList()
+}
+
+const handleExportPublicMateial = async () => {
+  let downRes: any = await exportSharedMaterialWarehouse()
+  console.log(downRes, 'downRes')
+  const blob = downRes
+  const reader = new FileReader()
+  reader.readAsDataURL(blob)
+  reader.onload = function () {
+    let url = URL.createObjectURL(new Blob([blob]))
+    let a = document.createElement("a")
+    document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    a.href = url
+    a.download = downRes.result.threeDFileName
+    a.target = "_blank"
+    a.click()
+    a.remove() //将a标签移除
+  }
+  // data.setVisible = false
 }
 
 onMounted(() => {

@@ -18,115 +18,69 @@
           v-loading="loading"
           @selection-change="selectionChange($event, index)"
         >
+        <el-table-column type="index" label="序号" width="80" fixed="left" />
           <el-table-column type="selection" width="55" />
-          <el-table-column type="index" label="序号" width="70" fixed />
-          <el-table-column prop="categoryName" label="物料大类" fixed width="80" />
-          <el-table-column prop="typeName" label="物料种类" fixed width="80" />
-          <el-table-column prop="sapItemNum" label="物料编号" fixed width="80" />
-          <el-table-column prop="drawingNumName" label="图号名称" fixed width="80" />
+          <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
+          <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
+          <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
+          <el-table-column prop="drawingNumName" label="图号名称" width="100" fixed="left" />
           <el-table-column prop="overallDimensionSize" label="外形尺寸" width="80" />
           <el-table-column prop="materialName" label="材料" width="80" />
           <el-table-column prop="weightNumber" label="重量g" width="80" />
           <el-table-column prop="moldingProcess" label="成型工艺" width="80" />
           <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="80" />
           <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="80" />
-          <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="80" />
+          <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
           <el-table-column prop="materialsUseCount" label="项目物料的使用量">
-            <el-table-column
-              v-for="(item, iginalCurrencyIndex) in allColums?.sop"
-              :key="item"
-              :label="`${item?.toString()}`"
-              width="80"
-            >
-              <template #default="scope">
-                <span>{{ scope.row?.materialsUseCount[iginalCurrencyIndex]?.value || 0 }}</span>
-              </template>
+            <el-table-column align="center" :label="`${c.kv} K/Y`" :class-name="`column-class-${i}`" v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount"
+              prop="materialsUseCount" width="175" >
+              <el-table-column width="100" v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
+                :prop="`materialsUseCount.${i}.yearOrValueModes.${yIndex}.value`"
+                :label="yearItem.year + upDownEunm[yearItem.upDown]" :formatter="formatDatas" />
             </el-table-column>
           </el-table-column>
-          <el-table-column prop="currency" label="币种" width="80">
-            <template #default="scope">
-              <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
-                <el-option
-                  v-for="item in exchangeSelectOptions"
-                  :key="item.id"
-                  :label="item.exchangeRateKind"
-                  :value="item.id"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
+          <el-table-column prop="currency" label="币种" width="120" />
           <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
-            <el-table-column
-              v-for="(item, iginalCurrencyIndex) in allColums?.sop"
-              :key="item"
-              :label="`${item?.toString()}`"
-              :prop="`systemiginalCurrency[${iginalCurrencyIndex}].value`"
-              width="80"
-            >
-              <template #default="scope">
-                <span>{{ scope.row?.systemiginalCurrency[iginalCurrencyIndex]?.value || 0 }}</span>
-              </template>
+            <el-table-column v-for="(c, i) in item.structureMaterial[0]?.systemiginalCurrency" align="center"
+              :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">
+              <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
+                :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175" :prop="`systemiginalCurrency.${i}.yearOrValueModes.${yIndex}.value`" />
             </el-table-column>
           </el-table-column>
           <el-table-column prop="inTheRate" label="年降率">
-            <el-table-column
-              v-for="(item, iginalCurrencyIndex) in allColums?.sop"
-              :key="`construction-iginalCurrency${item}`"
-              :label="`${item?.toString()}`"
-              :prop="`inTheRate[${iginalCurrencyIndex}].value`"
-              width="80"
-            >
-              <template #default="scope">
-                <span>{{ scope.row?.inTheRate[iginalCurrencyIndex]?.value }}</span>
-              </template>
-            </el-table-column>
-          </el-table-column>
-          <!-- <el-table-column prop="materialsSystemPrice" label="系统单价" width="150">
-            <template #default="scope">
-              <el-input v-if="scope.row.isEdit" v-model="scope.row.materialsSystemPrice" />
-              <span v-if="!scope.row.isEdit">{{ scope.row.materialsSystemPrice }}</span>
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column label="Sop" align="center" v-if="allColums?.sop.length">
-          <el-table-column
-            v-for="(item, index) in allColums?.sop"
-            :key="item"
-            :label="`${item}`"
-            :prop="`sop[${index}].value`"
-            width="150"
-          />
-        </el-table-column> -->
-          <el-table-column prop="iginalCurrency" label="原币">
-            <el-table-column
-              v-for="(item, iginalCurrencyIndex) in allColums?.sop"
-              :key="`construction-iginalCurrency${item}`"
-              :label="`${item?.toString()}`"
-              :prop="`iginalCurrency[${iginalCurrencyIndex}].value`"
-              width="80"
-            >
-              <template #default="{ row }">
-                {{ (row?.iginalCurrency && row?.iginalCurrency[iginalCurrencyIndex]?.value).toFixed(3) || 0 }}
-              </template>
+            <el-table-column v-for="(c, i) in item.structureMaterial[0]?.inTheRate" align="center"
+              :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">
+              <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
+                :label="yearItem.year + upDownEunm[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="175">
+              </el-table-column>
             </el-table-column>
           </el-table-column>
           <el-table-column prop="standardMoney" label="本位币">
-            <el-table-column
-              v-for="(item, index) in allColums?.sop"
-              :key="`construction-standardMoney${item}`"
-              :label="`${item?.toString()}`"
-              :prop="`standardMoney[${index}].value`"
-              width="80"
-            >
-              <template #default="{ row }">
-                {{ (row.standardMoney && row.standardMoney[index]?.value).toFixed(3) || 0 }}
-              </template>
+            <el-table-column v-for="(c, i) in item.structureMaterial[0]?.standardMoney" align="center"
+              :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">
+              <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
+                :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175"
+                :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`" :formatter="filterStandardMoney" />
             </el-table-column>
           </el-table-column>
-          <el-table-column prop="moq" label="MOQ" width="80" />
-          <el-table-column prop="rebateMoney" label="物料返利金额" />
-          <el-table-column prop="remark" label="备注" />
-          <el-table-column prop="eccnCode" label="物料管制状态" />
-          <el-table-column prop="peopleName" fixed="right" label="确认人" />
+          <el-table-column prop="moq" label="MOQ" width="175" />
+          <el-table-column prop="rebateMoney" label="物料返利金额" width="150">
+            <el-table-column v-for="(c, i) in item.structureMaterial[0]?.rebateMoney" align="center"
+              :label="`${c.kv} K/Y`" width="175"  :prop="`rebateMoney.${i}.value`">
+            </el-table-column>
+          </el-table-column>
+          <el-table-column label="备注" width="120" prop="remark" />
+          <el-table-column label="物料管制状态" width="130">
+            <template #default="{ row }">
+              <el-select v-model="row.eccnCode" disabled>
+                <el-option label="ECCN" value="ECCN" />
+                <el-option label="EAR99" value="EAR99" />
+                <el-option label="待定" value="待定" />
+                <el-option label="不涉及" value="不涉及" />
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="peopleName" label="确认人" />
         </el-table>
         <el-descriptions :column="2" border>
           <el-descriptions-item
@@ -182,6 +136,12 @@ const data = reactive({
   constructionId,
   peopleId
 })
+
+enum upDownEunm {
+  '全年',
+  '上半年',
+  '下半年'
+}
 
 const exchangeSelectOptions = ref<any>([])
 const multipleTableRef = ref<any>()
@@ -382,6 +342,15 @@ const selectionChange = async (selection: any, index: number) => {
 const fetchSopYear = async () => {
   const { result } = (await getYears(auditFlowId)) || {}
   allColums.sop = result || []
+}
+
+
+const formatDatas = (record: any, _row: any, cellValue: any) => {
+  return cellValue || ''
+}
+
+const filterStandardMoney = (record: any, _row: any, cellValue: any) => {
+  return cellValue.toFixed(5) || ''
 }
 
 watchEffect(() => {})

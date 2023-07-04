@@ -73,7 +73,7 @@
                     type="number">
                     <template #append> % </template>
                   </el-input>
-                  <span v-else>{{ scope.row.inTheRate[i].yearOrValueModes[yIndex].value }}</span>
+                  <span v-else>{{ scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value }}</span>
                 </template>
               </el-table-column>
             </el-table-column>
@@ -269,30 +269,32 @@ const queryModlueNumber = () => {
 }
 
 // 确认结构料单价行数据
-const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, iginalCurrencyIndex: number) => {
+const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   if (isSubmit) {
     //提交
-    await submitFun(record, isSubmit, bomIndex, iginalCurrencyIndex)
+    await submitFun(record, isSubmit, bomIndex, rowIndex)
   } else {
     //确认
-    await handleSubmitcalculate(record, isSubmit, bomIndex, iginalCurrencyIndex)
+
+    await SubmitJudge(record, isSubmit, bomIndex, rowIndex)
   }
 }
 
-const handleSubmitcalculate = async (record: any, isSubmit: number, bomIndex: number, iginalCurrencyIndex: number) => {
-  //判断是根据年将率计算还是根据原币计算
-  await handleCalculation(record, bomIndex, iginalCurrencyIndex).then(async () => {
-    await SubmitJudge(record, isSubmit, bomIndex, iginalCurrencyIndex)
-  })
-}
-
-const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, iginalCurrencyIndex: number) => {
+const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   //判断本位币金额是否是否存在0
-  const prop = constructionBomList.value[bomIndex].structureMaterial[iginalCurrencyIndex].standardMoney.filter(
-    (p: any) => !p.value
-  ).length
-  if (prop) {
-    ElMessageBox.confirm("该条数据本位币数据有0的存在,是否继续执行", "确认提醒", {
+  const { systemiginalCurrency } = record
+ 
+  let label = ''
+  const isPass = systemiginalCurrency.every((s: any) => {
+    const isRight = s.yearOrValueModes.every((y: any, i: number) => {
+      if (!y.value) label = `系统单价（原币）的 ${s.kv} K/Y 下第${i + 1}列的值为0`
+      return !!y.value
+    })
+    return isRight
+  })
+
+  if (!isPass) {
+    ElMessageBox.confirm(`${label},是否继续执行`, "确认提醒", {
       // if you want to disable its autofocus
       // autofocus: false,
       confirmButtonText: "确认",
@@ -300,13 +302,15 @@ const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, igin
       type: "warning"
     })
       .then(async () => {
-        await submitFun(record, isSubmit, bomIndex, iginalCurrencyIndex)
+        await handleCalculation(record, bomIndex, rowIndex).then(async () => {
+          await submitFun(record, isSubmit, bomIndex, rowIndex)
+        })
       })
-      .catch(async () => {
-        fetchInitData()
-      })
+      // .catch(async () => {
+      //   fetchInitData()
+      // })
   } else {
-    await submitFun(record, isSubmit, bomIndex, iginalCurrencyIndex)
+    await submitFun(record, isSubmit, bomIndex, rowIndex)
   }
 }
 
@@ -346,13 +350,7 @@ const computeStandardMoney = (arr: any[]) => {
     }
   })
 
-  console.log(rowOne, 'computeStandardMoney')
-  
   return rowOne
-}
-
-const comptedYearOrValueModes = (a, b) => {
-  return 
 }
 
 // 根据汇率计算

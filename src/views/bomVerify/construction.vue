@@ -9,7 +9,6 @@
           v-loading="loading" @selection-change="selectionChange($event, index)">
           <el-table-column type="selection" width="55" />
           <el-table-column type="index" label="序号" width="80" fixed="left" />
-          <el-table-column type="selection" width="55" />
           <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
           <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
           <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
@@ -64,7 +63,7 @@
           <el-table-column label="备注" width="120" prop="remark" />
           <el-table-column label="物料管制状态" width="130">
             <template #default="{ row }">
-              <el-select v-model="row.materialControlStatus" disabled>
+              <el-select v-model="row.eccnCode" disabled>
                 <el-option label="ECCN" value="ECCN" />
                 <el-option label="EAR99" value="EAR99" />
                 <el-option label="待定" value="待定" />

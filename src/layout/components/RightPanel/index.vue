@@ -58,20 +58,28 @@ onMounted(() => {
   } else showPanel.value = false
 })
 
+const safeJsonParse = (data) => {
+  try {
+    return JSON.parse(data)
+  } catch {
+    return data
+  }
+}
+
 const init = async () => {
   // 未执行todocenter里的跳转时打开会造成state.auditFlowId为undefined
   try {
     state.productId = null
     const { productId, auditFlowId } = route.query
-    
+
     if (auditFlowId) {
       await productStore.setProductList(Number(auditFlowId))
     }
     if (productId) {
       //如url中存在productId则选中
-      
+
       state.productId = Number(productId)
-      console.log(Number(productId), 'productId')
+      console.log(Number(productId), "productId")
       window.sessionStorage.setItem("productId", String(state.productId))
     } else {
       // const intro = IntroJs().setOptions({
@@ -84,10 +92,9 @@ const init = async () => {
       // })
       // intro.start()
     }
-    const isUnfoldData = localStorage.getItem("isUnfold") || ''
-    let isUnfoldValue=JSON.parse([null, undefined, 'null'].includes(isUnfoldData) ? '' : isUnfoldData)
+    const isUnfoldData = localStorage.getItem("isUnfold") || ""
+    let isUnfoldValue = safeJsonParse(isUnfoldData)
     isUnfold.value = isUnfoldValue
-
   } catch (err) {
     console.log(err, "出错啦")
   }

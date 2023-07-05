@@ -20,10 +20,10 @@ export function deleteMultiplePublicMaterials(data: { ids: string[] }): any {
 }
 
 /** 导出共用物料库 */
-export function exportSharedMaterialWarehouse(data: any): any {
+export function exportSharedMaterialWarehouse(): any {
   return request({
     url: "/api/services/app/UnitPriceLibrary/ExportSharedMaterialWarehouse",
     method: "post",
-    data
+    responseType: "blob"
   })
 }

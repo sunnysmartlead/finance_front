@@ -9,7 +9,6 @@
           v-loading="loading" @selection-change="selectionChange($event, index)">
           <el-table-column type="selection" width="55" />
           <el-table-column type="index" label="序号" width="80" fixed="left" />
-          <el-table-column type="selection" width="55" />
           <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
           <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
           <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />

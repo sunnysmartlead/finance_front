@@ -77,7 +77,7 @@
         <el-table-column label="备注" width="100" prop="remark" />
         <el-table-column label="物料管制状态" width="130">
           <template #default="{ row }">
-            <el-select v-model="row.eccnCode" disabled>
+            <el-select v-model="row.materialControlStatus" disabled>
               <el-option label="ECCN" value="ECCN" />
               <el-option label="EAR99" value="EAR99" />
               <el-option label="待定" value="待定" />
@@ -207,16 +207,11 @@ watch(
   },
   { immediate: true }
 )
-// 计算总值
-const reduceArr = (arr: any[]) => {
-  return arr.reduce((a, b) => a + b)
-}
 
 const allStandardMoney = computed(() => {
   try {
     const arr = electronicBomList.value
     const rowOne = cloneDeep(arr?.[0]?.standardMoney) || []
-    console.log(arr, 'allStandardMoney')
     arr?.forEach?.((item: any, index: number) => {
       if (index > 1) {
         const { standardMoney } = item

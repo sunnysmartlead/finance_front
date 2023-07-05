@@ -64,7 +64,7 @@
           <el-table-column label="备注" width="120" prop="remark" />
           <el-table-column label="物料管制状态" width="130">
             <template #default="{ row }">
-              <el-select v-model="row.eccnCode" disabled>
+              <el-select v-model="row.materialControlStatus" disabled>
                 <el-option label="ECCN" value="ECCN" />
                 <el-option label="EAR99" value="EAR99" />
                 <el-option label="待定" value="待定" />

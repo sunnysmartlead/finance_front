@@ -135,7 +135,7 @@
           </el-table-column>
           <el-table-column label="物料管制状态" width="130">
             <template #default="{ row }">
-              <el-select v-model="row.eccnCode" :disabled="row.isSubmit">
+              <el-select v-model="row.materialControlStatus" :disabled="row.isSubmit">
                 <el-option label="ECCN" value="ECCN" />
                 <el-option label="EAR99" value="EAR99" />
                 <el-option label="待定" value="待定" />
@@ -283,7 +283,7 @@ const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, row
 const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   //判断本位币金额是否是否存在0
   const { systemiginalCurrency } = record
- 
+
   let label = ''
   const isPass = systemiginalCurrency.every((s: any) => {
     const isRight = s.yearOrValueModes.every((y: any, i: number) => {

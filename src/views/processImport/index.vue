@@ -7,7 +7,7 @@
           <span>工序工时导入</span>
           <el-row align="middle">
             <el-upload
-              :action="$baseUrl + 'api/services/app/WorkingHours/UploadExcel'"
+              :action=" 'api/services/app/WorkingHours/UploadExcel'"
               :on-success="handleSuccess"
               show-file-list
               :data="{ auditFlowId: data.auditFlowId }"
@@ -212,14 +212,14 @@ let Host: string = "ManHourImport"
 const { auditFlowId, productId }: any = getQuery()
 
 const data = reactive<any>({
-  tableData: [],
+  tableData: [{"procedure":"11"}],
   downloadSetForm: {
     number: 0
   },
   retrospectPart: { equipmentDetails: [] }, // 追溯部分（硬件及软件开发费用）
   toolingFixturePart: { equipmentDetails: [] }, // 工装治具部分
   equipmentPart: { equipmentDetails: [] }, // 设备部分
-  humanMachineHoursDetailList: [],
+  humanMachineHoursDetailList: [212,22],
   sop: [],
   uph: null,
   tangentForm: {

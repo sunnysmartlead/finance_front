@@ -1,4 +1,5 @@
 import { request } from "@/utils/service"
+import qs from "query-string"
 import { QueryPublicMaterialWarehouse } from "./data.type"
 
 /** 查询共用物料库 */
@@ -11,11 +12,12 @@ export function getQueryPublicMaterialWarehouse(data: QueryPublicMaterialWarehou
 }
 
 /** 查询共用物料库 */
-export function deleteMultiplePublicMaterials(data: { ids: string[] }): any {
+export function deleteMultiplePublicMaterials(data: any): any {
   return request({
     url: "/api/services/app/UnitPriceLibrary/DeleteMultiplePublicMaterials",
     method: "delete",
-    data
+    data,
+    paramsSerializer: params => qs.stringify(params)
   })
 }
 

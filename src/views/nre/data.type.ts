@@ -23,7 +23,7 @@ export interface ProjectManagementModel {
   /**
    * 零件的id
    */
-  productId?: number
+  solutionid?: number
   /**
    * 其他费用
    */

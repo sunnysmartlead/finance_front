@@ -246,7 +246,7 @@ const submit = async () => {
             cost: (item.unitPrice || 0) * (item.quantity || 0)
           }
         }),
-        productId
+        solutionid: productId
       },
       auditFlowId
     })

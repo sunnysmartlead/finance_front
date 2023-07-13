@@ -231,10 +231,10 @@
         </div>
 
         <h5>项目走量</h5>
-        <h6>终端走量（单位：PCS）</h6>
-        <div class="demand-apply__btn-container" v-if="!isDisabled">
-          <el-button type="primary" class="demand-apply__add-btn" @click="addPCS" v-havedone>新增</el-button>
-        </div>
+        <h6>客户输入终端走量（台）</h6>
+        <el-row class="demand-apply__btn-container" v-if="!isDisabled">
+          <el-button type="primary" class="demand-apply__add-btn" @click="addPCS" v-havedone>新增车型</el-button>
+        </el-row>
         <el-table :data="pcsTableData" border>
           <el-table-column label="车厂" width="180" fixed="left">
             <template #default="{ row }">
@@ -246,11 +246,11 @@
               <el-input v-model="row.carModel" :disabled="isDisabled" />
             </template>
           </el-table-column>
-          <el-table-column label="梯度(K/Y)" width="180" fixed="left">
+          <!-- <el-table-column label="梯度(K/Y)" width="180" fixed="left">
             <template #default="{ row }">
               <el-input v-model="row.kv" :disabled="isDisabled" />
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             :label="year + yearNote(index)"
             v-for="(year, index) in state.yearCols"
@@ -266,12 +266,12 @@
               />
             </template>
           </el-table-column>
-          <el-table-column prop="rowSum" label="合计" width="150">
+          <el-table-column prop="rowSum" label="合计">
             <template #default="{ row }">
               {{ formatThousandths(null, null, getRowSum(row)) }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right">
+          <el-table-column label="操作" fixed="right" width="85">
             <template #default="{ $index }" v-if="!isDisabled">
               <el-button @click="deletePcs($index)" type="danger" :disabled="pcsTableData.length === 1" v-havedone>
                 删除
@@ -279,9 +279,9 @@
             </template>
           </el-table-column>
         </el-table>
-        <h6></h6>
+        <h6 />
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="内部评估后终端走量（台)"> </el-form-item>
+          <el-form-item label="内部评估后终端走量（台)" />
           <el-form-item label="系数K">
             <el-input
               type="number"
@@ -333,12 +333,13 @@
           </el-table-column> -->
         </el-table>
         <h6>模组数量</h6>
-        <div class="demand-apply__btn-container">
-          <!-- <el-button type="primary" @click="addProduct" v-havedone>同步</el-button> -->
-        </div>
+        <!-- <div class="demand-apply__btn-container">
+          <el-button type="primary" @click="addProduct" v-havedone>同步</el-button>
+        </div> -->
+        <h6 />
         <div v-for="(item, Findex) in moduleTableDataV2" :key="Findex">
-          <div class="demand-apply__btn-container">
-            <el-text class="mx-1" size="large">{{ item[0].kv }}(K/Y)</el-text>
+          <el-row class="demand-apply__btn-container">
+            <p class="mx-1" size="large">{{ item[0].carModel }} - 模组数量</p>
             <el-button
               type="primary"
               class="demand-apply__add-btn"
@@ -347,9 +348,9 @@
               v-if="!isDisabled"
               >新增模组</el-button
             >
-          </div>
+          </el-row>
           <el-table :data="item" style="width: 100%" border>
-            <el-table-column type="index" width="50" />
+            <el-table-column type="index" width="80" label="序号" />
             <el-table-column label="客户零件号" width="180">
               <template #default="{ row }">
                 <el-input v-model="row.partNumber" placeholder="若没有，填写 /" :disabled="isDisabled" />
@@ -365,9 +366,9 @@
                 <el-input v-model="row.product" :disabled="isDisabled" @change="productChange" />
               </template>
             </el-table-column>
-            <el-table-column label="产品小类" width="180">
+            <el-table-column label="产品大类" width="180">
               <template #default="{ row }">
-                <el-select v-model="row.productType" placeholder="产品小类" :disabled="isDisabled">
+                <el-select v-model="row.productType" placeholder="产品大类" :disabled="isDisabled">
                   <el-option
                     v-for="item in state.productTypeOptions"
                     :key="item.id"
@@ -380,6 +381,18 @@
             <el-table-column label="像素" width="180">
               <template #default="{ row }">
                 <el-input v-model="row.pixel" placeholder="像素" :disabled="isDisabled" />
+              </template>
+            </el-table-column>
+            <el-table-column label="我司角色" width="180">
+              <template #default="{ row }">
+                <el-select v-model="row.role" placeholder="我司角色" :disabled="isDisabled">
+                  <el-option
+                    v-for="item in state.roleOptions"
+                    :key="item.id"
+                    :label="item.displayName"
+                    :value="item.id"
+                  />
+                </el-select>
               </template>
             </el-table-column>
             <el-table-column label="市场份额" width="180">
@@ -430,7 +443,7 @@
                 {{ price(row) }}
               </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right">
+            <el-table-column label="操作" fixed="right" width="85">
               <template #default="{ $index }" v-if="!isDisabled">
                 <el-button
                   @click="deleteProduct(Findex, $index)"
@@ -442,7 +455,157 @@
               </template>
             </el-table-column>
           </el-table>
-          <h6></h6>
+        </div>
+        <div>
+          <h6 />
+          <el-row justify="space-between">
+            <span>是否分梯度核价：<el-switch v-model="state.isKvPricing" border /></span>
+            <el-button type="primary" @click="handleChangekvPricingData('add')" v-havedone>新增梯度</el-button>
+          </el-row>
+          <h6 />
+          <el-table :data="kvPricingData" border style="width: 600px">
+            <el-table-column type="index" label="梯度序号" width="100" />
+            <el-table-column prop="kv" label="梯度" width="250">
+              <template #default="{ row }">
+                <el-input-number controls-position="right" v-model="row.kv" :disabled="isDisabled" />
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right">
+              <template #default="{ $index }" v-if="!isDisabled">
+                <el-button
+                  type="danger"
+                  :disabled="specimenData.length === 1"
+                  @click="handleChangekvPricingData('delete', $index)"
+                  v-havedone
+                >
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div v-for="(item, Findex) in moduleTableDataV2" :key="Findex">
+            <el-row class="demand-apply__btn-container">
+              <p class="mx-1" size="large">{{ item[0].carModel }} (K/Y)</p>
+              <el-button
+                type="primary"
+                class="demand-apply__add-btn"
+                @click="addProduct(Findex)"
+                v-havedone
+                v-if="!isDisabled"
+                >新增模组</el-button
+              >
+            </el-row>
+            <el-table :data="item" style="width: 100%" border>
+              <el-table-column type="index" width="80" label="序号" />
+              <el-table-column label="客户零件号" width="180">
+                <template #default="{ row }">
+                  <el-input v-model="row.partNumber" placeholder="若没有，填写 /" :disabled="isDisabled" />
+                </template>
+              </el-table-column>
+              <el-table-column label="子项目代码" width="180">
+                <template #default="{ row }">
+                  <el-input v-model="row.code" placeholder="未导入PLM" :disabled="isDisabled" />
+                </template>
+              </el-table-column>
+              <el-table-column label="产品名称" width="180">
+                <template #default="{ row }">
+                  <el-input v-model="row.product" :disabled="isDisabled" @change="productChange" />
+                </template>
+              </el-table-column>
+              <el-table-column label="产品大类" width="180">
+                <template #default="{ row }">
+                  <el-select v-model="row.productType" placeholder="产品大类" :disabled="isDisabled">
+                    <el-option
+                      v-for="item in state.productTypeOptions"
+                      :key="item.id"
+                      :label="item.displayName"
+                      :value="item.id"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column label="像素" width="180">
+                <template #default="{ row }">
+                  <el-input v-model="row.pixel" placeholder="像素" :disabled="isDisabled" />
+                </template>
+              </el-table-column>
+              <el-table-column label="我司角色" width="180">
+                <template #default="{ row }">
+                  <el-select v-model="row.role" placeholder="我司角色" :disabled="isDisabled">
+                    <el-option
+                      v-for="item in state.roleOptions"
+                      :key="item.id"
+                      :label="item.displayName"
+                      :value="item.id"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column label="市场份额" width="180">
+                <template #default="{ row }">
+                  <el-input
+                    v-model="row.marketShare"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
+                    :disabled="isDisabled"
+                  >
+                    <template #append>%</template>
+                  </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="模组搭载率" width="180">
+                <template #default="{ row }">
+                  <el-input
+                    v-model="row.moduleCarryingRate"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
+                    :disabled="isDisabled"
+                  >
+                    <template #append>%</template>
+                  </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="单车产品数量" width="180">
+                <template #default="{ row }">
+                  <el-input
+                    v-model="row.singleCarProductsQuantity"
+                    oninput="value=value.replace(/[^\d]/g,'')"
+                    :disabled="isDisabled"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="year + yearNote(index)"
+                v-for="(year, index) in state.yearCols"
+                :key="year + ''"
+                width="180"
+              >
+                <template #default="{ row }">
+                  <el-input
+                    v-model="row.modelCountYearList[index].quantity"
+                    @input="modelCountYearListQuantitySum(row)"
+                    oninput="value=value.replace(/[^\d]/g,'')"
+                    :disabled="isDisabled"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column label="模组总量" prop="modelTotal" width="180" :formatter="formatThousandths">
+                <template #default="{ row }">
+                  <!-- <el-input v-model="row.modelTotal" :disabled="isDisabled" /> -->
+                  {{ price(row) }}
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" fixed="right" width="85">
+                <template #default="{ $index }" v-if="!isDisabled">
+                  <el-button
+                    @click="deleteProduct(Findex, $index)"
+                    type="danger"
+                    :disabled="moduleTableDataV2[Findex].length === 1"
+                    v-havedone
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
         <h6>要求</h6>
         <el-table :data="requireTableData" style="width: 100%; margin: 20px 0" border>
@@ -481,6 +644,7 @@
             </template>
           </el-table-column>
         </el-table>
+
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="模具费分摊:" prop="allocationOfMouldCost">
@@ -928,8 +1092,8 @@
           <el-table-column prop="exchange" label="汇率" />
           <el-table-column prop="total" label="合计" />
         </el-table>
-        <h6></h6>
-        <h6></h6>
+        <h6 />
+        <h6 />
         <h6>
           客户目标价<el-button
             type="primary"
@@ -1167,7 +1331,7 @@ import { useRoute, useRouter } from "vue-router"
 
 import type { UploadProps, UploadUserFile } from "element-plus"
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults"
-import _, { forEach } from "lodash"
+import _, { cloneDeep, forEach } from "lodash"
 import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
@@ -1218,6 +1382,7 @@ interface SummaryMethodProps<T = Pcs> {
   columns: TableColumnCtx<T>[]
   data: T[]
 }
+
 const rules = reactive<FormRules>({
   projectName: [{ required: true, message: "请输入该值", trigger: "blur" }],
   projectCode: [{ required: true, message: "请输入该值", trigger: "blur" }],
@@ -1312,7 +1477,11 @@ const getRowSum = (row: any) => {
       .reduce((prev: any, curr: any) => Number(prev) + Number(curr))
   }
 }
+
+const kvPricingData = ref<any>([])
+
 const state = reactive({
+  isKvPricing: false,
   quoteForm: {
     title: "" as any, //标题
     drafter: "", //拟稿人
@@ -1396,8 +1565,15 @@ const state = reactive({
   ExchangeSelectOptions: [] as any,
   updateFrequencyOptions: [] as unknown as Options[],
   valenceTypeOptions: [] as unknown as Options[],
-  isSpecimenOptions: [] as unknown as Options[]
+  isSpecimenOptions: [] as unknown as Options[],
+  roleOptions: [
+    { id: "1", displayName: "一供" },
+    { id: "2", displayName: "二供" },
+    { id: "3", displayName: "三供" },
+    { id: "4", displayName: "四供" }
+  ]
 })
+
 const fileList = ref<UploadUserFile[]>([])
 const yearCount = ref(0)
 let route = useRoute()
@@ -1564,7 +1740,7 @@ let moduleTableData: any = ref([
 let moduleTableDataV2: any = ref<any[][]>([
   [
     {
-      kv: 0, //梯度
+      carModel: 0, // 车型
       partNumber: "",
       code: "",
       product: "",
@@ -1680,9 +1856,9 @@ const addProduct = (index: number) => {
       upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
     }
   })
-  let kvValue = moduleTableDataV2.value[index][0].kv
+  let carModelVal = moduleTableDataV2.value[index][0].carModel
   var prop = {
-    kv: kvValue, //梯度
+    carModel: carModelVal, //车型
     partNumber: "",
     code: "",
     product: "",
@@ -1695,7 +1871,7 @@ const addProduct = (index: number) => {
     modelCountYearList: modelCountYear
   }
 
-  moduleTableDataV2.value[index].push(JSON.parse(JSON.stringify(prop)))
+  moduleTableDataV2.value[index].push(_.cloneDeep(prop))
 }
 
 const yearChange = (val: number) => {
@@ -1838,8 +2014,9 @@ watch(
 )
 //监听终端走量的梯度
 watch(
-  () => interiorPcsTableData.value.map((item: any) => item.kv),
+  () => interiorPcsTableData.value.map((item: any) => item.carModel),
   (val, old) => {
+    console.log(val, "val123")
     let modelCountYear = state.yearCols.map((item: any, index: number) => {
       return {
         year: item,
@@ -1851,12 +2028,12 @@ watch(
     val.forEach((item: any, index: number) => {
       if (moduleTableDataV2.value[index]) {
         moduleTableDataV2.value[index]?.forEach((pr: any) => {
-          pr.kv = item
+          pr.carModel = item
         })
       } else {
         var prop = [
           {
-            kv: item, //梯度
+            carModel: item, //车型
             partNumber: "",
             code: "",
             product: "",
@@ -1869,7 +2046,7 @@ watch(
             modelCountYearList: modelCountYear
           }
         ]
-        moduleTableDataV2.value[index] = JSON.parse(JSON.stringify(prop))
+        moduleTableDataV2.value[index] = _.cloneDeep(prop)
       }
     })
     console.log("difference", moduleTableDataV2.value)
@@ -1883,12 +2060,14 @@ watch(
     if (isEdit) return
     for (let index = 0; index < moduleTableDataV2.value.length; index++) {
       if (index) {
-        let kv = moduleTableDataV2.value[index][0].kv
-        let pp = JSON.parse(JSON.stringify(val))
-        pp.forEach((pradi: any) => {
-          pradi.kv = kv
+        let carModel = moduleTableDataV2.value[index][0].carModel
+        const temp = _.cloneDeep(val)
+        moduleTableDataV2.value[index] = temp.map((item: any) => {
+          return {
+            ...item,
+            carModel
+          }
         })
-        moduleTableDataV2.value[index] = JSON.parse(JSON.stringify(pp))
       }
     }
 
@@ -1934,10 +2113,10 @@ const targetPriceCalcul = () => {
     if (item.product == "齐套") {
       item.targetPrice = 0
       customerTargetPrice.value
-        .filter((pro: any) => pro.kv == item.kv && pro.product != "齐套")
+        .filter((pro: any) => pro.carModel == item.carModel && pro.product != "齐套")
         .forEach((customerTarget: any) => {
           moduleTableDataV2.value.forEach((moduleTable: any) => {
-            let value = moduleTable.filter((p: any) => p.kv == customerTarget.kv)
+            let value = moduleTable.filter((p: any) => p.carModel == customerTarget.carModel)
             value.forEach((valueitem: any) => {
               if (valueitem.product == customerTarget.product) {
                 item.targetPrice += customerTarget.targetPrice * valueitem.singleCarProductsQuantity
@@ -2444,6 +2623,15 @@ onMounted(async () => {
     }, 2000)
   }
 })
+
+const handleChangekvPricingData = (type: string, index?: number) => {
+  if (type === "add") {
+    kvPricingData.value.push({ kv: 0 })
+  } else {
+    kvPricingData.value = kvPricingData.value.splice(index, 1)
+  }
+}
+
 defineExpose({
   ...toRefs(state)
 })

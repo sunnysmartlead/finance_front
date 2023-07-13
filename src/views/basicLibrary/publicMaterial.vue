@@ -129,8 +129,9 @@ const handleDelete = async () => {
       cancelButtonText: "Cancel",
       type: "warning"
     }).then(async () => {
-      const Ids = map(data.deleteIds, (c: any) => c.id)
-      const { success } = await deleteMultiplePublicMaterials({ Ids })
+      let text = ""
+      map(data.deleteIds, (c: any, index: number) => (text += `Ids[${index}]=${c.id}&`))
+      const { success } = await deleteMultiplePublicMaterials(text)
       if (success) {
         ElMessage({
           type: "success",

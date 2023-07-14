@@ -347,7 +347,7 @@
                               :loading="jianJuNameLoading">
                       <el-option v-for="item in jianJuNameOptions" :key="item.value" 
                                 :label="item.label" :value="item.value" />
-                    </el-select>  
+                  </el-select>  
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input-number v-model="dataItem.toolInfo.jianJu.jianJuCount" :min="1" 

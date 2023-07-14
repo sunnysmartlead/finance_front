@@ -611,7 +611,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     redirect: "/processHoursExport/index",
     component: Layout,
     meta: {
-      roles: ["admin"]
+      //roles: ["admin"]
+      title: "工序工时",
     },
     children: [
       {
@@ -621,6 +622,15 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "processHoursExport",
         meta: {
           title: "工序工时导入"
+        }
+      },
+      {
+        path: "/processHoursExport/processLib",
+        component: () => import("@/views/processHoursExport/processLib.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "processLib",
+        meta: {
+          title: "工序库"
         }
       }
     ]

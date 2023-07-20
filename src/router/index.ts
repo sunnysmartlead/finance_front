@@ -634,6 +634,15 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "/processHoursExport/workingHours",
+        component: () => import("@/views/processHoursExport/workingHours.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "workingHours",
+        meta: {
+          title: "工时库"
+        }
+      },
+      {
         path: "/processHoursExport/workClothes",
         component: () => import("@/views/processHoursExport/workClothes.vue"),
         name: "baseLibLog",

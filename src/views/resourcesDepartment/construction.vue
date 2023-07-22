@@ -243,7 +243,7 @@ const fetchOptionsData = async () => {
 const fetchInitData = async () => {
   const { result } = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
   constructionBomList.value = result || []
-  console.log(constructionBomList.value, "constructionBomList")
+  console.log(constructionBomList.value, "constructionBomList123")
 }
 
 const formatDatas = (record: any, _row: any, cellValue: any) => {

@@ -303,11 +303,11 @@
                 <el-input v-model="row.carModel" :disabled="isDisabled" />
               </template>
             </el-table-column>
-            <el-table-column label="梯度(K/Y)" width="180" fixed="left">
+            <!-- <el-table-column label="梯度(K/Y)" width="180" fixed="left">
               <template #default="{ row }">
                 <el-text class="mx-1" size="large">{{ row.kv }}</el-text>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
@@ -337,26 +337,23 @@
           <el-button type="primary" @click="addProduct" v-havedone>同步</el-button>
         </div> -->
           <div v-for="(item, Findex) in moduleTableDataV2" :key="Findex">
-            <el-row class="demand-apply__btn-container">
+            <el-row justify="space-between" align="middle">
               <h6 class="mx-1" size="large">{{ item[0].carModel }} - 模组数量</h6>
-
               <div>
                 <el-button
                   type="primary"
-                  class="demand-apply__add-btn"
                   @click="addProduct(Findex)"
                   v-havedone
                   v-if="!isDisabled"
                   >新增模组</el-button
                 >
-                <!-- <el-button
+                <el-button
                   type="primary"
-                  @Change="syncModuleTableDataV2(Findex)"
-                  class="demand-apply__add-btn"
+                  @click="syncModuleTableDataV2(Findex)"
                   v-havedone
-                  v-if="!isDisabled"
+                  v-if="!isDisabled && Findex === 0"
                   >一键同步</el-button
-                > -->
+                >
               </div>
             </el-row>
             <el-table :data="item" style="width: 100%" border>
@@ -508,8 +505,7 @@
               <el-option :value="false" label="否" />
             </el-select>
           </el-form-item>
-          <el-row justify="space-between" v-if="state.quoteForm.isHasGradient">
-            <div />
+          <el-row justify="end" v-if="state.quoteForm.isHasGradient">
             <el-button type="primary" :disabled="isDisabled" @click="handleChangekvPricingData('add')" v-havedone
               >新增梯度</el-button
             >
@@ -1091,7 +1087,7 @@
             <template #default="{ row }">
               <el-text class="mx-1" size="large">{{ row.kv }}</el-text>
             </template>
-          </el-table-column>
+          </el-table-column>  
           <el-table-column prop="产品名称" label="产品名称">
             <template #default="{ row }">
               <el-text class="mx-1" size="large">{{ row.product }}</el-text>
@@ -1386,7 +1382,7 @@ const rules = reactive<FormRules>({
   placeOfDelivery: [{ required: true, message: "请输入该值", trigger: "blur" }],
   deadline: [{ required: true, message: "请输入该值", trigger: "blur" }],
   projectManager: [{ required: true, message: "请输入该值", trigger: "blur" }],
-  sorFile: [{ required: true, message: "请输入该值", trigger: "blur" }]
+  sorFile: [{ required: true, message: "请上传SOR文件", trigger: "blur" }]
 })
 
 let userStorage = window.localStorage.getItem("user")
@@ -1503,17 +1499,24 @@ const state = reactive({
 const moduleTableTotal = computed(() => {
   console.log("更新了【moduleTableTotal】")
   const flatData = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
+  const filterData = uniq(map(flatData, (c) => c.product))
+  shareCountTable.value = map(filterData, (item, index: number) => ({
+    count: shareCountTable.value?.[index]?.count || 0,
+    name: item
+  })).filter((c) => !!c.name)
   const productName = new Map()
 
   flatData.forEach((item: any) => {
     const currentData = productName.get(item.product) || {}
-    if (item.product && _.isEmpty(currentData)) {
-      productName.set(item.product, item)
+    if (item.product && _.isEmpty(productName.get(item.product))) {
+      productName.set(item.product, {
+        ...item,
+        productType: [item.productType]
+      })
     }
 
     if (currentData?.product && currentData?.product === item?.product) {
-      const carModal = compareString(currentData.carModel, item.carModel)
-      console.log(item, "currentData")
+      const carModal = compareString(currentData.carModel, item.carModel)   
       productName.set(item.product, {
         ...currentData,
         carModal,
@@ -1551,7 +1554,10 @@ const gradientModelTable = computed(() => {
   flatData.forEach((item: any) => {
     const currentData = productName.get(item.product) || {}
     if (item.product && _.isEmpty(currentData)) {
-      productName.set(item.product, item)
+      productName.set(item.product, {
+        ...item,
+        productType: [item.productType]
+      })
     }
 
     if (currentData?.product && currentData?.product === item?.product) {
@@ -1594,7 +1600,7 @@ const pcsYearQuantitySum = (row: Pcs, count: number) => {
   row.pcsYearList.forEach((item: any, index: number) => {
     if (numRe.test(item.quantity) && count == index) {
       ElMessage.warning("不能输入小数以及特殊符号!")
-      item.quantity = ""
+      item.quantity = 0
     }
     rowSum = rowSum + Number(item.quantity)
   })
@@ -1606,7 +1612,7 @@ const oninputFun = (row: Pcs, count: number) => {
   row.pcsYearList.forEach((item: any, index: number) => {
     if (numRe.test(item.quantity) && count == index) {
       ElMessage.warning("不能输入小数以及特殊符号!")
-      item.quantity = ""
+      item.quantity = 0
     }
   })
 }
@@ -1663,8 +1669,8 @@ const save = async (formEl: FormInstance | undefined) => {
     return
   }
   if (!formEl) return
+  console.log(state.quoteForm.sorFile, '{state.quoteForm.sorFile}')
   await formEl.validate(async (valid, fields) => {
-    console.log(fileList)
     if (valid) {
       saveloading.value = true
       let { quoteForm } = state
@@ -1679,9 +1685,15 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.requirement = requireTableData // 要求
       quoteForm.productInformation = productTableData // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
-      quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
+      // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
+      
       try {
-        let res: any = await saveApplyInfo(quoteForm)
+        let res: any = await saveApplyInfo({
+          ...quoteForm,
+          shareCount: shareCountTable.value,
+          gradient: kvPricingData.value,
+          gradientModel: gradientModelTable.value,
+        })
         console.log(quoteForm, "quoteForm")
         if (res.success) {
           ElMessage({
@@ -1715,7 +1727,6 @@ let pcsTableData: any = ref([
   {
     carFactory: "",
     carModel: "",
-    kv: 0, //梯度
     pcsYearList: [] as YearListItem[],
     sum: 0,
     pcsType: 0 //走量类型
@@ -1725,7 +1736,6 @@ let interiorPcsTableData: any = ref([
   {
     carFactory: "",
     carModel: "",
-    kv: 0, //梯度
     pcsYearList: [] as YearListItem[],
     sum: 0,
     pcsType: 1 //走量类型
@@ -1734,7 +1744,6 @@ let interiorPcsTableData: any = ref([
 //模组数量table
 let moduleTableData: any = ref([
   {
-    kv: 0, //梯度
     partNumber: "",
     code: "",
     product: "",
@@ -1997,74 +2006,73 @@ watch(
   () => pcsTableData.value,
   (val, old) => {
     val.forEach((item: any, index: number) => {
-      var itemNew = JSON.parse(JSON.stringify(item))
-      itemNew.kv = item.kv * state.quoteForm.kValue
+      var itemNew = _.cloneDeep(item)
       itemNew.pcsType = 1
-      itemNew.pcsYearList.forEach((pro: any) => {
-        pro.quantity = Number(pro.quantity) * state.quoteForm.kValue
-      })
+      // itemNew.pcsYearList.forEach((pro: any) => {
+      //   pro.quantity = Number(pro.quantity) * state.quoteForm.kValue
+      // })
       interiorPcsTableData.value[index] = itemNew
     })
   },
   { deep: true }
 )
-//系数
-watch(
-  () => state.quoteForm.kValue,
-  (val) => {
-    pcsTableData.value.forEach((item: any, index: number) => {
-      let itemNew = JSON.parse(JSON.stringify(item))
-      itemNew.kv = item.kv * val
-      itemNew.pcsType = 1
-      itemNew.pcsYearList.forEach((pro: any) => {
-        pro.quantity = pro.quantity * val
-      })
-      interiorPcsTableData.value[index] = itemNew
-    })
-  },
-  { deep: true }
-)
+// //系数
+// watch(
+//   () => state.quoteForm.kValue,
+//   (val) => {
+//     pcsTableData.value.forEach((item: any, index: number) => {
+//       let itemNew = JSON.parse(JSON.stringify(item))
+//       // itemNew.kv = item.kv * val
+//       itemNew.pcsType = 1
+//       itemNew.pcsYearList.forEach((pro: any) => {
+//         pro.quantity = pro.quantity * val
+//       })
+//       interiorPcsTableData.value[index] = itemNew
+//     })
+//   },
+//   { deep: true }
+// )
 //监听终端走量的梯度
-watch(
-  () => interiorPcsTableData.value.map((item: any) => item.carModel),
-  (val, old) => {
-    console.log(val, "val123")
-    let modelCountYear = state.yearCols.map((item: any, index: number) => {
-      return {
-        year: item,
-        quantity: null,
-        upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
-      }
-    })
-    //moduleTableDataV2.value = []
-    val.forEach((item: any, index: number) => {
-      if (moduleTableDataV2.value[index]) {
-        moduleTableDataV2.value[index]?.forEach((pr: any) => {
-          pr.carModel = item
-        })
-      } else {
-        var prop = [
-          {
-            carModel: item, //车型
-            partNumber: "",
-            code: "",
-            product: "",
-            productType: null,
-            pixel: "",
-            marketShare: 0,
-            moduleCarryingRate: 0,
-            singleCarProductsQuantity: 0,
-            modelTotal: 0,
-            modelCountYearList: modelCountYear
-          }
-        ]
-        moduleTableDataV2.value[index] = _.cloneDeep(prop)
-      }
-    })
-    console.log("difference", moduleTableDataV2.value)
-  },
-  { deep: true }
-)
+// watch(
+//   () => kvPricingData.value.map((item: any) => item.kv),
+//   (val, old) => {
+//     console.log(val, "val123")
+//     let modelCountYear = state.yearCols.map((item: any, index: number) => {
+//       return {
+//         year: item,
+//         quantity: null,
+//         upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+//       }
+//     })
+//     //moduleTableDataV2.value = []
+//     val.forEach((item: any, index: number) => {
+//       if (moduleTableDataV2.value[index]) {
+//         moduleTableDataV2.value[index]?.forEach((pr: any) => {
+//           pr.carModel = item
+//         })
+//       } else {
+//         var prop = [
+//           {
+//             carModel: item, //车型
+//             partNumber: "",
+//             code: "",
+//             product: "",
+//             productType: null,
+//             pixel: "",
+//             marketShare: 0,
+//             moduleCarryingRate: 0,
+//             singleCarProductsQuantity: 0,
+//             modelTotal: 0,
+//             modelCountYearList: modelCountYear
+//           }
+//         ]
+//         moduleTableDataV2.value[index] = _.cloneDeep(prop)
+//       }
+//     })
+//     console.log("difference", moduleTableDataV2.value)
+//   },
+//   { deep: true }
+// )
 //监听模组数量 第一个
 // watch(
 //   () => moduleTableDataV2.value[0],
@@ -2134,31 +2142,10 @@ watch(
   }
 )
 
-watch(
-  () => moduleTableDataV2.value,
-  (val) => {
-    if (val) {
-      console.log("更新了12312")
-      const flatData = uniq(map(val.flat(Infinity), (c) => c.product))
-      shareCountTable.value = map(flatData, (item, index: number) => ({
-        count: shareCountTable.value?.[index]?.count || 0,
-        name: item
-      })).filter((c) => !!c.name)
-    }
-  }
-)
-
-// watch(
-//   () => moduleTableDataV2.value,
-//   (_val) => {
-
-//   },
-//   { deep: true }
-// )
 
 const compareString = (a: string, b: string) => {
   if (_.isArray(a)) {
-    return uniq([...a, b])
+    return uniq([...(a || []), b])
   } else if (a === b) {
     return [a]
   }
@@ -2186,29 +2173,29 @@ const targetPriceCalcul = () => {
   })
 }
 
-const price = (row: any) => {
-  let modelTotal = 0
-  let interiorPcsTableDataValue = interiorPcsTableData.value.filter((p: any) => p.kv == row.kv)
-  row.modelCountYearList.forEach((item: any, index: any) => {
-    let yearValue = interiorPcsTableDataValue[0]?.pcsYearList.filter(
-      (p: any) => p.year == item.year && p.upDown == item.upDown
-    )
-    if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && yearValue) {
-      item.quantity = Math.round(
-        (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * yearValue[0].quantity) / 10000
-      )
-      modelTotal += item.quantity
-    }
-  })
-  return modelTotal
-  // let carAnnualTotal = getRowSum(interiorPcsTableDataValue[0])
-  // console.log(Number(carAnnualTotal),"carAnnualTotal")
-  // if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && carAnnualTotal) {
-  //   return (row.modelTotal = Math.round(
-  //     (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * Number(carAnnualTotal)) / 10000
-  //   ))
-  // }
-}
+// const price = (row: any) => {
+//   let modelTotal = 0
+//   let interiorPcsTableDataValue = interiorPcsTableData.value.filter((p: any) => p.kv == row.kv)
+//   row.modelCountYearList.forEach((item: any, index: any) => {
+//     let yearValue = interiorPcsTableDataValue[0]?.pcsYearList.filter(
+//       (p: any) => p.year == item.year && p.upDown == item.upDown
+//     )
+//     if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && yearValue) {
+//       item.quantity = Math.round(
+//         (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * yearValue[0].quantity) / 10000
+//       )
+//       modelTotal += item.quantity
+//     }
+//   })
+//   return modelTotal
+//   // let carAnnualTotal = getRowSum(interiorPcsTableDataValue[0])
+//   // console.log(Number(carAnnualTotal),"carAnnualTotal")
+//   // if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && carAnnualTotal) {
+//   //   return (row.modelTotal = Math.round(
+//   //     (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * Number(carAnnualTotal)) / 10000
+//   //   ))
+//   // }
+// }
 
 const productChange = (value: string) => {
   let product: any = []
@@ -2277,17 +2264,13 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 }
 const handleFileChange: UploadProps["onChange"] = (file, uploadFiles) => {
   console.log(uploadFiles)
-  console.log(fileList, "fileList")
+  console.log(fileList, "handleFileChange")
 }
 
 const syncModuleTableDataV2 = (index: number) => {
   if (index === 0) {
-    // console.log(index, 'syncModuleTableDataV2')
     moduleTableDataV2.value = moduleTableDataV2.value.map((val: any, i: number) => {
-      if (i > 0) {
-        return moduleTableDataV2.value[0]
-      }
-      return val
+      return _.cloneDeep(moduleTableDataV2.value[0])
     })
   }
 }
@@ -2446,7 +2429,7 @@ const customerTargetPriceTable = () => {
   {
     customerTargetPrice.value = []
     //获取所有梯度
-    let gradientAll = interiorPcsTableData.value.map((item: any) => item.kv)
+    let gradientAll = kvPricingData.value.map((item: any) => item.kv)
     gradientAll.forEach((item: any) => {
       //获取所有产品名称
       let productAll: string[] = []
@@ -2602,7 +2585,7 @@ onMounted(async () => {
     let isHasSample: any = await getDictionaryAndDetail("SampleName") //核价类型
     state.isSpecimenOptions = isHasSample.result?.financeDictionaryDetailList
 
-    let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
+    let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质a
     state.customerNatureOptions = customerNature.result.financeDictionaryDetailList
 
     let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质

@@ -8,7 +8,211 @@
           <span class="card-span"> 未提交的数量:{{ electronicBomList.filter((p) => !p.isSubmit).length }}</span>
         </div>
       </template>
-      <ElectronicTable :data="electronicBomList" />
+      <el-table :data="electronicBomList" height="75vh">
+        <el-table-column prop="categoryName" label="物料大类" width="60" fixed="left" />
+        <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
+        <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
+        <el-table-column prop="sapItemName" label="材料名称" width="120" fixed="left" />
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="120" fixed="left" />
+        <el-table-column prop="materialsUseCount" label="项目物料的使用量">
+          <el-table-column
+            align="center"
+            :class-name="`column-class-${index}`"
+            v-for="(item, index) in allColums?.materialsUseCountYears"
+            prop="materialsUseCount"
+            width="175"
+            :label="`${item.kv} K/Y`"
+          >
+            <el-table-column
+              width="100"
+              v-for="(yearItem, iIndex) in item?.yearOrValueModes"
+              :key="iIndex"
+              :prop="`materialsUseCount.${index}.yearOrValueModes.${iIndex}.value`"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]"
+              :formatter="formatDatas"
+            />
+          </el-table-column>
+        </el-table-column>
+        <el-table-column prop="currency" label="币种" width="100">
+          <template #default="scope">
+            <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
+              <el-option
+                v-for="item in exchangeSelectOptions"
+                :key="item.id"
+                :label="item.exchangeRateKind"
+                :value="item.exchangeRateKind"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
+          <el-table-column
+            v-for="(item, index) in allColums?.systemiginalCurrencyYears"
+            align="center"
+            :class-name="`column-class-${index}`"
+            :label="`${item.kv} K/Y`"
+            width="175"
+          >
+            <el-table-column
+              v-for="(yearItem, iIndex) in item?.yearOrValueModes"
+              :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]"
+              width="175"
+            >
+              <template #default="scope">
+                <el-input-number
+                  v-if="scope.row.isEdit"
+                  v-model="scope.row.systemiginalCurrency[index].yearOrValueModes[iIndex].value"
+                  controls-position="right"
+                  :min="0"
+                  @keyup.enter="handleCalculation(scope.row, scope.$index)"
+                />
+                <span v-if="!scope.row.isEdit">{{
+                  scope.row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5)
+                }}</span>
+              </template>
+            </el-table-column>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column prop="inTheRate" label="年降率">
+          <el-table-column
+            v-for="(item, index) in allColums?.inTheRateYears"
+            align="center"
+            :class-name="`column-class-${index}`"
+            :label="`${item.kv} K/Y`"
+            width="175"
+          >
+            <el-table-column
+              v-for="(yearItem, iIndex) in item?.yearOrValueModes"
+              :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]"
+              width="175"
+            >
+              <template #default="scope">
+                <el-input
+                  v-if="scope.row.isEdit"
+                  v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value"
+                  type="number"
+                >
+                  <template #append> % </template>
+                </el-input>
+                <span v-else>{{ scope.row.inTheRate?.[index]?.yearOrValueModes?.[iIndex]?.value }}</span>
+              </template>
+            </el-table-column>
+          </el-table-column>
+        </el-table-column>
+        <!-- <el-table-column prop="iginalCurrency" label="原币">
+          <el-table-column v-for="(item, index) in allColums?.iginalCurrencyYears" align="center"
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
+            <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175" :formatter="formatDatas">
+              <template #default="scope">
+                <el-input-number v-if="scope.row.isEdit"
+                  v-model="scope.row.iginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
+                  :min="0" />
+                <span v-if="!scope.row.isEdit">{{
+                  scope.row.iginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5) }}</span>
+              </template>
+            </el-table-column>
+          </el-table-column>
+        </el-table-column> -->
+        <el-table-column prop="standardMoney" label="本位币">
+          <el-table-column
+            v-for="(item, index) in allColums?.standardMoneyYears"
+            align="center"
+            :class-name="`column-class-${index}`"
+            :label="`${item.kv} K/Y`"
+            width="175"
+          >
+            <el-table-column
+              v-for="(yearItem, iIndex) in item?.yearOrValueModes"
+              :key="iIndex"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]"
+              width="175"
+              :prop="`standardMoney.${index}.yearOrValueModes.${iIndex}.value`"
+              :formatter="filterStandardMoney"
+            />
+          </el-table-column>
+        </el-table-column>
+        <el-table-column prop="moq" label="MOQ" width="120">
+          <template #default="{ row }">
+            <el-input-number v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
+            <span v-if="!row.isEdit">{{ row.moq }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
+          <el-table-column
+            v-for="(item, index) in allColums?.rebateMoneyYears"
+            align="center"
+            :label="`${item.kv} K/Y`"
+            width="175"
+          >
+            <template #default="{ row }">
+              <el-input-number
+                v-if="row.isEdit"
+                v-model="row.rebateMoney[index].value"
+                controls-position="right"
+                :min="0"
+              />
+              <span v-if="!row.isEdit">{{ row.rebateMoney[index]?.value }}</span>
+            </template>
+          </el-table-column>
+          <!-- <template #default="{ row }">
+            <el-input-number v-if="row.isEdit" v-model="row.rebateMoney" controls-position="right" :min="0" />
+            <span v-if="!row.isEdit">{{ row.rebateMoney }}</span>
+          </template> -->
+        </el-table-column>
+        <el-table-column label="备注" width="100">
+          <template #default="{ row }">
+            <el-input v-if="row.isEdit" v-model="row.remark" />
+            <span v-if="!row.isEdit">{{ row.remark }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="物料管制状态" width="130">
+          <template #default="{ row }">
+            <el-select v-model="row.materialControlStatus" :disabled="row.isSubmit">
+              <el-option label="ECCN" value="ECCN" />
+              <el-option label="EAR99" value="EAR99" />
+              <el-option label="待定" value="待定" />
+              <el-option label="不涉及" value="不涉及" />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column prop="peopleName" label="确认人" />
+        <el-table-column label="操作" fixed="right" width="180">
+          <template #default="scope">
+            <el-button
+              link
+              :disabled="scope.row.isSubmit"
+              @click="handleSubmit(scope.row, 0, scope.$index)"
+              type="danger"
+              v-havedone
+              >确认</el-button
+            >
+            <el-button
+              v-if="scope.row.isEntering"
+              link
+              :disabled="scope.row.isSubmit"
+              @click="handleSubmit(scope.row, 1, scope.$index)"
+              type="warning"
+              v-havedone
+            >
+              提交
+            </el-button>
+            <el-button
+              v-if="!scope.row.isEdit"
+              :disabled="scope.row.isSubmit"
+              link
+              @click="handleEdit(scope.row, true)"
+              type="primary"
+              v-havedone
+            >
+              修改
+            </el-button>
+            <el-button v-if="scope.row.isEdit" link @click="handleEdit(scope.row, false)" v-havedone>取消</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <div>
         <h5>本位币汇总：</h5>
         <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
@@ -43,7 +247,6 @@ import { getExchangeRate } from "./../demandApply/service"
 import getQuery from "@/utils/getQuery"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { cloneDeep } from "lodash"
-import ElectronicTable from '@/components/ElectronicTable/index.vue'
 
 let Host = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()

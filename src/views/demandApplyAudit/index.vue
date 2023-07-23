@@ -7,7 +7,7 @@
         <el-button type="info">重置</el-button>
       </el-row>
     </div>
-    <demandApply :isDisabled="true"></demandApply>
+    <demandApply :isDisabled="true" />
     <el-card>
       <el-card v-for="(item, index) in schemeTableMap" :key="index">
         <template #header>
@@ -92,7 +92,7 @@
         </div>
       </template>
       <el-table :data="designSolution" border>
-        <el-table-column prop="solutionName" label="方案名称" width="150"> </el-table-column>
+        <el-table-column prop="solutionName" label="方案名称" width="150" />
         <el-table-column prop="sensor" label="SENSOR" width="150">
           <template #default="{ row }">
             <el-input v-model="row.sensor" placeholder="请录入SENSOR" />
@@ -454,7 +454,7 @@ const submit = async (isSubmit: number) => {
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
   value.designSolutionList = _.cloneDeep(designSolution.value)
-  value.solutionTableList =_.cloneDeep(solutionTable.value)
+  value.solutionTableList = _.cloneDeep(solutionTable.value)
   console.log(value, "value")
   value.solutionTableList.forEach((item: any) => {
     if (!isNumeric(item.id)) {
@@ -484,10 +484,10 @@ const schemeTableData = (item: string) => {
 }
 const addScheme = (item: SolutionTableDto[]) => {
   let id = uuidv4()
-  console.log(item,"item")
+  console.log(item, "item")
   let prop: SolutionTableDto = {
     id: id,
-    productld:item[0].productld,
+    productld: item[0].productld,
     moduleName: item[0].moduleName,
     solutionName: "",
     product: "",

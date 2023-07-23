@@ -235,5 +235,9 @@ export const unitCols2 = [
   {
     name: "MOQ",
     key: "moq"
+  },
+  {
+    name: "累积采购数量",
+    key: "accumulatedProcurementQuantity"
   }
 ]

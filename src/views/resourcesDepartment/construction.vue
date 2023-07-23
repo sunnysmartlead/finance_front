@@ -168,7 +168,7 @@
             <el-descriptions  direction="vertical" :column="c.yearOrValueModes.length" border>
               <el-descriptions-item  v-for="yearItem in c.yearOrValueModes"
                 :key="yearItem.year" :label="yearItem.year + upDownEunm[yearItem.upDown]">
-                {{ yearItem.value }}
+                {{ yearItem.value.toFixed(4) }}
               </el-descriptions-item>
             </el-descriptions>
           </el-row>

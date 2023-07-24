@@ -667,6 +667,14 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "工装库"
         }
+      },
+      {
+        path: "/processHoursExport/deviceLib",
+        component: () => import("@/views/processHoursExport/deviceLib.vue"),
+        name: "deviceLib",
+        meta: {
+          title: "设备库"
+        }
       }
     ]
   },

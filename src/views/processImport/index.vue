@@ -30,7 +30,7 @@
           <el-table-column label="序号" prop="sequenceNumber" width="100" />
           <el-table-column label="工序" prop="procedure" width="100" />
           <el-table-column label="设备部分" class-name="columnColor1">
-            <template v-for="(item, index) in data.equipmentPart?.equipmentDetails" :key="`equipmentPart-${index}`">
+            <template v-for="(item, devicendex) in data.tableData?.deviceList" :key="`equipmentPart-${index}`">
               <el-table-column
                 :prop="`equipmentPart.equipmentDetails[${index}].equipmentName`"
                 :label="`设备${index + 1}`"

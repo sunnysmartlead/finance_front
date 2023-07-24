@@ -17,7 +17,7 @@
     </div>
     <div class="u-p-t-10 u-p-b-10  u-flex u-flex-wrap u-row-left u-col-center">
       <div class="u-m-5">
-        <el-button type="primary">项目走量查看</el-button>
+        <el-button type="primary" @click="showProjectDialog">项目走量查看</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary">SOR下载</el-button>
@@ -51,8 +51,8 @@
       <div style="color:#000000;font-weight:bold">
         <span>工序列表录入</span>
       </div>
-         <!-- <custom-table-form-list :dataArr="dataArr" @delPH="delPH"></custom-table-form-list> -->
-       <el-scrollbar wrap-style="padding:10px 0px" always :max-height="500">
+      <!-- <custom-table-form-list :dataArr="dataArr" @delPH="delPH"></custom-table-form-list> -->
+      <el-scrollbar wrap-style="padding:10px 0px" always :max-height="500">
         <!-- 头部区 -->
         <div class="u-flex u-row-left u-col-center u-text-center">
           <div class="u-flex u-row-left u-col-center  u-text-center">
@@ -209,21 +209,17 @@
                 <span>{{ dataIndex }}</span>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processIndex" 
-                           filterable remote reserve-keyword 
-                           :remote-method="remoteMethod"
-                           :loading="processIndexloading">
-                  <el-option v-for="item in processIndexOptions" :key="item.value" 
-                            :label="item.label" :value="item.value" />
+                <el-select v-model="dataItem.processIndex" filterable remote reserve-keyword :remote-method="remoteMethod"
+                  :loading="processIndexloading">
+                  <el-option v-for="item in processIndexOptions" :key="item.value" :label="item.label"
+                    :value="item.value" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processName" 
-                           filterable remote reserve-keyword 
-                           :remote-method="remoteMethodForProcessName"
-                           :loading="processNameLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.value" 
-                            :label="item.label" :value="item.value" />
+                <el-select v-model="dataItem.processName" filterable remote reserve-keyword
+                  :remote-method="remoteMethodForProcessName" :loading="processNameLoading">
+                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
+                    :value="item.value" />
                 </el-select>
               </div>
             </div>
@@ -233,31 +229,29 @@
                 <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150  u-border">
-                    <el-select v-model="deviceItem.deviceName" 
-                              filterable remote reserve-keyword 
-                              :remote-method="remoteMethodForDeviceName"
-                              :loading="deviceNameLoading">
-                      <el-option v-for="item in deviceNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                    </el-select>                    
+                    <el-select v-model="deviceItem.deviceName" filterable remote reserve-keyword
+                      :remote-method="remoteMethodForDeviceName" :loading="deviceNameLoading">
+                      <el-option v-for="item in deviceNameOptions" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                    </el-select>
                   </div>
                   <div class="u-width-150  u-border">
-                      <el-input v-model="deviceItem.deviceStatus"  class="input-with-select">
-                        <template #append>
-                          <el-select v-model="deviceItem.deviceStatus" placeholder="选择"  style="width:75px">
-                            <el-option label="正常" value="正常" />
-                            <el-option label="异常" value="异常" />
-                          </el-select>
-                        </template>
-                      </el-input>
+                    <el-input v-model="deviceItem.deviceStatus" class="input-with-select">
+                      <template #append>
+                        <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width:75px">
+                          <el-option label="正常" value="正常" />
+                          <el-option label="异常" value="异常" />
+                        </el-select>
+                      </template>
+                    </el-input>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="deviceItem.deviceCount" :min="1" 
-                          @change="handleDeviceChange($event,dataIndex,deviceIndex)"/>
+                    <el-input-number v-model="deviceItem.deviceCount" :min="1"
+                      @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="deviceItem.devicePrice" :precision="2" :step="0.01" 
-                          @change="handleDeviceChange($event,dataIndex,deviceIndex)"/>
+                    <el-input-number v-model="deviceItem.devicePrice" :precision="2" :step="0.01"
+                      @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                 </div>
                 <div class="u-width-150  u-border   u-p-t-5 u-p-b-5">
@@ -271,25 +265,23 @@
                 <div v-for="(hardInfo, hardIndex) in dataItem.developCostInfo.hardwareInfo" :key="hardIndex"
                   class="u-flex u-row-left u-col-center u-text-center u-border">
                   <div class="u-width-150  u-border">
-                    <el-select v-model="hardInfo.hardwareDeviceName" 
-                              filterable remote reserve-keyword 
-                              :remote-method="remoteMethodForHardwareDeviceName"
-                              :loading="hardwareDeviceNameLoading">
-                      <el-option v-for="item in hardwareDeviceNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                    </el-select>  
+                    <el-select v-model="hardInfo.hardwareDeviceName" filterable remote reserve-keyword
+                      :remote-method="remoteMethodForHardwareDeviceName" :loading="hardwareDeviceNameLoading">
+                      <el-option v-for="item in hardwareDeviceNameOptions" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                    </el-select>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="hardInfo.hardwareDeviceCount" :min="1" 
-                          @change="handleHardwareDeviceChange($event,dataIndex,hardIndex)"/>
+                    <el-input-number v-model="hardInfo.hardwareDeviceCount" :min="1"
+                      @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="hardInfo.hardwareDevicePrice" :precision="2" :step="0.01" 
-                          @change="handleHardwareDeviceChange($event,dataIndex,hardIndex)"/>
+                    <el-input-number v-model="hardInfo.hardwareDevicePrice" :precision="2" :step="0.01"
+                      @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                    <span>{{ dataItem.developCostInfo.hardwareTotalCost.toFixed(2) }}</span>
+                  <span>{{ dataItem.developCostInfo.hardwareTotalCost.toFixed(2) }}</span>
                 </div>
                 <!-- <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.developCostInfo.zhuiSuSoft }}</span>
@@ -298,17 +290,15 @@
                   <span>{{ dataItem.developCostInfo.developCost_zhuisu }}</span>
                 </div> -->
                 <div class="u-width-150  u-border">
-                    <el-select v-model="dataItem.developCostInfo.kaiTuSoft" 
-                              filterable remote reserve-keyword 
-                              @change="kaiTuChange($event,dataIndex)"
-                              :remote-method="remoteMethodForKaiTuName"
-                              :loading="kaiTuNameLoading">
-                      <el-option v-for="item in kaiTuNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                    </el-select>  
+                  <el-select v-model="dataItem.developCostInfo.kaiTuSoft" filterable remote reserve-keyword
+                    @change="kaiTuChange($event, dataIndex)" :remote-method="remoteMethodForKaiTuName"
+                    :loading="kaiTuNameLoading">
+                    <el-option v-for="item in kaiTuNameOptions" :key="item.value" :label="item.label"
+                      :value="item.value" />
+                  </el-select>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.developCostInfo.kaiTuCost.toFixed(2)}}</span>
+                  <span>{{ dataItem.developCostInfo.kaiTuCost.toFixed(2) }}</span>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.developCostInfo.developTotalCost }}</span>
@@ -321,55 +311,49 @@
                 <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
                   class="u-flex u-row-left u-col-center u-text-center u-border">
                   <div class="u-width-150  u-border">
-                    <el-select v-model="zhiju.zhiJuName" 
-                              filterable remote reserve-keyword 
-                              :remote-method="remoteMethodForZhiJuName"
-                              @change="zhiJuNameChange($event,dataIndex,zhijuindex)"
-                              :loading="zhiJuNameLoading">
-                      <el-option v-for="item in zhiJuNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                    </el-select>  
+                    <el-select v-model="zhiju.zhiJuName" filterable remote reserve-keyword
+                      :remote-method="remoteMethodForZhiJuName" @change="zhiJuNameChange($event, dataIndex, zhijuindex)"
+                      :loading="zhiJuNameLoading">
+                      <el-option v-for="item in zhiJuNameOptions" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                    </el-select>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="zhiju.zhiJuCount" :min="1" 
-                          @change="handleZhiJuCountChange($event,dataIndex,zhijuindex)"/>
+                    <el-input-number v-model="zhiju.zhiJuCount" :min="1"
+                      @change="handleZhiJuCountChange($event, dataIndex, zhijuindex)" />
                   </div>
                   <div class="u-width-150  u-border">
                     <el-input-number v-model="zhiju.zhiJuPrice" :precision="2" :step="0.01" disabled
-                          @change="handleZhiJuCountChange($event,dataIndex,zhijuindex)"/>
+                      @change="handleZhiJuCountChange($event, dataIndex, zhijuindex)" />
                   </div>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  <el-select v-model="dataItem.toolInfo.jianJu.jianJuName" 
-                              filterable remote reserve-keyword 
-                              :remote-method="remoteMethodForJianJuName"
-                              @change="jianJuNameChange($event,dataIndex)"
-                              :loading="jianJuNameLoading">
-                      <el-option v-for="item in jianJuNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                  </el-select>  
+                  <el-select v-model="dataItem.toolInfo.jianJu.jianJuName" filterable remote reserve-keyword
+                    :remote-method="remoteMethodForJianJuName" @change="jianJuNameChange($event, dataIndex)"
+                    :loading="jianJuNameLoading">
+                    <el-option v-for="item in jianJuNameOptions" :key="item.value" :label="item.label"
+                      :value="item.value" />
+                  </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.toolInfo.jianJu.jianJuCount" :min="1" 
-                          @change="handleJianJuCountChange($event,dataIndex)"/>
+                  <el-input-number v-model="dataItem.toolInfo.jianJu.jianJuCount" :min="1"
+                    @change="handleJianJuCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.toolInfo.jianJu.jianJuPrice }}</span>
                 </div>
 
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                    <el-select v-model="dataItem.toolInfo.gongZhuang.gongZhuangName" 
-                              filterable remote reserve-keyword 
-                              :remote-method="remoteMethodForGongZhuangName"
-                              @change="gongZhuangNameChange($event,dataIndex)"
-                              :loading="gongZhuangNameLoading">
-                      <el-option v-for="item in gongZhuangNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                    </el-select>  
+                  <el-select v-model="dataItem.toolInfo.gongZhuang.gongZhuangName" filterable remote reserve-keyword
+                    :remote-method="remoteMethodForGongZhuangName" @change="gongZhuangNameChange($event, dataIndex)"
+                    :loading="gongZhuangNameLoading">
+                    <el-option v-for="item in gongZhuangNameOptions" :key="item.value" :label="item.label"
+                      :value="item.value" />
+                  </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.toolInfo.gongZhuang.gongZhuangCount" :min="1" 
-                          @change="handleGongZhuangCountChange($event,dataIndex)"/>
+                  <el-input-number v-model="dataItem.toolInfo.gongZhuang.gongZhuangCount" :min="1"
+                    @change="handleGongZhuangCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.toolInfo.gongZhuang.gongZhuangPrice }}</span>
@@ -377,18 +361,16 @@
 
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <!-- <span>{{ dataItem.toolInfo.testLine.testLineName }}</span> -->
-                  <el-select  v-model="dataItem.toolInfo.testLine.testLineName " 
-                              filterable remote reserve-keyword 
-                              :remote-method="remoteMethodForTestLineName"
-                              @change="testLineNameChange($event,dataIndex)"
-                              :loading="testLineNameLoading">
-                      <el-option v-for="item in testLineNameOptions" :key="item.value" 
-                                :label="item.label" :value="item.value" />
-                    </el-select> 
+                  <el-select v-model="dataItem.toolInfo.testLine.testLineName" filterable remote reserve-keyword
+                    :remote-method="remoteMethodForTestLineName" @change="testLineNameChange($event, dataIndex)"
+                    :loading="testLineNameLoading">
+                    <el-option v-for="item in testLineNameOptions" :key="item.value" :label="item.label"
+                      :value="item.value" />
+                  </el-select>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  <el-input-number v-model=" dataItem.toolInfo.testLine.testLineCount" :min="1" 
-                          @change="handleTestLineCountChange($event,dataIndex)"/>
+                  <el-input-number v-model="dataItem.toolInfo.testLine.testLineCount" :min="1"
+                    @change="handleTestLineCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.toolInfo.testLine.testLinePrice }}</span>
@@ -396,7 +378,7 @@
 
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <!-- <span>{{ dataItem.toolInfo.toolTotalCost }}</span> -->
-                    <span>{{ calToolTotalCost(dataIndex) }}</span>
+                  <span>{{ calToolTotalCost(dataIndex) }}</span>
                 </div>
               </div>
             </div>
@@ -406,13 +388,13 @@
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.manWorkHour" :min="1"/>
+                      <el-input-number v-model="scopItem.manWorkHour" :min="1" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.machineWorkHour" :min="1"/>
+                      <el-input-number v-model="scopItem.machineWorkHour" :min="1" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.manNumber" :min="1"/>
+                      <el-input-number v-model="scopItem.manNumber" :min="1" />
                     </div>
                   </div>
                 </div>
@@ -429,37 +411,37 @@
         <span>UPH录入</span>
       </div>
       <el-scrollbar wrap-style="padding:10px 0px" always>
-          <div class="u-flex u-row-left u-col-center">
-             <div style="background-color:#E6A23C" class="u-text-center">
-                <div class="u-border  u-height-32 u-width-150">
-                    <span>UPH</span>
-                </div>
-                <div class="u-border u-height-34 u-width-150">
-                    <span>SMT-UPH值</span>
-                </div>
-                <div  class="u-border  u-height-34 u-width-150">
-                    <span>COB-UPH值</span>
-                </div>
-                <div  class="u-border  u-height-34 u-width-150">
-                    <span>组测-UPH值</span>
-                </div>
-             </div>
-             <div v-for="(uphItem,uphIndex) in UPHData" :key="uphIndex">
-                <div class="u-border u-p-t-5 u-p-b-5 u-width-150 u-text-center">
-                    <span>{{uphItem.year}}</span>
-                </div>
-                <div  class="u-border  u-width-150 u-text-center">
-                    <el-input v-model="uphItem.smtVal"/>
-                </div>
-                <div  class="u-border  u-width-150 u-text-center">
-                    <el-input  v-model="uphItem.cobVal"  class="u-text-center"/>
-                </div>
-                <div  class="u-border  u-width-150 u-text-center">
-                    <el-input v-model="uphItem.groupTestVal"  class="u-text-center"/>
-                </div>
-             </div>
+        <div class="u-flex u-row-left u-col-center">
+          <div style="background-color:#E6A23C" class="u-text-center">
+            <div class="u-border  u-height-32 u-width-150">
+              <span>UPH</span>
+            </div>
+            <div class="u-border u-height-34 u-width-150">
+              <span>SMT-UPH值</span>
+            </div>
+            <div class="u-border  u-height-34 u-width-150">
+              <span>COB-UPH值</span>
+            </div>
+            <div class="u-border  u-height-34 u-width-150">
+              <span>组测-UPH值</span>
+            </div>
           </div>
-      </el-scrollbar>  
+          <div v-for="(uphItem, uphIndex) in UPHData" :key="uphIndex">
+            <div class="u-border u-p-t-5 u-p-b-5 u-width-150 u-text-center">
+              <span>{{ uphItem.year }}</span>
+            </div>
+            <div class="u-border  u-width-150 u-text-center">
+              <el-input v-model="uphItem.smtVal" />
+            </div>
+            <div class="u-border  u-width-150 u-text-center">
+              <el-input v-model="uphItem.cobVal" class="u-text-center" />
+            </div>
+            <div class="u-border  u-width-150 u-text-center">
+              <el-input v-model="uphItem.groupTestVal" class="u-text-center" />
+            </div>
+          </div>
+        </div>
+      </el-scrollbar>
     </div>
 
     <div class="u-p-10 u-m-t-10 u-border uph-box">
@@ -467,32 +449,74 @@
         <span>线体数量、共线分辨率</span>
       </div>
       <el-scrollbar wrap-style="padding:10px 0px" always>
-          <div class="u-flex u-row-left u-col-center">
-             <div style="background-color:#E6A23C" class="u-text-center">
-                <div class="u-border  u-height-32 u-width-150">
-                    <span>项目\年份</span>
-                </div>
-                <div class="u-border u-height-34 u-width-150">
-                    <span>线体数量</span>
-                </div>
-                <div  class="u-border  u-height-34 u-width-150">
-                    <span>共线分辨率</span>
-                </div>
-             </div>
-             <div v-for="(lineItem,lineIndex) in lineData" :key="lineIndex">
-                <div class="u-border u-p-t-5 u-p-b-5 u-width-150 u-text-center">
-                    <span>{{lineItem.year}}</span>
-                </div>
-                <div  class="u-border  u-width-150 u-text-center">
-                    <el-input v-model="lineItem.lineBodyCount"/>
-                </div>
-                <div  class="u-border  u-width-150 u-text-center">
-                    <el-input  v-model="lineItem.fenBianLvVal"  class="u-text-center"/>
-                </div>
-             </div>
+        <div class="u-flex u-row-left u-col-center">
+          <div style="background-color:#E6A23C" class="u-text-center">
+            <div class="u-border  u-height-32 u-width-150">
+              <span>项目\年份</span>
+            </div>
+            <div class="u-border u-height-34 u-width-150">
+              <span>线体数量</span>
+            </div>
+            <div class="u-border  u-height-34 u-width-150">
+              <span>共线分辨率</span>
+            </div>
           </div>
-      </el-scrollbar>  
+          <div v-for="(lineItem, lineIndex) in lineData" :key="lineIndex">
+            <div class="u-border u-p-t-5 u-p-b-5 u-width-150 u-text-center">
+              <span>{{ lineItem.year }}</span>
+            </div>
+            <div class="u-border  u-width-150 u-text-center">
+              <el-input v-model="lineItem.lineBodyCount" />
+            </div>
+            <div class="u-border  u-width-150 u-text-center">
+              <el-input v-model="lineItem.fenBianLvVal" class="u-text-center" />
+            </div>
+          </div>
+        </div>
+      </el-scrollbar>
     </div>
+
+    <el-dialog v-model="dialogTableVisible" title="模组数量" :close-on-click-modal="false" fullscreen>
+        <div>
+          <el-card v-for="(project,index) in dialogProData" :key="index" class="u-m-b-10">
+              <template #header>
+                <div style="font-weight: bold;">{{project.spec}}</div>
+              </template> 
+              <div>
+                  <div class="u-flex u-row-left u-col-center">
+                     <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                        <span>序号</span>
+                     </div>
+                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                        <span>产品名称</span>
+                     </div>
+                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                        <span>产品大类</span>
+                     </div>
+                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5"
+                          v-for="(yearItem,yearIndex) in project.data[0]?.years" :key="yearIndex">
+                          <span>{{ yearItem.year}}</span>
+                     </div>
+                  </div>
+                  <div v-for="(dataItem,dataIndex) in project.data" class="u-flex u-row-left u-col-center">
+                    <div class="u-border u-text-center u-width-200  u-p-t-5 u-p-b-5">
+                        <span>{{dataItem.groupIndex}}</span>
+                     </div>
+                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                        <span>{{dataItem.prodName}}</span>
+                     </div>
+                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                        <span>{{dataItem.prodBigCategory}}</span>
+                     </div>
+                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5"
+                          v-for="(yearItem,yearIndex) in dataItem.years" :key="yearIndex">
+                          <span>{{ yearItem.yearVal}}</span>
+                     </div>
+                  </div>
+              </div>
+           </el-card>
+        </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -502,6 +526,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import customTableFormList from "@/components/processHoursExport/custom-table-form-list.vue"
 import { randomInt } from 'crypto'
 import { random } from 'lodash'
+
 const currentPlan = ref('1')
 const options = [
   {
@@ -584,7 +609,7 @@ const dataArr = reactive([
       jianJu: {
         jianJuName: '检具1',
         jianJuCount: 1,
-        jianJuPrice:1000.00
+        jianJuPrice: 1000.00
       },
       gongZhuang: {
         gongZhuangName: '工装1',
@@ -596,7 +621,7 @@ const dataArr = reactive([
         testLineCount: 1,
         testLinePrice: 5000
       },
-      toolTotalCost:10000.00
+      toolTotalCost: 10000.00
     },
     sopInfo: [
       {
@@ -615,14 +640,15 @@ const dataArr = reactive([
   }
 ])
 
-const UPHData=reactive([])
-const lineData=reactive([])
+const UPHData = reactive([])
+const lineData = reactive([])
 
 onMounted(() => {
   // console.log('数据结构',JSON.stringify(dataArr));
   getUPHData();
   getLineData();
 })
+
 
 //新增工序
 const addPH = () => {
@@ -647,7 +673,6 @@ const delPH = (index: number) => {
     dataArr.splice(index);
   })
 }
-
 
 //-------------------------工序序号代码块代码块------------------------------
 interface processIndexListItem {
@@ -702,10 +727,10 @@ const remoteMethodForProcessName = (query: string) => {
 }
 const getProcessName = (keyWord: String) => {
   return [
-    { label: "工序名称1"+keyWord, value: 'aaaaa' },
-    { label: "工序名称2"+keyWord, value: 'bbbbb' },
-    { label: "工序名称3"+keyWord, value: 'ccccc' },
-    { label: "工序名称4"+keyWord, value: 'ddddd' }
+    { label: "工序名称1" + keyWord, value: 'aaaaa' },
+    { label: "工序名称2" + keyWord, value: 'bbbbb' },
+    { label: "工序名称3" + keyWord, value: 'ccccc' },
+    { label: "工序名称4" + keyWord, value: 'ddddd' }
   ]
 }
 //------------------------------end------------------------------------------
@@ -734,21 +759,21 @@ const remoteMethodForDeviceName = (query: string) => {
 }
 const getDeviceName = (keyWord: String) => {
   return [
-    { label: "设备名称1"+keyWord, value: 'aaaaa' },
-    { label: "设备名称2"+keyWord, value: 'bbbbb' },
-    { label: "设备名称3"+keyWord, value: 'ccccc' },
-    { label: "设备名称4"+keyWord, value: 'ddddd' }
+    { label: "设备名称1" + keyWord, value: 'aaaaa' },
+    { label: "设备名称2" + keyWord, value: 'bbbbb' },
+    { label: "设备名称3" + keyWord, value: 'ccccc' },
+    { label: "设备名称4" + keyWord, value: 'ddddd' }
   ]
 }
 //设备价格或数量变化
-const handleDeviceChange = (value:any,dataIndex:any,deviceIndex:any) => {
-    console.log("第"+dataIndex+"工序的第"+deviceIndex+"个的数量是"+value+"个");
-    let deviceCost=0.00;
-    dataArr[dataIndex].deviceInfo.deviceArr.forEach(item=>{
-      deviceCost=deviceCost+item.deviceCount*item.devicePrice;
-    })
-    console.log("设备总价",deviceCost);
-    dataArr[dataIndex].deviceInfo.deviceTotalCost=Number(Number(deviceCost).toFixed(2));
+const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
+  console.log("第" + dataIndex + "工序的第" + deviceIndex + "个的数量是" + value + "个");
+  let deviceCost = 0.00;
+  dataArr[dataIndex].deviceInfo.deviceArr.forEach(item => {
+    deviceCost = deviceCost + item.deviceCount * item.devicePrice;
+  })
+  console.log("设备总价", deviceCost);
+  dataArr[dataIndex].deviceInfo.deviceTotalCost = Number(Number(deviceCost).toFixed(2));
 }
 //-------------------------------------end----------------------------------
 
@@ -775,22 +800,22 @@ const remoteMethodForHardwareDeviceName = (query: string) => {
 }
 const getHardwareDeviceName = (keyWord: String) => {
   return [
-    { label: "硬件设备名称1"+keyWord, value: 'aaaaa' },
-    { label: "硬件设备名称2"+keyWord, value: 'bbbbb' },
-    { label: "硬件设备名称3"+keyWord, value: 'ccccc' },
-    { label: "硬件设备名称4"+keyWord, value: 'ddddd' }
+    { label: "硬件设备名称1" + keyWord, value: 'aaaaa' },
+    { label: "硬件设备名称2" + keyWord, value: 'bbbbb' },
+    { label: "硬件设备名称3" + keyWord, value: 'ccccc' },
+    { label: "硬件设备名称4" + keyWord, value: 'ddddd' }
   ]
 }
 //软件设备数量和价格变化
-const handleHardwareDeviceChange = (value:any,dataIndex:any,hardwareDeviceIndex:any) => {
-    console.log("第"+dataIndex+"工序的第"+hardwareDeviceIndex+"个的数量是"+value+"个");
-    let handleHardwareDeviceCost=0.00;
-    dataArr[dataIndex].developCostInfo.hardwareInfo.forEach(item=>{
-      handleHardwareDeviceCost=handleHardwareDeviceCost+item.hardwareDeviceCount*item.hardwareDevicePrice;
-    })
-    console.log("软件设备总价",handleHardwareDeviceCost);
-    dataArr[dataIndex].developCostInfo.hardwareTotalCost=Number(Number(handleHardwareDeviceCost).toFixed(2));
-    dataArr[dataIndex].developCostInfo.developTotalCost=Number(handleHardwareDeviceCost)+Number(dataArr[dataIndex].developCostInfo.kaiTuCost);
+const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIndex: any) => {
+  console.log("第" + dataIndex + "工序的第" + hardwareDeviceIndex + "个的数量是" + value + "个");
+  let handleHardwareDeviceCost = 0.00;
+  dataArr[dataIndex].developCostInfo.hardwareInfo.forEach(item => {
+    handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceCount * item.hardwareDevicePrice;
+  })
+  console.log("软件设备总价", handleHardwareDeviceCost);
+  dataArr[dataIndex].developCostInfo.hardwareTotalCost = Number(Number(handleHardwareDeviceCost).toFixed(2));
+  dataArr[dataIndex].developCostInfo.developTotalCost = Number(handleHardwareDeviceCost) + Number(dataArr[dataIndex].developCostInfo.kaiTuCost);
 }
 //-------------------------------------end-------------------------------
 
@@ -818,17 +843,17 @@ const remoteMethodForKaiTuName = (query: string) => {
 }
 const getKaiTuName = (keyWord: String) => {
   return [
-    { label: "开图软件"+keyWord, value: 'aaaaa',price:50000 },
-    { label: "开图软件"+keyWord, value: 'bbbbb',price:40000 },
-    { label: "开图软件"+keyWord, value: 'ccccc',price:30000},
-    { label: "开图软件"+keyWord, value: 'ddddd',price:20000}
+    { label: "开图软件" + keyWord, value: 'aaaaa', price: 50000 },
+    { label: "开图软件" + keyWord, value: 'bbbbb', price: 40000 },
+    { label: "开图软件" + keyWord, value: 'ccccc', price: 30000 },
+    { label: "开图软件" + keyWord, value: 'ddddd', price: 20000 }
   ]
 }
 //开图名称变化后,查询此开图的单价,并计算价格
-const kaiTuChange=(kaitu:any,dataIndex:number) =>{
-    console.log("第"+dataIndex+"工序的开图软件名称变化了"+kaitu);
-    dataArr[dataIndex].developCostInfo.kaiTuCost=Number(random(50000));
-    dataArr[dataIndex].developCostInfo.developTotalCost=Number(dataArr[dataIndex].developCostInfo.hardwareTotalCost)+Number(dataArr[dataIndex].developCostInfo.kaiTuCost);
+const kaiTuChange = (kaitu: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的开图软件名称变化了" + kaitu);
+  dataArr[dataIndex].developCostInfo.kaiTuCost = Number(random(50000));
+  dataArr[dataIndex].developCostInfo.developTotalCost = Number(dataArr[dataIndex].developCostInfo.hardwareTotalCost) + Number(dataArr[dataIndex].developCostInfo.kaiTuCost);
 }
 //-------------------------------end---------------------------------------
 
@@ -856,22 +881,22 @@ const remoteMethodForZhiJuName = (query: string) => {
 }
 const getZhiJuName = (keyWord: String) => {
   return [
-    { label: "治具名称"+keyWord, value: 'aaaaa' },
-    { label: "治具名称"+keyWord, value: 'bbbbb' },
-    { label: "治具名称"+keyWord, value: 'ccccc' },
-    { label: "治具名称"+keyWord, value: 'ddddd' }
+    { label: "治具名称" + keyWord, value: 'aaaaa' },
+    { label: "治具名称" + keyWord, value: 'bbbbb' },
+    { label: "治具名称" + keyWord, value: 'ccccc' },
+    { label: "治具名称" + keyWord, value: 'ddddd' }
   ]
 }
 //治具名称发生变化,从而获取治具的价格,并计算总价
-const zhiJuNameChange=(zhiju:any,dataIndex:number,zhiJuIndex:number) =>{
-  console.log("第"+dataIndex+"工序的第"+zhiJuIndex+"个的治具名称发生了变化"+zhiju);
+const zhiJuNameChange = (zhiju: any, dataIndex: number, zhiJuIndex: number) => {
+  console.log("第" + dataIndex + "工序的第" + zhiJuIndex + "个的治具名称发生了变化" + zhiju);
   //模拟后台查询此治具的单价
-  dataArr[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].zhiJuPrice=Number(random(1000));
+  dataArr[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].zhiJuPrice = Number(random(1000));
   //这里还要计算总价
 }
 //治具数量变化监听
-const handleZhiJuCountChange= (value:any,dataIndex:any,zhijuIndex:any) => {
-    console.log("第"+dataIndex+"工序的第"+zhijuIndex+"个的治具数量是"+value+"个");
+const handleZhiJuCountChange = (value: any, dataIndex: any, zhijuIndex: any) => {
+  console.log("第" + dataIndex + "工序的第" + zhijuIndex + "个的治具数量是" + value + "个");
 }
 //---------------------------------end-------------------------------------
 
@@ -886,7 +911,7 @@ interface jianJuNameListItem {
 const jianJuNameOptions = ref<jianJuNameListItem[]>([])
 const jianJuNameLoading = ref(false)
 //模糊查询检具名称
-const remoteMethodForJianJuName= (query: string) => {
+const remoteMethodForJianJuName = (query: string) => {
   if (query) {
     jianJuNameLoading.value = true;
     setTimeout(() => {
@@ -899,22 +924,22 @@ const remoteMethodForJianJuName= (query: string) => {
 }
 const getJianJuName = (keyWord: String) => {
   return [
-    { label: "检具名称1"+keyWord, value: 'aaaaa' },
-    { label: "检具名称2"+keyWord, value: 'bbbbb' },
-    { label: "检具名称3"+keyWord, value: 'ccccc' },
-    { label: "检具名称4"+keyWord, value: 'ddddd' }
+    { label: "检具名称1" + keyWord, value: 'aaaaa' },
+    { label: "检具名称2" + keyWord, value: 'bbbbb' },
+    { label: "检具名称3" + keyWord, value: 'ccccc' },
+    { label: "检具名称4" + keyWord, value: 'ddddd' }
   ]
 }
 //选择检具名称,查询出检具的单价
-const jianJuNameChange=(jianJu:any,dataIndex:number) =>{
-  console.log("第"+dataIndex+"工序的检具名称发生了变化"+jianJu);
+const jianJuNameChange = (jianJu: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的检具名称发生了变化" + jianJu);
   //模拟后台查询此检具的单价
-  dataArr[dataIndex].toolInfo.jianJu.jianJuPrice=Number(random(1000));
+  dataArr[dataIndex].toolInfo.jianJu.jianJuPrice = Number(random(1000));
   //这里还要计算总价
 }
 //检具数量变化监听
-const handleJianJuCountChange=(value:any,dataIndex:number)=>{
-  console.log("第"+dataIndex+"工序的检举数量变化"+value+"个");
+const handleJianJuCountChange = (value: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的检举数量变化" + value + "个");
 }
 //------------------------------end----------------------------------------
 
@@ -928,7 +953,7 @@ interface gongZhuangNameListItem {
 const gongZhuangNameOptions = ref<gongZhuangNameListItem[]>([])
 const gongZhuangNameLoading = ref(false)
 //模糊查询工装的名称
-const remoteMethodForGongZhuangName= (query: string) => {
+const remoteMethodForGongZhuangName = (query: string) => {
   if (query) {
     gongZhuangNameLoading.value = true;
     setTimeout(() => {
@@ -941,22 +966,22 @@ const remoteMethodForGongZhuangName= (query: string) => {
 }
 const getGongZhuangName = (keyWord: String) => {
   return [
-    { label: "工装名称1"+keyWord, value: 'aaaaa' },
-    { label: "工装名称2"+keyWord, value: 'bbbbb' },
-    { label: "工装名称3"+keyWord, value: 'ccccc' },
-    { label: "工装名称4"+keyWord, value: 'ddddd' }
+    { label: "工装名称1" + keyWord, value: 'aaaaa' },
+    { label: "工装名称2" + keyWord, value: 'bbbbb' },
+    { label: "工装名称3" + keyWord, value: 'ccccc' },
+    { label: "工装名称4" + keyWord, value: 'ddddd' }
   ]
 }
 //工装名称变化,查询工装的价格
-const gongZhuangNameChange=(gongZhuang:any,dataIndex:number) =>{
-  console.log("第"+dataIndex+"工序的工装名称发生了变化"+gongZhuang);
+const gongZhuangNameChange = (gongZhuang: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的工装名称发生了变化" + gongZhuang);
   //模拟后台查询此工装的单价
-  dataArr[dataIndex].toolInfo.gongZhuang.gongZhuangPrice=Number(random(1000));
+  dataArr[dataIndex].toolInfo.gongZhuang.gongZhuangPrice = Number(random(1000));
   //这里还要计算总价
 }
 //工装数量变化
-const handleGongZhuangCountChange=(value:any,dataIndex:number)=>{
-  console.log("第"+dataIndex+"工序的工装数量变化"+value+"个");
+const handleGongZhuangCountChange = (value: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的工装数量变化" + value + "个");
 }
 //----------------------------------end----------------------------------
 
@@ -969,7 +994,7 @@ interface testLineNameListItem {
 const testLineNameOptions = ref<testLineNameListItem[]>([])
 const testLineNameLoading = ref(false)
 //模糊查询测试线的名称
-const remoteMethodForTestLineName= (query: string) => {
+const remoteMethodForTestLineName = (query: string) => {
   if (query) {
     testLineNameLoading.value = true;
     setTimeout(() => {
@@ -982,70 +1007,186 @@ const remoteMethodForTestLineName= (query: string) => {
 }
 const getTestLineName = (keyWord: String) => {
   return [
-    { label: "线束名称1"+keyWord, value: 'aaaaa' },
-    { label: "线束名称2"+keyWord, value: 'bbbbb' },
-    { label: "线束名称3"+keyWord, value: 'ccccc' },
-    { label: "线束名称4"+keyWord, value: 'ddddd' }
+    { label: "线束名称1" + keyWord, value: 'aaaaa' },
+    { label: "线束名称2" + keyWord, value: 'bbbbb' },
+    { label: "线束名称3" + keyWord, value: 'ccccc' },
+    { label: "线束名称4" + keyWord, value: 'ddddd' }
   ]
 }
 //测试先名称变化,查询对应的单价
-const testLineNameChange=(testLine:any,dataIndex:number) =>{
-  console.log("第"+dataIndex+"工序的线束名称发生了变化"+testLine);
+const testLineNameChange = (testLine: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的线束名称发生了变化" + testLine);
   //模拟后台查询此线束的单价
-  dataArr[dataIndex].toolInfo.testLine.testLinePrice=Number(random(1000));
+  dataArr[dataIndex].toolInfo.testLine.testLinePrice = Number(random(1000));
   //这里还要计算总价
 }
 //测试线数量变化
-const handleTestLineCountChange=(value:any,dataIndex:number)=>{
-  console.log("第"+dataIndex+"工序的线束数量变化"+value+"个");
+const handleTestLineCountChange = (value: any, dataIndex: number) => {
+  console.log("第" + dataIndex + "工序的线束数量变化" + value + "个");
 }
 //-----------------------------------end---------------------------------------
 
 
 //每条工序工具部分的总费用
-const calToolTotalCost=(dataIndex:number)=>{
-  let toolTotalCost=0.00;
-  let toolInfo= dataArr[dataIndex].toolInfo;
-  let gzCount= toolInfo.gongZhuang.gongZhuangCount;
-  let gzPrice= toolInfo.gongZhuang.gongZhuangPrice;
-  let gzCost=Number(gzCount)*Number(gzPrice);
-  let tlCount= toolInfo.testLine.testLineCount;
-  let tlPrice= toolInfo.testLine.testLinePrice;
-  let tlCost=Number(tlCount)*Number(tlPrice);
-  let jzCount= toolInfo.jianJu.jianJuCount;
-  let jzPrice= toolInfo.jianJu.jianJuPrice;
-  let jzCost=Number(jzCount)*Number(jzPrice);
-  let zhiJuCost=0.00;
-  toolInfo.zhiJuArr.forEach((item)=>{
-    zhiJuCost=zhiJuCost+ Number(item.zhiJuCount)*Number(item.zhiJuPrice);
+const calToolTotalCost = (dataIndex: number) => {
+  let toolTotalCost = 0.00;
+  let toolInfo = dataArr[dataIndex].toolInfo;
+  let gzCount = toolInfo.gongZhuang.gongZhuangCount;
+  let gzPrice = toolInfo.gongZhuang.gongZhuangPrice;
+  let gzCost = Number(gzCount) * Number(gzPrice);
+  let tlCount = toolInfo.testLine.testLineCount;
+  let tlPrice = toolInfo.testLine.testLinePrice;
+  let tlCost = Number(tlCount) * Number(tlPrice);
+  let jzCount = toolInfo.jianJu.jianJuCount;
+  let jzPrice = toolInfo.jianJu.jianJuPrice;
+  let jzCost = Number(jzCount) * Number(jzPrice);
+  let zhiJuCost = 0.00;
+  toolInfo.zhiJuArr.forEach((item) => {
+    zhiJuCost = zhiJuCost + Number(item.zhiJuCount) * Number(item.zhiJuPrice);
   })
-  toolTotalCost=gzCost+tlCost+jzCost+zhiJuCost;
+  toolTotalCost = gzCost + tlCost + jzCost + zhiJuCost;
   return toolTotalCost;
 }
 
 
 
-const getUPHData=()=>{
-   for (let i=25;i>=10;i--) {
-        let item={
-          year:'20'+i,
-          smtVal:random(100*i),
-          cobVal:random(500*i),
-          groupTestVal:random(1000*i)
-        }
-        UPHData.unshift(item)
-   }
+const getUPHData = () => {
+  for (let i = 25; i >= 10; i--) {
+    let item = {
+      year: '20' + i,
+      smtVal: random(100 * i),
+      cobVal: random(500 * i),
+      groupTestVal: random(1000 * i)
+    }
+    UPHData.unshift(item)
+  }
 }
 
-const getLineData=()=>{
-  for (let i=25;i>=10;i--) {
-        let item={
-          year:'20'+i,
-          lineBodyCount:random(100*i),
-          fenBianLvVal:random(500*i),
-        }
-        lineData.unshift(item)
-   }
+const getLineData = () => {
+  for (let i = 25; i >= 10; i--) {
+    let item = {
+      year: '20' + i,
+      lineBodyCount: random(100 * i),
+      fenBianLvVal: random(500 * i),
+    }
+    lineData.unshift(item)
+  }
+}
+
+
+const dialogTableVisible = ref(false)
+const dialogProData = [
+  {
+    spec: '300K/Y',
+    data: [
+      {
+        groupIndex: '序号1',
+        prodName: '产品名称1',
+        prodBigCategory: '产品大类1',
+        years: [
+          {
+            year: '2023',
+            yearVal: '二零二三'
+          },
+          {
+            year: '2024',
+            yearVal: '二零二四'
+          }
+        ]
+      },
+      {
+        groupIndex: '序号',
+        prodName: '产品名称',
+        prodBigCategory: '产品大类',
+        years: [
+          {
+            year: '2023',
+            yearVal: '二零二三'
+          },
+          {
+            year: '2024',
+            yearVal: '二零二四'
+          }
+        ]
+      },
+    ]
+  },
+  {
+    spec: '600K/Y',
+    data: [
+      {
+        groupIndex: '序号1',
+        prodName: '产品名称1',
+        prodBigCategory: '产品大类1',
+        years: [
+          {
+            year: '2023',
+            yearVal: '二零二三'
+          },
+          {
+            year: '2024',
+            yearVal: '二零二四'
+          }
+        ]
+      },
+      {
+        groupIndex: '序号',
+        prodName: '产品名称',
+        prodBigCategory: '产品大类',
+        years: [
+          {
+            year: '2023',
+            yearVal: '二零二三'
+          },
+          {
+            year: '2024',
+            yearVal: '二零二四'
+          }
+        ]
+      },
+    ]
+  },
+  {
+    spec: '1200K/Y',
+    data: [
+      {
+        groupIndex: '序号1',
+        prodName: '产品名称1',
+        prodBigCategory: '产品大类1',
+        years: [
+          {
+            year: '2023',
+            yearVal: '二零二三'
+          },
+          {
+            year: '2024',
+            yearVal: '二零二四'
+          }
+        ]
+      },
+      {
+        groupIndex: '序号',
+        prodName: '产品名称',
+        prodBigCategory: '产品大类',
+        years: [
+          {
+            year: '2023',
+            yearVal: '二零二三'
+          },
+          {
+            year: '2024',
+            yearVal: '二零二四'
+          }
+        ]
+      },
+    ]
+  }
+]
+
+
+
+const showProjectDialog = () => {
+  dialogTableVisible.value = true
 }
 
 
@@ -1054,21 +1195,23 @@ const getLineData=()=>{
 defineExpose({
   ...toRefs(dataArr),
   ...toRefs(UPHData),
-  ...toRefs(lineData)
+  ...toRefs(lineData),
+  dialogTableVisible
 })
 
 </script>
 
 <style scoped>
 .process-hour-box {
-  background-color:#ffffff;
+  background-color: #ffffff;
 }
-.uph-box{
-  background-color:#ffffff;
+
+.uph-box {
+  background-color: #ffffff;
 }
 </style>
 <style>
-.uph-box .el-input__inner{
-  text-align:center;
+.uph-box .el-input__inner {
+  text-align: center;
 }
 </style>

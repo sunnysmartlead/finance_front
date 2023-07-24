@@ -33,7 +33,7 @@
             <el-table-column label="操作" align="center">
               <template #default="scope">
                 <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -47,39 +47,46 @@
           <div>日志更新记录：</div>
           <div>
             <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-                 <el-button v-else @click="editLogFlag=false">取消</el-button>
-              <el-button type="primary" @click="saveLog">保存</el-button>
+            <el-button v-else @click="editLogFlag = false">取消</el-button>
+            <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
         </div>
         <div class="u-m-t-20">
           <el-timeline>
-              <el-timeline-item placement="top"
-                  v-for="(activity, index) in baseLibLogRecords" :key="index"
-                  :timestamp="activity.timestamp">
-                 <div class="u-p-10 u-border-bottom u-font-12">
-                    <div style="font-weight: bold;color: #909399;">
-                      <span>版本号：</span>
-                      <span>{{ activity.version }}</span>
+            <el-timeline-item
+              placement="top"
+              v-for="(activity, index) in baseLibLogRecords"
+              :key="index"
+              :timestamp="activity.timestamp"
+            >
+              <div class="u-p-10 u-border-bottom u-font-12">
+                <div style="font-weight: bold; color: #909399">
+                  <span>版本号：</span>
+                  <span>{{ activity.version }}</span>
+                </div>
+                <div>
+                  <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
+                    <div>
+                      <span>操作人：</span>
                     </div>
                     <div>
-                      <div style="font-weight: bold;color: #909399;"
-                           class="u-flex u-row-left u-col-center u-m-t-10">
-                        <div>
-                          <span>操作人：</span>
-                        </div>
-                        <div>
-                          <span>{{activity.optionUser}}</span>
-                        </div>
-                      </div>
-                      <div class="u-m-t-10">
-                          <div class="u-m-t-5 u-font-12">
-                              <el-input :disabled="!editLogFlag" v-model="activity.content" :rows="2"
-                            type="textarea" placeholder="更新日志记录内容"/>
-                          </div>
-                      </div>
+                      <span>{{ activity.optionUser }}</span>
                     </div>
-                 </div>
-              </el-timeline-item>
+                  </div>
+                  <div class="u-m-t-10">
+                    <div class="u-m-t-5 u-font-12">
+                      <el-input
+                        :disabled="!editLogFlag"
+                        v-model="activity.content"
+                        :rows="2"
+                        type="textarea"
+                        placeholder="更新日志记录内容"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </el-timeline-item>
           </el-timeline>
         </div>
       </el-scrollbar>
@@ -119,7 +126,8 @@ import {
   GetListAll,
   getFoundationReliableById,
   updateFoundationReliable,
-  createFoundationReliable
+  createFoundationReliable,
+  deleteFoundationReliable
 } from "@/api/foundationreliable"
 import { ElMessage, ElMessageBox, FormInstance } from "element-plus"
 const data = reactive({
@@ -129,6 +137,7 @@ const data = reactive({
     name: undefined,
     price: undefined,
     unit: undefined,
+    IsDeleted: 1,
     laboratory: undefined
   },
   queryParams: {
@@ -172,7 +181,8 @@ function reset() {
     price: undefined,
     unit: undefined,
     name: undefined,
-    laboratory: undefined
+    laboratory: undefined,
+    IsDeleted: 1
   }
 }
 function cancel() {
@@ -198,18 +208,21 @@ function handleEdit(index: number, row: environmentItem) {
     title.value = "编辑试验信息"
   })
 }
-const handleDelete = (index: number, row: environmentItem) => {
-  console.log(index, row)
-  ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async () => {
-    ElMessage({
-      type: "success",
-      message: "删除成功"
+/** 删除按钮操作 */
+function handleDelete(row) {
+  const postIds = row.id
+  ElMessageBox.confirm("是否确认删除!")
+    .then(function () {
+      return deleteFoundationReliable(postIds)
     })
-  })
+    .then(() => {
+      getList()
+      ElMessage({
+        type: "success",
+        message: "删除成功"
+      })
+    })
+    .catch(() => {})
 }
 
 function submitForm() {

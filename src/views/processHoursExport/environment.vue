@@ -1,12 +1,12 @@
 <template>
   <div class="u-p-20">
     <div>
-      <el-form :inline="true" :model="queryForm" class="demo-form-inline">
+      <el-form :inline="true" :model="queryParams" class="demo-form-inline">
         <el-form-item label="实验分类">
-          <el-input v-model="queryForm.classification" placeholder="输入实验分类" clearable />
+          <el-input v-model="queryParams.classification" placeholder="输入实验分类" clearable />
         </el-form-item>
         <el-form-item label="实验名称">
-          <el-input v-model="queryForm.name" placeholder="输入实验名称" clearable />
+          <el-input v-model="queryParams.name" placeholder="输入实验名称" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitSearch">查询</el-button>
@@ -23,14 +23,13 @@
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
         <div>
-          <el-table :data="tableData" style="width: 100%" border>
+          <el-table v-loading="loading" :data="tableData" style="width: 100%" border>
             <el-table-column label="实验分类" align="center" prop="classification" />
             <el-table-column label="实验名称" align="center" prop="name" />
             <el-table-column label="单价" align="center" prop="price" />
             <el-table-column label="计价单位" align="center" prop="unit" />
-            <el-table-column label="工序维护人" align="center" prop="processManager" />
-            <el-table-column label="工序维护时间" align="center" prop="processManageTime" />
-
+            <el-table-column label="工序维护人" align="center" prop="lastModifierUserName" />
+            <el-table-column label="工序维护时间" align="center" prop="creationTime" />
             <el-table-column label="操作" align="center">
               <template #default="scope">
                 <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -48,7 +47,7 @@
           <div>日志更新记录：</div>
           <div>
             <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-              <el-button v-else @click="editLogFlag=false">取消</el-button>
+                 <el-button v-else @click="editLogFlag=false">取消</el-button>
               <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
         </div>
@@ -116,58 +115,56 @@
 
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from "vue"
-
+import {
+  GetListAll,
+  getFoundationReliableById,
+  updateFoundationReliable,
+  createFoundationReliable
+} from "@/api/foundationreliable"
 import { ElMessage, ElMessageBox, FormInstance } from "element-plus"
-
-const queryForm = reactive({
-  classification: "",
-  name: ""
+const data = reactive({
+  form: {
+    id: undefined,
+    classification: undefined,
+    name: undefined,
+    price: undefined,
+    unit: undefined,
+    laboratory: undefined
+  },
+  queryParams: {
+    name: undefined,
+    classification: undefined
+  },
+  rules: {
+    laboratory: [{ required: true, message: "实验室不能为空", trigger: "blur" }],
+    name: [{ required: true, message: "试验名称不能为空", trigger: "blur" }],
+    classification: [{ required: true, message: "试验分类不能为空", trigger: "blur" }],
+    price: [{ required: true, message: "单价不能为空", trigger: "blur" }],
+    unit: [{ required: true, message: "单位不能为空", trigger: "blur" }]
+  }
 })
+const { queryParams, form } = toRefs(data)
 const title = ref("")
 const open = ref(false)
-const tableData = reactive([
-  {
-    classification: "实验分类",
-    processManageTime: "2016-05-03 10:00:00",
-    processManager: "Tom",
-    name: "实验名称",
-    price: 100,
-    unit: "元"
-  },
-  {
-    classification: "实验分类",
-    processManageTime: "2016-05-03 10:00:00",
-    processManager: "Tom",
-    name: "实验名称",
-    price: 100,
-    unit: "元"
-  },
-  {
-    classification: "实验分类",
-    processManageTime: "2016-05-03 10:00:00",
-    processManager: "Tom",
-    name: "实验名称",
-    price: 100,
-    unit: "元"
-  },
-  {
-    classification: "实验分类",
-    processManageTime: "2016-05-03 10:00:00",
-    processManager: "Tom",
-    name: "实验名称",
-    price: 100,
-    unit: "元"
-  }
-])
-
+const loading = ref(true)
+const tableData = ref([])
+function getList() {
+  loading.value = true
+  GetListAll(queryParams.value).then((response) => {
+    tableData.value = response.result
+    loading.value = false
+  })
+}
 const submitSearch = () => {
-  console.log("submitSearch!")
+  getList()
 }
 function handleAdd() {
   reset()
   open.value = true
   title.value = "试验信息"
 }
+
+const editLogFlag = ref(false)
 function reset() {
   form.value = {
     classification: undefined,
@@ -178,52 +175,57 @@ function reset() {
     laboratory: undefined
   }
 }
-
-interface processItem {
-  processIndex: string
-  processName: string
-  processManager: string
-  processManageTime: string
+function cancel() {
+  open.value = false
+  reset()
+}
+interface environmentItem {
+  classification: string
+  laboratory: string
+  name: string
+  unit: string
+  price: number
+  id: number
 }
 
-const currentEditProcessIndex = ref<string>("")
-
-const handleEdit = (index: number, row: processItem) => {
-  console.log(index, row)
-  currentEditProcessIndex.value = row.processIndex
+/** 修改按钮操作 */
+function handleEdit(index: number, row: environmentItem) {
+  console.log(index, row.id)
+  const postId = row.id
+  getFoundationReliableById(postId).then((response) => {
+    form.value = response.result
+    open.value = true
+    title.value = "编辑试验信息"
+  })
 }
-const handleDelete = (index: number, row: processItem) => {
+const handleDelete = (index: number, row: environmentItem) => {
   console.log(index, row)
   ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    tableData.splice(index)
     ElMessage({
       type: "success",
       message: "删除成功"
     })
   })
 }
-const data = reactive({
-  form: {},
-  queryParams: {
-    postCode: undefined,
-    postName: undefined,
-    status: undefined
-  },
-  rules: {
-    laboratory: [{ required: true, message: "实验室不能为空", trigger: "blur" }],
-    name: [{ required: true, message: "试验名称不能为空", trigger: "blur" }],
-    classification: [{ required: true, message: "试验分类不能为空", trigger: "blur" }],
-    price: [{ required: true, message: "单价不能为空", trigger: "blur" }],
-    unit: [{ required: true, message: "单位不能为空", trigger: "blur" }]
+
+function submitForm() {
+  console.log(form.value)
+  if (form.value.id == null) {
+    createFoundationReliable(form.value).then((response) => {
+      open.value = false
+      getList()
+    })
+  } else {
+    updateFoundationReliable(form.value).then((response) => {
+      open.value = false
+      getList()
+    })
   }
-})
-function submitForm() {}
-const { form, rules } = toRefs(data)
-const editLogFlag = ref(false)
+}
 const baseLibLogRecords = reactive([
   {
     content: "修改记录1",
@@ -244,6 +246,7 @@ const saveLog = () => {
   editLogFlag.value = false
 }
 
+getList()
 defineExpose({
   ...toRefs(tableData)
 })

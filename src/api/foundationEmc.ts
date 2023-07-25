@@ -87,18 +87,18 @@ export interface QueryParams {
   classification?: string
 }
 /** 创建用户 */
-export function createFoundationReliable(data) {
+export function createFoundationEmc(data) {
   return request({
-    url: "/api/services/app/Foundationreliable/Create",
+    url: "/api/services/app/FoundationEmc/Create",
     method: "post",
     data: data
   })
 }
 
 // 查询岗位详细
-export function getFoundationReliableById(id: number) {
+export function getFoundationEmcById(id: number) {
   return request({
-    url: "api/services/app/Foundationreliable/GetAsyncById",
+    url: "api/services/app/FoundationEmc/GetAsyncById",
     method: "get",
     data: {
       id
@@ -107,17 +107,17 @@ export function getFoundationReliableById(id: number) {
 }
 
 /** 修改用户 */
-export function updateFoundationReliable(data) {
+export function updateFoundationEmc(data) {
   return request({
-    url: "/api/services/app/Foundationreliable/Update",
+    url: "/api/services/app/FoundationEmc/Update",
     method: "put",
     data
   })
 }
 /** 删除用户 */
-export function deleteUser(id: number | undefined) {
+export function deleteFoundationEmc(id: number | undefined) {
   return request({
-    url: "/api/services/app/User/Delete",
+    url: "/api/services/app/FoundationEmc/Delete",
     method: "delete",
     data: {
       id
@@ -128,7 +128,7 @@ export function deleteUser(id: number | undefined) {
 /** 用户列表 */
 export function GetListAll(data: QueryParams) {
   return request({
-    url: "api/services/app/Foundationreliable/GetListAll",
+    url: "api/services/app/FoundationEmc/GetListAll",
     method: "get",
     data
   })

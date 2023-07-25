@@ -23,7 +23,7 @@
         <el-button type="primary">SOR下载</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">选择工艺标准</el-button>
+        <el-button type="primary" @click="openStandardProcessDialogForm">选择工艺标准</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="addPH()">新增工序</el-button>
@@ -38,7 +38,7 @@
         <el-button type="primary">电子BOM查看</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">板部件以及拼版数量</el-button>
+        <el-button type="primary" @click="openPanelPartDialog">板部件以及拼版数量</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary">工序工时导入</el-button>
@@ -476,47 +476,78 @@
       </el-scrollbar>
     </div>
 
-    <el-dialog v-model="dialogTableVisible" title="模组数量" :close-on-click-modal="false" fullscreen>
-        <div>
-          <el-card v-for="(project,index) in dialogProData" :key="index" class="u-m-b-10">
-              <template #header>
-                <div style="font-weight: bold;">{{project.spec}}</div>
-              </template> 
-              <div>
-                  <div class="u-flex u-row-left u-col-center">
-                     <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                        <span>序号</span>
-                     </div>
-                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
-                        <span>产品名称</span>
-                     </div>
-                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
-                        <span>产品大类</span>
-                     </div>
-                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5"
-                          v-for="(yearItem,yearIndex) in project.data[0]?.years" :key="yearIndex">
-                          <span>{{ yearItem.year}}</span>
-                     </div>
-                  </div>
-                  <div v-for="(dataItem,dataIndex) in project.data" class="u-flex u-row-left u-col-center">
-                    <div class="u-border u-text-center u-width-200  u-p-t-5 u-p-b-5">
-                        <span>{{dataItem.groupIndex}}</span>
-                     </div>
-                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
-                        <span>{{dataItem.prodName}}</span>
-                     </div>
-                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
-                        <span>{{dataItem.prodBigCategory}}</span>
-                     </div>
-                     <div  class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5"
-                          v-for="(yearItem,yearIndex) in dataItem.years" :key="yearIndex">
-                          <span>{{ yearItem.yearVal}}</span>
-                     </div>
-                  </div>
+    <!-- fullscreen -->
+    <el-dialog v-model="dialogTableVisible" title="模组数量" :close-on-click-modal="false" width="60%">
+      <div>
+        <el-card v-for="(project, index) in dialogProData" :key="index" class="u-m-b-10">
+          <template #header>
+            <div style="font-weight: bold;">{{ project.spec }}</div>
+          </template>
+          <div>
+            <div class="u-flex u-row-left u-col-center">
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>序号</span>
               </div>
-           </el-card>
-        </div>
+              <div class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                <span>产品名称</span>
+              </div>
+              <div class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                <span>产品大类</span>
+              </div>
+              <div class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5"
+                v-for="(yearItem, yearIndex) in project.data[0]?.years" :key="yearIndex">
+                <span>{{ yearItem.year }}</span>
+              </div>
+            </div>
+            <div v-for="(dataItem, dataIndex) in project.data" class="u-flex u-row-left u-col-center">
+              <div class="u-border u-text-center u-width-200  u-p-t-5 u-p-b-5">
+                <span>{{ dataItem.groupIndex }}</span>
+              </div>
+              <div class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                <span>{{ dataItem.prodName }}</span>
+              </div>
+              <div class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5">
+                <span>{{ dataItem.prodBigCategory }}</span>
+              </div>
+              <div class="u-border u-text-center  u-width-200  u-p-t-5 u-p-b-5"
+                v-for="(yearItem, yearIndex) in dataItem.years" :key="yearIndex">
+                <span>{{ yearItem.yearVal }}</span>
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </div>
     </el-dialog>
+
+    <el-dialog v-model="dialogFormVisible" :close-on-click-modal="false">
+      <el-form :model="dialogForm">
+        <el-form-item label="标准工艺名称" label-width="150px">
+          <el-select v-model="dialogForm.standardProcessName" filterable remote reserve-keyword clearable
+            :remote-method="remoteMethodForStandardProcessName" placeholder="输入关键字查询"
+            :loading="standardProcessNameLoading">
+            <el-option v-for="item in standardProcessNameOptions" :key="item.value" :label="item.label"
+              :value="item.value" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="cancelSelectStandardProcessName">取消</el-button>
+          <el-button type="primary" @click="confirmSelectStandardProcessName">确认</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="panelPartDialogTableVisible" title="板部件及拼板数量"  width="60%" :close-on-click-modal="false">
+      <el-table :data="panelPartTableData" border>
+        <el-table-column property="panelPartName" label="板部件名称"   align="center"/>
+        <el-table-column property="panelPartLength" label="板部件长(mm)"  align="center"/>
+        <el-table-column property="panelPartWidth" label="板部件宽(mm)"  align="center"/>
+        <el-table-column property="panelPartArea"  label="板部件面积(mm^)"   align="center"/>
+        <el-table-column property="panelPartCount" label="拼板数量"  align="center"/>
+      </el-table>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -1073,9 +1104,11 @@ const getLineData = () => {
   }
 }
 
-
+const showProjectDialog = () => {
+  dialogTableVisible.value = true
+}
 const dialogTableVisible = ref(false)
-const dialogProData = [
+const dialogProData =reactive([
   {
     spec: '300K/Y',
     data: [
@@ -1181,13 +1214,95 @@ const dialogProData = [
       },
     ]
   }
-]
+])
 
 
-
-const showProjectDialog = () => {
-  dialogTableVisible.value = true
+//-----------------------------标准工艺名称代码块---------------------------------
+const dialogFormVisible = ref(false)
+const dialogForm = reactive({
+  standardProcessName: '',
+})
+const openStandardProcessDialogForm = () => {
+  dialogForm.standardProcessName = "";
+  dialogFormVisible.value = true;
 }
+interface standardProcessNameListItem {
+  value: string
+  label: string
+}
+const standardProcessNameOptions = ref<standardProcessNameListItem[]>([])
+const standardProcessNameLoading = ref(false)
+//模糊查询标准工艺名称
+const remoteMethodForStandardProcessName = (query: string) => {
+  if (query) {
+    standardProcessNameLoading.value = true;
+    setTimeout(() => {
+      standardProcessNameLoading.value = false;
+      standardProcessNameOptions.value = getStandardProcessName(query);
+    }, 200)
+  } else {
+    standardProcessNameOptions.value = []
+  }
+}
+const getStandardProcessName = (keyWord: String) => {
+  return [
+    { label: "标准工艺名称1" + keyWord, value: 'aaaaa' },
+    { label: "标准工艺名称2" + keyWord, value: 'bbbbb' },
+    { label: "标准工艺名称3" + keyWord, value: 'ccccc' },
+    { label: "标准工艺名称4" + keyWord, value: 'ddddd' }
+  ]
+}
+
+const cancelSelectStandardProcessName = () => {
+  ElMessage({
+    type: "warning",
+    message: "取消选择标准工序"
+  })
+  dialogFormVisible.value = false;
+}
+
+const confirmSelectStandardProcessName = () => {
+  if (dialogForm.standardProcessName.length < 1) {
+    ElMessage({
+      type: "error",
+      message: "标准工艺不能为空!"
+    })
+    return;
+  }
+  dialogFormVisible.value = false;
+  ElMessage({
+    type: "success",
+    message: "success!"
+  })
+}
+
+//------------------------------end------------------------------------------
+
+
+
+// --------------------------板部件弹窗代码块 start-----------
+const panelPartDialogTableVisible=ref(false)
+const panelPartTableData=reactive([
+  {
+    panelPartName:'名称1',
+    panelPartLength:'长度1',
+    panelPartWidth:'宽度1',
+    panelPartArea:'面积1',
+    panelPartCount:'数量1'
+  },
+  {
+    panelPartName:'名称2',
+    panelPartLength:'长度2',
+    panelPartWidth:'宽度2',
+    panelPartArea:'面积2',
+    panelPartCount:'数量2'
+  }
+])
+const openPanelPartDialog=()=>{
+   panelPartDialogTableVisible.value=true;
+}
+//---------------------------板部件弹窗代码块 end-----------
+
 
 
 // 使用toRefs解构
@@ -1196,7 +1311,12 @@ defineExpose({
   ...toRefs(dataArr),
   ...toRefs(UPHData),
   ...toRefs(lineData),
-  dialogTableVisible
+  dialogTableVisible,
+  dialogProData,
+  dialogFormVisible,
+  dialogForm,
+  panelPartDialogTableVisible,
+  panelPartTableData
 })
 
 </script>

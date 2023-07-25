@@ -28,7 +28,7 @@
       </div>
     </el-card>
     <div>
-      <designScheme v-model:dialogTableVisible="dialogTableVisible" @close="dialogTableVisible = false"></designScheme>
+      <designScheme v-model:dialogTableVisible="dialogTableVisible" @close="dialogTableVisible = false" />
     </div>
   </div>
 </template>

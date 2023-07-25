@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-dialog v-model="dialogTableVisible" :title="title" @close="dialogClose" draggable width="85%">
+    <el-dialog v-model="props.dialogTableVisible" :title="title" @close="dialogClose" draggable width="85%">
       <el-table :data="designScheme" border>
-        <el-table-column prop="solutionName" label="方案名称" width="150"> </el-table-column>
+        <el-table-column prop="solutionName" label="方案名称" width="150" />
         <el-table-column prop="sensor" label="SENSOR" width="150">
           <template #default="{ row }">
             <el-input v-model="row.sensor" disabled />
@@ -75,7 +75,7 @@
   </div>
 </template>
 
-<script  lang="ts" setup>
+<script lang="ts" setup>
 import { ref, onMounted, watch, defineEmits } from "vue"
 import { AuditExport } from "./service"
 import getQuery from "@/utils/getQuery"
@@ -134,5 +134,4 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -34,28 +34,31 @@
         <el-table-column
           v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 0)"
           :key="iIndex"
-          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
           :label="item.year"
           :formatter="formatDatas"
-        />
+        >
+        {{ item.value }}
+        </el-table-column>
       </el-table-column>
       <el-table-column label="年降率" width="175">
         <el-table-column
           v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 1)"
           :key="iIndex"
-          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
           :label="item.year"
           :formatter="formatDatas"
-        />
+        >
+        {{ item.value }}
+        </el-table-column>
       </el-table-column>
       <el-table-column label="年未税价" width="300">
         <el-table-column
           v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 2)"
           :key="iIndex"
-          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
           :label="item.year"
           :formatter="formatDatas"
-        />
+        >
+        {{ item.value }}
+        </el-table-column>
       </el-table-column>
       <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols2" :key="col.key" width="150" />
     </el-table>

@@ -1499,7 +1499,7 @@ const state = reactive({
 const moduleTableTotal = computed(() => {
   console.log("更新了【moduleTableTotal】")
   const flatData = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
-  const filterData = uniq(map(flatData, (c) => c.product))
+  const filterData = uniq(map(flatData, (c) => c?.product))
   shareCountTable.value = map(filterData, (item, index: number) => ({
     count: shareCountTable.value?.[index]?.count || 0,
     name: item
@@ -1682,6 +1682,7 @@ const save = async (formEl: FormInstance | undefined) => {
         item.order = ++index
       }) // 模组数量
       quoteForm.modelCount = prop
+      console.log(quoteForm.modelCount, "quoteForm.modelCount")
       quoteForm.requirement = requireTableData // 要求
       quoteForm.productInformation = productTableData // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
@@ -2016,103 +2017,63 @@ watch(
   },
   { deep: true }
 )
-// //系数
-// watch(
-//   () => state.quoteForm.kValue,
-//   (val) => {
-//     pcsTableData.value.forEach((item: any, index: number) => {
-//       let itemNew = JSON.parse(JSON.stringify(item))
-//       // itemNew.kv = item.kv * val
-//       itemNew.pcsType = 1
-//       itemNew.pcsYearList.forEach((pro: any) => {
-//         pro.quantity = pro.quantity * val
-//       })
-//       interiorPcsTableData.value[index] = itemNew
-//     })
-//   },
-//   { deep: true }
-// )
-//监听终端走量的梯度
-// watch(
-//   () => kvPricingData.value.map((item: any) => item.kv),
-//   (val, old) => {
-//     console.log(val, "val123")
-//     let modelCountYear = state.yearCols.map((item: any, index: number) => {
-//       return {
-//         year: item,
-//         quantity: null,
-//         upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
-//       }
-//     })
-//     //moduleTableDataV2.value = []
-//     val.forEach((item: any, index: number) => {
-//       if (moduleTableDataV2.value[index]) {
-//         moduleTableDataV2.value[index]?.forEach((pr: any) => {
-//           pr.carModel = item
-//         })
-//       } else {
-//         var prop = [
-//           {
-//             carModel: item, //车型
-//             partNumber: "",
-//             code: "",
-//             product: "",
-//             productType: null,
-//             pixel: "",
-//             marketShare: 0,
-//             moduleCarryingRate: 0,
-//             singleCarProductsQuantity: 0,
-//             modelTotal: 0,
-//             modelCountYearList: modelCountYear
-//           }
-//         ]
-//         moduleTableDataV2.value[index] = _.cloneDeep(prop)
-//       }
-//     })
-//     console.log("difference", moduleTableDataV2.value)
-//   },
-//   { deep: true }
-// )
-//监听模组数量 第一个
-// watch(
-//   () => moduleTableDataV2.value[0],
-//   (val, old) => {
-//     if (isEdit) return
-// for (let index = 0; index < moduleTableDataV2.value.length; index++) {
-//   if (index) {
-//     let carModel = moduleTableDataV2.value[index][0].carModel
-//     const temp = _.cloneDeep(val)
-//     moduleTableDataV2.value[index] = temp.map((item: any) => {
-//       return {
-//         ...item,
-//         carModel
-//       }
-//     })
-//   }
-//     }
-
-// val.forEach((item: any, index: any) => {
-//   // 同步带入下面表格的名称
-//   // productTableData.value[index].name = item.product
-//   // productTableData.value[index].product = item.product
-//   val.forEach((row: any) => {
-//     row.modelCountYearList.forEach((item: any, index: any) => {
-//       if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && state.sumArr[index]) {
-//         item.quantity = Math.round(
-//           (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * state.sumArr[index]) / 10000
-//         )
-//       }
-//     })
-//   })
-//   if (item.marketShare && item.moduleCarryingRate && item.singleCarProductsQuantity && state.carAnnualTotal) {
-//     item.modelTotal = Math.round(
-//       (item.marketShare * item.moduleCarryingRate * item.singleCarProductsQuantity * state.carAnnualTotal) / 10000
-//     )
-//   }
-// })
-//   },
-//   { deep: true }
-// )
+//系数
+watch(
+  () => state.quoteForm.kValue,
+  (val) => {
+    pcsTableData.value.forEach((item: any, index: number) => {
+      let itemNew = JSON.parse(JSON.stringify(item))
+      // itemNew.kv = item.kv * val
+      itemNew.pcsType = 1
+      itemNew.pcsYearList.forEach((pro: any) => {
+        pro.quantity = pro.quantity * val
+      })
+      interiorPcsTableData.value[index] = itemNew
+    })
+  },
+  { deep: true }
+)
+//监听终端走量的车型
+watch(
+  () => interiorPcsTableData.value.map((item: any) => item.carModel),
+  (val, old) => {
+    console.log(val, "val123")
+    let modelCountYear = state.yearCols.map((item: any, index: number) => {
+      return {
+        year: item,
+        quantity: null,
+        upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+      }
+    })
+    //moduleTableDataV2.value = []
+    val.forEach((item: any, index: number) => {
+      if (moduleTableDataV2.value[index]) {
+        moduleTableDataV2.value[index]?.forEach((pr: any) => {
+          pr.carModel = item
+        })
+      } else {
+        var prop = [
+          {
+            carModel: item, //车型
+            partNumber: "",
+            code: "",
+            product: "",
+            productType: null,
+            pixel: "",
+            marketShare: 0,
+            moduleCarryingRate: 0,
+            singleCarProductsQuantity: 0,
+            modelTotal: 0,
+            modelCountYearList: modelCountYear
+          }
+        ]
+        moduleTableDataV2.value[index] = _.cloneDeep(prop)
+      }
+    })
+    console.log("difference", moduleTableDataV2.value)
+  },
+  { deep: true }
+)
 //监听产品信息第一行
 watch(
   () => customerTargetPrice.value[0],
@@ -2268,11 +2229,14 @@ const handleFileChange: UploadProps["onChange"] = (file, uploadFiles) => {
 }
 
 const syncModuleTableDataV2 = (index: number) => {
-  if (index === 0) {
-    moduleTableDataV2.value = moduleTableDataV2.value.map((val: any, i: number) => {
-      return _.cloneDeep(moduleTableDataV2.value[0])
-    })
-  }
+  const temp = _.cloneDeep(moduleTableDataV2.value[0] || {})
+  console.log(temp, "syncModuleTableDataV2")
+  moduleTableDataV2.value = moduleTableDataV2.value.map((val: any, i: number, arr: any[]) => {
+   if (i !== 0) {
+      return map(temp, item => ({ ...item, carModel: val[0].carModel }))
+   }
+   return val
+  })
 }
 
 const generateTitle = () => {
@@ -2585,7 +2549,7 @@ onMounted(async () => {
     let isHasSample: any = await getDictionaryAndDetail("SampleName") //核价类型
     state.isSpecimenOptions = isHasSample.result?.financeDictionaryDetailList
 
-    let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质a
+    let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
     state.customerNatureOptions = customerNature.result.financeDictionaryDetailList
 
     let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
@@ -2643,15 +2607,13 @@ onMounted(async () => {
       productTableData.value = viewDataRes.result.productInformation
       moduleTableDataV2.value = Object.values(
         viewDataRes.result.modelCount.reduce((result: any, item: any) => {
-          if (!result[item.carModel]) {
-            result[item.carModel] = []
+          if (!result[item.kv]) {
+            result[item.kv] = []
           }
-          result[item.carModel].push(item)
+          result[item.kv].push(item)
           return result
         }, {})
       )
-      // kvPricingData.value = viewDataRes.result.gradient
-      // kvModuleTableData.value = viewDataRes.result.gradientModel
       requireTableData.value = viewDataRes.result.requirement // 要求
       specimenData.value = viewDataRes.result.sample //样品
       customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价

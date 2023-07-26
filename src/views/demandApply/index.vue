@@ -1087,7 +1087,7 @@
             <template #default="{ row }">
               <el-text class="mx-1" size="large">{{ row.kv }}</el-text>
             </template>
-          </el-table-column>  
+          </el-table-column>
           <el-table-column prop="产品名称" label="产品名称">
             <template #default="{ row }">
               <el-text class="mx-1" size="large">{{ row.product }}</el-text>
@@ -1516,7 +1516,7 @@ const moduleTableTotal = computed(() => {
     }
 
     if (currentData?.product && currentData?.product === item?.product) {
-      const carModal = compareString(currentData.carModel, item.carModel)   
+      const carModal = compareString(currentData.carModel, item.carModel)
       productName.set(item.product, {
         ...currentData,
         carModal,
@@ -1687,7 +1687,7 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.productInformation = productTableData // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
       // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
-      
+
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
@@ -2563,7 +2563,7 @@ onMounted(async () => {
 
     let productType: any = await getDictionaryAndDetail("ProductType") // 产品小类
     state.productTypeOptions = productType.result.financeDictionaryDetailList
-    moduleTableDataV2.value[0].productType = state.productTypeOptions[0]?.id
+    // moduleTableDataV2.value[0].productType = state.productTypeOptions[0]?.id
 
     let landingFactory: any = await getDictionaryAndDetail("LandingFactory") //落地工厂
     state.landingFactoryOptions = landingFactory.result.financeDictionaryDetailList
@@ -2605,12 +2605,13 @@ onMounted(async () => {
       pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
       yearChange(viewDataRes.result.projectCycle)
       productTableData.value = viewDataRes.result.productInformation
+      shareCountTable.value = viewDataRes.result.shareCount
       moduleTableDataV2.value = Object.values(
         viewDataRes.result.modelCount.reduce((result: any, item: any) => {
-          if (!result[item.kv]) {
-            result[item.kv] = []
+          if (!result[item.carModel]) {
+            result[item.carModel] = []
           }
-          result[item.kv].push(item)
+          result[item.carModel].push(item)
           return result
         }, {})
       )

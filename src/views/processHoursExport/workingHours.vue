@@ -12,12 +12,12 @@
       </div>
       <div class="u-flex u-row-between u-col-center">
         <div>
-          <el-button type="primary" @click="submitSearch">工序库导入</el-button>
+          <el-button type="primary" >工序库导入</el-button>
           <el-button type="primary" @click="addworkingHours">新增工序</el-button>
         </div>
         <div>
-          <el-button type="primary" @click="submitSearch">工序库导出</el-button>
-          <el-button type="primary" @click="submitSearch">工序库模板下载</el-button>
+          <el-button type="primary"  >工序库导出</el-button>
+          <el-button type="primary" >工序库模板下载</el-button>
         </div>
       </div>
     <div  class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
@@ -250,7 +250,9 @@ const saveLog=()=>{
 }
 
 
-
+const submitSearch=()=>{
+  
+}
 
 
 

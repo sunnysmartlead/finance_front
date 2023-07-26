@@ -165,7 +165,7 @@
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
               :timestamp="activity.timestamp">
-              <div class="u-p-10 u-border-bottom u-font-12">
+              <div class="u-p-10  u-font-12">
                 <div style="font-weight: bold;color: #909399;">
                   <span>版本号：</span>
                   <span>{{ activity.version }}</span>

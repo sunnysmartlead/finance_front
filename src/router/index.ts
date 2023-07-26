@@ -699,6 +699,14 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "物流成本录入"
         }
+      },
+      {
+        path: "/processHoursExport/standardProcess",
+        component: () => import("@/views/processHoursExport/standardProcess.vue"),
+        name: "standardProcess",
+        meta: {
+          title: "标准工艺库"
+        }
       }
     ]
   },

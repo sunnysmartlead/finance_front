@@ -102,11 +102,11 @@
                 </div>
               </div>
             </div>
-            <div class="u-width-400 u-border  u-flex u-row-left u-col-center  u-text-center">
-              <div class="u-width-100  u-p-t-2 u-p-b-2">
+            <div class="u-width-200 u-border  u-flex u-row-left u-col-center  u-text-center">
+              <div class="u-width-100  u-p-t-5 u-p-b-5">
                 <el-button type="primary" size="small">编辑</el-button>
               </div>
-              <div class="u-width-100  u-p-t-2 u-p-b-2">
+              <div class="u-width-100  u-p-t-5 u-p-b-5">
                 <el-button type="danger" size="small" @click="$emit('delPH', dataIndex)">删除</el-button>
               </div>
             </div>

@@ -53,8 +53,8 @@ export interface foundationProcedureDto {
 export interface QueryParams {
   ProcessName?: string
 }
-/** 创建用户 */
-export function createFoundationProcedure(data) {
+/** 新增 */
+export function createFoundationProcedure(data:any) {
   return request({
     url: "/api/services/app/FoundationProcedure/Create",
     method: "post",
@@ -73,8 +73,8 @@ export function getFoundationProcedureById(id: number) {
   })
 }
 
-/** 修改用户 */
-export function updateFoundationProcedure(data) {
+/** 修改 */
+export function updateFoundationProcedure(data:any) {
   return request({
     url: "/api/services/app/FoundationProcedure/Update",
     method: "put",
@@ -82,8 +82,8 @@ export function updateFoundationProcedure(data) {
   })
 }
 
-/** 用户列表 */
-export function GetListAll(data: QueryParams) {
+/** 列表 */
+export function getListAll(data: QueryParams) {
   return request({
     url: "api/services/app/FoundationProcedure/GetListAll",
     method: "get",

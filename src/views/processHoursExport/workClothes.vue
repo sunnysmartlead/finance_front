@@ -1,15 +1,17 @@
 <template>
   <div class="u-p-20">
+    <!-- 搜索表单 -->
     <div>
       <el-form :inline="true" :model="queryForm" class="demo-form-inline">
         <el-form-item label="工装名称">
-          <el-input v-model="queryForm.workClothesName" placeholder="输入工装名称" clearable />
+          <el-input v-model="queryForm.ProcessName" placeholder="输入工装名称" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitSearch">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
+    <!-- 操作按钮 -->
     <div class="u-flex u-row-between u-col-center">
       <div>
         <el-button type="primary" @click="submitSearch">工装库导入</el-button>
@@ -20,6 +22,7 @@
         <el-button type="primary" @click="submitSearch">工装库模板下载</el-button>
       </div>
     </div>
+    <!-- 数据表格区域 -->
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <div class="table-box">
         <el-table :data="tableData" style="width: 100%;" :scrollbar-always-on="false" max-height="400" border>
@@ -27,10 +30,10 @@
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.row.processIndex" v-model="scope.row.processIndex"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForprocessIndex"
-                  @change="processIndexChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in processIndexOptions" :key="item.value" :label="item.label"
+                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processNumber"
+                  filterable remote reserve-keyword :remote-method="remoteMethodForprocessNumber"
+                  @change="processNumberChange($event, scope.$index)" :loading="optionLoading">
+                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
                     :value="item.value" />
                 </el-select>
               </div>
@@ -40,8 +43,8 @@
           <el-table-column label="工序名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.row.processIndex" v-model="scope.row.processName"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForProcessName"
+                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processName" filterable
+                  remote reserve-keyword :remote-method="remoteMethodForProcessName"
                   @change="processNameChange($event, scope.$index)" :loading="optionLoading">
                   <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
                     :value="item.value" />
@@ -53,11 +56,10 @@
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.row.processIndex"
-                  v-model="scope.row.workClothesName" filterable remote reserve-keyword
-                  :remote-method="remoteMethodForworkClothesName" @change="workClothesNameChange($event, scope.$index)"
-                  :loading="optionLoading">
-                  <el-option v-for="item in workClothesNameOptions" :key="item.value" :label="item.label"
+                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.installationName"
+                  filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
+                  @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
+                  <el-option v-for="item in installationNameOptions" :key="item.value" :label="item.label"
                     :value="item.value" />
                 </el-select>
               </div>
@@ -67,11 +69,10 @@
           <el-table-column label="工装单价" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <!-- <el-input v-model="scope.row.workClothesPrice" :disabled="currentEditProcessIndex != scope.row.processIndex"
+                <!-- <el-input v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex !=scope.$index"
                       placeholder="请输入工装单价" /> -->
-                <el-input-number v-model="scope.row.workClothesPrice"
-                  :disabled="currentEditProcessIndex != scope.row.processIndex" placeholder="工装单价" :precision="2"
-                  :step="0.01" />
+                <el-input-number v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex != scope.$index"
+                  placeholder="工装单价" :precision="2" :step="0.01" />
               </div>
             </template>
           </el-table-column>
@@ -79,8 +80,8 @@
           <el-table-column label="工装供应商" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-input v-model="scope.row.workClothesProvider"
-                  :disabled="currentEditProcessIndex != scope.row.processIndex" placeholder="请输入工装供应商" />
+                <el-input v-model="scope.row.installationSupplier" :disabled="currentEditProcessIndex != scope.$index"
+                  placeholder="请输入工装供应商" />
               </div>
             </template>
           </el-table-column>
@@ -89,7 +90,7 @@
           <el-table-column label="测试线名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-input v-model="scope.row.testLineName" :disabled="currentEditProcessIndex != scope.row.processIndex"
+                <el-input v-model="scope.row.testName" :disabled="currentEditProcessIndex != scope.$index"
                   placeholder="请输入测试线名称" />
               </div>
             </template>
@@ -99,11 +100,10 @@
           <el-table-column label="测试线单价" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <!-- <el-input v-model="scope.row.workClothesPrice" :disabled="currentEditProcessIndex != scope.row.processIndex"
+                <!-- <el-input v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex !=scope.$index"
                       placeholder="请输入测试线单价" /> -->
-                <el-input-number v-model="scope.row.testLinePrice"
-                  :disabled="currentEditProcessIndex != scope.row.processIndex" placeholder="测试线单价" :precision="2"
-                  :step="0.01" />
+                <el-input-number v-model="scope.row.testPrice" :disabled="currentEditProcessIndex != scope.$index"
+                  placeholder="测试线单价" :precision="2" :step="0.01" />
               </div>
             </template>
           </el-table-column>
@@ -112,8 +112,8 @@
           <el-table-column label="工装维护人" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-input v-model="scope.row.workClothesManager"
-                  :disabled="currentEditProcessIndex != scope.row.processIndex" placeholder="请输入工装维护人" />
+                <!--  :disabled="currentEditProcessIndex !=scope.$index" -->
+                <el-input v-model="scope.row.lastModifierUserName" disabled placeholder="请输入工装维护人" />
               </div>
             </template>
           </el-table-column>
@@ -121,8 +121,8 @@
           <el-table-column label="工装维护时间" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-date-picker v-model="scope.row.workClothesManageTime"
-                  :disabled="currentEditProcessIndex != scope.row.processIndex" type="datetime"
+                <!-- :disabled="currentEditProcessIndex !=scope.$index"  -->
+                <el-date-picker v-model="scope.row.lastModificationTime" type="datetime" disabled
                   value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" :disabled-date="disabledDate"
                   placeholder="请输入工装维护时间" />
               </div>
@@ -131,7 +131,7 @@
 
           <el-table-column label="操作" :width="tableColumnWidth" align="center" fixed="right">
             <template #default="scope">
-              <template v-if="currentEditProcessIndex == scope.row.processIndex">
+              <template v-if="currentEditProcessIndex == scope.$index">
                 <el-button size="small" @click="cancelEdit(scope.$index, scope.row)">取消</el-button>
                 <el-button type="primary" @click="saveEdit(scope.$index, scope.row)" size="small">保存</el-button>
               </template>
@@ -150,8 +150,8 @@
       </div>
 
     </div>
-
-    <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
+    <!-- 日志记录 -->
+    <div v-if="baseLibLogRecords.length>0" class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <el-scrollbar :min-size="10">
         <div class="u-flex u-row-between u-col-center  u-p-r-20">
           <div>日志更新记录：</div>
@@ -199,115 +199,122 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox } from "element-plus"
+import { getListAll, createFoundationProcedure, updateFoundationProcedure } from '@/api/foundationProcedure';
+//查询关键字
 const queryForm = reactive({
-  workClothesName: ''
+  ProcessName: ''
 })
+//表格每列宽度
 const tableColumnWidth = ref(200)
-let tableData = reactive<any>([])
 
+//工装类型
+interface workClothesItem {
+  id: number,
+  processName: string,
+  processNumber: string
+  installationName: string
+  lastModifierUserName: string,
+  lastModificationTime: string,
+  installationPrice: number,
+  installationSupplier: string,
+  testName: string,
+  testPrice: number,
+}
+
+//表格数据
+let tableData = ref<any>([])
+
+//生命周期钩子
 onMounted(() => {
   initData();
 })
-
-const initData = () => {
-  tableData.push(...[
-    {
-      processIndex: '00001',
-      processName: '工序名称',
-      workClothesName: '工装名称1',
-      workClothesPrice: 100.00,
-      workClothesProvider: 'NIKE',
-      testLineName: '测试线名称1',
-      testLinePrice: 99.99,
-      workClothesManager: 'Tom',
-      workClothesManageTime: '2016-05-03 10:00:00',
-    },
-    {
-      processIndex: '00002',
-      processName: '工序名称',
-      workClothesName: '工装名称2',
-      workClothesPrice: 200.00,
-      workClothesProvider: 'Adidas',
-      testLineName: '测试线名称2',
-      testLinePrice: 88.22,
-      workClothesManager: 'Jerry',
-      workClothesManageTime: '2016-05-04 10:00:00',
-    },
-    {
-      processIndex: '00003',
-      processName: '工序名称',
-      workClothesName: '工装名称3',
-      workClothesPrice: 300.00,
-      workClothesProvider: '乔丹',
-      testLineName: '测试线名称3',
-      testLinePrice: 77.66,
-      workClothesManager: 'Jordan',
-      workClothesManageTime: '2016-05-02 10:00:00',
-    }
-  ])
+//初始化查询数据
+const initData = async () => {
+  let listResult: any = await getListAll({ ProcessName: queryForm.ProcessName })
+  if (listResult.success) {
+    tableData.value = listResult.result;
+    console.log("工装数据数量", tableData.value.length);
+  }
+  //获取日志
+  getLogRecords();
 }
-
-
+//提交搜索
 const submitSearch = () => {
-  console.log('submitSearch!')
+  console.log('submitSearch!');
+  initData();
 }
 
+//新增工装
 const addNewworkClothes = () => {
-  tableData.push({
+  tableData.value.push({
+    id: -1,
     processName: '',
-    processIndex: '',
-    workClothesName: '',
-    workClothesPrice: 0.00,
-    workClothesProvider: '',
-    testLineName: '',
-    testLinePrice: 0.00,
-    workClothesManager: '',
-    workClothesManageTime: '',
+    processNumber: '',
+    installationName: '',
+    installationPrice: 0.00,
+    installationSupplier: '',
+    testName: '',
+    testPrice: 0.00,
+    lastModifierUserName: '',
+    lastModificationTime: '',
   })
-  currentEditProcessIndex.value = "";
+  currentEditProcessIndex.value = tableData.value.length - 1;
 }
 
-interface workClothesItem {
-  processName: string,
-  processIndex: string
-  workClothesName: string
-  workClothesManager: string,
-  workClothesManageTime: string,
-  workClothesPrice: number,
-  workClothesProvider: string,
-  testLineName: string,
-  testLinePrice: number,
-}
-
-const currentEditProcessIndex = ref<string>("")
+const currentEditProcessIndex = ref(-1)
 let currentEditProcessItem = {
+  id: -1,
   processName: '',
-  processIndex: '',
-  workClothesName: '',
-  workClothesPrice: 0.00,
-  workClothesProvider: '',
-  testLineName: '',
-  testLinePrice: 0.00,
-  workClothesManager: '',
-  workClothesManageTime: '',
+  processNumber: '',
+  installationName: '',
+  installationPrice: 0.00,
+  installationSupplier: '',
+  testName: '',
+  testPrice: 0.00,
+  lastModifierUserName: '',
+  lastModificationTime: '',
 }
+//开启编辑
 const handleEdit = (index: number, row: workClothesItem) => {
   console.log(index, row);
-  currentEditProcessIndex.value = row.processIndex;
+  currentEditProcessIndex.value = index;
   currentEditProcessItem = JSON.parse(JSON.stringify(row));
 }
-
+//取消编辑
 const cancelEdit = (index: number, row: workClothesItem) => {
   console.log("currentEditProcessItem", currentEditProcessItem);
-  tableData[index] = currentEditProcessItem;
-  currentEditProcessIndex.value = "";
+  tableData.value[index] = currentEditProcessItem;
+  currentEditProcessIndex.value = -1;
 }
-
-const saveEdit = (index: number, row: workClothesItem) => {
+//新增或者修改
+const saveEdit = async (index: number, row: any) => {
   console.log("保存编辑内容", row);
-  currentEditProcessIndex.value = "";
+  currentEditProcessIndex.value = -1;
+  let tip: string = "";
+  let result: any;
+  //编辑保存
+  if (row.id > 0) {
+    console.log("编辑工装保存");
+    tip = "修改工装";
+    result = await updateFoundationProcedure(row);
+  }
+  //新增
+  else {
+    console.log("新增工装");
+    tip = "新增工装";
+    result = await createFoundationProcedure(row);
+  }
+  console.log("结果", result);
+  if (result.success == true) {
+    initData();
+  } else {
+    ElMessage({
+      type: 'error',
+      message: tip + '失败',
+    })
+  }
 }
-
+//删除
 const handleDelete = (index: number, row: workClothesItem) => {
   console.log(index, row);
   ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
@@ -315,35 +322,35 @@ const handleDelete = (index: number, row: workClothesItem) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    tableData.splice(index);
+    tableData.value.splice(index);
     ElMessage({
       type: "success",
       message: "删除成功"
     })
   })
 }
-
+//下拉选项的数据类型定义
 interface selectOptionListItem {
   value: string
   label: string
 }
+//异步请求loading
 const optionLoading = ref(false)
-
-const workClothesNameOptions = ref<selectOptionListItem[]>([])
-//模糊查询工装名称
-const remoteMethodForworkClothesName = (query: string) => {
+const installationNameOptions = ref<selectOptionListItem[]>([])
+//填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForinstallationName = (query: string) => {
   if (query) {
     optionLoading.value = true;
     setTimeout(() => {
       optionLoading.value = false;
-      workClothesNameOptions.value = getworkClothesName(query);
+      installationNameOptions.value = getinstallationName(query);
     }, 200)
   } else {
-    workClothesNameOptions.value = []
+    installationNameOptions.value = []
   }
 }
-//模糊查询工装名称
-const getworkClothesName = (keyWord: String) => {
+//查询工装名称的方法,用于渲染工装名称下拉框选项
+const getinstallationName = (keyWord: String) => {
   return [
     { label: "工装名称1" + keyWord, value: 'aaaaa' },
     { label: "工装名称2" + keyWord, value: 'bbbbb' },
@@ -352,13 +359,12 @@ const getworkClothesName = (keyWord: String) => {
   ]
 }
 //监听工装名称变化
-const workClothesNameChange = (value: any, dataIndex: any) => {
+const installationNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装名称变化了${value}`);
 }
-
-
+//工序名称下拉数据列表
 const processNameOptions = ref<selectOptionListItem[]>([])
-//模糊查询工序名称
+//填写工序名称时候的回调,需要从后台模糊查询工序名称,然后下拉选择
 const remoteMethodForProcessName = (query: string) => {
   if (query) {
     optionLoading.value = true;
@@ -370,7 +376,7 @@ const remoteMethodForProcessName = (query: string) => {
     processNameOptions.value = []
   }
 }
-//模糊查询工序名称
+//模糊查询工序名称,用于渲染工序名称下拉框选项
 const getProcessName = (keyWord: String) => {
   return [
     { label: "工序名称1" + keyWord, value: 'aaaaa' },
@@ -383,25 +389,22 @@ const getProcessName = (keyWord: String) => {
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
 }
-
-
-
 //模糊查询工装编号
-const processIndexOptions = ref<selectOptionListItem[]>([])
-//选择查询回调
-const remoteMethodForprocessIndex = (query: string) => {
+const processNumberOptions = ref<selectOptionListItem[]>([])
+//填写工装编号时候的回调,需要从后台模糊查询编号,然后下拉选择
+const remoteMethodForprocessNumber = (query: string) => {
   if (query) {
     optionLoading.value = true;
     setTimeout(() => {
       optionLoading.value = false;
-      processIndexOptions.value = getprocessIndex(query);
+      processNumberOptions.value = getprocessNumber(query);
     }, 200)
   } else {
-    processIndexOptions.value = []
+    processNumberOptions.value = []
   }
 }
-//模糊查询工装名称
-const getprocessIndex = (keyWord: String) => {
+//模糊查询工装编号的接口请求
+const getprocessNumber = (keyWord: String) => {
   return [
     { label: "工序编号1" + keyWord, value: '11111' },
     { label: "工序编号2" + keyWord, value: '22222' },
@@ -409,8 +412,8 @@ const getprocessIndex = (keyWord: String) => {
     { label: "工序编号4" + keyWord, value: '44444' }
   ]
 }
-//监听工装名称变化
-const processIndexChange = (value: any, dataIndex: any) => {
+//监听工装序号变化
+const processNumberChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);
 }
 
@@ -422,37 +425,41 @@ const timeChange = (val: string) => {
   console.log("维护时间发生了变化", val);
 }
 
-//日志更新记录相关
+//-------------------------------------日志更新记录相关代码块 start-------------------
+//#region 
 const editLogFlag = ref(false);
-const baseLibLogRecords = reactive([
-  {
-    content: '修改记录1',
-    version: '2.0.0',
-    timestamp: '2023-07-15',
-    optionUser: '张三'
-  },
-  {
-    content: '修改记录2',
-    version: '2.0.0',
-    timestamp: '2023-07-14',
-    optionUser: '张三'
-  },
-  {
-    content: '修改记录3',
-    version: '2.0.0',
-    timestamp: '2013-07-13',
-    optionUser: '张三'
-  },
-])
-const saveLog = () => {
-  console.log(baseLibLogRecords);
-  editLogFlag.value = false;
+//日志数据
+const baseLibLogRecords = ref<any>([])
+
+//获取日志
+const getLogRecords = () => {
+  baseLibLogRecords.value = [
+    {
+      content: '修改记录1',
+      version: '2.0.0',
+      timestamp: '2023-07-15',
+      optionUser: '张三'
+    },
+    {
+      content: '修改记录2',
+      version: '2.0.0',
+      timestamp: '2023-07-14',
+      optionUser: '张三'
+    },
+    {
+      content: '修改记录3',
+      version: '2.0.0',
+      timestamp: '2013-07-13',
+      optionUser: '张三'
+    },
+  ]
 }
 
-defineExpose({
-  ...toRefs(tableData),
-})
-
+//保存日志方法
+const saveLog = () => {
+  editLogFlag.value = false;
+}
+//#endregion
 </script>
 <style>
 .demo-form-inline .el-input {

@@ -65,7 +65,7 @@
                   v-model="scope.row.systemiginalCurrency[index].yearOrValueModes[iIndex].value"
                   controls-position="right"
                   :min="0"
-                  @keyup.enter="handleCalculation(scope.row, scope.$index)"
+                  @change="handleCalculation(scope.row, scope.$index)"
                 />
                 <span v-if="!scope.row.isEdit">{{
                   scope.row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5)
@@ -239,14 +239,14 @@ import { ElectronicDto } from "./data.type"
 import { ElMessage, ElMessageBox } from "element-plus"
 import {
   GetElectronic,
-  PostElectronicMaterialCalculate,
+  // PostElectronicMaterialCalculate,
   PostElectronicMaterialEntering,
   PosToriginalCurrencyCalculate
 } from "./common/request"
 import { getExchangeRate } from "./../demandApply/service"
 import getQuery from "@/utils/getQuery"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
-import { cloneDeep } from "lodash"
+import { cloneDeep, debounce } from "lodash"
 
 let Host = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()
@@ -415,7 +415,7 @@ const filterStandardMoney = (record: any, _row: any, cellValue: any) => {
 }
 
 // 根据原币计算
-const handleCalculation = async (row: any, index: number) => {
+const handleCalculation = debounce(async (row: any, index: number) => {
   try {
     tableLoading.value = true
     const { success, result } = await PosToriginalCurrencyCalculate(row)
@@ -427,7 +427,7 @@ const handleCalculation = async (row: any, index: number) => {
     tableLoading.value = false
     ElMessage.error("计算失败~")
   }
-}
+}, 300)
 </script>
 <style lang="scss">
 .card-header {

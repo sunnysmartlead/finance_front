@@ -4,7 +4,7 @@
     <div>
       <el-form :inline="true" :model="queryForm" class="demo-form-inline">
         <el-form-item label="工装名称">
-          <el-input v-model="queryForm.ProcessName" placeholder="输入工装名称" clearable />
+          <el-input v-model="queryForm.InstallationName" placeholder="输入工装名称" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitSearch">查询</el-button>
@@ -195,14 +195,14 @@
 
   </div>
 </template>
-  
+
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox } from "element-plus"
 import { getListAll, createFoundationProcedure, updateFoundationProcedure } from '@/api/foundationProcedure';
 //查询关键字
 const queryForm = reactive({
-  ProcessName: ''
+  InstallationName: ''
 })
 //表格每列宽度
 const tableColumnWidth = ref(200)
@@ -230,7 +230,7 @@ onMounted(() => {
 })
 //初始化查询数据
 const initData = async () => {
-  let listResult: any = await getListAll({ ProcessName: queryForm.ProcessName })
+  let listResult: any = await getListAll({ ProcessName: queryForm.InstallationName })
   if (listResult.success) {
     tableData.value = listResult.result;
     console.log("工装数据数量", tableData.value.length);
@@ -276,7 +276,7 @@ let currentEditProcessItem = {
 }
 //开启编辑
 const handleEdit = (index: number, row: workClothesItem) => {
-  console.log(index, row);
+  console.log(index, row.id);
   currentEditProcessIndex.value = index;
   currentEditProcessItem = JSON.parse(JSON.stringify(row));
 }
@@ -293,16 +293,18 @@ const saveEdit = async (index: number, row: any) => {
   let tip: string = "";
   let result: any;
   //编辑保存
+  console.log(row.id)
   if (row.id > 0) {
     console.log("编辑工装保存");
     tip = "修改工装";
     result = await updateFoundationProcedure(row);
   }
   //新增
-  else {
+  else if (row.id == -1) {
     console.log("新增工装");
     tip = "新增工装";
-    result = await createFoundationProcedure(row);
+    row.id = null
+    result = await createFoundationProcedure(row)
   }
   console.log("结果", result);
   if (result.success == true) {
@@ -426,7 +428,7 @@ const timeChange = (val: string) => {
 }
 
 //-------------------------------------日志更新记录相关代码块 start-------------------
-//#region 
+//#region
 const editLogFlag = ref(false);
 //日志数据
 const baseLibLogRecords = ref<any>([])

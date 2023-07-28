@@ -51,7 +51,7 @@ export interface foundationProcedureDto {
  */
 
 export interface QueryParams {
-  ProcessName?: string
+  InstallationName?: string
 }
 /** 新增 */
 export function createFoundationProcedure(data:any) {

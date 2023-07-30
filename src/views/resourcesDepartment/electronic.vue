@@ -52,6 +52,7 @@
             :class-name="`column-class-${index}`"
             :label="`${item.kv} K/Y`"
             width="175"
+            :key="`systemiginalCurrency${index}`"
           >
             <el-table-column
               v-for="(yearItem, iIndex) in item?.yearOrValueModes"
@@ -81,6 +82,7 @@
             :class-name="`column-class-${index}`"
             :label="`${item.kv} K/Y`"
             width="175"
+            :key="`inTheRate${index}`"
           >
             <el-table-column
               v-for="(yearItem, iIndex) in item?.yearOrValueModes"
@@ -96,26 +98,11 @@
                 >
                   <template #append> % </template>
                 </el-input>
-                <span v-else>{{ scope.row.inTheRate?.[index]?.yearOrValueModes?.[iIndex]?.value }}</span>
+                <span v-else>{{ (scope.row.inTheRate?.[index]?.yearOrValueModes?.[iIndex]?.value || 0) * 100 }} %</span>
               </template>
             </el-table-column>
           </el-table-column>
         </el-table-column>
-        <!-- <el-table-column prop="iginalCurrency" label="原币">
-          <el-table-column v-for="(item, index) in allColums?.iginalCurrencyYears" align="center"
-            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="175">
-            <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175" :formatter="formatDatas">
-              <template #default="scope">
-                <el-input-number v-if="scope.row.isEdit"
-                  v-model="scope.row.iginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
-                  :min="0" />
-                <span v-if="!scope.row.isEdit">{{
-                  scope.row.iginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5) }}</span>
-              </template>
-            </el-table-column>
-          </el-table-column>
-        </el-table-column> -->
         <el-table-column prop="standardMoney" label="本位币">
           <el-table-column
             v-for="(item, index) in allColums?.standardMoneyYears"
@@ -123,6 +110,7 @@
             :class-name="`column-class-${index}`"
             :label="`${item.kv} K/Y`"
             width="175"
+            :key="`standardMoney${index}`"
           >
             <el-table-column
               v-for="(yearItem, iIndex) in item?.yearOrValueModes"
@@ -146,6 +134,7 @@
             align="center"
             :label="`${item.kv} K/Y`"
             width="175"
+            :key="`rebateMoney${index}`"
           >
             <template #default="{ row }">
               <el-input-number

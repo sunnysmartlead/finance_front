@@ -1,5 +1,5 @@
 <template>
-  <div class="demand-apply">
+  <div class="demand-apply" v-loading="state.taebleLoading">
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
@@ -50,15 +50,15 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="项目名称:" prop="projectName">
-              <el-select v-model="state.quoteForm.projectName" filterable placeholder="Select" :disabled="isDisabled">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
+              <el-input v-model="state.quoteForm.projectName" placeholder="与PLM系统保持一致" :disabled="isDisabled" />
               <!-- <el-input v-model="state.quoteForm.projectName" placeholder="与PLM系统保持一致" @change="generateTitle" /> -->
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目代码(自动带出):" prop="projectCode">
-              <el-input v-model="state.quoteForm.projectCode" placeholder="与PLM系统保持一致" :disabled="isDisabled" />
+              <el-select v-model="state.quoteForm.projectCode" filterable placeholder="Select" :disabled="isDisabled">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -231,11 +231,11 @@
         </div>
         <h6 />
         <el-card header="项目走量">
-          <h6 style="margin: 0px">客户输入终端走量（台）</h6>
-          <el-row class="demand-apply__btn-container" v-if="!isDisabled">
-            <el-button type="primary" class="demand-apply__add-btn" @click="addPCS" v-havedone>新增车型</el-button>
+          <el-row justify="space-between" align="middle" style="margin: 10px 0px">
+            <h6 style="margin: 0px">客户输入终端走量K（台）</h6>
+            <el-button type="primary" @click="addPCS" v-havedone>新增车型</el-button>
           </el-row>
-          <el-table :data="pcsTableData" border>
+          <el-table :data="pcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
             <el-table-column label="车厂" width="180" fixed="left">
               <template #default="{ row }">
                 <el-input v-model="row.carFactory" :disabled="isDisabled" />
@@ -246,16 +246,12 @@
                 <el-input v-model="row.carModel" :disabled="isDisabled" />
               </template>
             </el-table-column>
-            <!-- <el-table-column label="梯度(K/Y)" width="180" fixed="left">
-            <template #default="{ row }">
-              <el-input v-model="row.kv" :disabled="isDisabled" />
-            </template>
-          </el-table-column> -->
             <el-table-column
               :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
               :key="year + ''"
               width="150"
+              :prop="`pcsYearList[${index}].quantity`"
             >
               <template #default="{ row }">
                 <!-- {{ row.pcsYearList[index] }} -->
@@ -281,7 +277,9 @@
           </el-table>
           <h6 />
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <el-form-item label="内部评估后终端走量（台)" />
+            <el-form-item>
+              <h6 style="margin: 0px">内部评估后终端走量K（台)</h6>
+            </el-form-item>
             <el-form-item label="系数K">
               <el-input
                 type="number"
@@ -292,7 +290,7 @@
               />
             </el-form-item>
           </el-form>
-          <el-table :data="interiorPcsTableData" border>
+          <el-table :data="interiorPcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
             <el-table-column label="车厂" width="180" fixed="left">
               <template #default="{ row }">
                 <el-input v-model="row.carFactory" :disabled="isDisabled" />
@@ -303,19 +301,15 @@
                 <el-input v-model="row.carModel" :disabled="isDisabled" />
               </template>
             </el-table-column>
-            <!-- <el-table-column label="梯度(K/Y)" width="180" fixed="left">
-              <template #default="{ row }">
-                <el-text class="mx-1" size="large">{{ row.kv }}</el-text>
-              </template>
-            </el-table-column> -->
             <el-table-column
               :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
               :key="year + ''"
               width="150"
+              :prop="`pcsYearList[${index}].quantity`"
             >
               <template #default="{ row }">
-                {{ row.pcsYearList[index].quantity }}
+                {{ formatThousandths(null, null, row.pcsYearList?.[index]?.quantity) }}
                 <!-- <el-input v-model="row.pcsYearList[index].quantity" @change="pcsYearQuantitySum(row, index)" /> -->
               </template>
             </el-table-column>
@@ -338,15 +332,9 @@
         </div> -->
           <div v-for="(item, Findex) in moduleTableDataV2" :key="Findex">
             <el-row justify="space-between" align="middle">
-              <h6 class="mx-1" size="large">{{ item[0].carModel }} - 模组数量</h6>
+              <h6 class="mx-1" size="large">{{ item[0].carModel }} - 模组数量K</h6>
               <div>
-                <el-button
-                  type="primary"
-                  @click="addProduct(Findex)"
-                  v-havedone
-                  v-if="!isDisabled"
-                  >新增模组</el-button
-                >
+                <el-button type="primary" @click="addProduct(Findex)" v-havedone v-if="!isDisabled">新增模组</el-button>
                 <el-button
                   type="primary"
                   @click="syncModuleTableDataV2(Findex)"
@@ -438,21 +426,23 @@
                 v-for="(year, index) in state.yearCols"
                 :key="year + ''"
                 width="180"
+                :prop="`modelCountYearList.${index}.quantity`"
               >
                 <template #default="{ row }">
-                  <el-input
+                  <!-- <el-input
                     v-model="row.modelCountYearList[index].quantity"
                     @input="modelCountYearListQuantitySum(row)"
                     oninput="value=value.replace(/[^\d]/g,'')"
                     :disabled="isDisabled"
-                  />
+                  /> -->
+                  {{ formatThousandths(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
               </el-table-column>
-              <!-- <el-table-column label="模组总量" prop="modelTotal" width="180" :formatter="formatThousandths">
+              <el-table-column label="模组总量" prop="modelTotal" width="180" :formatter="formatThousandths">
                 <template #default="{ row }">
                   {{ price(row) }}
                 </template>
-              </el-table-column> -->
+              </el-table-column>
               <el-table-column label="操作" fixed="right" width="85">
                 <template #default="{ $index }" v-if="!isDisabled">
                   <el-button
@@ -484,7 +474,18 @@
               </template>
             </el-table-column>
             <el-table-column label="像素" prop="pixel" width="180" />
-            <el-table-column label="我司角色" prop="role" width="180" />
+            <el-table-column label="我司角色" prop="role" width="180">
+              <template #default="{ row }">
+                <el-select v-model="row.role" multiple placeholder="我司角色" disabled>
+                  <el-option
+                    v-for="item in state.roleOptions"
+                    :key="item.id"
+                    :label="item.displayName"
+                    :value="item.id"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
             <el-table-column label="市场份额" prop="marketShare" width="180" />
             <el-table-column label="模组搭载率" prop="moduleCarryingRate" width="180" />
             <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" />
@@ -513,11 +514,11 @@
           <h6 />
           <el-table :data="kvPricingData" border style="width: 600px">
             <el-table-column type="index" label="梯度序号" width="100" />
-            <el-table-column prop="kv" label="梯度" width="250">
+            <el-table-column prop="gradientValue" label="梯度" width="250">
               <template #default="{ row }">
                 <el-input-number
                   controls-position="right"
-                  v-model="row.kv"
+                  v-model="row.gradientValue"
                   :disabled="isDisabled || !state.quoteForm.isHasGradient"
                 />
               </template>
@@ -536,8 +537,8 @@
             </el-table-column>
           </el-table>
           <div v-for="(item, Findex) in gradientModelTable" :key="Findex">
-            <p class="mx-1" size="large">{{ item.kv }} (K/Y)</p>
-            <el-table :data="item.children" style="width: 100%" border>
+            <p class="mx-1" size="large">{{ item[0].gradientValue?.toFixed(2) }} (K/Y)</p>
+            <el-table :data="item" style="width: 100%" border>
               <el-table-column type="index" width="80" label="序号" />
               <el-table-column label="客户零件号" prop="number" width="180" />
               <el-table-column label="子项目代码" prop="code" width="180" />
@@ -561,7 +562,12 @@
                 width="180"
               >
                 <template #default="{ row }">
-                  {{ row.gradientModelYear[index].count }}
+                  {{ formatThousandths(null, null, row.gradientModelYear?.[index]?.count) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="rowSum" label="合计" width="150">
+                <template #default="{ row }">
+                  {{ formatThousandths(null, null, getRowSum(row, "gradientModelYear", "count")) }}
                 </template>
               </el-table-column>
             </el-table>
@@ -1301,7 +1307,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onMounted, toRefs, watch, computed } from "vue"
-import { productTypeMap, Pcs, YearListItem, modelCount, updateFrequency } from "./data.type"
+import { productTypeMap, Pcs, YearListItem, updateFrequency } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 // import { Search } from "@element-plus/icons-vue"
@@ -1389,10 +1395,10 @@ let userStorage = window.localStorage.getItem("user")
 let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
 let isEdit = false //是否查看
 let saveloading = ref(false)
-const getRowSum = (row: any) => {
-  if (Array.isArray(row.pcsYearList) && row.pcsYearList.length > 0) {
-    return row.pcsYearList
-      .map((item: any) => item.quantity)
+const getRowSum = (row: any, key?: string, childkey?: string) => {
+  if (Array.isArray(row[key || "pcsYearList"]) && row[key || "pcsYearList"].length > 0) {
+    return row[key || "pcsYearList"]
+      .map((item: any) => item[childkey || "quantity"])
       .reduce((prev: any, curr: any) => Number(prev) + Number(curr))
   }
 }
@@ -1401,6 +1407,7 @@ const kvPricingData = ref<any>([])
 const shareCountTable = ref<any>([])
 
 const state = reactive({
+  taebleLoading: false,
   quoteForm: {
     isHasNre: false,
     isHasGradient: null,
@@ -1495,11 +1502,43 @@ const state = reactive({
   ]
 })
 
+const getPcsTableDatSummaries = (param: any) => {
+  const { columns, data: tempData } = param
+  const sums: string[] = []
+  columns.forEach((column: any, index: number) => {
+    if (index === 0) {
+      sums[index] = "合计"
+      return
+    }
+    const values = tempData.map((_item: any) => {
+      const val = eval("_item." + column.property)
+      return Number(val)
+    })
+    if (!values.every((value: any) => Number.isNaN(value))) {
+      sums[index] = `${values
+        .reduce((prev: any, curr: any) => {
+          const value = Number(curr)
+          if (!Number.isNaN(value)) {
+            return prev + curr
+          } else {
+            return prev
+          }
+        }, 0)
+        .toFixed(2)
+        .replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")}`
+    } else {
+      sums[index] = ""
+    }
+  })
+
+  return sums
+}
+
 // 车型模组合计
 const moduleTableTotal = computed(() => {
-  console.log("更新了【moduleTableTotal】")
   const flatData = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
   const filterData = uniq(map(flatData, (c) => c?.product))
+  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   shareCountTable.value = map(filterData, (item, index: number) => ({
     count: shareCountTable.value?.[index]?.count || 0,
     name: item
@@ -1508,16 +1547,22 @@ const moduleTableTotal = computed(() => {
 
   flatData.forEach((item: any) => {
     const currentData = productName.get(item.product) || {}
-    if (item.product && _.isEmpty(productName.get(item.product))) {
-      productName.set(item.product, {
+    if (item.product && _.isEmpty(productName.get(`${item.product}-${item.pixel}-${item.productType}`))) {
+      productName.set(`${item.product}-${item.pixel}-${item.productType}`, {
         ...item,
-        productType: [item.productType]
+        productType: [item.productType],
+        role: [item.role]
       })
     }
 
-    if (currentData?.product && currentData?.product === item?.product) {
+    if (
+      currentData?.product &&
+      currentData?.product === item?.product &&
+      currentData?.pixel === item?.pixel &&
+      currentData?.productType === item?.productType
+    ) {
       const carModal = compareString(currentData.carModel, item.carModel)
-      productName.set(item.product, {
+      productName.set(`${item.product}-${item.pixel}-${item.productType}`, {
         ...currentData,
         carModal,
         partNumber: compareString(currentData.partNumber, item.partNumber),
@@ -1546,48 +1591,7 @@ const moduleTableTotal = computed(() => {
   return filterProductModuleTotal
 })
 
-const gradientModelTable = computed(() => {
-  if (!kvPricingData.value.length) return []
-  const flatData = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
-  const productName = new Map()
-
-  flatData.forEach((item: any) => {
-    const currentData = productName.get(item.product) || {}
-    if (item.product && _.isEmpty(currentData)) {
-      productName.set(item.product, {
-        ...item,
-        productType: [item.productType]
-      })
-    }
-
-    if (currentData?.product && currentData?.product === item?.product) {
-      productName.set(item.product, {
-        product: currentData.product,
-        partNumber: compareString(currentData.partNumber, item.partNumber),
-        code: compareString(currentData.code, item.code),
-        productType: compareString(currentData.productType, item.productType),
-        modelCountYearList: currentData.modelCountYearList
-      })
-    }
-  })
-
-  const filterProductModuleTotal = [...productName.values()]
-  const filterData = kvPricingData.value.map((item: any) => {
-    return {
-      kv: item.kv,
-      children: map(filterProductModuleTotal, (c, index: number) => ({
-        index,
-        name: c.product,
-        number: c.partNumber,
-        code: c.code,
-        type: c.productType,
-        gradientModelYear: map(c.modelCountYearList, (y) => ({ year: y.year, count: item.kv }))
-      }))
-    }
-  })
-  console.log(filterData, "[filterData]")
-  return filterData
-})
+const gradientModelTable = ref<any>([])
 
 const fileList = ref<UploadUserFile[]>([])
 const yearCount = ref(0)
@@ -1606,16 +1610,6 @@ const pcsYearQuantitySum = (row: Pcs, count: number) => {
   })
   row.rowSum = rowSum
 }
-const oninputFun = (row: Pcs, count: number) => {
-  var numReg = /[^\d]/g
-  var numRe = new RegExp(numReg)
-  row.pcsYearList.forEach((item: any, index: number) => {
-    if (numRe.test(item.quantity) && count == index) {
-      ElMessage.warning("不能输入小数以及特殊符号!")
-      item.quantity = 0
-    }
-  })
-}
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (cellValue) {
@@ -1625,14 +1619,6 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   }
 }
 
-const modelCountYearListQuantitySum = (row: modelCount) => {
-  console.log("暂时功能先去掉", row)
-  // let sum = 0
-  // row.modelCountYearList.forEach((item: any) => {
-  //   sum = sum + Number(item.quantity)
-  // })
-  // row.modelTotal = sum
-}
 const save = async (formEl: FormInstance | undefined) => {
   let { auditFlowId } = route.query
   // 模组走量不能为0
@@ -1669,7 +1655,7 @@ const save = async (formEl: FormInstance | undefined) => {
     return
   }
   if (!formEl) return
-  console.log(state.quoteForm.sorFile, '{state.quoteForm.sorFile}')
+  console.log(state.quoteForm.sorFile, "{state.quoteForm.sorFile}")
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       saveloading.value = true
@@ -1692,8 +1678,8 @@ const save = async (formEl: FormInstance | undefined) => {
         let res: any = await saveApplyInfo({
           ...quoteForm,
           shareCount: shareCountTable.value,
-          gradient: kvPricingData.value,
-          gradientModel: gradientModelTable.value,
+          gradient: kvPricingData.value.map((v: any, index: number) => ({ ...v, index })),
+          gradientModel: gradientModelTable.value
         })
         console.log(quoteForm, "quoteForm")
         if (res.success) {
@@ -1716,7 +1702,7 @@ const save = async (formEl: FormInstance | undefined) => {
     }
   })
 }
-//
+
 let specimenData: any = ref([
   {
     name: "",
@@ -2005,14 +1991,35 @@ watch(
 //监听终端走量同步内部评估后的终端走量
 watch(
   () => pcsTableData.value,
-  (val, old) => {
+  (val, _old) => {
+    const rowOneData = map(val[0].pcsYearList, (v: any) => ({
+      ...v,
+      quantity: Number(v.quantity || 0) * state.quoteForm.kValue
+    }))
+    console.log(rowOneData, "[rowOneDataOne]")
     val.forEach((item: any, index: number) => {
       var itemNew = _.cloneDeep(item)
       itemNew.pcsType = 1
-      // itemNew.pcsYearList.forEach((pro: any) => {
-      //   pro.quantity = Number(pro.quantity) * state.quoteForm.kValue
-      // })
+      itemNew.pcsYearList.forEach((pro: any, i: number) => {
+        pro.quantity = (Number(pro.quantity || 0) * state.quoteForm.kValue).toFixed(2)
+        const rowOneItem = rowOneData[i]
+        if (index > 0) {
+          rowOneItem.quantity += Number(pro.quantity)
+        }
+      })
       interiorPcsTableData.value[index] = itemNew
+    })
+    moduleTableDataV2.value.forEach((moduleTable: any) => {
+      moduleTable?.forEach((moduleItem: any) => {
+        moduleItem?.modelCountYearList?.forEach((pscY: any, pscYIndex: number) => {
+          const { quantity } = rowOneData[pscYIndex] || {}
+          pscY.quantity =
+            (moduleItem.moduleCarryingRate / 100) *
+            moduleItem.singleCarProductsQuantity *
+            moduleItem.marketShare *
+            quantity
+        })
+      })
     })
   },
   { deep: true }
@@ -2026,7 +2033,7 @@ watch(
       // itemNew.kv = item.kv * val
       itemNew.pcsType = 1
       itemNew.pcsYearList.forEach((pro: any) => {
-        pro.quantity = pro.quantity * val
+        pro.quantity = (pro.quantity * val).toFixed(2)
       })
       interiorPcsTableData.value[index] = itemNew
     })
@@ -2036,7 +2043,7 @@ watch(
 //监听终端走量的车型
 watch(
   () => interiorPcsTableData.value.map((item: any) => item.carModel),
-  (val, old) => {
+  (val, _old) => {
     console.log(val, "val123")
     let modelCountYear = state.yearCols.map((item: any, index: number) => {
       return {
@@ -2045,7 +2052,6 @@ watch(
         upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
       }
     })
-    //moduleTableDataV2.value = []
     val.forEach((item: any, index: number) => {
       if (moduleTableDataV2.value[index]) {
         moduleTableDataV2.value[index]?.forEach((pr: any) => {
@@ -2089,24 +2095,45 @@ watch(
 )
 
 watch(
-  () => state.quoteForm.isHasGradient,
+  () => [state.quoteForm.isHasGradient, moduleTableTotal.value],
   (val) => {
-    if (!val) {
+    const isHasGradient = val[0]
+    const moduleTableTotalData = val[1]
+    if (!isHasGradient && !_.isEmpty(moduleTableTotalData)) {
       const rowOne = moduleTableTotal.value[0]
       const yearTotal = state.yearCols.length
       const countData = rowOne.modelCountYearList.map((item: any) => item.quantity || 0)
       const totalData = countData.reduce((a: number, b: number) => a + b)
-      kvPricingData.value = [{ kv: totalData / yearTotal }]
-    } else {
-      return [{ kv: 0 }]
+      kvPricingData.value = [{ gradientValue: Number((totalData / yearTotal).toFixed(2)) }]
     }
   }
 )
 
+watch(
+  () => [moduleTableTotal, kvPricingData.value],
+  (val) => {
+    const [moduleTableTotalData, kvPricingList] = val
+    if (kvPricingList.length && !_.isEmpty(moduleTableTotalData)) {
+      const filterData = _.cloneDeep(kvPricingList)
+      filterData.forEach((item: any, i: number) => {
+        filterData[i] = map(moduleTableTotalData.value, (c, index: number) => ({
+          gradientValue: item.gradientValue,
+          index,
+          name: c.product,
+          number: c.partNumber,
+          code: c.code,
+          type: c.productType,
+          gradientModelYear: map(c.modelCountYearList, (y) => ({ year: y.year, count: item.gradientValue }))
+        }))
+      })
+      gradientModelTable.value = filterData
+    }
+  }
+)
 
 const compareString = (a: string, b: string) => {
   if (_.isArray(a)) {
-    return uniq([...(a || []), b])
+    return uniq([...(a || []), b]).filter((v) => !!v)
   } else if (a === b) {
     return [a]
   }
@@ -2114,51 +2141,32 @@ const compareString = (a: string, b: string) => {
 }
 
 const targetPriceCalcul = () => {
-  //判断有没有齐套
   customerTargetPrice.value.forEach((item: any) => {
-    if (item.product == "齐套") {
-      item.targetPrice = 0
-      customerTargetPrice.value
-        .filter((pro: any) => pro.carModel == item.carModel && pro.product != "齐套")
-        .forEach((customerTarget: any) => {
-          moduleTableDataV2.value.forEach((moduleTable: any) => {
-            let value = moduleTable.filter((p: any) => p.carModel == customerTarget.carModel)
-            value.forEach((valueitem: any) => {
-              if (valueitem.product == customerTarget.product) {
-                item.targetPrice += customerTarget.targetPrice * valueitem.singleCarProductsQuantity
-              }
-            })
+    item.targetPrice = 0
+    customerTargetPrice.value
+      .filter((pro: any) => pro.carModel === item.carModel)
+      .forEach((customerTarget: any) => {
+        moduleTableDataV2.value.forEach((moduleTable: any) => {
+          let value = moduleTable.filter((p: any) => p.carModel == customerTarget.carModel)
+          value.forEach((valueitem: any) => {
+            if (valueitem.product == customerTarget.product) {
+              item.targetPrice += customerTarget.targetPrice * valueitem.singleCarProductsQuantity
+            }
           })
         })
-    }
+      })
   })
 }
 
-// const price = (row: any) => {
-//   let modelTotal = 0
-//   let interiorPcsTableDataValue = interiorPcsTableData.value.filter((p: any) => p.kv == row.kv)
-//   row.modelCountYearList.forEach((item: any, index: any) => {
-//     let yearValue = interiorPcsTableDataValue[0]?.pcsYearList.filter(
-//       (p: any) => p.year == item.year && p.upDown == item.upDown
-//     )
-//     if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && yearValue) {
-//       item.quantity = Math.round(
-//         (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * yearValue[0].quantity) / 10000
-//       )
-//       modelTotal += item.quantity
-//     }
-//   })
-//   return modelTotal
-//   // let carAnnualTotal = getRowSum(interiorPcsTableDataValue[0])
-//   // console.log(Number(carAnnualTotal),"carAnnualTotal")
-//   // if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && carAnnualTotal) {
-//   //   return (row.modelTotal = Math.round(
-//   //     (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * Number(carAnnualTotal)) / 10000
-//   //   ))
-//   // }
-// }
+const price = (row: any) => {
+  let modelTotal = 0
+  row.modelCountYearList.forEach((item: any) => {
+    modelTotal += item.quantity
+  })
+  return modelTotal
+}
 
-const productChange = (value: string) => {
+const productChange = (_value: string) => {
   let product: any = []
   moduleTableDataV2.value.forEach((item: any) => {
     product.push(item.map((p: any) => p.product))
@@ -2223,19 +2231,19 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
     })
   }
 }
-const handleFileChange: UploadProps["onChange"] = (file, uploadFiles) => {
+const handleFileChange: UploadProps["onChange"] = (_file, uploadFiles) => {
   console.log(uploadFiles)
   console.log(fileList, "handleFileChange")
 }
 
-const syncModuleTableDataV2 = (index: number) => {
+const syncModuleTableDataV2 = (_index: number) => {
   const temp = _.cloneDeep(moduleTableDataV2.value[0] || {})
   console.log(temp, "syncModuleTableDataV2")
-  moduleTableDataV2.value = moduleTableDataV2.value.map((val: any, i: number, arr: any[]) => {
-   if (i !== 0) {
-      return map(temp, item => ({ ...item, carModel: val[0].carModel }))
-   }
-   return val
+  moduleTableDataV2.value = moduleTableDataV2.value.map((val: any, i: number, _arr: any[]) => {
+    if (i !== 0) {
+      return map(temp, (item) => ({ ...item, carModel: val[0].carModel }))
+    }
+    return val
   })
 }
 
@@ -2393,12 +2401,12 @@ const customerTargetPriceTable = () => {
   {
     customerTargetPrice.value = []
     //获取所有梯度
-    let gradientAll = kvPricingData.value.map((item: any) => item.kv)
+    let gradientAll = kvPricingData.value.map((item: any) => item.gradientValue)
     gradientAll.forEach((item: any) => {
       //获取所有产品名称
       let productAll: string[] = []
       moduleTableDataV2.value.forEach((moduleTable: any) => {
-        let value = moduleTable.filter((p: any) => p.kv == item)
+        let value = moduleTable.filter((p: any) => p.gradientValue == item)
         value.forEach((valueitem: any) => {
           productAll.push(valueitem.product)
         })
@@ -2406,7 +2414,7 @@ const customerTargetPriceTable = () => {
       productAll = [...new Set(productAll)]
       //判断产品名称中是否 前视 测试 后视 都在
       let isproductName = productAll.every(
-        (item: any) => productAll.includes("前视") && productAll.includes("侧视") && productAll.includes("后视")
+        (_item: any) => productAll.includes("前视") && productAll.includes("侧视") && productAll.includes("后视")
       )
       productAll.forEach((pro: any) => {
         let prop = {
@@ -2537,6 +2545,7 @@ onMounted(async () => {
   state.quoteForm.drafterNumber = userInfo.userNumber || "未成功获取"
   state.quoteForm.draftingCompany = userInfo.userCompany?.name || "未成功获取"
   state.quoteForm.draftingDepartment = userInfo.userDepartment?.name || "未成功获取"
+  state.taebleLoading = true
   // 设置单据编号
   setNumber()
   try {
@@ -2606,6 +2615,7 @@ onMounted(async () => {
       yearChange(viewDataRes.result.projectCycle)
       productTableData.value = viewDataRes.result.productInformation
       shareCountTable.value = viewDataRes.result.shareCount
+      gradientModelTable.value = viewDataRes.result.gradientModel
       moduleTableDataV2.value = Object.values(
         viewDataRes.result.modelCount.reduce((result: any, item: any) => {
           if (!result[item.carModel]) {
@@ -2631,16 +2641,18 @@ onMounted(async () => {
       })
       generateCustomTable()
     }
+
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
     }, 2000)
   }
+  state.taebleLoading = false
 })
 
 const handleChangekvPricingData = (type: string, index?: number) => {
   if (type === "add") {
-    kvPricingData.value.push({ kv: 0 })
+    kvPricingData.value.push({ gradientValue: 0, index: 0 })
   } else {
     kvPricingData.value = kvPricingData.value.splice(index, 1)
   }

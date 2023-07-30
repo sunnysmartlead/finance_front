@@ -118,7 +118,7 @@
                   >
                     <template #append> % </template>
                   </el-input>
-                  <span v-else>{{ scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value }}</span>
+                  <span v-else>{{ (scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value || 0) * 100 }} %</span>
                 </template>
               </el-table-column>
             </el-table-column>
@@ -271,13 +271,11 @@ import {
   PostStructuralMemberEntering,
   ToriginalCurrencyStructural,
   PostStructuralMaterialCalculate,
-  GetProjectGoQuantity
 } from "./common/request"
 import { useRouter } from "vue-router"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 let Host = "StructPriceInput"
 import { getExchangeRate } from "./../demandApply/service"
-import { getYears } from "../pmDepartment/service"
 import getQuery from "@/utils/getQuery"
 import { useUserStore } from "@/store/modules/user"
 import { ElMessage, ElMessageBox } from "element-plus"
@@ -298,10 +296,6 @@ const { auditFlowId, productId }: any = getQuery()
 
 // 结构料 - table数据
 const constructionBomList = ref<any>([])
-
-const allStandardMoney = computed(() => {
-  return 1000
-})
 
 const exchangeSelectOptions = ref<any>([])
 

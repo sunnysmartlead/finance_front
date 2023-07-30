@@ -34,6 +34,9 @@
         <el-table-column label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row }">
             <el-input v-model="row.projectName" />
+            <el-select v-model="row.projectName" multiple placeholder="我司角色" disabled>
+              <el-option v-for="item in data.projectList" :key="item.id" :label="item.displayName" :value="item.id" />
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column label="是否指定第三方" width="180">
@@ -44,17 +47,11 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="单价" width="180">
-          <template #default="{ row }">
+        <el-table-column label="单价" prop="unitPrice" width="180">
+          <!-- <template #default="{ row }">
             <el-input v-model="row.unitPrice" />
-          </template>
+          </template> -->
         </el-table-column>
-        <!-- <el-table-column label="数量" width="180">
-          <template #default="{ row }">
-            <el-input-number v-model="row.count" controls-position="right" :min="0" />
-          </template>
-        </el-table-column> -->
-
         <el-table-column label="时间-摸底" width="180">
           <template #default="{ row }">
             <el-input-number :min="0" controls-position="right" v-model="row.dataThoroughly" />
@@ -70,10 +67,10 @@
             <el-input-number :min="0" controls-position="right" v-model="row.dataPV" />
           </template>
         </el-table-column>
-        <el-table-column label="单位" width="180">
-          <template #default="{ row }">
+        <el-table-column label="计价单位" prop="unit" width="180">
+          <!-- <template #default="{ row }">
             <el-input v-model="row.unit" />
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="总费用" width="180">
           <template #default="{ row }">
@@ -110,7 +107,7 @@ import { ElMessage } from "element-plus"
 import { downloadFileExcel } from "@/utils"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
-let Host: string = "NreInputTest"
+let Host = "NreInputTest"
 const { auditFlowId, productId }: any = getQuery()
 
 /**
@@ -119,8 +116,10 @@ const { auditFlowId, productId }: any = getQuery()
 const fileList = ref<UploadUserFile[]>([])
 const data = reactive<{
   experimentItems: QADepartmentTestModel[]
+  projectList: any[]
 }>({
-  experimentItems: []
+  experimentItems: [],
+  projectList: []
 })
 
 const deleteExperimentItemsData = (i: number) => {

@@ -169,8 +169,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/resourcesDepartment/index",
     component: Layout,
     meta: {
-      title: "BOM单价录入",
-      hidden: true
+      title: "BOM单价录入"
+      // hidden: true
     },
     children: [
       {

@@ -30,13 +30,11 @@
         :summary-method="getQaTestDepartmentsSummaries"
         show-summary
       >
-        <el-table-column type="index" width="50" />
+        <el-table-column type="index" label="序号" width="50" />
         <el-table-column label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.projectName" />
-            <el-select v-model="row.projectName" multiple placeholder="我司角色" disabled>
-              <el-option v-for="item in data.projectList" :key="item.id" :label="item.displayName" :value="item.id" />
-            </el-select>
+            <!-- <el-input v-model="row.projectName" /> -->
+            <SelectSearch :value="row.projectName" />
           </template>
         </el-table-column>
         <el-table-column label="是否指定第三方" width="180">
@@ -107,6 +105,8 @@ import { ElMessage } from "element-plus"
 import { downloadFileExcel } from "@/utils"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
+import SelectSearch from './components/SelectSearch/index.vue'
+
 let Host = "NreInputTest"
 const { auditFlowId, productId }: any = getQuery()
 

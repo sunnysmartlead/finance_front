@@ -537,8 +537,8 @@
             </el-table-column>
           </el-table>
           <div v-for="(item, Findex) in gradientModelTable" :key="Findex">
-            <p class="mx-1" size="large">{{ item[0].gradientValue?.toFixed(2) }} (K/Y)</p>
-            <el-table :data="item" style="width: 100%" border>
+            <p class="mx-1" size="large">{{ item.kv }} (K/Y)</p>
+            <el-table :data="item.children" style="width: 100%" border>
               <el-table-column type="index" width="80" label="序号" />
               <el-table-column label="客户零件号" prop="number" width="180" />
               <el-table-column label="子项目代码" prop="code" width="180" />
@@ -1662,6 +1662,7 @@ const save = async (formEl: FormInstance | undefined) => {
       let { quoteForm } = state
       quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
       quoteForm.sample = specimenData //样品
+      console.log(interiorPcsTableData.value, "[interiorPcsTableData.value]")
       quoteForm.pcs = [...pcsTableData.value, ...interiorPcsTableData.value] //终端走量（PCS）
       let prop = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
       prop.forEach((item: any, index: number) => {
@@ -1670,18 +1671,19 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.modelCount = prop
       console.log(quoteForm.modelCount, "quoteForm.modelCount")
       quoteForm.requirement = requireTableData // 要求
-      quoteForm.productInformation = productTableData // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
+      quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
       // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
-
+      let gradientModel = map(gradientModelTable.value, (item: any) =>
+        map(item.children, (v) => ({ ...v, type: v.type?.join(",") }))
+      ).flat(2)
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
           shareCount: shareCountTable.value,
           gradient: kvPricingData.value.map((v: any, index: number) => ({ ...v, index })),
-          gradientModel: gradientModelTable.value
+          gradientModel
         })
-        console.log(quoteForm, "quoteForm")
         if (res.success) {
           ElMessage({
             type: "success",
@@ -1693,6 +1695,7 @@ const save = async (formEl: FormInstance | undefined) => {
           saveloading.value = false
         }
       } catch (error) {
+        console.log(error, "[参数错误]")
         saveloading.value = false
       }
     } else {
@@ -1941,7 +1944,7 @@ watch(
         irow.modelCountYearList = val.map((item: any, index: number) => {
           return {
             year: item,
-            quantity: null,
+            quantity: 0,
             upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
           }
         })
@@ -2001,7 +2004,7 @@ watch(
       var itemNew = _.cloneDeep(item)
       itemNew.pcsType = 1
       itemNew.pcsYearList.forEach((pro: any, i: number) => {
-        pro.quantity = (Number(pro.quantity || 0) * state.quoteForm.kValue).toFixed(2)
+        pro.quantity = Math.floor(Number(pro.quantity || 0) * state.quoteForm.kValue)
         const rowOneItem = rowOneData[i]
         if (index > 0) {
           rowOneItem.quantity += Number(pro.quantity)
@@ -2013,14 +2016,16 @@ watch(
       moduleTable?.forEach((moduleItem: any) => {
         moduleItem?.modelCountYearList?.forEach((pscY: any, pscYIndex: number) => {
           const { quantity } = rowOneData[pscYIndex] || {}
-          pscY.quantity =
+          pscY.quantity = Math.floor(
             (moduleItem.moduleCarryingRate / 100) *
-            moduleItem.singleCarProductsQuantity *
-            moduleItem.marketShare *
-            quantity
+              moduleItem.singleCarProductsQuantity *
+              moduleItem.marketShare *
+              quantity
+          )
         })
       })
     })
+    console.log(moduleTableDataV2.value, "{moduleTableDataV2.value}")
   },
   { deep: true }
 )
@@ -2033,7 +2038,7 @@ watch(
       // itemNew.kv = item.kv * val
       itemNew.pcsType = 1
       itemNew.pcsYearList.forEach((pro: any) => {
-        pro.quantity = (pro.quantity * val).toFixed(2)
+        pro.quantity = Math.floor(pro.quantity * val)
       })
       interiorPcsTableData.value[index] = itemNew
     })
@@ -2110,22 +2115,28 @@ watch(
 )
 
 watch(
-  () => [moduleTableTotal, kvPricingData.value],
+  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue)],
   (val) => {
-    const [moduleTableTotalData, kvPricingList] = val
-    if (kvPricingList.length && !_.isEmpty(moduleTableTotalData)) {
-      const filterData = _.cloneDeep(kvPricingList)
-      filterData.forEach((item: any, i: number) => {
-        filterData[i] = map(moduleTableTotalData.value, (c, index: number) => ({
-          gradientValue: item.gradientValue,
-          index,
-          name: c.product,
-          number: c.partNumber,
-          code: c.code,
-          type: c.productType,
-          gradientModelYear: map(c.modelCountYearList, (y) => ({ year: y.year, count: item.gradientValue }))
-        }))
+    const [moduleTableTotalData, kvList] = val
+    console.log(kvList, "kvList")
+    if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
+      let filterData = _.cloneDeep(kvList)
+
+      filterData = filterData.map((item: any) => {
+        return {
+          kv: item,
+          children: map(moduleTableTotalData, (c, index: number) => ({
+            gradientValue: item,
+            index,
+            name: c.product,
+            number: c.partNumber,
+            code: c.code,
+            type: c.productType,
+            gradientModelYear: map(c.modelCountYearList, (y) => ({ year: y.year, count: item }))
+          }))
+        }
       })
+      console.log(filterData, "[filterDatafilterData]")
       gradientModelTable.value = filterData
     }
   }
@@ -2613,6 +2624,7 @@ onMounted(async () => {
       state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
       pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
       yearChange(viewDataRes.result.projectCycle)
+
       productTableData.value = viewDataRes.result.productInformation
       shareCountTable.value = viewDataRes.result.shareCount
       gradientModelTable.value = viewDataRes.result.gradientModel

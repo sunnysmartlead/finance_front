@@ -199,7 +199,8 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox } from "element-plus"
-import { getListAll, createFoundationProcedure, updateFoundationProcedure } from '@/api/foundationProcedure';
+import { getListAll, createFoundationProcedure, updateFoundationProcedure, deleteFoundationProcedure} from '@/api/foundationProcedure';
+import {deleteFoundationEmc} from "@/api/foundationEmc";
 //查询关键字
 const queryForm = reactive({
   InstallationName: ''
@@ -316,20 +317,22 @@ const saveEdit = async (index: number, row: any) => {
     })
   }
 }
-//删除
-const handleDelete = (index: number, row: workClothesItem) => {
-  console.log(index, row);
-  ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async () => {
-    tableData.value.splice(index);
-    ElMessage({
-      type: "success",
-      message: "删除成功"
+
+/** 删除按钮操作 */
+function handleDelete(index: number, row: workClothesItem) {
+  const postIds = row.id
+  ElMessageBox.confirm("是否确认删除!")
+    .then(function () {
+      return deleteFoundationProcedure(postIds)
     })
-  })
+    .then(() => {
+      initData()
+      ElMessage({
+        type: "success",
+        message: "删除成功"
+      })
+    })
+    .catch(() => {})
 }
 //下拉选项的数据类型定义
 interface selectOptionListItem {

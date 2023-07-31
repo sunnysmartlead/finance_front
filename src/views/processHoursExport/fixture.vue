@@ -1,9 +1,9 @@
 <template>
     <div class="u-p-20">
         <div>
-            <el-form :inline="true" :model="data.queryForm" class="demo-form-inline">
+            <el-form :inline="true" :model="queryForm" class="demo-form-inline">
                 <el-form-item label="设备名称">
-                    <el-input v-model="data.queryForm.deviceName" placeholder="输入设备名称" clearable />
+                    <el-input v-model="queryForm.deviceName" placeholder="输入设备名称" clearable />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitSearch">查询</el-button>
@@ -32,7 +32,7 @@
                     <div class="u-text-center">
                         <div class="u-text-center u-border  u-p-t-5 u-p-b-5" style="background-color:#79bbff;">治具部分</div>
                         <div class="u-flex u-row-left u-col-center  u-text-center">
-                            <div v-for="index in data.tableData[0]?.deviceList.length" :key="index"
+                            <div v-for="index in data.tableData[0]?.fixtureList.length" :key="index"
                                 class="u-flex u-row-left u-col-center u-text-center">
                                 <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
                                     <span>治具{{ index }}名称</span>
@@ -60,14 +60,14 @@
                         <div class="u-width-300 u-border u-height-60"><span>操作</span></div>
                     </div>
                 </div>
-                <template v-if="data.tableData?.length > 0">
+                <template v-if="data.tableData.length > 0">
                     <div>
                         <div v-for="(dataItem, dataIndex) in data.tableData" :key="dataIndex"
                             class="u-flex u-row-left u-col-center u-text-center">
                             <div class="u-flex u-row-left u-col-center  u-text-center">
                                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                                 <div class="u-width-150 u-border">
-                                    <el-input v-model="dataItem.processIndex" style="border: none;"
+                                    <el-input v-model="dataItem.processNumber" style="border: none;"
                                         :disabled="data.currentEditProcessIndex != dataIndex" />
                                 </div>
                                 <div class="u-width-150 u-border">
@@ -78,25 +78,22 @@
 
                             <div class="u-text-center">
                                 <div class="u-flex u-row-left u-col-center  u-text-center">
-                                    <div v-for="(deviceItem, deviceIndex) in dataItem.deviceList" :key="deviceIndex"
+                                    <div v-for="(deviceItem, deviceIndex) in dataItem.fixtureList" :key="deviceIndex"
                                         class="u-flex u-row-left u-col-center u-text-center">
                                         <div class="u-width-200   u-border">
-                                            <el-input v-model="deviceItem.deviceName"
+                                            <el-input v-model="deviceItem.fixtureName"
                                                 :disabled="data.currentEditProcessIndex != dataIndex" />
                                         </div>
                                         <div class="u-width-200   u-border">
-                                          <el-select v-model="deviceItem.deviceStatus"  :disabled="data.currentEditProcessIndex != dataIndex" placeholder="选择"
-                                                     style="width:150px;">
-                                            <el-option label="正常" value="正常" />
-                                            <el-option label="异常" value="异常" />
-                                          </el-select>
+                                          <el-input v-model="deviceItem.fixtureState"
+                                                    :disabled="data.currentEditProcessIndex != dataIndex" />
                                         </div>
                                         <div class="u-width-200   u-border">
-                                            <el-input-number v-model="deviceItem.price" :min="1" :precision="2"
+                                            <el-input-number v-model="deviceItem.fixturePrice" :min="1" :precision="2"
                                                 :disabled="data.currentEditProcessIndex != dataIndex" :step="0.01" />
                                         </div>
                                         <div class="u-width-200   u-border">
-                                            <el-input v-model="deviceItem.deviceProvider"
+                                            <el-input v-model="deviceItem.fixtureProvider"
                                                 :disabled="data.currentEditProcessIndex != dataIndex" />
                                         </div>
                                     </div>
@@ -105,32 +102,29 @@
 
                             <div class="u-flex u-row-left u-col-center  u-text-center">
                                 <div class="u-width-150  u-border">
-                                    <el-input v-model="dataItem.deviceManager" style="border: none;"
+                                    <el-input v-model="dataItem.fixtureGaugeName" style="border: none;"
                                         :disabled="data.currentEditProcessIndex != dataIndex" />
                                 </div>
                               <div class="u-width-150  u-border">
-                                <el-select v-model="data.deviceStatus"  :disabled="data.currentEditProcessIndex != dataIndex" placeholder="选择"
-                                           style="width:150px;">
-                                  <el-option label="正常" value="正常" />
-                                  <el-option label="异常" value="异常" />
-                                </el-select>
-                              </div>
-                              <div class="u-width-150  u-border">
-                                <el-input v-model="dataItem.deviceManager" style="border: none;"
+                                <el-input v-model="dataItem.fixtureGaugeState" style="border: none;"
                                           :disabled="data.currentEditProcessIndex != dataIndex" />
                               </div>
                               <div class="u-width-150  u-border">
-                                <el-input v-model="dataItem.deviceManager" style="border: none;"
+                                <el-input-number v-model="dataItem.fixtureGaugePrice" style="border: none;"
                                           :disabled="data.currentEditProcessIndex != dataIndex" />
                               </div>
                               <div class="u-width-150  u-border">
-                                <el-input v-model="dataItem.deviceManager" style="border: none;"
+                                <el-input v-model="dataItem.fixtureGaugeBusiness" style="border: none;"
                                           :disabled="data.currentEditProcessIndex != dataIndex" />
+                              </div>
+                              <div class="u-width-150  u-border">
+                                <el-input v-model="dataItem.lastModifierUserName" style="border: none;"
+                                          disabled />
                               </div>
                                 <div class="u-width-200 u-border">
                                     <!-- <el-input v-model="dataItem.deviceManageTime"  style="border: none;" /> -->
-                                    <el-date-picker v-model="dataItem.deviceManageTime" style="width: 200px;"
-                                        :disabled="data.currentEditProcessIndex != dataIndex" type="datetime"
+                                    <el-date-picker v-model="dataItem.lastModificationTime" style="width: 200px;"
+                                        disabled type="datetime"
                                         value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange"
                                         :disabled-date="disabledDate" placeholder="请输入工序维护时间" />
                                 </div>
@@ -152,7 +146,7 @@
                                     </template>
                                     <div class="u-p-t-4 u-p-b-4">
                                         <el-button type="danger" size="small"
-                                            @click="handleDelete(dataIndex, dataItem)">删除</el-button>
+                                            @click="handleDelete(dataItem)">删除</el-button>
                                     </div>
                                 </div>
                             </div>
@@ -212,14 +206,12 @@
 <script setup lang="ts">
 import { reactive, toRefs, onMounted,ref } from 'vue';
 import { ElMessage, ElMessageBox } from "element-plus"
+import {getListAll,updateFoundationFixture,createFoundationFixture,deleteFoundationPFoundationFixture} from "@/api/foundationFixtureDto";
 interface selectOptionListItem {
     value: string
     label: string
 }
 const data = reactive<any>({
-    queryForm: {
-        deviceName: ''
-    },
     tableColumnWidth: 200,
     tableData: [],
     currentEditProcessIndex: -1,
@@ -227,75 +219,44 @@ const data = reactive<any>({
     processIndexOptions: <Array<selectOptionListItem>>[],
     processNameOptions: <Array<selectOptionListItem>>[],
 })
-
+//查询关键字
+const queryForm = reactive({
+  deviceName: ''
+})
 let currentEditProcessItem: any = null;
 onMounted(() => {
     initData();
 })
 
-const initData = () => {
-    data.tableData = [{
-        processIndex: '0001',
-        processName: '工序1',
-        deviceManager: '张三',
-        deviceManageTime: '2023--7-20',
-        deviceList: [
-            {
-                deviceName: '设备1',
-                deviceStatus: '状态',
-                devicePrice: '设备1价格',
-                deviceProvider: '设备1供应商'
-            },
-            {
-                deviceName: '工序1-设备2',
-                deviceStatus: '设备2状态',
-                devicePrice: '工序1-设备2价格',
-                deviceProvider: '工序1-设备2供应商'
-            },
-        ]
-    },
-    {
-        processIndex: '0002',
-        processName: '工序2',
-        deviceManager: '李四',
-        deviceManageTime: '2023--7-19',
-        deviceList: [
-            {
-                deviceName: '设备1',
-                deviceStatus: '设备1状态',
-                devicePrice: '设备1价格',
-                deviceProvider: '设备1供应商'
-            },
-            {
-                deviceName: '设备2',
-                deviceStatus: '设备2状态',
-                devicePrice: '设备2价格',
-                deviceProvider: '设备2供应商'
-            }
-        ]
-    }
-    ]
+const initData = async () => {
+  let listResult: any = await getListAll({DeviceName: queryForm.deviceName})
+  if (listResult.success) {
+    data.tableData = listResult.result
+  }
 }
 
 const addDevice = () => {
     let item = {
-        processIndex: '',
-        processName: '',
-        deviceManager: '',
-        deviceManageTime: '',
-        deviceList: [
+      id: -1,
+      processNumber: '',
+      processName: '',
+      fixtureGaugeState: '',
+      fixtureGaugePrice: '',
+      fixtureGaugeName: '',
+      fixtureGaugeBusiness: '',
+      fixtureList: [
             {
-                deviceName: '',
-                deviceStatus: '',
-                devicePrice: '',
-                deviceProvider: ''
+              fixtureName: '',
+              fixturePrice: 0,
+              fixtureState: '',
+              FixtureProvider: ''
             },
-            {
-                deviceName: '',
-                deviceStatus: '',
-                devicePrice: '',
-                deviceProvider: ''
-            },
+        {
+          fixtureName: '',
+          fixturePrice: 0,
+          fixtureState: '',
+          FixtureProvider: ''
+        },
         ]
     }
     data.tableData.push(item);
@@ -305,6 +266,7 @@ const addDevice = () => {
 
 const submitSearch = () => {
     console.log('搜索设备')
+    initData()
 }
 
 //选择查询回调
@@ -379,25 +341,62 @@ const cancelEdit = (index: number, row: any) => {
     data.tableData[index] = currentEditProcessItem;
 }
 
-const saveEdit = (index: number, row: any) => {
-    console.log("保存编辑内容", row);
-    data.currentEditProcessIndex = "";
-    //Todo 保存
+
+//新增或者修改
+const saveEdit = async (index: number, row: any) => {
+  console.log("保存编辑内容", row);
+  data.currentEditProcessIndex = -1;
+  let tip: string = "";
+  let result: any;
+  //编辑保存
+  console.log(row.id)
+  if (row.id > 0) {
+    console.log("编辑治置保存");
+    tip = "修改治置";
+    result = await updateFoundationFixture(row);
+  }
+  //新增
+  else if (row.id == -1) {
+    console.log("新增治置");
+    tip = "新增治置";
+    let a ={
+      "processName": row.processName,
+      "processNumber": row.processNumber,
+      "fixtureList": row.fixtureList,
+      "fixtureGaugeName": row.fixtureGaugeName,
+      "fixtureGaugePrice": row.fixtureGaugePrice,
+      "fixtureGaugeState": row.fixtureGaugeState,
+      "fixtureGaugeBusiness": row.fixtureGaugeBusiness
+    }
+
+    result = await createFoundationFixture(a)
+  }
+  console.log("结果", result);
+  if (result.success == true) {
+    initData();
+  } else {
+    ElMessage({
+      type: 'error',
+      message: tip + '失败',
+    })
+  }
 }
 
-const handleDelete = (index: number, row: any) => {
-    console.log(index, row);
-    ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "warning"
-    }).then(async () => {
-        data.tableData.splice(index);
-        ElMessage({
-            type: "success",
-            message: "删除成功"
-        })
+function handleDelete(row) {
+  console.log(row.id)
+  const postIds = row.id
+  ElMessageBox.confirm("是否确认删除!")
+    .then(function () {
+      return deleteFoundationPFoundationFixture(postIds)
     })
+    .then(() => {
+      initData()
+      ElMessage({
+        type: "success",
+        message: "删除成功"
+      })
+    })
+    .catch(() => {})
 }
 
 //日志更新记录相关

@@ -707,6 +707,14 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "标准工艺库"
         }
+      },
+      {
+        path: "/processHoursExport/COBManufactureCost",
+        component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
+        name: "COBManufactureCost",
+        meta: {
+          title: "COB制造成本录入"
+        }
       }
     ]
   },

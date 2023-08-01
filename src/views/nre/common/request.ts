@@ -58,6 +58,7 @@ export function PostExperimentItems(data: {
    * 流程Id
    */
   auditFlowId?: number
+  solutionId?: number
   /**
    * 带零件id 的 品保录入模型
    */
@@ -225,6 +226,25 @@ export function PostExperimentItemsSingleDownloadExcel(data: any) {
   })
 }
 
+//  Nre 品保部=>试验项目 产品开发部-NRE 下载
+export function GetExportOfEnvironmentalExperimentFeeForm(data: any) {
+  return request({
+    url: "/api/services/app/NrePricing/GetExportOfEnvironmentalExperimentFeeForm",
+    method: "get",
+    data,
+    responseType: "blob"
+  })
+}
+
+// 获取 产品开发部-NRE 实验费
+export function GetFoundationEmc(data: any) {
+  return request({
+    url: "/api/services/app/FoundationEmc/GetListAll",
+    method: "get",
+    data
+  })
+}
+
 //  Nre 产品部-电子工程师 导入数据
 export function PostProductDepartmentSingleExcel(data: any) {
   return request({
@@ -246,7 +266,7 @@ export function PostExperimentItemsSingleExcel(data: any) {
 }
 
 // 获取环境实验费
-export function GetFoundationreliableList(data: any) {
+export function GetFoundationreliableList(data: any): any {
   return request({
     url: "/api/services/app/Foundationreliable/GetListAll",
     method: "get",

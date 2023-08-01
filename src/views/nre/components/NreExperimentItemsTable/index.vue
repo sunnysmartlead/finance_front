@@ -160,11 +160,11 @@ const submit = async () => {
     const { success } = await PostExperimentItems({
       auditFlowId,
       solutionId: productId,
+      isSubmit: true,
       environmentalExperimentFeeModels: data.experimentItems.map((item: any) => ({
         ...item,
         allCost: (item.unitPrice || 0) * item.adjustmentCoefficient * (item.dataThoroughly + item.dataDV + item.dataPV)
-      })),
-      isSubmit: true
+      }))
     })
     if (!success) throw Error()
     ElMessage.success("提交成功")

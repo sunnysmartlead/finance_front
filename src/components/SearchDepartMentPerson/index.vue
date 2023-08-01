@@ -58,6 +58,7 @@ const data = reactive({})
 onBeforeMount(() => {
   getList(props.roleName)
 })
+
 const getList = async (query: string) => {
   let res: any = await getUserListByRoleName(query)
   options.value = res.result.items

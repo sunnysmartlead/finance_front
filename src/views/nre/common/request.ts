@@ -58,10 +58,12 @@ export function PostExperimentItems(data: {
    * 流程Id
    */
   auditFlowId?: number
+  solutionId?: number
   /**
    * 带零件id 的 品保录入模型
    */
-  experimentItems?: ExperimentItemsModel | null
+  environmentalExperimentFeeModels?: any
+  isSubmit: boolean
 }): any {
   return request({
     url: "/api/services/app/NrePricing/PostExperimentItemsSingle",
@@ -89,13 +91,13 @@ export function PostResourcesManagement(data: {
 }
 
 // 资源部录入初始值
-export function GetInitialResourcesManagement(auditFlowId: number, solutionid: number): any {
+export function GetInitialResourcesManagement(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
     method: "get",
     data: {
       auditFlowId,
-      solutionid
+      solutionId
     }
   })
 }
@@ -105,7 +107,7 @@ export function PostCalculateMouldInventory(data: {
   /**
    * 零件Id
    */
-  solutionid?: number
+  solutionId?: number
   /**
    * Nre核价  资源部录入 实体
    */
@@ -138,7 +140,7 @@ export function PostSalesDepartment(data: NreMarketingDepartmentModel[]): any {
 
 /**NRE 核价表 */
 
-export function GetPricingForm(data: { Id: number; solutionid: number }): any {
+export function GetPricingForm(data: { Id: number; solutionId: number }): any {
   return request({
     url: "/api/services/app/NrePricing/GetPricingForm",
     method: "get",
@@ -147,37 +149,37 @@ export function GetPricingForm(data: { Id: number; solutionid: number }): any {
 }
 
 // Nre项目管理部 获取版本录入过的值
-export function GetReturnProjectManagement(auditFlowId: number, solutionid: number): any {
+export function GetReturnProjectManagement(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/NrePricing/GetReturnProjectManagementSingle",
     method: "get",
     data: {
       auditFlowId,
-      solutionid
+      solutionId
     }
   })
 }
 
 // Nre项目管理部 获取版本录入过的值
-export function GetReturnExperimentItems(auditFlowId: number, solutionid: number): any {
+export function GetReturnExperimentItems(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/NrePricing/GetReturnExperimentItemsSingle",
     method: "get",
     data: {
       auditFlowId,
-      solutionid
+      solutionId
     }
   })
 }
 
 // Nre 品保部=>项目制程QC量检具 录入过的值(单个零件)
-export function GetReturnQcGauge(auditFlowId: number, solutionid: number): any {
+export function GetReturnQcGauge(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/NrePricing/GetReturnQcGaugeSingle",
     method: "get",
     data: {
       auditFlowId,
-      solutionid
+      solutionId
     }
   })
 }
@@ -194,13 +196,13 @@ export function GetReturnInitialSalesDepartment(Id: number): any {
 }
 
 // 产品部-电子工程师 录入过的值(单个零件)
-export function GetProductDepartment(auditFlowId: number, solutionid: number): any {
+export function GetProductDepartment(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/NrePricing/GetProductDepartmentSingle",
     method: "get",
     data: {
       auditFlowId,
-      solutionid
+      solutionId
     }
   })
 }
@@ -225,6 +227,25 @@ export function PostExperimentItemsSingleDownloadExcel(data: any) {
   })
 }
 
+//  Nre 品保部=>试验项目 产品开发部-NRE 下载
+export function GetExportOfEnvironmentalExperimentFeeForm(data: any) {
+  return request({
+    url: "/api/services/app/NrePricing/GetExportOfEnvironmentalExperimentFeeForm",
+    method: "get",
+    data,
+    responseType: "blob"
+  })
+}
+
+// 获取 产品开发部-NRE 实验费
+export function GetFoundationEmc(data: any) {
+  return request({
+    url: "/api/services/app/FoundationEmc/GetListAll",
+    method: "get",
+    data
+  })
+}
+
 //  Nre 产品部-电子工程师 导入数据
 export function PostProductDepartmentSingleExcel(data: any) {
   return request({
@@ -242,5 +263,14 @@ export function PostExperimentItemsSingleExcel(data: any) {
     method: "post",
     data,
     responseType: "blob"
+  })
+}
+
+// 获取环境实验费
+export function GetFoundationreliableList(data: any): any {
+  return request({
+    url: "/api/services/app/Foundationreliable/GetListAll",
+    method: "get",
+    data
   })
 }

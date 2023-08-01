@@ -210,6 +210,7 @@ export interface QADepartmentPartModel {
  * QADepartmentTestModel，品保录入  试验项目表 模型
  */
 export interface QADepartmentTestModel {
+  adjustmentCoefficient?: number
   /**
    * 总费用
    */

@@ -90,3 +90,12 @@ export function getListAll(data: QueryParams) {
     data
   })
 }
+export function deleteFoundationProcedure(id: number | undefined) {
+  return request({
+    url: "/api/services/app/FoundationProcedure/Delete",
+    method: "delete",
+    data: {
+      id
+    }
+  })
+}

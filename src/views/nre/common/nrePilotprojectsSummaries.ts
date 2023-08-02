@@ -16,9 +16,7 @@ export const getLaboratoryFeeSummaries = (param: LaboratoryFeeSummaryMethodProps
       return
     }
 
-    const values = data.map((item) =>
-      Number((item.unitPrice || 0) * ((item.dataThoroughly || 0) + (item.dataDV || 0) + (item.dataPV || 0)))
-    )
+    const values = data.map((item) => Number(item.allCost))
     if (!values.every((value) => Number.isNaN(value)) && index === 5) {
       sums[index] = `¥ ${values.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {

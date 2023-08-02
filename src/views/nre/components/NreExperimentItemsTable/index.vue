@@ -19,6 +19,9 @@
               <el-button style="margin-top: 8px">试验项目导入</el-button>
             </el-upload>
             <SORDonwload />
+            <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
+              >查看设计方案</el-button
+            >
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">试验项目导出</el-button>
             <el-button v-if="!isVertify" type="primary" @click="addExperimentItemsData" m="2" v-havedone>
               新增
@@ -27,7 +30,7 @@
         </el-row>
       </template>
       <el-table
-        :data="data.experimentItems"
+        :data="experimentItems"
         style="width: 100%"
         border
         :summary-method="getQaTestDepartmentsSummaries"
@@ -37,7 +40,9 @@
         <el-table-column label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
             <!-- <el-input v-model="row.projectName" /> -->
+            <span v-if="isVertify">{{ row.projectName }}</span>
             <SelectSearch
+              v-else
               :request="GetFoundationreliableList"
               :onChange="(record: any) => handleChangeData(record, $index)"
               v-model:value="row.projectName"
@@ -46,7 +51,7 @@
         </el-table-column>
         <el-table-column label="是否指定第三方" width="180">
           <template #default="{ row }">
-            <el-select v-model="row.isThirdParty">
+            <el-select :disabled="isVertify" v-model="row.isThirdParty">
               <el-option :value="true" label="是" />
               <el-option :value="false" label="否" />
             </el-select>
@@ -55,50 +60,58 @@
         <el-table-column label="单价" prop="unitPrice" width="175" />
         <el-table-column label="调整系数" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
+            <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
           </template>
         </el-table-column>
         <el-table-column label="计价单位" prop="unit" width="180" />
         <el-table-column label="时间-摸底" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.dataThoroughly" />
+            <span v-if="isVertify">{{ row.countBottomingOut }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
           </template>
         </el-table-column>
         <el-table-column label="时间-DV" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.dataDV" />
+            <span v-if="isVertify">{{ row.countDV }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
           </template>
         </el-table-column>
         <el-table-column label="时间-PV" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.dataPV" />
+            <span v-if="isVertify">{{ row.countPV }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
           </template>
         </el-table-column>
-        <el-table-column label="总费用" width="180">
-          <template #default="{ row }">
-            {{ row.unitPrice * row.adjustmentCoefficient * (row.dataThoroughly + row.dataDV + row.dataPV) }}
-          </template>
-        </el-table-column>
+        <el-table-column label="总费用" prop="allCost" width="180" />
         <el-table-column label="备注" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.remark" />
+            <span v-if="isVertify">{{ row.remark }}</span>
+            <el-input v-else v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="85px">
+        <el-table-column label="操作" v-if="!isVertify" fixed="right" width="85px">
           <template #default="{ $index }">
             <el-button @click="deleteExperimentItemsData($index)" type="danger" v-havedone>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-    <div style="float: right; margin: 20px 0">
-      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
+    <div style="float: right; margin: 20px 0" v-if="isVertify">
+      <el-button type="primary" v-havedone m="2">同意</el-button>
+      <el-button type="primary" v-havedone>退回</el-button>
     </div>
+    <div style="float: right; margin: 20px 0" v-else>
+      <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
+      <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
+    </div>
+
+    <designScheme v-model:dialogTableVisible="data.dialogTableVisible" @close="data.dialogTableVisible = false" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
+import { reactive, onBeforeMount, onMounted, watch, ref } from "vue"
 import { QADepartmentTestModel } from "../../data.type"
 import { getQaTestDepartmentsSummaries } from "../../common/nreQCDepartmentSummaries"
 import {
@@ -115,6 +128,7 @@ import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/uplo
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
+import { designScheme } from "@/views/demandApplyAudit"
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
@@ -123,29 +137,48 @@ const props = defineProps({
   isVertify: Boolean
 })
 
+console.log(props, "props")
 /**
  * 数据部分
  */
 const fileList = ref<UploadUserFile[]>([])
+const experimentItems = ref<QADepartmentTestModel[]>([])
 const data = reactive<{
-  experimentItems: QADepartmentTestModel[]
   projectList: any[]
+  dialogTableVisible: boolean
+  isSubmit: boolean
 }>({
-  experimentItems: [],
-  projectList: []
+  projectList: [],
+  dialogTableVisible: false,
+  isSubmit: false
 })
 
+watch(
+  () => experimentItems.value,
+  (val) => {
+    val.forEach((item: any) => {
+      item.allCost =
+        item.unitPrice *
+        (item.adjustmentCoefficient || 0) *
+        ((item.countBottomingOut || 0) + (item.countDV || 0) + (item.countPV || 0))
+    })
+  },
+  {
+    deep: true
+  }
+)
+
 const deleteExperimentItemsData = (i: number) => {
-  data.experimentItems.splice(i, 1)
+  experimentItems.value.splice(i, 1)
 }
 
 const addExperimentItemsData = () => {
-  data.experimentItems.push({
+  experimentItems.value.push({
     allCost: 0,
     count: 0,
-    dataDV: 0,
-    dataPV: 0,
-    dataThoroughly: 0,
+    countDV: 0,
+    countPV: 0,
+    countBottomingOut: 0,
     isThirdParty: false,
     projectName: "",
     remark: "",
@@ -155,19 +188,16 @@ const addExperimentItemsData = () => {
   })
 }
 
-const submit = async () => {
+const submit = async (isSubmit: boolean) => {
   try {
     const { success } = await PostExperimentItems({
       auditFlowId,
       solutionId: productId,
-      isSubmit: true,
-      environmentalExperimentFeeModels: data.experimentItems.map((item: any) => ({
-        ...item,
-        allCost: (item.unitPrice || 0) * item.adjustmentCoefficient * (item.dataThoroughly + item.dataDV + item.dataPV)
-      }))
+      isSubmit,
+      environmentalExperimentFeeModels: experimentItems.value
     })
     if (!success) throw Error()
-    ElMessage.success("提交成功")
+    ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
     // jumpTodoCenter()
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
@@ -192,7 +222,7 @@ const handleFethNreTableDownload = async () => {
 // NRE实验费模板上传
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
   if (!res.error) {
-    data.experimentItems = res.result || []
+    experimentItems.value = res.result || []
     console.log(res, "NRE实验费模板上传")
     ElMessage.success("上传成功！")
   } else {
@@ -206,12 +236,13 @@ const handleFileChange: UploadProps["onChange"] = (file, uploadFiles) => {
 }
 
 const initFetch = async () => {
-  const { result } = await GetReturnExperimentItems(auditFlowId, productId)
-  data.experimentItems = result?.environmentalExperimentFeeModels || []
+  const { result, isSubmit } = await GetReturnExperimentItems(auditFlowId, productId)
+  experimentItems.value = result?.environmentalExperimentFeeModels || []
+  data.isSubmit = isSubmit
 }
 
 const handleChangeData = (row: any, i: number) => {
-  data.experimentItems.forEach((item: any, index: number) => {
+  experimentItems.value.forEach((item: any, index: number) => {
     if (i === index) {
       console.log(row, "{ row }")
       item.unit = row.unit
@@ -231,8 +262,6 @@ onMounted(() => {
   initFetch()
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
-
-watchEffect(() => {})
 </script>
 <style scoped lang="scss">
 .margin-top {

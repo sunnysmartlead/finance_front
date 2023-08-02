@@ -3,8 +3,7 @@ import {
   ProductDepartmentModel,
   ProjectManagementModel,
   ResourcesManagementModel,
-  NreMarketingDepartmentModel,
-  ExperimentItemsModel
+  NreMarketingDepartmentModel
 } from "../data.type"
 
 // 项目管理部录入
@@ -31,6 +30,8 @@ export function PostProductDepartment(data: {
    * 流程Id
    */
   auditFlowId?: number
+  solutionId: number
+  isSubmit: boolean
   /**
    * 实验费 实体类
    */
@@ -218,10 +219,10 @@ export function NreTableDownload(data: any) {
 }
 
 //  Nre 品保部=>试验项目 产品开发部-NRE 下载
-export function PostExperimentItemsSingleDownloadExcel(data: any) {
+export function GetExportOfProductDepartmentFeeForm(data: any) {
   return request({
-    url: "/api/services/app/NrePricing/PostExperimentItemsSingleDownloadExcel",
-    method: "post",
+    url: "/api/services/app/NrePricing/GetExportOfProductDepartmentFeeForm",
+    method: "get",
     data,
     responseType: "blob"
   })

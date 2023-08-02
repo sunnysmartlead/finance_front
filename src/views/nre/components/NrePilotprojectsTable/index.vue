@@ -18,6 +18,10 @@
             >
               <el-button class="uploadBtn">NRE实验费模板上传</el-button>
             </el-upload>
+            <SORDonwload />
+            <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
+              >查看设计方案</el-button
+            >
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">NRE实验费模板下载</el-button>
             <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
           </el-row>
@@ -33,7 +37,9 @@
         <el-table-column type="index" width="50" />
         <el-table-column label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
+            <span v-if="isVertify">{{ row.testItem }}</span>
             <SelectSearch
+              v-else
               :request="GetFoundationEmc"
               :onChange="(record: any) => handleChangeData(record, $index)"
               v-model:value="row.testItem"
@@ -49,88 +55,63 @@
           </template>
         </el-table-column>
         <el-table-column label="单价" prop="unitPrice" width="175" />
-        <el-table-column label="单位" prop="unit" width="180" />
-        <!-- <el-table-column label="数量" width="120">
+        <el-table-column label="调整系数" width="180">
           <template #default="{ row }">
-            <el-input-number v-model="row.count" :min="0" controls-position="right" />
+            <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
+            <el-input-number :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
           </template>
-        </el-table-column> -->
+        </el-table-column>
+        <el-table-column label="单位" prop="unit" width="180" />
         <el-table-column label="时间-摸底" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.dataThoroughly" />
+            <span v-if="isVertify">{{ row.countBottomingOut }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
           </template>
         </el-table-column>
         <el-table-column label="时间-DV" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.dataDV" />
+             <span v-if="isVertify">{{ row.countDV }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
           </template>
         </el-table-column>
         <el-table-column label="时间-PV" width="180">
           <template #default="{ row }">
-            <el-input-number :min="0" controls-position="right" v-model="row.dataPV" />
+            <span v-if="isVertify">{{ row.countPV }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
           </template>
         </el-table-column>
-
-        <!-- <el-table-column label="时间" width="250">
-          <template #default="{ row }">
-            <el-date-picker size="small" v-model="row.time" type="datetime" />
-          </template>
-        </el-table-column> -->
-        <!-- <el-table-column label="时间-摸底" width="180">
-        <template #default="{ row }">
-          <el-input v-model="row.time" />
-        </template>
-      </el-table-column>
-      <el-table-column label="时间-DV" width="180">
-        <template #default="{ row }">
-          <el-input v-model="row.carModel" />
-        </template>
-      </el-table-column>
-      <el-table-column label="时间-PV" width="180">
-        <template #default="{ row }">
-          <el-input v-model="row.carModel" />
-        </template>
-      </el-table-column> -->
-        <!-- <el-table-column label="单位" width="180">
-        <template #default="{ row }">
-          <el-input v-model="row.carModel" />
-        </template>
-      </el-table-column> -->
-        <el-table-column label="总费用" width="150">
-          <template #default="{ row }">
-            ￥ {{ (row.unitPrice || 0) * ((row.dataThoroughly || 0) + (row.dataDV || 0) + (row.dataPV || 0)) }}
-          </template>
-        </el-table-column>
-        <!-- <el-table-column label="单位" width="180">
-        <template #default="{ row }">
-          <el-input v-model="row.carModel" />
-        </template>
-      </el-table-column> -->
+        <el-table-column label="总费用" prop="allCost" width="150" />
         <el-table-column label="备注" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.remark" />
+            <span v-if="isVertify">{{ row.remark }}</span>
+            <el-input v-else v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="90">
+        <el-table-column label="操作" v-if="!isVertify" fixed="right" width="90">
           <template #default="{ $index }">
             <el-button @click="deleteLaboratoryFeeModel($index)" type="danger" v-havedone>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-
-    <div style="float: right; margin: 20px 0">
-      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
+    <div style="float: right; margin: 20px 0" v-if="isVertify">
+      <el-button type="primary" v-havedone m="2">同意</el-button>
+      <el-button type="primary" v-havedone>退回</el-button>
     </div>
+    <div style="float: right; margin: 20px 0" v-else>
+      <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
+      <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
+    </div>
+    <designScheme v-model:dialogTableVisible="data.dialogTableVisible" @close="data.dialogTableVisible = false" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
+import { reactive, onBeforeMount, onMounted, watch, ref } from "vue"
 import {
   PostProductDepartment,
   GetProductDepartment,
-  PostExperimentItemsSingleDownloadExcel,
+  GetExportOfProductDepartmentFeeForm,
   GetFoundationEmc
 } from "../../common/request"
 import type { UploadProps, UploadUserFile } from "element-plus"
@@ -141,6 +122,10 @@ import { downloadFileExcel } from "@/utils"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
+import { designScheme } from "@/views/demandApplyAudit"
+import SORDonwload from "@/components/SORDonwload/index.vue"
+
+let { auditFlowId, productId } = getQuery()
 
 let Host = "NreInputEmc"
 const fileList = ref<UploadUserFile[]>([])
@@ -152,9 +137,17 @@ const props = defineProps({
 const deleteLaboratoryFeeModel = (i: number) => {
   data.laboratoryFeeModels.splice(i, 1)
 }
-let { auditFlowId, productId } = getQuery()
+
 const addLaboratoryFeeModel = () => {
-  data.laboratoryFeeModels.push({ unitPrice: 0, allCost: 0, dataThoroughly: 0, dataDV: 0, dataPV: 0 })
+  data.laboratoryFeeModels.push({
+    adjustmentCoefficient: 0,
+    unitPrice: 5,
+    allCost: 0,
+    countBottomingOut: 0,
+    countDV: 0,
+    countPV: 0,
+    testItem: "实验项目1"
+  })
 }
 
 /**
@@ -162,29 +155,32 @@ const addLaboratoryFeeModel = () => {
  */
 const data = reactive<{
   laboratoryFeeModels: any[]
+  dialogTableVisible: boolean
+  isSubmit: boolean
 }>({
-  laboratoryFeeModels: []
+  laboratoryFeeModels: [],
+  dialogTableVisible: false,
+  isSubmit: false
 })
 
 const initFetch = async () => {
-  const { result } = (await GetProductDepartment(auditFlowId, productId)) || {}
+  const { result, isSubmit } = (await GetProductDepartment(auditFlowId, productId)) || {}
   data.laboratoryFeeModels = result.laboratoryFeeModels || []
+  data.isSubmit = isSubmit
 }
 
-const submit = async () => {
+const submit = async (isSubmit: boolean) => {
   try {
     const { success } = await PostProductDepartment({
       auditFlowId,
+      solutionId: productId,
+      isSubmit,
       productDepartmentModels: {
         productId,
-        laboratoryFeeModels:
-          data.laboratoryFeeModels.map((item: any) => ({
-            ...item,
-            allCost: (item.unitPrice || 0) * (item.dataThoroughly + item.dataDV + item.dataPV)
-          })) || []
+        laboratoryFeeModels: data.laboratoryFeeModels
       }
     })
-    if (success) ElMessage.success("提交成功")
+    if (success) ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {
     console.log(err, "[PostProductDepartment err]")
@@ -194,8 +190,9 @@ const submit = async () => {
 // NRE实验费模板下载
 const handleFethNreTableDownload = async () => {
   try {
-    const res: any = await PostExperimentItemsSingleDownloadExcel({
-      FileName: ""
+    const res: any = await GetExportOfProductDepartmentFeeForm({
+      auditFlowId,
+      solutionId: productId
     })
     downloadFileExcel(res, "NRE实验费模板")
     console.log(res, "NreTableDownload")
@@ -231,14 +228,30 @@ const handleChangeData = (row: any, i: number) => {
   })
 }
 
+watch(
+  () => data.laboratoryFeeModels,
+  (val) => {
+    val.forEach((item: any) => {
+      item.allCost =
+        item.unitPrice *
+        (item.adjustmentCoefficient || 0) *
+        ((item.countBottomingOut || 0) + (item.countDV || 0) + (item.countPV || 0))
+    })
+  },
+  {
+    deep: true
+  }
+)
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 onMounted(() => {
+  auditFlowId = Number(auditFlowId)
+  productId = Number(productId)
   initFetch()
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
-watchEffect(() => {})
 </script>
 <style scoped lang="scss">
 .card-warp {

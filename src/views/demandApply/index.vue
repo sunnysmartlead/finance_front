@@ -2111,6 +2111,9 @@ watch(
       const totalData = countData.reduce((a: number, b: number) => a + b)
       kvPricingData.value = [{ gradientValue: Number((totalData / yearTotal).toFixed(2)) }]
     }
+  },
+  {
+    deep: true
   }
 )
 
@@ -2139,6 +2142,9 @@ watch(
       console.log(filterData, "[filterDatafilterData]")
       gradientModelTable.value = filterData
     }
+  },
+  {
+    deep: true
   }
 )
 

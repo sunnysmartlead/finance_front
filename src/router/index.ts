@@ -314,7 +314,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "NRE",
-      hidden: true
+      // hidden: true
     },
     children: [
       {
@@ -334,6 +334,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "/nre/nrePilotprojectsVertify",
+        component: () => import("@/views/nre/vertify/nrePilotprojects.vue"),
+        name: "nrePilotprojectsVertify",
+        meta: {
+          title: "产品部NRE审核"
+        }
+      },
+      {
         path: "/nre/nreResourcesDepartment",
         component: () => import("@/views/nre/nreResourcesDepartment.vue"),
         name: "nreResourcesDepartment",
@@ -347,6 +355,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "nreExperimentItems",
         meta: {
           title: "品保部实验NRE"
+        }
+      },
+      {
+        path: "/nre/nreExperimentItemsVertify",
+        component: () => import("@/views/nre/vertify/nreExperimentItems.vue"),
+        name: "nreExperimentItemsVertify",
+        meta: {
+          title: "品保部实验NRE审核"
         }
       },
       {

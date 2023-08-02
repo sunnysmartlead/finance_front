@@ -222,15 +222,15 @@ export interface QADepartmentTestModel {
   /**
    * 时间-DV
    */
-  dataDV?: number
+  countDV?: number
   /**
    * 时间-PV
    */
-  dataPV?: number
+  countPV?: number
   /**
    * 时间-摸底
    */
-  dataThoroughly?: number
+  countBottomingOut?: number
   /**
    * 是否指定第三方
    */
@@ -368,7 +368,7 @@ export interface QADepartmentTestModel {
   /**
    * 时间-摸底
    */
-  dataThoroughly?: string | undefined
+  countBottomingOut?: string | undefined
   /**
    * 是否指定第三方
    */
@@ -608,7 +608,7 @@ export interface LaboratoryFeeModel {
   /**
    * 时间-摸底
    */
-  dataThoroughly?: number
+  countBottomingOut?: number
   /**
    * 是否指定第三方 (是 true   否 false)
    */

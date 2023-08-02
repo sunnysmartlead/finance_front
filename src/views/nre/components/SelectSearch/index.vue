@@ -14,17 +14,16 @@
 </template>
 <script lang="ts" setup>
 import { reactive, PropType } from "vue"
-import { GetFoundationreliableList } from "../../common/request"
 import { map } from "lodash"
 
 const props = defineProps({
   value: String,
   onChange: {
-    type: Object as PropType<Record<string, any>>,
+    type: Function as PropType<any>,
     required: false
   },
   request: {
-    type: Object as PropType<Record<string, any>>,
+    type: Function as PropType<any>,
     required: false
   }
 })
@@ -36,7 +35,7 @@ const data = reactive<any>({
 
 const handleSearch = async (query: string) => {
   if (query) {
-    const { result } = (await GetFoundationreliableList({ Name: query })) || {}
+    const { result } = (await props.request({ Name: query })) || {}
     console.log(result, "result")
     if (result?.length) {
       data.options = map(result, (item) => {

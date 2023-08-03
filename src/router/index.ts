@@ -206,7 +206,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM单价审核",
-      hidden: true
+      //hidden: true
     },
     children: [
       {

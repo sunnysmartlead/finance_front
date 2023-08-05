@@ -107,7 +107,7 @@
                 <el-button type="primary" size="small">编辑</el-button>
               </div>
               <div class="u-width-100  u-p-t-5 u-p-b-5">
-                <el-button type="danger" size="small" @click="$emit('delPH', dataIndex)">删除</el-button>
+                <el-button type="danger" size="small" @click="delPH(dataIndex)">删除</el-button>
               </div>
             </div>
 

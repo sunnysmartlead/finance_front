@@ -1237,11 +1237,9 @@
               <!-- <SearchPerson v-model="state.quoteForm.projectManager" /> -->
               <SearchDepartMentPerson
                 v-model="state.quoteForm.projectManager"
-                roleName="项目经理"
+                :roleName="['项目管理部-项目经理', '市场部-项目经理']"
                 :disabled="isDisabled"
               />
-
-              <!-- <el-input :suffix-icon="Search" v-model="state.quoteForm.projectManager" /> -->
             </el-form-item>
           </el-col>
           <el-col :span="6">

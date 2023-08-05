@@ -1,4 +1,5 @@
 import { request } from "@/utils/service"
+import { map } from "lodash"
 
 /**
  * CreateUserDto
@@ -184,14 +185,21 @@ export function getUserList(data: UserParams) {
 }
 
 /** 根据角色获取人员 */
-export function getUserListByRoleName(roleName: string) {
+export function getUserListByRoleName(roleNames: string | string[]) {
+  let text = ""
+  if (Array.isArray(roleNames)) {
+    map(roleNames, (c: string, index: number) => (text += `roleNames[${index}]=${encodeURIComponent(c)}&`))
+  } else if (typeof roleNames === "string") {
+    text = `roleNames[0]=${roleNames}&`
+  }
+  console.log(text, "roleNames")
   return request({
-    url: "/api/services/app/User/GetUserListByRoleName",
-    method: "get",
-    data: {
-      roleName,
-      maxResultCount: 200,
-      skipCount: 0
-    }
+    url: `/api/services/app/User/GetUserListByRoleNames/?${encodeURIComponent(text)}maxResultCount=200&skipCount=0`,
+    method: "get"
+    // data: {
+    //   // roleNames,
+    //   maxResultCount: 200,
+    //   skipCount: 0
+    // }
   })
 }

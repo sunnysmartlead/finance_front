@@ -2,7 +2,18 @@
   <div style="height: 400px">
     <el-auto-resizer>
       <template #default="{ height, width }">
-        <el-table-v2 :columns="columns" :data="data" :width="width" :height="height" fixed />
+        <el-table-v2
+          :columns="fixedColumns"
+          :header-height="[50, 40, 50]"
+          :data="data"
+          :width="width"
+          :height="height"
+          fixed
+        >
+          <template #header="props">
+            <customized-header v-bind="props" />
+          </template>
+        </el-table-v2>
       </template>
     </el-auto-resizer>
   </div>
@@ -10,20 +21,10 @@
 
 <script lang="tsx" setup>
 import { computed, ref, unref, reactive, watch } from "vue"
-import { ElCheckbox } from "element-plus"
+import { ElCheckbox, TableV2Placeholder } from "element-plus"
 import type { FunctionalComponent, PropType } from "vue"
-import type { CheckboxValueType, Column } from "element-plus"
+import type { CheckboxValueType, Column, HeaderClassNameGetter, TableV2CustomizedHeaderSlotParam } from "element-plus"
 import { DEFAULT_COLUMN } from "./const"
-
-const props = defineProps({
-  data: {
-    type: Array as PropType<any[]>
-  }
-})
-
-const data = computed(() => props.data)
-
-const selectData = ref<any[]>([])
 
 type SelectionCellProps = {
   value: boolean
@@ -31,11 +32,66 @@ type SelectionCellProps = {
   onChange: (value: CheckboxValueType) => void
 }
 
+const keyList: any = [
+  "materialsUseCount",
+  "systemiginalCurrency",
+  "inTheRate",
+  "iginalCurrency",
+  "standardMoney",
+  "rebateMoney"
+]
+
+const props = defineProps({
+  data: {
+    type: Array as PropType<any[]>
+  },
+  allColums: {
+    type: Object as PropType<any>
+  }
+})
+
+const data = computed(() => props.data)
+
+console.log(data, "data")
+
+const selectData = ref<any[]>([])
+
 const SelectionCell: FunctionalComponent<SelectionCellProps> = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
 
-const columns: Column<any>[] = [
+const CustomizedHeader: FunctionalComponent<TableV2CustomizedHeaderSlotParam> = ({ cells, columns, headerIndex }) => {
+  if (headerIndex === 2) return cells
+
+  const groupCells = [] as typeof cells
+  let width = 0
+  let idx = 0
+
+  columns.forEach((column, columnIndex) => {
+    if (!keyList.includes(column.dataKey)) groupCells.push(cells[columnIndex])
+    else {
+      width += cells[columnIndex].props!.column.width
+
+      const nextColumn = columns[columnIndex + 1]
+      groupCells.push(
+        <div
+          class="flex items-center justify-center custom-header-cell"
+          role="columnheader"
+          style={{
+            ...cells[columnIndex].props!.style,
+            width: `${width}px`
+          }}
+        >
+          Group width {width}
+        </div>
+      )
+      width = 0
+    }
+  })
+  return groupCells
+}
+
+const fixedColumns: Column<any>[] = [
   {
     key: "selection",
     width: 50,
@@ -43,7 +99,6 @@ const columns: Column<any>[] = [
       const onChange = (value: CheckboxValueType) => (rowData.checked = value)
       return <SelectionCell value={rowData.checked} onChange={onChange} />
     },
-
     headerCellRenderer: () => {
       const _data = unref(props.data)
       const onChange = (value: CheckboxValueType) =>
@@ -62,7 +117,7 @@ const columns: Column<any>[] = [
     key: "categoryName",
     title: "物料大类",
     dataKey: "categoryName",
-    width: 80
+    width: 80,
   },
   {
     key: "categoryName",
@@ -74,21 +129,26 @@ const columns: Column<any>[] = [
     key: "sapItemNum",
     title: "物料编号",
     dataKey: "sapItemNum",
-    width: 150,
-    cellRenderer: ({ cellData: sapItemNum }) => <div style="padding: 10px 0;">{sapItemNum}</div>
+    width: 150
   },
   {
     key: "sapItemName",
     title: "材料名称",
     dataKey: "sapItemName",
-    width: 250,
-    cellRenderer: ({ cellData: sapItemName }) => <div style="padding: 10px 0;">{sapItemName}</div>
+    width: 250
   },
   {
     key: "assemblyQuantity",
     title: "装配数量",
     dataKey: "assemblyQuantity",
     width: 80
+  },
+  {
+    key: "materialsUseCount",
+    title: "项目物料的使用量",
+    dataKey: "materialsUseCount",
+    width: 120,
+    headerHeight: []
   }
 ]
 </script>

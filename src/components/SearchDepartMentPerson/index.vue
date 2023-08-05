@@ -1,14 +1,14 @@
 /* eslint-disable vue/no-mutating-props */
 <template>
   <div>
-    <el-select v-model="value" :multiple="multiple" filterable placeholder="请选择姓名"  :disabled="disabled">
+    <el-select v-model="value" :multiple="multiple" filterable placeholder="请选择姓名" :disabled="disabled">
       <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, watch } from "vue"
+import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, watch, PropType } from "vue"
 import { getUserListByRoleName } from "@/api/user"
 
 const value = ref<number | undefined>(undefined)
@@ -22,10 +22,9 @@ const props = defineProps({
     default: undefined
   },
   roleName: {
-    type: String,
-    default: ""
+    type: Array as PropType<string[] | string>
   },
-  disabled:{
+  disabled: {
     type: Boolean,
     default: false
   }
@@ -34,6 +33,7 @@ const emit = defineEmits(["update:modelValue"])
 watch(value, (val) => {
   emit("update:modelValue", val)
 })
+
 watch(
   () => props.modelValue,
   (val) => {
@@ -56,10 +56,10 @@ const options = ref<user[]>([])
 
 const data = reactive({})
 onBeforeMount(() => {
-  getList(props.roleName)
+  getList(props.roleName || "")
 })
 
-const getList = async (query: string) => {
+const getList = async (query: string[] | string) => {
   let res: any = await getUserListByRoleName(query)
   options.value = res.result.items
 }

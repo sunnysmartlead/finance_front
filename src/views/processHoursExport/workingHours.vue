@@ -189,6 +189,12 @@ const dataArr = reactive([
         manWorkHour: 18,
         manNumber: 11,
         machineWorkHour: 14,
+      },
+      {
+        year: '2025',
+        manWorkHour: 18,
+        manNumber: 11,
+        machineWorkHour: 14,
       }
     ]
   }
@@ -251,7 +257,7 @@ const saveLog=()=>{
 
 
 const submitSearch=()=>{
-  
+
 }
 
 

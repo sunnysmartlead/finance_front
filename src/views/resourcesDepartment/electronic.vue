@@ -323,8 +323,10 @@ const fetchInitData = async () => {
   allColums.iginalCurrencyYears = iginalCurrency || []
   allColums.standardMoneyYears = standardMoney || []
   allColums.rebateMoneyYears = rebateMoney || []
-  electronicBomList.value = result
-  tableLoading.value = false
+  setTimeout(() => {
+    electronicBomList.value = result
+    tableLoading.value = false
+  }, 1000)
 }
 
 // 提交电子料单价行数据

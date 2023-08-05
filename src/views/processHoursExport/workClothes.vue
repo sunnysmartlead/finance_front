@@ -302,10 +302,19 @@ const saveEdit = async (index: number, row: any) => {
   }
   //新增
   else if (row.id == -1) {
+    let a ={
+      "installationName": row.installationName,
+      "installationPrice": row.installationPrice,
+      "installationSupplier": row.installationSupplier,
+      "processName": row.processName,
+      "processNumber": row.processNumber,
+      "testName": row.testName,
+      "testPrice": row.testPrice,
+    }
     console.log("新增工装");
     tip = "新增工装";
     row.id = null
-    result = await createFoundationProcedure(row)
+    result = await createFoundationProcedure(a)
   }
   console.log("结果", result);
   if (result.success == true) {

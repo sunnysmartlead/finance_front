@@ -29,8 +29,16 @@
             <el-table-column label="单价" align="center" prop="price" />
             <el-table-column label="计价单位" align="center" prop="unit" />
             <el-table-column label="工序维护人" align="center" prop="lastModifierUserName" />
-            <el-table-column label="工序维护时间" align="center" prop="creationTime" />
-            <el-table-column label="操作" align="center">
+            <el-table-column label="工序维护时间" align="center" width="160px">
+              <template #default="scope">
+                  <div>
+                    {{formatDateTime(scope.row.creationTime)}}
+                  </div>
+              </template>
+            </el-table-column>
+              
+
+            <el-table-column label="操作" align="center" width="160px">
               <template #default="scope">
                 <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -124,6 +132,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import type { FormInstance, FormRules } from 'element-plus'
 import { forIn } from "lodash"
 import { nextTick } from "process"
+import { formatDateTime } from "@/utils"
 const data = reactive({
   queryParams: {
     name: undefined,
@@ -141,9 +150,7 @@ interface RuleForm {
   IsDeleted: number,
   laboratory: string
 }
-
 const ruleFormRef = ref<FormInstance>()
-
 let ruleForm = reactive<RuleForm>({
   id: 0,
   classification: '',
@@ -153,8 +160,6 @@ let ruleForm = reactive<RuleForm>({
   IsDeleted: 1,
   laboratory: ''
 })
-
-
 const rules = reactive<FormRules<RuleForm>>({
   name: [
     { required: true, message: '名称不能为空!', trigger: 'blur' },
@@ -193,10 +198,8 @@ const submitSearch = () => {
 }
 const handleAdd=(formEl: FormInstance | undefined)=> {
   open.value = true
-  nextTick(function(){
-    resetForm(formEl)
-   title.value = "试验信息"
-  })
+  resetForm(formEl)
+  title.value = "试验信息"
 }
 
 const editLogFlag = ref(false)

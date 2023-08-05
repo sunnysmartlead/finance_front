@@ -15,9 +15,21 @@
     </div>
     <div class="u-flex u-row-between u-col-center">
       <div>
-        <el-button type="primary" @click="submitSearch">表单导入</el-button>
-        <el-button type="primary" @click="submitSearch">模版下载</el-button>
-        <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
+        <div class="u-flex u-row-left u-col-center">
+          <div class="u-m-r-20">
+            <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
+              :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"
+              :limit="1">
+              <template #trigger>
+                <el-button type="primary">表单导入</el-button>
+              </template>
+            </el-upload>
+          </div>
+          <div>
+            <el-button type="primary" @click="submitSearch">模版下载</el-button>
+            <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
@@ -31,9 +43,9 @@
             <el-table-column label="工序维护人" align="center" prop="lastModifierUserName" />
             <el-table-column label="工序维护时间" align="center" width="160px">
               <template #default="scope">
-                  <div>
-                    {{formatDateTime(scope.row.creationTime)}}
-                  </div>
+                <div>
+                  {{ formatDateTime(scope.row.creationTime) }}
+                </div>
               </template>
             </el-table-column>
 
@@ -130,10 +142,13 @@ import {
   getFoundationEmcById,
   updateFoundationEmc,
   createFoundationEmc,
-  deleteFoundationEmc
+  deleteFoundationEmc,
+  baseURL
 } from "@/api/foundationEmc"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox,genFileId } from "element-plus"
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from "@/utils"
+const uploadAction = baseURL + "api/services/app/FoundationProcedure/UploadFoundationProcedure";
 const data = reactive({
   queryParams: {
     name: undefined,
@@ -187,6 +202,41 @@ const rules = reactive<FormRules<RuleForm>>({
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
+}
+
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+    upload.value!.clearFiles()
+    const file = files[0] as UploadRawFile
+    file.uid = genFileId()
+    upload.value!.handleStart(file)
+}
+
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+    console.log("responese", response);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    if(response.result){
+      getList()
+      ElMessage({
+        type: 'success',
+        message: '导入成功',
+       })
+    }else{
+      ElMessage({
+        type: 'error',
+        message: '导入失败',
+       })
+    }
+}
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+    console.log("error", error);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    ElMessage({
+        type: 'error',
+        message: '导入失败',
+    })
 }
 
 //新增

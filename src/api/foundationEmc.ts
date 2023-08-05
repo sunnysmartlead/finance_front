@@ -1,6 +1,6 @@
 import { request } from "@/utils/service"
 
-
+export const baseURL="https://localhost:44311/"
 
 export interface QueryParams {
   name?: string

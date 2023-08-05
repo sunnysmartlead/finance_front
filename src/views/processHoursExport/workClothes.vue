@@ -13,9 +13,20 @@
     </div>
     <!-- 操作按钮 -->
     <div class="u-flex u-row-between u-col-center">
-      <div>
-        <el-button type="primary" @click="submitSearch">工装库导入</el-button>
-        <el-button type="primary" @click="addNewworkClothes">新增工装</el-button>
+      <div class="u-flex u-row-left u-col-center">
+        <div class="u-m-r-20">
+            <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"  
+              :show-file-list="false"
+               :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                :action="uploadAction" :limit="1">
+            <template #trigger>
+                <el-button type="primary">工装库导入</el-button>
+            </template>
+          </el-upload>
+        </div>
+        <div>
+            <el-button type="primary" @click="addNewworkClothes">新增工装</el-button>
+        </div>
       </div>
       <div>
         <el-button type="primary" @click="submitSearch">工装库导出</el-button>
@@ -198,9 +209,13 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
-import { ElMessage, ElMessageBox } from "element-plus"
-import { getListAll, createFoundationProcedure, updateFoundationProcedure, deleteFoundationProcedure} from '@/api/foundationProcedure';
+import { ElMessage, ElMessageBox,genFileId} from "element-plus"
+import {baseURL,getListAll, createFoundationProcedure, updateFoundationProcedure, deleteFoundationProcedure} from '@/api/foundationProcedure';
 import {deleteFoundationEmc} from "@/api/foundationEmc";
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
+
+const uploadAction=baseURL+"api/services/app/FoundationProcedure/UploadFoundationProcedure";
+
 //查询关键字
 const queryForm = reactive({
   InstallationName: ''
@@ -243,6 +258,41 @@ const initData = async () => {
 const submitSearch = () => {
   console.log('submitSearch!');
   initData();
+}
+
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+    upload.value!.clearFiles()
+    const file = files[0] as UploadRawFile
+    file.uid = genFileId()
+    upload.value!.handleStart(file)
+}
+
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+    console.log("responese", response);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    if(response.result){
+      initData()
+      ElMessage({
+        type: 'success',
+        message: '导入成功',
+       })
+    }else{
+      ElMessage({
+        type: 'error',
+        message: '导入失败',
+       })
+    }
+}
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+    console.log("error", error);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    ElMessage({
+        type: 'error',
+        message: '导入失败',
+    })
 }
 
 //新增工装

@@ -1,4 +1,7 @@
 import { request } from "@/utils/service"
+export const baseURL="https://localhost:44311/"
+
+
 
 /**
  * foundationReliable
@@ -99,3 +102,4 @@ export function deleteFoundationProcedure(id: number | undefined) {
     }
   })
 }
+

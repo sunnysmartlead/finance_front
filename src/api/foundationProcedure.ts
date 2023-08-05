@@ -103,3 +103,22 @@ export function deleteFoundationProcedure(id: number | undefined) {
   })
 }
 
+//获取日志
+export function getLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//保存日志
+export function saveOptionLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/update",
+    method: "put",
+    data
+  })
+}
+
+

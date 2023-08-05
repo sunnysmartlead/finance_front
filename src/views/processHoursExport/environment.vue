@@ -14,10 +14,19 @@
       </el-form>
     </div>
     <div class="u-flex u-row-between u-col-center">
-      <div>
-        <el-button type="primary" @click="submitSearch">表单导入</el-button>
-        <el-button type="primary" @click="submitSearch">模版下载</el-button>
-        <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
+      <div class="u-flex u-row-left u-col-center">
+        <div class="u-m-r-20">
+          <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false" :on-error="uploadErrror"
+            :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction" :limit="1">
+            <template #trigger>
+              <el-button type="primary">表单导入</el-button>
+            </template>
+          </el-upload>
+        </div>
+        <div>
+          <el-button type="primary" @click="submitSearch">模版下载</el-button>
+          <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
+        </div>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
@@ -31,12 +40,12 @@
             <el-table-column label="工序维护人" align="center" prop="lastModifierUserName" />
             <el-table-column label="工序维护时间" align="center" width="160px">
               <template #default="scope">
-                  <div>
-                    {{formatDateTime(scope.row.creationTime)}}
-                  </div>
+                <div>
+                  {{ formatDateTime(scope.row.creationTime) }}
+                </div>
               </template>
             </el-table-column>
-              
+
 
             <el-table-column label="操作" align="center" width="160px">
               <template #default="scope">
@@ -62,11 +71,11 @@
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
-              :timestamp="activity.timestamp">
+              :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">
                 <div style="font-weight: bold; color: #909399">
                   <span>版本号：</span>
-                  <span>{{ activity.version }}</span>
+                  <span>{{ activity.version?activity.version:'--' }}</span>
                 </div>
                 <div>
                   <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
@@ -74,12 +83,14 @@
                       <span>操作人：</span>
                     </div>
                     <div>
-                      <span>{{ activity.optionUser }}</span>
+                      <span>{{ activity.lastModifierUserName }}</span>
                     </div>
                   </div>
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
-                      <el-input :disabled="!editLogFlag" v-model="activity.content" :rows="2" type="textarea"
+                      <el-input :disabled="!editLogFlag" 
+                        v-model="activity.remark" 
+                        :rows="2" type="textarea"
                         placeholder="更新日志记录内容" />
                     </div>
                   </div>
@@ -120,19 +131,22 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs } from "vue"
+import { onMounted, reactive, ref, toRefs } from "vue"
 import {
   GetListAll,
+  getEnvLog,
+  saveEnvLog,
   getFoundationReliableById,
   updateFoundationReliable,
   createFoundationReliable,
-  deleteFoundationReliable
+  deleteFoundationReliable,
+  baseDomain
 } from "@/api/foundationreliable"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox, genFileId } from "element-plus"
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus'
-import { forIn } from "lodash"
-import { nextTick } from "process"
 import { formatDateTime } from "@/utils"
+const uploadAction = baseDomain + "api/services/app/Foundationreliable/UploadFoundationreliable";
 const data = reactive({
   queryParams: {
     name: undefined,
@@ -181,40 +195,60 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: '实验室不能为空!', trigger: 'blur' },
   ],
 })
-
 const title = ref("")
 const open = ref(false)
 const loading = ref(true)
 const tableData = ref([])
-function getList() {
-  loading.value = true
-  GetListAll(queryParams.value).then((response) => {
-    tableData.value = response.result
-    loading.value = false
+
+const submitSearch = () => {
+  initData()
+}
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+  console.log("responese", response);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  if (response.result) {
+    initData()
+    ElMessage({
+      type: 'success',
+      message: '导入成功',
+    })
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '导入失败',
+    })
+  }
+}
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+  console.log("error", error);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  ElMessage({
+    type: 'error',
+    message: '导入失败',
   })
 }
-const submitSearch = () => {
-  getList()
-}
-const handleAdd=(formEl: FormInstance | undefined)=> {
+const handleAdd = (formEl: FormInstance | undefined) => {
   open.value = true
   resetForm(formEl)
   title.value = "试验信息"
 }
-
-const editLogFlag = ref(false)
-
 const cancel = (formEl: FormInstance | undefined) => {
   resetForm(formEl)
   open.value = false
 }
-
-
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
-
 interface environmentItem {
   classification: string
   laboratory: string
@@ -223,7 +257,6 @@ interface environmentItem {
   price: number
   id: number
 }
-
 /** 修改按钮操作 */
 function handleEdit(index: number, row: environmentItem) {
   console.log(index, row.id)
@@ -243,7 +276,7 @@ function handleDelete(row) {
       return deleteFoundationReliable(postIds)
     })
     .then(() => {
-      getList()
+      initData()
       ElMessage({
         type: "success",
         message: "删除成功"
@@ -251,21 +284,20 @@ function handleDelete(row) {
     })
     .catch(() => { })
 }
-
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("valid",valid);
+      console.log("valid", valid);
       if (ruleForm.id == 0) {
         createFoundationReliable(ruleForm).then((response) => {
           open.value = false
-          getList()
+          initData()
         })
       } else {
         updateFoundationReliable(ruleForm).then((response) => {
           open.value = false
-          getList()
+          initData()
         })
       }
     } else {
@@ -276,27 +308,63 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 
 }
-const baseLibLogRecords = reactive([
-  {
-    content: "修改记录1",
-    version: "2.0.0",
-    timestamp: "2023-07-15",
-    optionUser: "张三"
-  },
-  {
-    content: "修改记录2",
-    version: "2.0.0",
-    timestamp: "2023-07-14",
-    optionUser: "张三"
-  }
-])
 
-const saveLog = () => {
-  console.log(baseLibLogRecords)
+
+const editLogFlag = ref(false)
+
+const baseLibLogRecords = ref([])
+
+const saveLog =async () => {
+  let data=JSON.parse(JSON.stringify(baseLibLogRecords.value))
+  await saveEnvLog({
+    listFoundationLogs:data
+    }).then((response) => {
+     if(response.success){
+      ElMessage({
+        type:'success',
+        message:'修改成功'
+      });
+      initData()
+     }else{
+      ElMessage({
+        type:'error',
+        message:'修改失败'
+      });
+     }
+  })
   editLogFlag.value = false
 }
 
-getList()
+const getList = async () => {
+  await GetListAll(queryParams.value).then((response) => {
+    tableData.value = response.result
+  })
+}
+
+//获取日志记录
+const getEnvOptionLog = () => {
+  let data={
+    Type: 3
+  };
+  getEnvLog(data).then((response) => {
+    baseLibLogRecords.value = response.result
+    console.log("======baseLibLogRecords=======", baseLibLogRecords.value);
+  })
+}
+
+
+const initData = () => {
+  loading.value = true;
+  getList()
+  getEnvOptionLog()
+  loading.value = false;
+}
+
+onMounted(() => {
+  initData();
+})
+
+
 defineExpose({
   ...toRefs(tableData)
 })

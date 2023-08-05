@@ -60,7 +60,8 @@
       </el-scrollbar>
     </div>
 
-    <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
+    <div v-if="baseLibLogRecords.length>0" 
+        class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar :min-size="10">
         <div class="u-flex u-row-between u-col-center u-p-r-20">
           <div>日志更新记录：</div>
@@ -73,11 +74,11 @@
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
-              :timestamp="activity.timestamp">
+               :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">
                 <div style="font-weight: bold; color: #909399">
                   <span>版本号：</span>
-                  <span>{{ activity.version }}</span>
+                  <span>{{ activity.version?activity.version:'--' }}</span>
                 </div>
                 <div>
                   <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
@@ -85,12 +86,12 @@
                       <span>操作人：</span>
                     </div>
                     <div>
-                      <span>{{ activity.optionUser }}</span>
+                      <span>{{ activity.lastModifierUserName }}</span>
                     </div>
                   </div>
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
-                      <el-input :disabled="!editLogFlag" v-model="activity.content" :rows="2" type="textarea"
+                      <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2" type="textarea"
                         placeholder="更新日志记录内容" />
                     </div>
                   </div>
@@ -134,7 +135,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs } from "vue"
+import { reactive, ref, toRefs,onMounted } from "vue"
 import type { FormInstance, FormRules } from 'element-plus'
 import { nextTick } from "process"
 import {
@@ -143,12 +144,14 @@ import {
   updateFoundationEmc,
   createFoundationEmc,
   deleteFoundationEmc,
-  baseURL
+  getEmcLog,
+  saveEmcLog,
+  baseDomain
 } from "@/api/foundationEmc"
 import { ElMessage, ElMessageBox,genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from "@/utils"
-const uploadAction = baseURL + "api/services/app/FoundationProcedure/UploadFoundationProcedure";
+const uploadAction = baseDomain + "api/services/app/FoundationEmc/UploadFoundationEmc";
 const data = reactive({
   queryParams: {
     name: undefined,
@@ -217,7 +220,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     console.log("uploadFile", uploadFile);
     console.log("uploadFiles", uploadFiles);
     if(response.result){
-      getList()
+      initData()
       ElMessage({
         type: 'success',
         message: '导入成功',
@@ -258,12 +261,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       if (ruleForm.id == 0) {
         createFoundationEmc(ruleForm).then((response) => {
           open.value = false
-          getList()
+          initData()
         })
       } else {
         updateFoundationEmc(ruleForm).then((response) => {
           open.value = false
-          getList()
+          initData()
         })
       }
     } else {
@@ -320,7 +323,7 @@ function handleDelete(row) {
       return deleteFoundationEmc(postIds)
     })
     .then(() => {
-      getList()
+      initData()
       ElMessage({
         type: "success",
         message: "删除成功"
@@ -329,27 +332,60 @@ function handleDelete(row) {
     .catch(() => { })
 }
 
-const baseLibLogRecords = reactive([
-  {
-    content: "修改记录1",
-    version: "2.0.0",
-    timestamp: "2023-07-15",
-    optionUser: "张三"
-  },
-  {
-    content: "修改记录2",
-    version: "2.0.0",
-    timestamp: "2023-07-14",
-    optionUser: "张三"
-  }
-])
+const baseLibLogRecords = ref([])
 
-const saveLog = () => {
-  console.log(baseLibLogRecords)
+//获取日志记录
+const getEmcOptionLog = () => {
+  let data={
+    Type: 2
+  };
+  getEmcLog(data).then((response) => {
+    console.log("======getEmcLog ===response=======",response);
+    if(response.success){
+      baseLibLogRecords.value = response.result
+      console.log("======baseLibLogRecords=======", baseLibLogRecords.value);
+    }
+    else{
+      ElMessage({
+        type:'error',
+        message:'加载日志记录失败'
+      })
+    }
+  })
+}
+
+const saveLog =async () => {
+  let data=JSON.parse(JSON.stringify(baseLibLogRecords.value))
+  await saveEmcLog({
+    listFoundationLogs:data
+    }).then((response) => {
+     if(response.success){
+      ElMessage({
+        type:'success',
+        message:'修改成功'
+      });
+      initData()
+     }else{
+      ElMessage({
+        type:'error',
+        message:'修改失败'
+      });
+     }
+  })
   editLogFlag.value = false
 }
 
-getList()
+const initData = () => {
+  loading.value = true;
+  getList()
+  getEmcOptionLog()
+  loading.value = false;
+}
+
+onMounted(() => {
+  initData();
+})
+
 defineExpose({
   ...toRefs(tableData)
 })

@@ -67,10 +67,13 @@
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.installationName"
+                <el-select :disabled="currentEditProcessIndex != scope.$index" 
+                  v-model="scope.row.installationName"
                   filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
                   @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in installationNameOptions" :key="item.value" :label="item.label"
+                  <el-option v-for="item in installationNameOptions" 
+                    :key="item.value" 
+                    :label="item.label"
                     :value="item.value" />
                 </el-select>
               </div>
@@ -162,9 +165,10 @@
 
     </div>
     <!-- 日志记录 -->
-    <div v-if="baseLibLogRecords.length>0" class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
+    <div v-if="baseLibLogRecords.length>0" 
+        class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar :min-size="10">
-        <div class="u-flex u-row-between u-col-center  u-p-r-20">
+        <div class="u-flex u-row-between u-col-center u-p-r-20">
           <div>日志更新记录：</div>
           <div>
             <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
@@ -175,24 +179,24 @@
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
-              :timestamp="activity.timestamp">
-              <div class="u-p-10  u-font-12">
-                <div style="font-weight: bold;color: #909399;">
+               :timestamp="formatDateTime(activity.lastModificationTime)">
+              <div class="u-p-10 u-border-bottom u-font-12">
+                <div style="font-weight: bold; color: #909399">
                   <span>版本号：</span>
-                  <span>{{ activity.version }}</span>
+                  <span>{{ activity.version?activity.version:'--' }}</span>
                 </div>
                 <div>
-                  <div style="font-weight: bold;color: #909399;" class="u-flex u-row-left u-col-center u-m-t-10">
+                  <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
                     <div>
                       <span>操作人：</span>
                     </div>
                     <div>
-                      <span>{{ activity.optionUser }}</span>
+                      <span>{{ activity.lastModifierUserName }}</span>
                     </div>
                   </div>
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
-                      <el-input :disabled="!editLogFlag" v-model="activity.content" :rows="2" type="textarea"
+                      <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2" type="textarea"
                         placeholder="更新日志记录内容" />
                     </div>
                   </div>
@@ -206,14 +210,15 @@
 
   </div>
 </template>
-
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox,genFileId} from "element-plus"
-import {baseURL,getListAll, createFoundationProcedure, updateFoundationProcedure, deleteFoundationProcedure} from '@/api/foundationProcedure';
+import {baseURL,getListAll, createFoundationProcedure, 
+  updateFoundationProcedure, deleteFoundationProcedure,
+  getLog,saveOptionLog} from '@/api/foundationProcedure';
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
-
+import { formatDateTime } from '@/utils';
 const uploadAction=baseURL+"api/services/app/FoundationProcedure/UploadFoundationProcedure";
 
 //查询关键字
@@ -346,7 +351,7 @@ const saveEdit = async (index: number, row: any) => {
   //编辑保存
   console.log(row.id)
   if (row.id > 0) {
-    console.log("编辑工装保存");
+    console.log("编辑工装保存",row);
     tip = "修改工装";
     result = await updateFoundationProcedure(row);
   }
@@ -488,32 +493,45 @@ const baseLibLogRecords = ref<any>([])
 
 //获取日志
 const getLogRecords = () => {
-  baseLibLogRecords.value = [
-    {
-      content: '修改记录1',
-      version: '2.0.0',
-      timestamp: '2023-07-15',
-      optionUser: '张三'
-    },
-    {
-      content: '修改记录2',
-      version: '2.0.0',
-      timestamp: '2023-07-14',
-      optionUser: '张三'
-    },
-    {
-      content: '修改记录3',
-      version: '2.0.0',
-      timestamp: '2013-07-13',
-      optionUser: '张三'
-    },
-  ]
+  let data={
+    Type: 1
+  };
+  getLog(data).then((response:any) => {
+    if(response.success){
+      baseLibLogRecords.value = response.result
+      console.log("======baseLibLogRecords=======", baseLibLogRecords.value);
+    }
+    else{
+      ElMessage({
+        type:'error',
+        message:'加载日志记录失败'
+      })
+    }
+  })
 }
 
 //保存日志方法
-const saveLog = () => {
-  editLogFlag.value = false;
+const saveLog =async () => {
+  let data=JSON.parse(JSON.stringify(baseLibLogRecords.value))
+  await saveOptionLog({
+    listFoundationLogs:data
+    }).then((response) => {
+     if(response.success){
+      ElMessage({
+        type:'success',
+        message:'修改成功'
+      });
+      initData()
+     }else{
+      ElMessage({
+        type:'error',
+        message:'修改失败'
+      });
+     }
+  })
+  editLogFlag.value = false
 }
+
 //#endregion
 </script>
 <style>

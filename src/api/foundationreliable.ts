@@ -1,4 +1,6 @@
-import { request } from "@/utils/service"
+import { request,baseDomain } from "@/utils/service"
+
+export {baseDomain}
 
 /**
  * foundationreliable
@@ -130,6 +132,24 @@ export function GetListAll(data: QueryParams) {
   return request({
     url: "api/services/app/Foundationreliable/GetListAll",
     method: "get",
+    data
+  })
+}
+
+//获取日志
+export function getEnvLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//保存日志
+export function saveEnvLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/update",
+    method: "put",
     data
   })
 }

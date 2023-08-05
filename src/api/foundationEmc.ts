@@ -1,6 +1,6 @@
-import { request } from "@/utils/service"
+import { request,baseDomain} from "@/utils/service"
 
-export const baseURL="https://localhost:44311/"
+export {baseDomain}
 
 export interface QueryParams {
   name?: string
@@ -50,6 +50,34 @@ export function GetListAll(data: QueryParams) {
   return request({
     url: "api/services/app/FoundationEmc/GetListAll",
     method: "get",
+    data
+  })
+}
+
+//获取日志
+export function getLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+
+//获取日志
+export function getEmcLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//保存日志
+export function saveEmcLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/update",
+    method: "put",
     data
   })
 }

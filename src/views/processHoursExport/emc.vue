@@ -31,7 +31,7 @@
             <el-table-column label="工序维护人" align="center" prop="lastModifierUserName" />
             <el-table-column label="工序维护时间" align="center" width="160px">
               <template #default="scope">
-                  <div>
+                <div v-if="null != scope.row.creationTime && '' != scope.row.creationTime">
                     {{formatDateTime(scope.row.creationTime)}}
                   </div>
               </template>

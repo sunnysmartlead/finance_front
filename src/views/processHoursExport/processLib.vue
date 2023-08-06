@@ -11,16 +11,28 @@
       </el-form>
     </div>
     <div class="u-flex u-row-between u-col-center">
-      <div>
-        <el-button type="primary" @click="submitSearch">工序库导入</el-button>
-        <el-button type="primary" @click="addNewProcess">新增工序</el-button>
+      <div class="u-flex u-row-left u-col-center">
+        <div  class="u-m-r-20">
+          <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"  
+              :show-file-list="false"
+               :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                :action="uploadAction" :limit="1">
+            <template #trigger>
+              <el-button type="primary">工序库导入</el-button>
+            </template>
+          </el-upload>
+        </div>
+        <div>
+          <el-button type="primary" @click="addNewProcess" :disabled="addFlag==1">新增工序</el-button>
+        </div>
       </div>
+
       <div>
-        <el-button type="primary" @click="submitSearch">工序库导出</el-button>
+        <el-button type="primary"  @click="submitExportProcess">工序库导出</el-button>
         <el-button type="primary" @click="submitSearch">工序库模板下载</el-button>
       </div>
     </div>
-    <div  class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
+    <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
         <div>
           <el-table :data="tableData" style="width: 100%" border>
@@ -28,12 +40,7 @@
             <el-table-column label="工序编号" align="center">
               <template #default="scope">
                 <div>
-                  <el-select :disabled="currentEditProcessIndex != scope.row.processIndex" v-model="scope.row.processIndex"
-                    filterable remote reserve-keyword :remote-method="remoteMethodForProcessIndex"
-                    @change="processIndexChange($event, scope.$index)" :loading="optionLoading">
-                    <el-option v-for="item in processIndexOptions" :key="item.value" :label="item.label"
-                      :value="item.value" />
-                  </el-select>
+                  <el-input :disabled="isDisable(scope.$index)" v-model="scope.row.processNumber"></el-input>
                 </div>
               </template>
             </el-table-column>
@@ -41,11 +48,8 @@
             <el-table-column label="工序名称" align="center">
               <template #default="scope">
                 <div>
-                  <el-select :disabled="currentEditProcessIndex != scope.row.processIndex" v-model="scope.row.processName"
-                    filterable remote reserve-keyword :remote-method="remoteMethodForProcessName"
-                    @change="processNameChange($event, scope.$index)" :loading="optionLoading">
-                    <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label" :value="item.value" />
-                  </el-select>
+                  <el-input :disabled="isDisable(scope.$index)" v-model="scope.row.processName"></el-input>
+
                 </div>
               </template>
             </el-table-column>
@@ -53,8 +57,7 @@
             <el-table-column label="工序维护人" align="center">
               <template #default="scope">
                 <div>
-                  <el-input v-model="scope.row.processManager" :disabled="currentEditProcessIndex != scope.row.processIndex"
-                    placeholder="请输入工序维护人" />
+                  <el-input v-model="scope.row.lastModifierUserName" :disabled="true" placeholder="系统自动生成" />
                 </div>
               </template>
             </el-table-column>
@@ -62,142 +65,288 @@
             <el-table-column label="工序维护时间" align="center">
               <template #default="scope">
                 <div>
-                  <el-date-picker v-model="scope.row.processManageTime"
-                    :disabled="currentEditProcessIndex != scope.row.processIndex" type="datetime"
+                  <el-date-picker v-model="scope.row.lastModificationTime" :disabled="true" type="datetime"
                     value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" :disabled-date="disabledDate"
-                    placeholder="请输入工序维护时间" />
+                    placeholder="系统自动生成" />
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column label="操作" align="center">
+            <el-table-column label="操作" align="center" width="200">
               <template #default="scope">
-                <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <template v-if="currentEditIndex == scope.$index">
+                      <el-button size="small" @click="cancalEdit(scope.$index, scope.row)">取消</el-button>
+                      <el-button type="primary" @click="handleSave(scope.$index, scope.row)"
+                          size="small">保存</el-button>
+                </template>
+                <template v-else>
+                        <el-button type="primary" size="small"
+                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                </template>
+                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> 
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <div v-show="tableData.length>=10" 
-            class="u-flex u-row-center u-col-center u-m-t-20">
+        <div v-show="tableData.length >= 10" class="u-flex u-row-center u-col-center u-m-t-20">
           <div>
-            <el-pagination 
-                  :page-size="10" :pager-count="5" 
-                  layout="prev, pager, next" 
-                  :total="tableData.length"/>
+            <el-pagination :page-size="10" :pager-count="5" layout="prev, pager, next" :total="tableData.length" />
           </div>
         </div>
-      </el-scrollbar>  
+      </el-scrollbar>
     </div>
 
-    <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-        <el-scrollbar  :min-size="10">
-        <div class="u-flex u-row-between u-col-center  u-p-r-20">
+    <div v-if="baseLibLogRecords.length>0" 
+        class="u-m-t-20 u-p-10" style="background-color: #ffffff">
+      <el-scrollbar :min-size="10">
+        <div class="u-flex u-row-between u-col-center u-p-r-20">
           <div>日志更新记录：</div>
           <div>
-              <el-button v-if="editLogFlag==false" type="primary" @click="editLogFlag=true">编辑</el-button>
-              <el-button v-else @click="editLogFlag=false">取消</el-button>
-              <el-button type="primary" @click="saveLog">保存</el-button>
+            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+            <el-button v-else @click="editLogFlag = false">取消</el-button>
+            <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
         </div>
         <div class="u-m-t-20">
           <el-timeline>
-              <el-timeline-item placement="top" 
-                  v-for="(activity, index) in baseLibLogRecords" :key="index"
-                  :timestamp="activity.timestamp">
-                 <div class="u-p-10 u-border-bottom u-font-12">
-                    <div style="font-weight: bold;color: #909399;">
-                      <span>版本号：</span>
-                      <span>{{ activity.version }}</span>
+            <el-timeline-item placement="top" 
+              v-for="(activity, index) in baseLibLogRecords" 
+              :key="index"
+               :timestamp="formatDateTime(activity.lastModificationTime)">
+              <div class="u-p-10 u-border-bottom u-font-12">
+                <div style="font-weight: bold; color: #909399">
+                  <span>版本号：</span>
+                  <span>{{ activity.version?activity.version:'--' }}</span>
+                </div>
+                <div>
+                  <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
+                    <div>
+                      <span>操作人：</span>
                     </div>
                     <div>
-                      <div style="font-weight: bold;color: #909399;"
-                           class="u-flex u-row-left u-col-center u-m-t-10">
-                        <div>
-                          <span>操作人：</span>
-                        </div>
-                        <div>
-                          <span>{{activity.optionUser}}</span>
-                        </div>
-                      </div>
-                      <div class="u-m-t-10">
-                          <div class="u-m-t-5 u-font-12">
-                              <el-input :disabled="!editLogFlag" v-model="activity.content" :rows="2" 
-                            type="textarea" placeholder="更新日志记录内容"/>
-                          </div> 
-                      </div>
+                      <span>{{ activity.lastModifierUserName }}</span>
                     </div>
-                 </div>
-              </el-timeline-item>
+                  </div>
+                  <div class="u-m-t-10">
+                    <div class="u-m-t-5 u-font-12">
+                      <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2" type="textarea"
+                        placeholder="更新日志记录内容" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </el-timeline-item>
           </el-timeline>
         </div>
-        </el-scrollbar>  
-      </div>
+      </el-scrollbar>
+    </div>
 
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs } from 'vue'
-import { ElMessage, ElMessageBox } from "element-plus"
+import { formatDateTime } from "@/utils"
+import { reactive, ref, toRefs, onMounted } from 'vue'
+import { ElMessage, ElMessageBox,genFileId } from "element-plus"
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
+import { GetListAll, getProcessDetail, createProcess, exportProcess,
+      updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
 const queryForm = reactive({
   processName: ''
 })
 
-const tableData = reactive([
-  {
-    processIndex: '00001',
-    processManageTime: '2016-05-03 10:00:00',
-    processManager: 'Tom',
-    processName: '工序名称1',
-  },
-  {
-    processIndex: '00002',
-    processManageTime: '2017-05-03 10:00:00',
-    processManager: 'Jerry',
-    processName: '工序名称2',
-  },
-  {
-    processIndex: '00003',
-    processManageTime: '2018-05-03 10:00:00',
-    processManager: '熊大',
-    processName: '工序名称3',
-  },
-  {
-    processIndex: '00004',
-    processManageTime: '2019-05-03 10:00:00',
-    processManager: '熊二',
-    processName: '工序名称4',
+interface processItem {
+  id: number,
+  isDeleted: boolean,
+  deleterUserId: number,
+  deletionTime: string,
+  lastModifierUserId: number,
+  lastModificationTime: string
+  creationTime: string,
+  creatorUserId: number,
+  processName: string
+  processNumber: string,
+  lastModifierUserName: string,
+}
+
+
+const tableData = ref([])
+
+
+onMounted(() => {
+  initData()
+})
+
+const initData = () => {
+  addFlag.value=0;
+  currentEditIndex.value=-1;
+  getProcessList()
+  getProcessOptionLog()
+}
+
+const getProcessList = async () => {
+  let param = {
+    ProcessName: queryForm.processName
   }
-])
+  await GetListAll(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      console.log("工序列表", data);
+      tableData.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
+}
 
 const submitSearch = () => {
   console.log('submitSearch!')
+  getProcessList()
 }
 
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+    upload.value!.clearFiles()
+    const file = files[0] as UploadRawFile
+    file.uid = genFileId()
+    upload.value!.handleStart(file)
+}
+
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+    console.log("responese", response);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    if(response.result){
+      initData()
+      ElMessage({
+        type: 'success',
+        message: '导入成功',
+       })
+    }else{
+      ElMessage({
+        type: 'error',
+        message: '导入失败',
+       })
+    }
+}
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+    console.log("error", error);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    ElMessage({
+        type: 'error',
+        message: '导入失败',
+    })
+}
+
+const submitExportProcess=()=>{
+  let param={
+    processName:queryForm.processName
+  }
+  exportProcess(param).then((response: any) => {
+      if (response) {
+          const data = new Blob([response],{ type: 'application/octet-stream'});
+          const url = URL.createObjectURL(data);
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download',"工序.xlsx");
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '导出失败'
+        })
+      }
+    })
+}
+
+
+const currentEditIndex = ref<number>()
+let currentEditProcess:any = null;
+const addFlag = ref<number>(0);
 const addNewProcess = () => {
-  tableData.push({
-    processIndex: "",
-    processName: "",
-    processManager: "",
-    processManageTime: ""
-  })
-  currentEditProcessIndex.value = "";
+  if (addFlag.value==1) {
+    ElMessage({
+      type: 'warning',
+      message: '您有新的记录尚未保存'
+    })
+    return;
+  }else{
+    let newItem: any = {
+      processNumber: "",
+      processName: "",
+      lastModifierUserName: "",
+      lastModificationTime: ""
+    }
+    tableData.value.push(newItem)
+    addFlag.value = 1;
+    currentEditIndex.value=tableData.value.length - 1;
+  }
+}
+//保存
+const handleSave = (index: number, row: processItem) => {
+  let param = JSON.parse(JSON.stringify(row))
+  let id = row.id;
+  //保存
+  if (row.id) {
+    updateProcess(param).then((response: any) => {
+      console.log("修改响应", response);
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '修改成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '编辑保存失败'
+        })
+      }
+    })
+  }
+  //新增
+  else {
+    createProcess(param).then((response: any) => {
+      console.log("新增响应", response);
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '保存成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '新增失败'
+        })
+      }
+    })
+  }
 }
 
-interface processItem {
-  processIndex: string
-  processName: string
-  processManager: string,
-  processManageTime: string
-}
-
-const currentEditProcessIndex = ref<string>("")
-
+//开启编辑
 const handleEdit = (index: number, row: processItem) => {
   console.log(index, row);
-  currentEditProcessIndex.value = row.processIndex;
+  currentEditIndex.value = index;
+  currentEditProcess=JSON.parse(JSON.stringify(row))
 }
+
+const cancalEdit=(index: number, row: processItem)=>{
+  currentEditIndex.value = -1;
+  if(addFlag.value==1){
+    tableData.value.splice(index);
+    addFlag.value=0;
+  }else{
+    tableData.value[index]=currentEditProcess;
+  }
+}
+
 const handleDelete = (index: number, row: processItem) => {
   console.log(index, row);
   ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
@@ -205,13 +354,21 @@ const handleDelete = (index: number, row: processItem) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    tableData.splice(index);
+    tableData.value.splice(index);
     ElMessage({
       type: "success",
       message: "删除成功"
     })
   })
 }
+
+const isDisable = (index: number) => {
+  if (currentEditIndex.value == index) {
+    return false;
+  }
+  return true;
+}
+
 
 interface selectOptionListItem {
   value: string
@@ -245,7 +402,6 @@ const getProcessName = (keyWord: String) => {
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
 }
-
 //模糊查询工序编号
 const processIndexOptions = ref<selectOptionListItem[]>([])
 //选择查询回调
@@ -281,31 +437,56 @@ const disabledDate = (time: Date) => {
 const timeChange = (val: string) => {
   console.log("维护时间发生了变化", val);
 }
-const editLogFlag=ref(false);
-const baseLibLogRecords = reactive([
-      {
-          content: '修改记录1',
-          version:'2.0.0',
-          timestamp: '2023-07-15',
-          optionUser:'张三'
-      },
-      {
-          content: '修改记录2',
-          version:'2.0.0',
-          timestamp: '2023-07-14',
-          optionUser:'张三'
-      },
-      {
-          content: '修改记录3',
-          version:'2.0.0',
-          timestamp: '2013-07-13',
-          optionUser:'张三'
-      },
-  ])
-const saveLog=()=>{
-  console.log(baseLibLogRecords);
-  editLogFlag.value=false;
+const editLogFlag = ref(false);
+const baseLibLogRecords = ref([])
+
+
+//获取日志记录
+const getProcessOptionLog = () => {
+  let data={
+    Type: 4
+  };
+  getProcessLog(data).then((response:any) => {
+    console.log("======工序日志结果 ===response=======",response);
+    if(response.success){
+      baseLibLogRecords.value = response.result
+      console.log("======baseLibLogRecords=======", baseLibLogRecords.value);
+    }
+    else{
+      ElMessage({
+        type:'error',
+        message:'加载日志记录失败'
+      })
+    }
+  })
 }
+
+
+
+
+const saveLog =async () => {
+  let data=JSON.parse(JSON.stringify(baseLibLogRecords.value))
+  await saveProcessLog({
+    listFoundationLogs:data
+    }).then((response:any) => {
+     if(response.success){
+      ElMessage({
+        type:'success',
+        message:'修改成功'
+      });
+      initData()
+     }else{
+      ElMessage({
+        type:'error',
+        message:'修改失败'
+      });
+     }
+  })
+  editLogFlag.value = false
+}
+
+
+
 
 defineExpose({
   ...toRefs(tableData),

@@ -15,7 +15,7 @@
     <div class="u-flex u-row-between u-col-center">
       <div class="u-flex u-row-left u-col-center">
         <div class="u-m-r-20">
-            <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"  
+            <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
               :show-file-list="false"
                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
                 :action="uploadAction" :limit="1">
@@ -31,6 +31,8 @@
       <div>
         <el-button type="primary" @click="exportData">工装库导出</el-button>
         <el-button type="primary" @click="submitSearch">工装库模板下载</el-button>
+        <el-button type="primary" @click="submitSearch">工装库导出</el-button>
+        <el-button type="primary" @click="downLoad">工装库模板下载</el-button>
       </div>
     </div>
     <!-- 数据表格区域 -->
@@ -67,12 +69,12 @@
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index" 
+                <el-select :disabled="currentEditProcessIndex != scope.$index"
                   v-model="scope.row.installationName"
                   filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
                   @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in installationNameOptions" 
-                    :key="item.value" 
+                  <el-option v-for="item in installationNameOptions"
+                    :key="item.value"
                     :label="item.label"
                     :value="item.value" />
                 </el-select>
@@ -165,7 +167,7 @@
 
     </div>
     <!-- 日志记录 -->
-    <div v-if="baseLibLogRecords.length>0" 
+    <div v-if="baseLibLogRecords.length>0"
         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar :min-size="10">
         <div class="u-flex u-row-between u-col-center u-p-r-20">
@@ -213,7 +215,7 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox,genFileId} from "element-plus"
-import {baseURL,getListAll, createFoundationProcedure, 
+import {baseURL,getListAll, createFoundationProcedure,
   updateFoundationProcedure, deleteFoundationProcedure,
   getLog,saveOptionLog,exportWorkClothes} from '@/api/foundationProcedure';
 import {deleteFoundationEmc} from "@/api/foundationEmc";
@@ -264,7 +266,14 @@ const submitSearch = () => {
   console.log('submitSearch!');
   initData();
 }
-
+const downLoad= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/工装库导入.xlsx"
+  link.download = '工装库导入.xlsx'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 const exportData=()=>{
    let param = {
         processName: queryForm.InstallationName

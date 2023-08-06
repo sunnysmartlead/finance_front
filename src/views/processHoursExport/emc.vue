@@ -26,7 +26,7 @@
             </el-upload>
           </div>
           <div>
-            <el-button type="primary" @click="submitSearch">模版下载</el-button>
+            <el-button type="primary" @click="downLoadEmc">模版下载</el-button>
             <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
           </div>
         </div>
@@ -60,7 +60,7 @@
       </el-scrollbar>
     </div>
 
-    <div v-if="baseLibLogRecords.length>0" 
+    <div v-if="baseLibLogRecords.length>0"
         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar :min-size="10">
         <div class="u-flex u-row-between u-col-center u-p-r-20">
@@ -151,6 +151,7 @@ import {
 import { ElMessage, ElMessageBox,genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from "@/utils"
+import {CommonDownloadFile} from "@/api/bom";
 const uploadAction = baseDomain + "api/services/app/FoundationEmc/UploadFoundationEmc";
 const data = reactive({
   queryParams: {
@@ -290,6 +291,16 @@ function getList() {
 const submitSearch = () => {
   getList()
 }
+
+const downLoadEmc= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/EMC导入.xlsx"
+  link.download = 'EMC导入模版.xls'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 
 
 const editLogFlag = ref(false)

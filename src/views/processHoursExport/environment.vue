@@ -24,7 +24,7 @@
           </el-upload>
         </div>
         <div>
-          <el-button type="primary" @click="submitSearch">模版下载</el-button>
+          <el-button type="primary" @click="downLoadEmc">模版下载</el-button>
           <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
         </div>
       </div>
@@ -89,8 +89,8 @@
                   </div>
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
-                      <el-input :disabled="!editLogFlag" 
-                        v-model="activity.remark" 
+                      <el-input :disabled="!editLogFlag"
+                        v-model="activity.remark"
                         :rows="2" type="textarea"
                         placeholder="更新日志记录内容" />
                     </div>
@@ -237,6 +237,16 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     message: '导入失败',
   })
 }
+
+const downLoadEmc= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/环境导入.xlsx"
+  link.download = '环境导入模版.xlsx'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 const handleAdd = (formEl: FormInstance | undefined) => {
   open.value = true
   resetForm(formEl)

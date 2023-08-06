@@ -29,7 +29,7 @@
 
             <div>
                 <el-button type="primary" @click="exportList">设备库导出</el-button>
-                <el-button type="primary">设备库模板下载</el-button>
+                <el-button @click="downLoad" type="primary">设备库模板下载</el-button>
             </div>
         </div>
         <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
@@ -394,6 +394,14 @@ const getProcessName = (keyWord: String) => {
         { label: "工序名称3" + keyWord, value: 'ccccc' },
         { label: "工序名称4" + keyWord, value: 'ddddd' }
     ]
+}
+const downLoad= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/设备库导入.xlsx"
+  link.download = '设备库导入.xlsx'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {

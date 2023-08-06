@@ -122,18 +122,18 @@ export function PostCalculateMouldInventory(data: {
 }
 
 // Ner 营销部录入初始值
-export function GetInitialSalesDepartment(Id: number): any {
+export function GetInitialResourcesManagementSingle(data: any): any {
   return request({
-    url: "/api/services/app/NrePricing/GetInitialSalesDepartment",
+    url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
     method: "get",
-    data: { Id }
+    data
   })
 }
 
 // Ner 营销部录入
-export function PostSalesDepartment(data: NreMarketingDepartmentModel[]): any {
+export function PostSalesDepartment(data: any): any {
   return request({
-    url: "/api/services/app/NrePricing/PostSalesDepartment",
+    url: "/api/services/app/NrePricing/PostResourcesManagementSingle",
     method: "post",
     data
   })
@@ -188,7 +188,7 @@ export function GetReturnQcGauge(auditFlowId: number, solutionId: number): any {
 // Ner 营销部 录入过的值
 export function GetReturnInitialSalesDepartment(Id: number): any {
   return request({
-    url: "/api/services/app/NrePricing/GetReturnInitialSalesDepartment",
+    url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
     method: "get",
     data: {
       Id

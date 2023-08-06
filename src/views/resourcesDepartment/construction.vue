@@ -262,7 +262,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onBeforeMount, onMounted, watchEffect, computed } from "vue"
+import { ref, onBeforeMount, onMounted, watchEffect, computed, shallowRef } from "vue"
 import { ConstructionModel } from "./data.type"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 
@@ -270,7 +270,7 @@ import {
   GetStructural,
   PostStructuralMemberEntering,
   ToriginalCurrencyStructural,
-  PostStructuralMaterialCalculate,
+  PostStructuralMaterialCalculate
 } from "./common/request"
 import { useRouter } from "vue-router"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
@@ -295,7 +295,7 @@ console.log(store.userInfo, "store")
 const { auditFlowId, productId }: any = getQuery()
 
 // 结构料 - table数据
-const constructionBomList = ref<any>([])
+const constructionBomList = shallowRef<any>([])
 
 const exchangeSelectOptions = ref<any>([])
 

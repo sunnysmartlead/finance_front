@@ -222,7 +222,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onBeforeMount, onMounted, computed } from "vue"
+import { ref, reactive, onBeforeMount, onMounted, computed, shallowRef } from "vue"
 // import { useUserStore } from "@/store/modules/user"
 import { ElectronicDto } from "./data.type"
 import { ElMessage, ElMessageBox } from "element-plus"
@@ -252,13 +252,7 @@ enum upDownEunm {
 const tableLoading = ref(false)
 
 // 电子料 - table数据
-const electronicBomList = ref<any>([])
-
-// 计算总值
-const reduceArr = (arr: any[]) => {
-  if (!arr?.length) return 0
-  return arr.reduce((a, b) => a + b)
-}
+const electronicBomList = shallowRef<any>([])
 
 const allStandardMoney = computed(() => {
   try {
@@ -329,8 +323,10 @@ const fetchInitData = async () => {
   allColums.iginalCurrencyYears = iginalCurrency || []
   allColums.standardMoneyYears = standardMoney || []
   allColums.rebateMoneyYears = rebateMoney || []
-  electronicBomList.value = result
-  tableLoading.value = false
+  setTimeout(() => {
+    electronicBomList.value = result
+    tableLoading.value = false
+  }, 1000)
 }
 
 // 提交电子料单价行数据

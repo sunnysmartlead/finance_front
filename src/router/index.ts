@@ -382,6 +382,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "/nre/nreMarketingDepartmentVertify",
+        component: () => import("@/views/nre/vertify/nreMarketingDepartment.vue"),
+        name: "nreMarketingDepartmentVertify",
+        meta: {
+          title: "营销部NRE审核"
+        }
+      },
+      {
         path: "/nre/nrePricelist",
         component: () => import("@/views/nre/nrePricelist.vue"),
         name: "nrePricelist",

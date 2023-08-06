@@ -30,8 +30,6 @@
       </div>
       <div>
         <el-button type="primary" @click="exportData">工装库导出</el-button>
-        <el-button type="primary" @click="submitSearch">工装库模板下载</el-button>
-        <el-button type="primary" @click="submitSearch">工装库导出</el-button>
         <el-button type="primary" @click="downLoad">工装库模板下载</el-button>
       </div>
     </div>

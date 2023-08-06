@@ -1,6 +1,7 @@
-import { request } from "@/utils/service"
+import { request,baseDomain } from "@/utils/service"
 
-
+const uploadAction=baseDomain+"api/services/app/FoundationDevice/UploadFoundationDevice"
+export {uploadAction}
 /**
  * ResetPasswordDto
  */
@@ -53,3 +54,32 @@ export function deleteFoundationPFoundationDevice(id: number | undefined) {
     }
   })
 }
+
+  //获取日志
+export function getDeviceLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//保存日志
+export function saveDeviceLog(data:any){
+  return request({
+    url: "/api/services/app/FoundationLogs/update",
+    method: "put",
+    data
+  })
+}
+
+/** 导出 */
+export function exportDevice(data:any) {
+  return request({
+    url: "/api/services/app/FoundationDevice/FoundationDeviceDownloadStream",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
+

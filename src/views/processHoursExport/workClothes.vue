@@ -29,7 +29,7 @@
         </div>
       </div>
       <div>
-        <el-button type="primary" @click="submitSearch">工装库导出</el-button>
+        <el-button type="primary" @click="exportData">工装库导出</el-button>
         <el-button type="primary" @click="submitSearch">工装库模板下载</el-button>
       </div>
     </div>
@@ -215,7 +215,7 @@ import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox,genFileId} from "element-plus"
 import {baseURL,getListAll, createFoundationProcedure, 
   updateFoundationProcedure, deleteFoundationProcedure,
-  getLog,saveOptionLog} from '@/api/foundationProcedure';
+  getLog,saveOptionLog,exportWorkClothes} from '@/api/foundationProcedure';
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from '@/utils';
@@ -263,6 +263,29 @@ const initData = async () => {
 const submitSearch = () => {
   console.log('submitSearch!');
   initData();
+}
+
+const exportData=()=>{
+   let param = {
+        processName: queryForm.InstallationName
+    }
+    exportWorkClothes(param).then((response: any) => {
+        if (response) {
+            const data = new Blob([response], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', "工装.xlsx");
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '导出失败'
+            })
+        }
+    })
 }
 
 const upload = ref<UploadInstance>()

@@ -122,3 +122,12 @@ export function saveOptionLog(data:any){
 }
 
 
+/** 导出 */
+export function exportWorkClothes(data:any) {
+  return request({
+    url: "/api/services/app/FoundationProcedure/FoundationProcedureDownloadStream",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}

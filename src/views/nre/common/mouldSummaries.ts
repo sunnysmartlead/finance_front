@@ -23,14 +23,14 @@ export const getMouldSummaries = (
     }
     let values: any[] = []
     if (key) {
-      values = data.map((item: any) => item[key])
+      values = data?.map((item: any) => item[key])
     } else if (key2) {
-      values = data.map((item: any) => Number((item[key2] || 0) * (item.unitPrice || 0)))
+      values = data?.map((item: any) => Number((item[key2] || 0) * (item.unitPrice || 0)))
     } else {
-      values = data.map((item) => Number((item.count || 0) * (item.unitPrice || 0)))
+      values = data?.map((item) => Number((item.count || 0) * (item.unitPrice || 0)))
     }
-    if (!values.every((value) => Number.isNaN(value)) && index === 2) {
-      sums[index] = `¥ ${values.reduce((prev, curr) => {
+    if (!values?.every((value) => Number.isNaN(value)) && index === 2) {
+      sums[index] = `¥ ${values?.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {
           return prev + curr
         } else {

@@ -133,7 +133,7 @@ export function GetInitialResourcesManagementSingle(data: any): any {
 // Ner 营销部录入
 export function PostSalesDepartment(data: any): any {
   return request({
-    url: "/api/services/app/NrePricing/PostResourcesManagementSinglet",
+    url: "/api/services/app/NrePricing/PostResourcesManagementSingle",
     method: "post",
     data
   })
@@ -188,7 +188,7 @@ export function GetReturnQcGauge(auditFlowId: number, solutionId: number): any {
 // Ner 营销部 录入过的值
 export function GetReturnInitialSalesDepartment(Id: number): any {
   return request({
-    url: "/api/services/app/NrePricing/GetReturnInitialSalesDepartment",
+    url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
     method: "get",
     data: {
       Id

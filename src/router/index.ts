@@ -9,7 +9,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/redirect",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -22,7 +22,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/login",
     component: () => import("@/views/login/index.vue"),
     meta: {
-      hidden: true
+      hidden: false
     }
   },
   {
@@ -93,7 +93,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "产品开发部审核"
         }
-      },
+      }
       // {
       //   path: "/partEntry/managerOperate",
       //   component: () => import("@/views/partEntry/managerOperate.vue"),
@@ -170,7 +170,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM单价录入"
-      // hidden: true
+      // hidden: false
     },
     children: [
       {
@@ -195,7 +195,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "moduleNumber",
         meta: {
           title: "项目走量",
-          hidden: true
+          hidden: false
         }
       }
     ]
@@ -205,7 +205,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/bomVerify/construction",
     component: Layout,
     meta: {
-      title: "BOM单价审核",
+      title: "BOM单价审核"
       //hidden: true
     },
     children: [
@@ -233,7 +233,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM损耗率表单",
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -259,7 +259,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/processImport/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -277,7 +277,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/manufacturingCost/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -295,7 +295,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/pmDepartment/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -313,8 +313,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/nre/nreProjectManageMent",
     component: Layout,
     meta: {
-      title: "NRE",
-      // hidden: true
+      title: "NRE"
+      // hidden: false
     },
     children: [
       {
@@ -412,7 +412,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -446,7 +446,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/tradeCompliance/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -464,7 +464,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/quoteAnalysis/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -474,6 +474,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "报价分析看板"
         }
+      },
+      {
+        path: "/quoteAnalysis/new",
+        component: () => import("@/views/quoteAnalysis/new.vue"),
+        name: "quoteAnalysisNew",
+        meta: {
+          title: "报价分析看板new"
+        }
       }
     ]
   },
@@ -482,7 +490,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/marketingQuotation/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -501,7 +509,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM查看",
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -536,7 +544,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/summaryTable/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -555,7 +563,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/archive/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -581,7 +589,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     redirect: "/timeliness/index",
     component: Layout,
     meta: {
-      roles: ["timeliness"],
+      roles: ["timeliness"]
     },
     children: [
       {
@@ -598,9 +606,9 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "timelinessOperationRecord",
         meta: {
           title: "时效性管理",
-          hidden: true
+          hidden: false
         }
-      },
+      }
     ]
   },
   {
@@ -609,7 +617,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "关闭流程",
-      roles: ["closeFlow"],
+      roles: ["closeFlow"]
     },
     children: [
       {
@@ -617,9 +625,9 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/versionManagement/closeFlow.vue"),
         name: "closeFlowPage",
         meta: {
-          title: "关闭流程",
-        },
-      },
+          title: "关闭流程"
+        }
+      }
     ]
   },
   {
@@ -645,7 +653,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "operationRecord",
         meta: {
           title: "时效性管理",
-          hidden: true
+          hidden: false
         }
       },
       {
@@ -752,7 +760,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "detailList",
         meta: {
           title: "字典管理明细表",
-          hidden: true
+          hidden: false
         }
       }
     ]
@@ -892,7 +900,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     meta: {
       title: "错误页面",
       icon: "404",
-      hidden: true
+      hidden: false
     },
     children: [
       {

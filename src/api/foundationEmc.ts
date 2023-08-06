@@ -26,7 +26,7 @@ export function getFoundationEmcById(id: number) {
   })
 }
 
-/** 修改用户 */
+/** 修改用*/
 export function updateFoundationEmc(data) {
   return request({
     url: "/api/services/app/FoundationEmc/Update",
@@ -34,7 +34,7 @@ export function updateFoundationEmc(data) {
     data
   })
 }
-/** 删除用户 */
+/** 删除 */
 export function deleteFoundationEmc(id: number | undefined) {
   return request({
     url: "/api/services/app/FoundationEmc/Delete",
@@ -45,12 +45,23 @@ export function deleteFoundationEmc(id: number | undefined) {
   })
 }
 
-/** 用户列表 */
+/** 列表 */
 export function GetListAll(data: QueryParams) {
   return request({
     url: "api/services/app/FoundationEmc/GetListAll",
     method: "get",
     data
+  })
+}
+
+export function downloadFile(fileId: number | null) {
+  return request({
+    url: "/api/services/app/FoundationEmc/DownloadFile",
+    method: "get",
+    responseType: "blob",
+    data: {
+      fileId
+    }
   })
 }
 

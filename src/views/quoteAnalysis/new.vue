@@ -55,6 +55,16 @@
         <el-table-column prop="name" label="设备金额" width="180" />
       </el-table>
     </el-card>
+    <p>样品报价</p>
+    <span>前视方案一</span>
+    <el-table :data="data.tableData" style="width: 100%" border height="500px">
+      <el-table-column prop="name" label="样品阶段" width="180" />
+      <el-table-column prop="name" label="需求量（pcs）" width="180" />
+      <el-table-column prop="name" label="成本" width="180" />
+      <el-table-column prop="name" label="单价" width="180" />
+      <el-table-column prop="name" label="毛利率" width="180" />
+      <el-table-column prop="name" label="销售收入" width="180" />
+    </el-table>
     <p>单价表（sop年）</p>
     <el-table :data="data.tableData" style="width: 100%" border height="500px">
       <el-table-column prop="name" label="梯度" width="180" />
@@ -107,7 +117,7 @@ onBeforeMount(() => {
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
-watchEffect(() => { })
+watchEffect(() => {})
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

@@ -308,6 +308,64 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
+
+
+  {
+    path: "/processHoursExport",
+    redirect: "/processHoursExport/index",
+    component: Layout,
+    meta: {
+      //roles: ["admin"]
+      title: "工序工时",
+    },
+    children: [
+
+      {
+        path: "/processHoursExport/processLib",
+        component: () => import("@/views/processHoursExport/processLib.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "processLib",
+        meta: {
+          title: "工序库"
+        }
+      },
+      {
+        path: "/processHoursExport/environment",
+        component: () => import("@/views/processHoursExport/environment.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "environment",
+        meta: {
+          title: "环境"
+        }
+      },
+      {
+        path: "/processHoursExport/emc",
+        component: () => import("@/views/processHoursExport/emc.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "emc",
+        meta: {
+          title: "emc"
+        }
+      },
+      {
+        path: "/processHoursExport/workClothes",
+        component: () => import("@/views/processHoursExport/workClothes.vue"),
+        name: "baseLibLog",
+        meta: {
+          title: "工装库"
+        }
+      },
+      {
+        path: "/processHoursExport/deviceLib",
+        component: () => import("@/views/processHoursExport/deviceLib.vue"),
+        name: "deviceLib",
+        meta: {
+          title: "设备库"
+        }
+      },
+
+    ]
+  },
   {
     path: "/nre",
     redirect: "/nre/nreProjectManageMent",

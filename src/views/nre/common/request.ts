@@ -121,10 +121,18 @@ export function PostCalculateMouldInventory(data: {
   })
 }
 
-// Ner 营销部录入初始值
+// Nre 资源部录入初始值
 export function GetInitialResourcesManagementSingle(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
+    method: "get",
+    data
+  })
+}
+// Nre 营销部录入初始值
+export function GetInitialSalesDepartment(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/GetInitialSalesDepartment",
     method: "get",
     data
   })

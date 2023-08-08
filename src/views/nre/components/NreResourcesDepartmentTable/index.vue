@@ -37,7 +37,7 @@
         </el-table-column>
         <el-table-column label="单价" width="180">
           <template #default="{ row }">
-            <span v-if="isVertify || !row.isSubmit">{{ row.unitPrice }}</span>
+            <span v-if="isVertify">{{ row.unitPrice }}</span>
             <el-input-number
               v-else
               :disabled="row.isSubmit"

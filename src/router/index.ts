@@ -350,6 +350,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "/nre/nreResourcesDepartmentVertify",
+        component: () => import("@/views/nre/vertify/nreResourcesDepartment.vue"),
+        name: "nreResourcesDepartmentVertify",
+        meta: {
+          title: "资源部NRE审核"
+        }
+      },
+      {
         path: "/nre/nreExperimentItems",
         component: () => import("@/views/nre/nreExperimentItems.vue"),
         name: "nreExperimentItems",

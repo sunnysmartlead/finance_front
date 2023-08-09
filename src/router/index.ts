@@ -822,6 +822,14 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "作业价格"
         }
+      },
+      {
+        path: "/fnDepartment/nreCoreDevices",
+        component: () => import("@/views/fnDepartment/nreCoreDevices.vue"),
+        name: "nreCoreDevices",
+        meta: {
+          title: "nre核心"
+        }
       }
     ]
   },

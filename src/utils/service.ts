@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus"
 import { get } from "lodash-es"
 import { getToken } from "@/utils/cookies"
 import { ElLoading } from "element-plus"
-
+export const baseDomain = import.meta.env.VITE_BASE_API
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例

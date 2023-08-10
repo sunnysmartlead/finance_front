@@ -381,7 +381,7 @@
               </el-table-column>
               <el-table-column label="我司角色" width="180">
                 <template #default="{ row }">
-                  <el-select v-model="row.role" placeholder="我司角色" :disabled="isDisabled">
+                  <el-select v-model="row.ourRole" placeholder="我司角色" :disabled="isDisabled">
                     <el-option
                       v-for="item in state.roleOptions"
                       :key="item.id"
@@ -475,9 +475,9 @@
               </template>
             </el-table-column>
             <el-table-column label="像素" prop="pixel" width="180" />
-            <el-table-column label="我司角色" prop="role" width="180">
+            <el-table-column label="我司角色" prop="ourRole" width="180">
               <template #default="{ row }">
-                <el-select v-model="row.role" multiple placeholder="我司角色" disabled>
+                <el-select v-model="row.ourRole" multiple placeholder="我司角色" disabled>
                   <el-option
                     v-for="item in state.roleOptions"
                     :key="item.id"
@@ -495,7 +495,7 @@
               v-for="(year, index) in state.yearCols"
               :key="year + ''"
               width="180"
-              :prop="`modelCountYearList.${index}.quantity`"
+              :prop="`carModelCountYearList.${index}.quantity`"
             />
           </el-table>
         </el-card>
@@ -1554,7 +1554,8 @@ const moduleTableTotal = computed(() => {
       productModule.set(`${item.product}-${item.pixel}-${item.productType}`, {
         ...item,
         productType: [item.productType],
-        role: [item.role]
+        ourRole: [item.ourRole],
+        carModelCountYearList: item.modelCountYearList
       })
     }
 
@@ -1571,14 +1572,14 @@ const moduleTableTotal = computed(() => {
         partNumber: compareString(currentData.partNumber, item.partNumber),
         code: compareString(currentData.code, item.code),
         productType: compareString(currentData.productType, item.productType),
-        role: compareString(currentData.role, item.role),
+        ourRole: compareString(currentData.ourRole, item.ourRole),
         pixel: compareString(currentData.pixel, item.pixel),
         marketShare: compareString(currentData.marketShare, item.marketShare),
         moduleCarryingRate: (currentData.moduleCarryingRate += item.moduleCarryingRate || 0),
         singleCarProductsQuantity: (currentData.singleCarProductsQuantity += item.singleCarProductsQuantity || 0),
         modelTotal: (currentData.modelTotal += item.modelTotal || 0),
-        modelCountYearList: currentData.modelCountYearList.map((m: any, i: number) => {
-          const modalCountYearItem: any = item.modelCountYearList[i] || {}
+        carModelCountYearList: currentData.carModelCountYearList.map((m: any, i: number) => {
+          const modalCountYearItem: any = item.carModelCountYearList[i] || {}
           return {
             ...m,
             quantity: (m.quantity += modalCountYearItem?.quantity || 0)
@@ -1683,13 +1684,17 @@ const save = async (formEl: FormInstance | undefined) => {
           // number: v.partNumber?.join(",")
         }))
       ).flat(2)
+      const carModelCount = map(moduleTableTotal, (v: any) => ({
+        ...v,
+        type: v.type?.join(",")
+      }))
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
           shareCount: shareCountTable.value,
           gradient: kvPricingData.value.map((v: any, index: number) => ({ ...v, index })),
           gradientModel,
-          CarModelCount: moduleTableTotal
+          carModelCount
         })
         if (res.success) {
           ElMessage({

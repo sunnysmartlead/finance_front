@@ -363,6 +363,22 @@ export const constantRoutes: Array<RouteRecordRaw> = [
           title: "设备库"
         }
       },
+      {
+        path: "/processHoursExport/fixture",
+        component: () => import("@/views/processHoursExport/fixture.vue"),
+        name: "fixture",
+        meta: {
+          title: "治具检具"
+        }
+      },
+      {
+        path: "/processHoursExport/softwareHardware",
+        component: () => import("@/views/processHoursExport/softwareHardware.vue"),
+        name: "softwareHardware",
+        meta: {
+          title: "硬件及软件"
+        }
+      },
 
     ]
   },

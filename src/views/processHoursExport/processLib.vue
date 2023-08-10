@@ -13,7 +13,7 @@
     <div class="u-flex u-row-between u-col-center">
       <div class="u-flex u-row-left u-col-center">
         <div  class="u-m-r-20">
-          <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
+          <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"  
               :show-file-list="false"
                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
                 :action="uploadAction" :limit="1">
@@ -83,7 +83,7 @@
                         <el-button type="primary" size="small"
                             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 </template>
-                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> 
               </template>
             </el-table-column>
           </el-table>
@@ -96,7 +96,7 @@
       </el-scrollbar>
     </div>
 
-    <div v-if="baseLibLogRecords.length>0"
+    <div v-if="baseLibLogRecords.length>0" 
         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar :min-size="10">
         <div class="u-flex u-row-between u-col-center u-p-r-20">
@@ -109,8 +109,8 @@
         </div>
         <div class="u-m-t-20">
           <el-timeline>
-            <el-timeline-item placement="top"
-              v-for="(activity, index) in baseLibLogRecords"
+            <el-timeline-item placement="top" 
+              v-for="(activity, index) in baseLibLogRecords" 
               :key="index"
                :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">

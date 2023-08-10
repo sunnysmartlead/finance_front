@@ -49,15 +49,15 @@
                                     <div>
                                         <span>{{ scope.row.year }}</span>
                                     </div>
-                                </template>
-                            </el-table-column>
+                                </template>   
+                            </el-table-column>  
                             <el-table-column label="单PCS包装价格/元" align="center">
                                 <template #default="scope">
                                     <div>
                                         <!-- :disabled="data.editDisabled" -->
                                         <el-input-number  v-model="scope.row.pcsPrice"  :precision="2" :step="0.01"  @change="pcsPriceChange($event,scope.$index, scope.row)"/>
                                     </div>
-                                </template>
+                                </template>   
                             </el-table-column>
                             <el-table-column label="运费/月" align="center">
                                 <template #default="scope">
@@ -65,7 +65,7 @@
                                         <!-- :disabled="data.editDisabled" -->
                                         <el-input-number  v-model="scope.row.monthFreight"  :precision="2" :step="0.01"  @change="monthFreightChange($event,scope.$index, scope.row)"/>
                                     </div>
-                                </template>
+                                </template>   
                             </el-table-column>
                             <el-table-column label="仓储费用/月" align="center">
                                 <template #default="scope">
@@ -73,42 +73,42 @@
                                         <!--  :disabled="data.editDisabled" -->
                                         <el-input-number v-model="scope.row.monthStorage"  :precision="2" :step="0.01"  @change="monthStorageChange($event,scope.$index, scope.row)"/>
                                     </div>
-                                </template>
-                            </el-table-column>
+                                </template>   
+                            </el-table-column> 
                             <el-table-column label="月需求量" align="center">
                                 <template #default="scope">
                                     <div>
                                         <span>{{ scope.row.monthRequirement }}</span>
                                     </div>
-                                </template>
+                                </template>   
                             </el-table-column>
                             <el-table-column label="单PCS运输费" align="center">
                                 <template #default="scope">
                                     <div>
                                         <span>{{ scope.row.pcsFreight }}</span>
                                     </div>
-                                </template>
-                            </el-table-column>
+                                </template>   
+                            </el-table-column>  
                             <el-table-column label="单PCS总物流成本" align="center">
                                 <template #default="scope">
                                     <div>
                                         <span>{{ scope.row.pcsFreightCost }}</span>
                                     </div>
-                                </template>
-                            </el-table-column>
+                                </template>   
+                            </el-table-column>   
                             <el-table-column label="备注" align="center">
                                 <template #default="scope">
                                     <div>
                                         <el-input v-model="scope.row.remark" placeholder="请输入备注内容"/>
                                     </div>
-                                </template>
-                            </el-table-column>
+                                </template>   
+                            </el-table-column> 
                             <!-- <el-table-column label="操作">
                                 <template #default="scope">
                                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                                 </template>
                             </el-table-column>                      -->
-                        </el-table>
+                        </el-table>   
                     </div>
                 </el-card>
             </div>
@@ -141,11 +141,11 @@ const data = reactive({
     ],
     cardData:<any>[],
 })
-
+   
 let tempCardData:any=[];
 
 onMounted(async ()=>{
-    data.cardData=await initData();
+    data.cardData=await initData(); 
 })
 
 const initData=()=>{

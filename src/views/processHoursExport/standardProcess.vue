@@ -310,7 +310,99 @@ const getFileTableData = () => {
                     machineWorkHour: 14,
                 }
             ]
-        }
+        },
+
+     {
+       processIndex: '000111',
+       processName: '工序1',
+       deviceInfo: {
+         deviceArr: [
+           {
+             deviceName: '设备1',
+             deviceStatus: '正常',
+             deviceCount: 1,
+             devicePrice: 100.00
+           },
+           {
+             deviceName: '设备2',
+             deviceStatus: '离线',
+             deviceCount: 2,
+             devicePrice: 200.00
+           },
+           {
+             deviceName: '设备3',
+             deviceStatus: '待维修',
+             deviceCount: 3,
+             devicePrice: 300.00
+           },
+         ],
+         deviceTotalCost: 1400.00
+       },
+       developCostInfo: {
+         hardwareInfo: [
+           {
+             hardwareDeviceName: '硬件设备1',
+             hardwareDeviceCount: 1,
+             hardwareDevicePrice: 100.00
+           },
+           {
+             hardwareDeviceName: '硬件设备2',
+             hardwareDeviceCount: 2,
+             hardwareDevicePrice: 200.00
+           }
+         ],
+         hardwareTotalCost: 500.00,
+         kaiTuSoft: '开图软件',
+         kaiTuCost: 1000.00,
+         zhuiSuSoft: '追溯软件',
+         developCost_zhuisu: 22222.22,
+         developTotalCost: 1500.00
+       },
+       toolInfo: {
+         zhiJuArr: [
+           {
+             zhiJuName: '治具1',
+             zhiJuCount: 1,
+             zhiJuPrice: 500.00
+           },
+           {
+             zhiJuName: '治具2',
+             zhiJuCount: 1,
+             zhiJuPrice: 500.00
+           }
+         ],
+         jianJu: {
+           jianJuName: '检具1',
+           jianJuCount: 1,
+           jianJuPrice: 1000.00
+         },
+         gongZhuang: {
+           gongZhuangName: '工装1',
+           gongZhuangCount: 1,
+           gongZhuangPrice: 3000.00
+         },
+         testLine: {
+           testLineName: '测试线名称',
+           testLineCount: 1,
+           testLinePrice: 5000
+         },
+         toolTotalCost: 10000.00
+       },
+       sopInfo: [
+         {
+           year: '2023',
+           manWorkHour: 8,
+           manNumber: 1,
+           machineWorkHour: 4,
+         },
+         {
+           year: '2024',
+           manWorkHour: 18,
+           manNumber: 11,
+           machineWorkHour: 14,
+         }
+       ]
+     }
     ]
     console.log(JSON.stringify(res));
     return res;

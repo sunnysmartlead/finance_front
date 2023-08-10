@@ -123,6 +123,7 @@
                 v-model="state.quoteForm.sopTime"
                 value-format="YYYY"
                 :disabled="isDisabled"
+                @change="yearChange"
               />
             </el-form-item>
           </el-col>
@@ -264,7 +265,7 @@
             </el-table-column>
             <el-table-column prop="rowSum" label="合计">
               <template #default="{ row }">
-                {{ formatThousandths(null, null, getRowSum(row)) }}
+                {{ formatThousandths(null, null, row.rowSum) }}
               </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="85">
@@ -315,7 +316,7 @@
             </el-table-column>
             <el-table-column prop="rowSum" label="合计" width="150">
               <template #default="{ row }">
-                {{ formatThousandths(null, null, getRowSum(row)) }}
+                {{ formatThousandths(null, null, row.rowSum) }}
               </template>
             </el-table-column>
             <!-- <el-table-column label="操作" fixed="right">
@@ -438,7 +439,7 @@
                   {{ formatThousandths(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
               </el-table-column>
-              <el-table-column label="模组总量" prop="modelTotal" width="180" :formatter="formatThousandths">
+              <el-table-column label="模组总量" width="180" :formatter="formatThousandths">
                 <template #default="{ row }">
                   {{ price(row) }}
                 </template>
@@ -520,6 +521,7 @@
                   controls-position="right"
                   v-model="row.gradientValue"
                   :disabled="isDisabled || !state.quoteForm.isHasGradient"
+                  :min="0"
                 />
               </template>
             </el-table-column>
@@ -1330,6 +1332,7 @@ const props = defineProps({
     default: false
   }
 })
+
 //客户目标价
 var customerTargetPrice: any = ref([])
 const options = [
@@ -1393,6 +1396,7 @@ let userStorage = window.localStorage.getItem("user")
 let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
 let isEdit = false //是否查看
 let saveloading = ref(false)
+
 const getRowSum = (row: any, key?: string, childkey?: string) => {
   if (Array.isArray(row[key || "pcsYearList"]) && row[key || "pcsYearList"].length > 0) {
     return row[key || "pcsYearList"]
@@ -1512,6 +1516,7 @@ const getPcsTableDatSummaries = (param: any) => {
       const val = eval("_item." + column.property)
       return Number(val)
     })
+
     if (!values.every((value: any) => Number.isNaN(value))) {
       sums[index] = `${values
         .reduce((prev: any, curr: any) => {
@@ -1541,12 +1546,12 @@ const moduleTableTotal = computed(() => {
     count: shareCountTable.value?.[index]?.count || 0,
     name: item
   })).filter((c) => !!c.name)
-  const productName = new Map()
 
+  const productModule = new Map()
   flatData.forEach((item: any) => {
-    const currentData = productName.get(item.product) || {}
-    if (item.product && _.isEmpty(productName.get(`${item.product}-${item.pixel}-${item.productType}`))) {
-      productName.set(`${item.product}-${item.pixel}-${item.productType}`, {
+    const currentData = productModule.get(item.product) || {}
+    if (item.product && _.isEmpty(productModule.get(`${item.product}-${item.pixel}-${item.productType}`))) {
+      productModule.set(`${item.product}-${item.pixel}-${item.productType}`, {
         ...item,
         productType: [item.productType],
         role: [item.role]
@@ -1560,7 +1565,7 @@ const moduleTableTotal = computed(() => {
       currentData?.productType === item?.productType
     ) {
       const carModal = compareString(currentData.carModel, item.carModel)
-      productName.set(`${item.product}-${item.pixel}-${item.productType}`, {
+      productModule.set(`${item.product}-${item.pixel}-${item.productType}`, {
         ...currentData,
         carModal,
         partNumber: compareString(currentData.partNumber, item.partNumber),
@@ -1583,7 +1588,7 @@ const moduleTableTotal = computed(() => {
     }
   })
 
-  const filterProductModuleTotal = [...productName.values()]
+  const filterProductModuleTotal = [...productModule.values()]
 
   console.log(filterProductModuleTotal, "[productName]")
   return filterProductModuleTotal
@@ -1595,18 +1600,16 @@ const fileList = ref<UploadUserFile[]>([])
 const yearCount = ref(0)
 let route = useRoute()
 let router = useRouter()
+
 const pcsYearQuantitySum = (row: Pcs, count: number) => {
   var numReg = /[^\d]/g
   var numRe = new RegExp(numReg)
-  let rowSum = 0
   row.pcsYearList.forEach((item: any, index: number) => {
     if (numRe.test(item.quantity) && count == index) {
       ElMessage.warning("不能输入小数以及特殊符号!")
       item.quantity = 0
     }
-    rowSum = rowSum + Number(item.quantity)
   })
-  row.rowSum = rowSum
 }
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
@@ -1672,15 +1675,21 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
       // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
+      console.log(gradientModelTable.value, "gradientModel123")
       let gradientModel = map(gradientModelTable.value, (item: any) =>
-        map(item.children, (v) => ({ ...v, type: v.type?.join(",") }))
+        map(item.children, (v) => ({
+          ...v,
+          type: v.type?.join(",")
+          // number: v.partNumber?.join(",")
+        }))
       ).flat(2)
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
           shareCount: shareCountTable.value,
           gradient: kvPricingData.value.map((v: any, index: number) => ({ ...v, index })),
-          gradientModel
+          gradientModel,
+          CarModelCount: moduleTableTotal
         })
         if (res.success) {
           ElMessage({
@@ -1887,7 +1896,6 @@ const yearChange = (val: number) => {
   yearCount.value = val
   let i = state.quoteForm.projectCycle
   state.yearCols = []
-  state.quoteForm.sopTime
   for (let j = 0; j < i; j++) {
     if (state.quoteForm.updateFrequency == updateFrequency.HalfYear)
       state.yearCols.push(Number(state.quoteForm.sopTime) + j)
@@ -1991,58 +1999,70 @@ watch(
 // )
 //监听终端走量同步内部评估后的终端走量
 watch(
-  () => pcsTableData.value,
+  () => [pcsTableData.value, state.quoteForm.kValue],
   (val, _old) => {
-    const rowOneData = map(val[0].pcsYearList, (v: any) => ({
-      ...v,
-      quantity: Number(v.quantity || 0) * state.quoteForm.kValue
-    }))
-    console.log(rowOneData, "[rowOneDataOne]")
-    val.forEach((item: any, index: number) => {
+    const [_pcsTable, kValue] = val
+    pcsTableData.value.forEach((item: any, index: number) => {
       var itemNew = _.cloneDeep(item)
       itemNew.pcsType = 1
-      itemNew.pcsYearList.forEach((pro: any, i: number) => {
-        pro.quantity = Math.floor(Number(pro.quantity || 0) * state.quoteForm.kValue)
-        const rowOneItem = rowOneData[i]
-        if (index > 0) {
-          rowOneItem.quantity += Number(pro.quantity)
-        }
+      let itemRowSum = 0
+      let pscRowSum = 0
+      itemNew.pcsYearList.forEach((pro: any) => {
+        pscRowSum += Number(pro.quantity)
+        pro.quantity = Math.floor(Number(pro.quantity || 0) * kValue)
+        itemRowSum += Number(pro.quantity)
       })
+      item.rowSum = pscRowSum
+      itemNew.rowSum = itemRowSum
       interiorPcsTableData.value[index] = itemNew
     })
+  },
+  { deep: true }
+)
+watch(
+  () => [interiorPcsTableData.value, moduleTableDataV2.value],
+  (val) => {
+    const [interiorPcsTableDataList] = val
+    const rowOneData = map(interiorPcsTableDataList[0].pcsYearList, (v: any) => ({
+      ...v,
+      quantity: Number(v.quantity || 0)
+    }))
+
     moduleTableDataV2.value.forEach((moduleTable: any) => {
       moduleTable?.forEach((moduleItem: any) => {
         moduleItem?.modelCountYearList?.forEach((pscY: any, pscYIndex: number) => {
           const { quantity } = rowOneData[pscYIndex] || {}
+
           pscY.quantity = Math.floor(
             (moduleItem.moduleCarryingRate / 100) *
               moduleItem.singleCarProductsQuantity *
-              moduleItem.marketShare *
+              (moduleItem.marketShare / 100) *
               quantity
           )
+          console.log(pscY.quantity, "quantitymoduleTableDataV2")
         })
       })
     })
-    console.log(moduleTableDataV2.value, "{moduleTableDataV2.value}")
+    console.log(moduleTableDataV2.value, "[rowOneDatarowOneData]")
   },
   { deep: true }
 )
 //系数
-watch(
-  () => state.quoteForm.kValue,
-  (val) => {
-    pcsTableData.value.forEach((item: any, index: number) => {
-      let itemNew = JSON.parse(JSON.stringify(item))
-      // itemNew.kv = item.kv * val
-      itemNew.pcsType = 1
-      itemNew.pcsYearList.forEach((pro: any) => {
-        pro.quantity = Math.floor(pro.quantity * val)
-      })
-      interiorPcsTableData.value[index] = itemNew
-    })
-  },
-  { deep: true }
-)
+// watch(
+//   () => state.quoteForm.kValue,
+//   (val) => {
+//     pcsTableData.value.forEach((item: any, index: number) => {
+//       let itemNew = JSON.parse(JSON.stringify(item))
+//       // itemNew.kv = item.kv * val
+//       itemNew.pcsType = 1
+//       itemNew.pcsYearList.forEach((pro: any) => {
+//         pro.quantity = Math.floor(pro.quantity * val)
+//       })
+//       interiorPcsTableData.value[index] = itemNew
+//     })
+//   },
+//   { deep: true }
+// )
 //监听终端走量的车型
 watch(
   () => interiorPcsTableData.value.map((item: any) => item.carModel),
@@ -2084,18 +2104,18 @@ watch(
   { deep: true }
 )
 //监听产品信息第一行
-watch(
-  () => customerTargetPrice.value[0],
-  (val) => {
-    customerTargetPrice.value.forEach((item: any, index: number) => {
-      if (index) {
-        item.currency = val.currency
-        item.exchangeRate = val.exchangeRate
-      }
-    })
-  },
-  { deep: true }
-)
+// watch(
+//   () => customerTargetPrice.value[0],
+//   (val) => {
+//     customerTargetPrice.value.forEach((item: any, index: number) => {
+//       if (index) {
+//         item.currency = val.currency
+//         item.exchangeRate = val.exchangeRate
+//       }
+//     })
+//   },
+//   { deep: true }
+// )
 
 watch(
   () => [state.quoteForm.isHasGradient, moduleTableTotal.value],
@@ -2130,10 +2150,14 @@ watch(
             gradientValue: item,
             index,
             name: c.product,
-            number: c.partNumber,
+            number: c.partNumber || "-",
             code: c.code,
             type: c.productType,
-            gradientModelYear: map(c.modelCountYearList, (y) => ({ year: y.year, count: item }))
+            gradientModelYear: map(c.modelCountYearList, (m: any) => ({
+              count: m.quantity,
+              upDown: m.upDown,
+              year: m.year
+            }))
           }))
         }
       })
@@ -2175,8 +2199,8 @@ const targetPriceCalcul = () => {
 
 const price = (row: any) => {
   let modelTotal = 0
-  row.modelCountYearList.forEach((item: any) => {
-    modelTotal += item.quantity
+  row.modelCountYearList?.forEach((item: any) => {
+    modelTotal += Number(item.quantity || 0)
   })
   return modelTotal
 }
@@ -2428,9 +2452,9 @@ const customerTargetPriceTable = () => {
       })
       productAll = [...new Set(productAll)]
       //判断产品名称中是否 前视 测试 后视 都在
-      let isproductName = productAll.every(
-        (_item: any) => productAll.includes("前视") && productAll.includes("侧视") && productAll.includes("后视")
-      )
+      // let isproductName = productAll.every(
+      //   (_item: any) => productAll.includes("前视") && productAll.includes("侧视") && productAll.includes("后视")
+      // )
       productAll.forEach((pro: any) => {
         let prop = {
           kv: item, //梯度
@@ -2441,15 +2465,15 @@ const customerTargetPriceTable = () => {
         }
         customerTargetPrice.value.push(prop)
       })
-      if (isproductName) {
-        customerTargetPrice.value.push({
-          kv: item, //梯度
-          product: "齐套",
-          targetPrice: 0,
-          currency: null,
-          exchangeRate: 0
-        })
-      }
+      // if (isproductName) {
+      //   customerTargetPrice.value.push({
+      //     kv: item, //梯度
+      //     product: pro,
+      //     targetPrice: 0,
+      //     currency: null,
+      //     exchangeRate: 0
+      //   })
+      // }
     })
   }
   generateCustomTable()

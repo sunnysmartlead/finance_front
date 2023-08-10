@@ -517,7 +517,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM查看",
-      hidden: true
+      // hidden: true
     },
     children: [
       {

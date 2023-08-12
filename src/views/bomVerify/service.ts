@@ -11,6 +11,7 @@ export function GetBOMElectronicSingle(auditFlowId: number, solutionId: number):
     }
   })
 }
+
 // BOM单价审核 加载结构料初始值(单个零件)
 export function GetBOMStructuralSingle(auditFlowId: number, solutionId: number): any {
   return request({

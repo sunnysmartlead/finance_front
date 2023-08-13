@@ -5,12 +5,24 @@
         <!-- <el-select class="m-2" v-model="data.product" placeholder="请选择产品" @change="fetchAllData">
           <el-option v-for="item in data.productOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select> -->
-        <el-select v-model="data.year" class="m-2" placeholder="请选择年份" @change="fetchAllData">
-          <el-option v-for="item in data.yearsOptions" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 产品核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
+      </el-row>
+      <el-row class="m-2">
+        <el-form inline :model="data.form" ref="refForm" :rules="data.rules">
+          <el-form-item label="项目代码:" prop="projectCode">
+            <el-input v-model="data.form.projectCode" />
+          </el-form-item>
+          <el-form-item label="项目名称:" prop="projectName">
+            <el-input v-model="data.form.projectCode" />
+          </el-form-item>
+          <el-form-item label="项目名称:" prop="projectName">
+            <el-select v-model="data.form.year" placeholder="请选择年份" @change="fetchAllData">
+              <el-option v-for="item in data.yearsOptions" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+        </el-form>
       </el-row>
       <el-row class="m-2">
         <el-radio-group v-model="data.mode" @change="handleChangeMode">
@@ -285,7 +297,7 @@ import {
   GetIsTradeCompliance
 } from "../service"
 import getQuery from "@/utils/getQuery"
-import type { UploadProps, UploadUserFile } from "element-plus"
+import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
 import { ElMessage, ElMessageBox } from "element-plus"
 import debounce from "lodash/debounce"
 import * as echarts from "echarts"
@@ -306,7 +318,8 @@ let dialogVisible = ref(false)
 let checkList = ref([""])
 let opinionDescription = ref("")
 const fileList = ref<UploadUserFile[]>([])
-const data = reactive<Record<string, any>>({
+const refForm = ref<FormInstance>()
+const data = reactive<any>({
   year: "",
   mode: "1",
   yearsOptions: [],
@@ -318,11 +331,19 @@ const data = reactive<Record<string, any>>({
   productInputs: 0,
   createVisible: false,
   compliance: false,
+  form: {
+    year: "",
+    projectCode: "",
+    projectName: ""
+  },
+  rules: {
+    projectName: [{ required: true, message: "请输入该值", trigger: "blur" }],
+    projectCode: [{ required: true, message: "请输入该值", trigger: "blur" }]
+  },
   priceEvaluationTableInputCount: [] //核价表投入量和年份
 })
 
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
-  console.log(res)
   let response: any = await addPricingPanelTrProgrammeId(auditFlowId, res.result.fileId)
   if (response.success) {
     console.log(response, "response")
@@ -434,8 +455,8 @@ const getPricingPanelTimeSelectList = async () => {
   try {
     const PanelTimeSelectRes: any = await GetPricingPanelTimeSelectList({ AuditFlowId: auditFlowId })
     data.yearsOptions = PanelTimeSelectRes?.result?.items
-    data.year = data.yearsOptions[0].id
-    console.log(data.year, data.yearsOptions[0].id, "getPricingPanelTimeSelectList")
+    data.form.year = data.yearsOptions[0].id
+    console.log(data.form.year, data.yearsOptions[0].id, "getPricingPanelTimeSelectList")
   } catch (err: any) {
     console.log(err, "[ 获取时间选择下拉数据失败 ]")
   }
@@ -444,9 +465,8 @@ const getPricingPanelTimeSelectList = async () => {
 // 获取 bom成本（含损耗）汇总表
 const getBomCost = async () => {
   try {
-    console.log(data.year, "getBomCost")
     const { result }: any = await GetBomCost({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -464,7 +484,7 @@ const getBomCost = async () => {
 const getLossCost = async () => {
   try {
     const { result }: any = await GetLossCost({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -479,7 +499,7 @@ const getLossCost = async () => {
 const getQualityCost = async () => {
   try {
     const { result }: any = await GetQualityCost({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -496,7 +516,7 @@ const handleFetchPriceEvaluationTableDownload = async () => {
     query: {
       auditFlowId,
       productId,
-      year: data.year
+      year: data.form.year
     }
   })
 }
@@ -506,7 +526,7 @@ const handleFethNreTableDownload = async () => {
   router.push({
     path: "/nre/nrePricelist",
     query: {
-      year: data.year,
+      year: data.form.year,
       auditFlowId,
       productId
     }
@@ -517,7 +537,7 @@ const handleFethNreTableDownload = async () => {
 const getLogisticsCost = async () => {
   try {
     const { result }: any = await GetLogisticsCost({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -532,7 +552,7 @@ const getLogisticsCost = async () => {
 const getManufacturingCost = async () => {
   try {
     const { result }: any = await GetManufacturingCost({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -547,7 +567,7 @@ const getManufacturingCost = async () => {
 const getPricingPanelProportionOfProductCost = async () => {
   try {
     const { result }: any = await GetPricingPanelProportionOfProductCost({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -571,7 +591,7 @@ const getPricingPanelProportionOfProductCost = async () => {
 const getPricingPanelProfit = async () => {
   try {
     const { result }: any = await GetPricingPanelProfit({
-      Year: data.year,
+      Year: data.form.year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })
@@ -645,7 +665,7 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
 }
 
 const fetchAllData = async () => {
-  console.log(data.year, "data")
+  console.log(data.form.year, "data")
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
   handleChangeMode()

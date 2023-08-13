@@ -1,5 +1,5 @@
 import { request,baseDomain} from "@/utils/service"
-const prefix="/api/services/app/FoundationWorkingHour"
+const prefix="api/services/app/FoundationWorkingHour"
 const uploadAction=baseDomain+prefix+"/UploadFoundationStandardTechnology"
 
 export {uploadAction}

@@ -12,8 +12,21 @@
     </div>
     <div class="u-flex u-row-between u-col-center">
       <div>
-        <el-button type="primary">工时库导入</el-button>
-        <el-button type="primary" :disabled="addFlag == true" @click="addworkingHours">新增工序工时</el-button>
+        <div class="u-flex u-row-left u-col-center">
+          <div  class="u-m-r-20">
+            <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"  
+                :show-file-list="false"
+                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                  :action="uploadAction" :limit="1">
+              <template #trigger>
+                <el-button type="primary">工时库导入</el-button>
+              </template>
+            </el-upload>
+          </div>
+          <div>
+            <el-button type="primary" :disabled="addFlag == true" @click="addworkingHours">新增工序工时</el-button>
+          </div>
+        </div>
       </div>
       <div>
         <el-button type="primary">工时库导出</el-button>
@@ -104,13 +117,13 @@
                   class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.laborHour" :min="1" :disabled="isDisable(dataIndex)" />
+                      <el-input-number v-model="scopItem.laborHour" :min="0" :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.machineHour" :min="1" :disabled="isDisable(dataIndex)" />
+                      <el-input-number v-model="scopItem.machineHour" :min="0" :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.numberPersonnel" :min="1" :disabled="isDisable(dataIndex)" />
+                      <el-input-number v-model="scopItem.numberPersonnel" :min="0" :disabled="isDisable(dataIndex)" />
                     </div>
                   </div>
                 </div>
@@ -160,7 +173,8 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox,genFileId } from "element-plus"
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import optionLogRecord from '@/components/processHoursExport/option-log-records.vue';
 import { getLogRecord } from "@/api/logRecord";
 import { GetListAll, update, create, deleteItem, uploadAction } from "@/api/workHour";
@@ -201,11 +215,6 @@ const getListData = async () => {
 }
 //新增工时
 const addworkingHours = () => {
-  let size = dataArr.value.length;
-  dataArr.value.push(dataArr.value[size - 1]);
-  console.log("新增工时", dataArr.value.length);
-
-
   if (addFlag.value == true) {
     ElMessage({
       type: 'warning',
@@ -213,18 +222,106 @@ const addworkingHours = () => {
     })
     return;
   } else {
-    let newItem: any = {
-      processNumber: "",
-      processName: "",
-      lastModifierUserName: "",
-      lastModificationTime: ""
+    let size = dataArr.value.length;
+    if(size>0){
+      let newItem=JSON.parse(JSON.stringify(dataArr.value[size - 1])); 
+      newItem.id=0;
+      newItem.processName="";
+      newItem.processNumber="";
+      newItem.lastModifierUserName="";
+      newItem.lastModifierUserId="";
+      newItem.lastModificationTime=new Date();
+      let listFoundationWorkingHour=[];
+      let length= newItem.listFoundationWorkingHour.length;
+      if(length>0){
+        for(let i=0;i<length;i++){
+            let childItem={
+              foundationWorkingHourId:0,
+              laborHour:0,
+              lastModificationTime:'',
+              lastModifierUserId:"",
+              machineHour:"",
+              numberPersonnel:"",
+              year:newItem.listFoundationWorkingHour[i].year
+            };
+            listFoundationWorkingHour.push(childItem);
+        }
+      }else{
+        listFoundationWorkingHour=[{
+              foundationWorkingHourId:0,
+              laborHour:0,
+              lastModificationTime:'',
+              lastModifierUserId:"",
+              machineHour:"",
+              numberPersonnel:"",
+              year:new Date().getFullYear()
+        }]
+      }
+      newItem.listFoundationWorkingHour=listFoundationWorkingHour;
+      dataArr.value.push(newItem)
+    }else{
+      let newItem={
+        id:0,
+        processName:"",
+        processNumber:"",
+        lastModifierUserName:"",
+        lastModifierUserId:"",
+        listFoundationWorkingHour:[
+          {
+            foundationWorkingHourId:0,
+            laborHour:0,
+            lastModificationTime:'',
+            lastModifierUserId:"",
+            machineHour:"",
+            numberPersonnel:"",
+            year:new Date().getFullYear()
+          }
+        ]
+      }
+      dataArr.value.push(newItem)
     }
-    dataArr.value.push(newItem)
     addFlag.value = true;
     currentEditIndex.value = dataArr.value.length - 1;
   }
 
 }
+
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+    upload.value!.clearFiles()
+    const file = files[0] as UploadRawFile
+    file.uid = genFileId()
+    upload.value!.handleStart(file)
+}
+
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+    console.log("responese", response);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    if(response.result){
+      initData()
+      ElMessage({
+        type: 'success',
+        message: '导入成功',
+       })
+    }else{
+      ElMessage({
+        type: 'error',
+        message: '导入失败',
+       })
+    }
+}
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+    console.log("error", error);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    ElMessage({
+        type: 'error',
+        message: '导入失败',
+    })
+}
+
+
 
 
 const baseLibLogRecords = ref([])
@@ -312,7 +409,7 @@ const handleSave = (index: number, row: any) => {
   let param = JSON.parse(JSON.stringify(row))
   let id = row.id;
   //保存
-  if (row.id) {
+  if (row.id&&row.id!=0) {
     update(param).then((response: any) => {
       console.log("修改响应", response);
       if (response.success) {
@@ -361,13 +458,14 @@ const handleEdit = (index: number, row: any) => {
 const cancalEdit = (index: number, row: any) => {
   currentEditIndex.value = -1;
   if (addFlag.value == true) {
+    console.log("取消新增");
     dataArr.value.splice(index);
     addFlag.value = false;
   } else {
     dataArr.value[index] = currentEditItem;
   }
 }
-
+//删除
 const handleDelete = (index: number, row: any) => {
   console.log(index, row);
   ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
@@ -375,10 +473,19 @@ const handleDelete = (index: number, row: any) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    dataArr.value.splice(index);
-    ElMessage({
-      type: "success",
-      message: "删除成功"
+    deleteItem(row.id).then((response: any) => {
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '删除失败'
+        })
+      }
     })
   })
 }

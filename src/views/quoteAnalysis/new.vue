@@ -28,33 +28,35 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-card>
-      <p>NRE-前视方案一</p>
+    <!-- nre -->
+    <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
+      <p>{{ nre.solutionName }}</p>
       <p>线体数量：2 共线分摊率：2</p>
-      <el-table :data="data.tableData" style="width: 100%" border height="500px">
-        <el-table-column prop="name" label="序号" />
-        <el-table-column prop="name" label="费用名称" />
-        <el-table-column prop="name" label="核价金额" />
+      <el-table :data="nre.models" style="width: 100%" border height="500px">
+        <el-table-column prop="index" label="序号" />
+        <el-table-column prop="costName" label="费用名称" />
+        <el-table-column prop="pricingMoney" label="核价金额" />
         <el-table-column label="报价系数">
           <template #default="scope">
-            <el-input v-model="scope.row.projectsPlan" type="number" />
+            <el-input v-model="scope.row.offerCoefficient" type="number" />
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="报价金额" />
+        <el-table-column prop="offerMoney" label="报价金额" />
         <el-table-column label="备注">
           <template #default="scope">
-            <el-input v-model="scope.row.projectsPlan" type="textarea" />
+            <el-input v-model="scope.row.remark" type="textarea" />
           </template>
         </el-table-column>
       </el-table>
       <p>专用设备</p>
-      <el-table :data="data.tableData" style="width: 100%" border height="500px">
-        <el-table-column prop="name" label="设备名称" />
-        <el-table-column prop="name" label="设备单价" />
-        <el-table-column prop="name" label="设备数量" />
-        <el-table-column prop="name" label="设备金额" />
+      <el-table :data="nre.devices" style="width: 100%" border height="500px">
+        <el-table-column prop="deviceName" label="设备名称" />
+        <el-table-column prop="devicePrice" label="设备单价" />
+        <el-table-column prop="number" label="设备数量" />
+        <el-table-column prop="equipmentMoney" label="设备金额" />
       </el-table>
     </el-card>
+    <!-- 样品 -->
     <p>样品报价</p>
     <el-card v-for="sample in data.sampleOnlyRes.sampleOffer" :key="sample.solutionName">
       <span>{{ sample.solutionName }}</span>
@@ -67,20 +69,35 @@
         <el-table-column prop="salesRevenue" label="销售收入" />
       </el-table>
     </el-card>
-
+    <!-- sop -->
     <p>单价表（sop年）</p>
-    <el-table :data="data.tableData" style="width: 100%" border height="500px">
-      <el-table-column prop="name" label="梯度" />
-      <el-table-column prop="name" label="产品" />
-      <el-table-column prop="name" label="10%" />
-      <el-table-column prop="name" label="20%" />
+    <el-table :data="data.allRes.sops" style="width: 100%" border height="500px">
+      <el-table-column prop="gradientValue" label="梯度" />
+      <el-table-column prop="product" label="产品" />
+      <el-table-column :label="item.gross" v-for="(item, index) in data.allRes.sops[0].grossValues" :key="item.gross">
+        <template #default="scope">
+          <el-input v-model="scope.row.grossValues[index].grossvalue" type="number" />
+        </template>
+      </el-table-column>
     </el-table>
     <p>项目全生命周期汇总分析表-实际数量</p>
-    <el-table :data="data.tableData" style="width: 100%" border height="500px">
-      <el-table-column prop="name" label="项目名称" />
-      <el-table-column prop="name" label="10%" />
-      <el-table-column prop="name" label="20%" />
+    <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border height="500px">
+      <el-table-column prop="itemName" label="项目名称" />
+      <el-table-column
+        :label="item.grossMargin"
+        v-for="(item, index) in data.allRes.fullLifeCycle[0].grosss"
+        :key="item.grossMargin"
+      >
+        <template #default="scope">
+          <el-input v-model="scope.row.grosss[index].grossMarginNumber" type="number" />
+        </template>
+      </el-table-column>
     </el-table>
+    <el-card class="card">
+      <el-row justify="end" m="2">
+        <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
+      </el-row>
+    </el-card>
   </div>
 </template>
 
@@ -320,8 +337,206 @@ const data = reactive({
     ],
     isSuccess: true,
     message: "调用成功"
+  },
+  allRes: {
+    isSuccess: true,
+    message: "string",
+    grossMarginList: [0],
+    nres: [
+      {
+        solutionName: "string", //方案名
+        models: [
+          {
+            index: 0, //序号
+            costName: "string", //费用名称
+            pricingMoney: "string", //核价金额
+            offerCoefficient: 0, //报价系数
+            offerMoney: 0, //报价金额
+            remark: 0 //备注
+          }
+        ],
+        devices: [
+          //专用设备
+          {
+            deviceName: "string", //设备名称
+            devicePrice: 0, //单价
+            number: 0, //数量
+            equipmentMoney: 0 //金额
+          }
+        ]
+      }
+    ],
+
+    sops: [
+      //SOP单价表（SOP年）
+      {
+        gradientValue: 0, //梯度
+        product: "string", //产品
+        grossValues: [
+          {
+            gross: "10", //毛利
+            grossvalue: 0 //值
+          },
+          {
+            gross: "20", //毛利
+            grossvalue: 1 //值
+          }
+        ]
+      },
+      {
+        gradientValue: 100, //梯度
+        product: "string", //产品
+        grossValues: [
+          {
+            gross: "10", //毛利
+            grossvalue: 3 //值
+          },
+          {
+            gross: "20", //毛利
+            grossvalue: 5 //值
+          }
+        ]
+      }
+    ],
+    quotedGrossMargins: [
+      //报价毛利率测算
+      {
+        project: "string", //方案名
+        quotedGrossMarginSimples: [
+          {
+            product: "string", //产品
+            amount: 0, //单车产品数量
+            interior: {
+              //目标价（内部）
+              price: 0, // 单价
+              grossMargin: 0, // 毛利率
+              clientGrossMargin: 0, // 增加客供料毛利率
+              nreGrossMargin: 0 // 剔除NRE分摊费用毛利率
+            },
+            client: {
+              // 目标价（客户）
+              price: 0,
+              grossMargin: 0,
+              clientGrossMargin: 0,
+              nreGrossMargin: 0
+            },
+            thisQuotation: {
+              // 本次报价
+              price: 0,
+              grossMargin: 0,
+              clientGrossMargin: 0,
+              nreGrossMargin: 0
+            },
+            lastRound: {
+              // 上轮报价
+              price: 0,
+              grossMargin: 0,
+              clientGrossMargin: 0,
+              nreGrossMargin: 0
+            }
+          }
+        ]
+      }
+    ],
+    gradientQuotedGrossMargins: [
+      // 报价毛利率测算-阶梯数量
+      {
+        project: "string", //方案名
+        quotedGrossMarginSimples: [
+          {
+            product: "string", //产品
+            amount: 0, //单车产品数量
+            interior: {
+              //目标价（内部）
+              price: 0, // 单价
+              grossMargin: 0, // 毛利率
+              clientGrossMargin: 0, // 增加客供料毛利率
+              nreGrossMargin: 0 // 剔除NRE分摊费用毛利率
+            },
+            client: {
+              // 目标价（客户）
+              price: 0,
+              grossMargin: 0,
+              clientGrossMargin: 0,
+              nreGrossMargin: 0
+            },
+            thisQuotation: {
+              // 本次报价
+              price: 0,
+              grossMargin: 0,
+              clientGrossMargin: 0,
+              nreGrossMargin: 0
+            },
+            lastRound: {
+              // 上轮报价
+              price: 0,
+              grossMargin: 0,
+              clientGrossMargin: 0,
+              nreGrossMargin: 0
+            }
+          }
+        ],
+        gradient: "string" //梯度
+      }
+    ],
+    fullLifeCycle: [
+      // 项目全生命周期汇总分析表-实际数量
+      {
+        itemName: "string", //项目名
+        grosss: [
+          {
+            grossMargin: "0", // 毛利率
+            grossMarginNumber: 0 //毛利率值
+          }
+        ]
+      }
+    ],
+    gradientGrossMarginModels: [
+      {
+        gradient: "string", //梯度
+        _itemGrossMarginModels: [
+          {
+            item: "string", // 项目
+            interior: 0, // 目标价（内部）
+            client: 0, // 目标价（客户）
+            thisQuotation: 0, // 本次报价
+            lastRound: 0 // 上轮报价
+          }
+        ]
+      }
+    ]
   }
 })
+
+const openDialog = async (row: any) => {
+  // let productBoards: any = []
+  // if (!row) {
+  //   productBoards = data.productBoard.map((item: any) => {
+  //     console.log(item, "123123")
+  //     return {
+  //       modelCountId: item.modelCountId,
+  //       unitPrice: item.offerUnitPrice
+  //     }
+  //   })
+  // } else {
+  //   productBoards = [
+  //     {
+  //       modelCountId: row.modelCountId,
+  //       unitPrice: row.offerUnitPrice
+  //     }
+  //   ]
+  // }
+  // console.log(productBoards, "data.productBoard")
+  // const { result } = await PostYearDimensionalityComparison({
+  //   auditFlowId: data.auditFlowId,
+  //   grossMargin: 0,
+  //   productBoards
+  // })
+  // console.log(result, "res")
+  // data.dialogTable = result
+  // dialogVisible.value = true
+}
+
 const addNewPlan = () => {
   debugger
   data.tableData.push({

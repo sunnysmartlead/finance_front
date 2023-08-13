@@ -36,7 +36,7 @@
                             COB-UPH
                         </div>
                     </div>
-                    <template v-for="i in 10">
+                    <template v-if="COBUPHData.length>0">
                         <div v-for="(uph, uphIndex) in COBUPHData" :key="uphIndex"
                             style="background-color: rgb(247, 247, 96);;">
                             <div class="u-border u-width-200  u-height-26">
@@ -173,8 +173,9 @@
     </div>
 </template>
 <script setup lang="ts">
-import { table } from 'console';
 import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox,genFileId } from "element-plus"
+import { GetListAll, update, create, deleteItem, uploadAction } from "@/api/COB";
 //方案下拉选项
 const planOptions = ref([
     {
@@ -394,9 +395,29 @@ onMounted(async () => {
     await initData();
 })
 
+const getListData = async () => {
+  let param = {
+    AuditFlowId: 100,
+    ProductId:100
+  }
+  await GetListAll(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+     // tableData.value =data;
+      console.log("列表数据", data);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
+}
+
 const initData = () => {
     COBUPHData.value = tempUPHData;
     tableData.value = tempTableDataArr;
+    getListData();
 }
 </script>
 <style>

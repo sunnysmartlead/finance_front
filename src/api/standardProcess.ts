@@ -7,7 +7,7 @@ export {uploadAction}
 const prefix="/api/services/app/FoundationStandardTechnology"
 
 export interface QueryParams {
-  standardProcessName?: string
+  name?: string
 }
   /**
 /** 标准工艺列表 */

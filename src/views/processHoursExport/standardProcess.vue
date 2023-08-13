@@ -18,7 +18,7 @@
         <div class="u-m-t-10">
             <el-table :data="standardProcessList" :border="true">
                 <el-table-column label="序号" type="index" min-width="80px" align="center" />
-                <el-table-column prop="standardProcessName" label="标准工艺名称" align="center" />
+                <el-table-column prop="name" label="标准工艺名称" align="center" />
                 <el-table-column prop="lastModificationTime" label="维护时间" align="center" />
                 <el-table-column prop="lastModifierUserName" label="维护人" align="center" />
                 <el-table-column label="操作" align="center">
@@ -30,7 +30,7 @@
                 </el-table-column>
             </el-table>
         </div>
-<!-- 日志相关 -->
+        <!-- 日志相关 -->
         <div v-if="baseLibLogRecords.length > 0" class="u-m-t-20 u-p-10" style="background-color: #ffffff">
             <el-scrollbar :min-size="10">
                 <div class="u-flex u-row-between u-col-center u-p-r-20">
@@ -74,7 +74,7 @@
             </el-scrollbar>
         </div>
 
-<!-- 新增/编辑弹窗 -->
+        <!-- 新增/编辑弹窗 -->
         <el-dialog title="新增标准工艺" v-model="addDialogFlag" :close-on-click-modal="false" width="40%">
             <div style="width: 70%;">
                 <div>
@@ -103,16 +103,16 @@
                 </div>
             </template>
         </el-dialog>
-<!-- 提交 -->
+        <!-- 提交 -->
         <el-dialog width="95%" title="标准工艺数据导入确认" v-model="processDialogTableFlag" :close-on-click-modal="false"
             :fullscreen="false">
-            <div>
+            <div v-if="data.exportTableData&&data.exportTableData.length>0">
                 <custom-table-form-list :data-arr="data.exportTableData"></custom-table-form-list>
             </div>
             <template #footer>
                 <div class="u-flex u-row-right u-col-center">
-                    <div  class="u-m-l-20">
-                        <template  v-if="viewFlag==true">
+                    <div class="u-m-l-20">
+                        <template v-if="viewFlag == true">
                             <el-button @click="closeViewDialog()">关闭</el-button>
                         </template>
                         <template v-else>
@@ -157,7 +157,7 @@ const initData = () => {
 //获取列表
 const getStandardProcessList = async () => {
     let param = {
-        standardProcessName: data.queryForm.standardProcessName
+        name: data.queryForm.standardProcessName
     }
     await getListAll(param).then((response: any) => {
         if (response.success) {
@@ -227,7 +227,7 @@ const addStandardProcess = () => {
 //取消新增,关闭弹窗
 const cancelAddProcess = () => {
     addDialogFlag.value = false;
-    currentUpdateID.value="";
+    currentUpdateID.value = 0;
     data.dialogAddProcessForm.standardProcessName = "";
 }
 //提交新增
@@ -239,7 +239,7 @@ const confirmAddProcess = () => {
         })
         return;
     }
-    if (data.exportTableData.length < 1) {
+    if (data.exportTableData==null||data.exportTableData.length < 1) {
         ElMessage({
             type: 'warning',
             message: '导入数据不能为空'
@@ -255,70 +255,107 @@ const confirmAddProcess = () => {
 //取消工序保存
 const cancelSaveProcess = () => {
     processDialogTableFlag.value = false;
-    currentUpdateID.value="";
-    addDialogFlag.value=false;
+    currentUpdateID.value = 0;
+    addDialogFlag.value = false;
 }
 //提交工序保存
 const confirmSaveProcess = () => {
     //编辑
-    if(currentUpdateID.value&&currentUpdateID.value.length>0){
-        standardProcessList.value.map(function(item:any){
-            if(item.id==currentUpdateID.value){
-                  item.standardProcessName= data.dialogAddProcessForm.standardProcessName;
-                  item.exportTableData= data.exportTableData; 
+    if (currentUpdateID.value&&currentUpdateID.value!=0) {
+        standardProcessList.value.map(function (item: any) {
+            if (item.id == currentUpdateID.value) {
+                item.name = data.dialogAddProcessForm.standardProcessName;
+                item.list = data.exportTableData;
+                update(item).then((response: any) => {
+                    console.log("修改响应", response);
+                    if (response.success) {
+                        ElMessage({
+                            type: 'success',
+                            message: '修改成功'
+                        })
+                        initData()
+                        return;
+                    } else {
+                        ElMessage({
+                            type: 'error',
+                            message: '编辑保存失败'
+                        })
+                        return;
+                    }
+                })
             }
         })
     }
     //新增
-    else{
+    else {
         let param: any = {
-        id: new Date().getTime.toString(),
-        standardProcessName: data.dialogAddProcessForm.standardProcessName,
-        lastModificationTime: '刚刚',
-        lastModifierUserName: '张三',
-        exportTableData: data.exportTableData
+            id: 0,
+            name: data.dialogAddProcessForm.standardProcessName,
+            list: data.exportTableData
         };
-        standardProcessList.value.push(param);
+        create(param).then((response: any) => {
+            console.log("新增响应", response);
+            if (response.success) {
+                ElMessage({
+                    type: 'success',
+                    message: '保存成功'
+                })
+                initData()
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: '新增失败'
+                })
+            }
+        })
     }
-    currentUpdateID.value="";
-    addDialogFlag.value=false;
+    currentUpdateID.value = 0;
+    addDialogFlag.value = false;
     processDialogTableFlag.value = false;
 }
 //查看弹窗
-const viewFlag=ref(false)
+const viewFlag = ref(false)
 
 //查看
 const handleView = (index: number, row: any) => {
-    viewFlag.value=true;
-    processDialogTableFlag.value=true;
-    data.exportTableData = row.exportTableData;
+    if(row.list==null||row.list.length<1){
+        ElMessage({
+            type: 'warning',
+            message: '数据为空'
+        })
+        return;
+    }
+    data.exportTableData = row.list;
+    viewFlag.value = true;
+    processDialogTableFlag.value = true;
+    
 }
 //关闭弹窗
-const closeViewDialog=()=>{
-    viewFlag.value=false;
-    processDialogTableFlag.value=false;
+const closeViewDialog = () => {
+    viewFlag.value = false;
+    processDialogTableFlag.value = false;
 }
 //开启编辑
-const currentUpdateID=ref("")
+const currentUpdateID = ref(0)
 //编辑
 const handleEdit = (index: number, row: any) => {
-    currentUpdateID.value=row.id;
-    data.dialogAddProcessForm.standardProcessName=row.standardProcessName;
-    data.exportTableData = row.exportTableData;
-    viewFlag.value=false;
+    currentUpdateID.value = row.id;
+    data.dialogAddProcessForm.standardProcessName = row.name;
+    data.exportTableData = row.list;
+    viewFlag.value = false;
     addDialogFlag.value = true;
 }
 //删除
 const handleDelete = (index: number, row: any) => {
     ElMessageBox.confirm("是否确认删除!").then(function () {
-            standardProcessList.value.splice(index, 1);
-        }).then(() => {
-            initData()
-            ElMessage({
-                type: "success",
-                message: "删除成功"
-            })
+        standardProcessList.value.splice(index, 1);
+    }).then(() => {
+        initData()
+        ElMessage({
+            type: "success",
+            message: "删除成功"
         })
+    })
         .catch(() => { })
 }
 

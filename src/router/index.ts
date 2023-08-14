@@ -319,7 +319,15 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       title: "工序工时",
     },
     children: [
-
+      {
+        path: "/processHoursExport/index",
+        component: () => import("@/views/processHoursExport/index.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "processHoursExport",
+        meta: {
+          title: "工序工时导入"
+        }
+      },
       {
         path: "/processHoursExport/processLib",
         component: () => import("@/views/processHoursExport/processLib.vue"),
@@ -327,6 +335,15 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "processLib",
         meta: {
           title: "工序库"
+        }
+      },
+      {
+        path: "/processHoursExport/workingHours",
+        component: () => import("@/views/processHoursExport/workingHours.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "workingHours",
+        meta: {
+          title: "工时库"
         }
       },
       {
@@ -379,7 +396,30 @@ export const constantRoutes: Array<RouteRecordRaw> = [
           title: "硬件及软件"
         }
       },
-
+      {
+        path: "/processHoursExport/logisticsCost",
+        component: () => import("@/views/processHoursExport/logisticsCost.vue"),
+        name: "logisticsCost",
+        meta: {
+          title: "物流成本录入"
+        }
+      },
+      {
+        path: "/processHoursExport/standardProcess",
+        component: () => import("@/views/processHoursExport/standardProcess.vue"),
+        name: "standardProcess",
+        meta: {
+          title: "标准工艺库"
+        }
+      },
+      {
+        path: "/processHoursExport/COBManufactureCost",
+        component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
+        name: "COBManufactureCost",
+        meta: {
+          title: "COB制造成本录入"
+        }
+      }
     ]
   },
   {

@@ -7,15 +7,19 @@
                         <span>零件列表</span>
                     </div>
                     <div class="u-m-l-10">
-                        <el-select v-model="data.currentPlan" placeholder="请选择方案" size="large">
+                        <el-select @change="planChange"
+                                v-model="data.currentPlan" 
+                                placeholder="请选择方案" 
+                                size="large">
                             <el-option v-for="item in data.planOptions" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
                     </div>
                 </div>
                 <div>
-                    <el-button type="primary">提交</el-button>
-                    <el-button type="primary"  @click="saveTableData()">保存</el-button>
+                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1">提交</el-button>
+                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1" 
+                        @click="saveTableData()">保存</el-button>
                     <!-- <template  v-if="!data.editDisabled">
                         <el-button type="info"     @click="resetTableData()">重置</el-button>
                         <el-button type="primary"  @click="saveTableData()">保存</el-button>
@@ -35,80 +39,83 @@
                 </div>
             </div>
 
-            <div v-if="data.cardData.length>0">
-                <el-card class="box-card u-m-b-10" v-for="(cardItem,cardIndex) in data.cardData" :key="cardIndex">
+            <div v-if="cardData.length > 0">
+                <el-card class="box-card u-m-b-10" v-for="(cardItem, cardIndex) in cardData" :key="cardIndex">
                     <template #header>
-                            <div style="font-weight: bold;">
-                                <span>{{cardItem.spec}}</span>
-                            </div>
+                        <div style="font-weight: bold;">
+                            <span>{{ cardItem.classification }}</span>
+                        </div>
                     </template>
                     <div>
-                        <el-table :data="(cardItem.tableData)" style="width: 100%" border>
+                        <el-table :data="(cardItem.logisticscostList)" style="width: 100%" border>
                             <el-table-column label="年份" align="center">
                                 <template #default="scope">
                                     <div>
                                         <span>{{ scope.row.year }}</span>
                                     </div>
-                                </template>   
-                            </el-table-column>  
+                                </template>
+                            </el-table-column>
                             <el-table-column label="单PCS包装价格/元" align="center">
                                 <template #default="scope">
                                     <div>
                                         <!-- :disabled="data.editDisabled" -->
-                                        <el-input-number  v-model="scope.row.pcsPrice"  :precision="2" :step="0.01"  @change="pcsPriceChange($event,scope.$index, scope.row)"/>
+                                        <el-input-number v-model="scope.row.packagingPrice" :precision="2" :step="0.01"
+                                            @change="pcsPriceChange($event, scope.$index, scope.row)" />
                                     </div>
-                                </template>   
+                                </template>
                             </el-table-column>
                             <el-table-column label="运费/月" align="center">
                                 <template #default="scope">
                                     <div>
                                         <!-- :disabled="data.editDisabled" -->
-                                        <el-input-number  v-model="scope.row.monthFreight"  :precision="2" :step="0.01"  @change="monthFreightChange($event,scope.$index, scope.row)"/>
+                                        <el-input-number v-model="scope.row.freightPrice" :precision="2" :step="0.01"
+                                            @change="freightPriceChange($event, scope.$index, scope.row)" />
                                     </div>
-                                </template>   
+                                </template>
                             </el-table-column>
                             <el-table-column label="仓储费用/月" align="center">
                                 <template #default="scope">
                                     <div>
                                         <!--  :disabled="data.editDisabled" -->
-                                        <el-input-number v-model="scope.row.monthStorage"  :precision="2" :step="0.01"  @change="monthStorageChange($event,scope.$index, scope.row)"/>
+                                        <el-input-number v-model="scope.row.storagePrice" :precision="2" :step="0.01"
+                                            @change="storagePriceChange($event, scope.$index, scope.row)" />
                                     </div>
-                                </template>   
-                            </el-table-column> 
+                                </template>
+                            </el-table-column>
                             <el-table-column label="月需求量" align="center">
                                 <template #default="scope">
                                     <div>
-                                        <span>{{ scope.row.monthRequirement }}</span>
+                                        <span>{{ scope.row.monthlyDemandPrice }}</span>
                                     </div>
-                                </template>   
+                                </template>
                             </el-table-column>
                             <el-table-column label="单PCS运输费" align="center">
                                 <template #default="scope">
                                     <div>
-                                        <span>{{ scope.row.pcsFreight }}</span>
+                                        <span>{{ scope.row.singlyDemandPrice }}</span>
                                     </div>
-                                </template>   
-                            </el-table-column>  
+                                </template>
+                            </el-table-column>
                             <el-table-column label="单PCS总物流成本" align="center">
                                 <template #default="scope">
                                     <div>
-                                        <span>{{ scope.row.pcsFreightCost }}</span>
+                                        <span>{{ scope.row.transportPrice }}</span>
                                     </div>
-                                </template>   
-                            </el-table-column>   
+                                </template>
+                            </el-table-column>
                             <el-table-column label="备注" align="center">
                                 <template #default="scope">
                                     <div>
-                                        <el-input v-model="scope.row.remark" placeholder="请输入备注内容"/>
+                                        <el-input type="textarea" v-model="scope.row.remark" placeholder="请输入备注内容" />
                                     </div>
-                                </template>   
-                            </el-table-column> 
+                                </template>
+                            </el-table-column>
                             <!-- <el-table-column label="操作">
                                 <template #default="scope">
                                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                                 </template>
                             </el-table-column>                      -->
-                        </el-table>   
+                        </el-table>
                     </div>
                 </el-card>
             </div>
@@ -116,187 +123,143 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs,onMounted } from 'vue';
+import { ref, reactive, toRefs, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from "element-plus";
+import { GetListAll,createProcess} from "@/api/logisticsCost";
 const data = reactive({
-    currentPlan: '1',
-    editDisabled:true,
+    currentPlan: '100',
+    editDisabled: true,
     planOptions: [
         {
-            value: '1',
+            value: '100',
             label: '前视-方案一',
         },
         {
-            value: '2',
+            value: '200',
             label: '前视-方案二',
         },
         {
-            value: '3',
+            value: '300',
             label: '侧视-方案一',
         },
         {
-            value: '4',
+            value: '400',
             label: '侧视-方案二',
         },
     ],
-    cardData:<any>[],
 })
-   
-let tempCardData:any=[];
+const cardData=ref([]);
+let tempCardData: any = [];
 
-onMounted(async ()=>{
-    data.cardData=await initData(); 
+onMounted(() => {
+    getListData();
 })
 
-const initData=()=>{
-    let res:any= [{
-            spec:'500K/Y',
-            tableData:[
-                {
-                    year:'2023',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                },
-                {
-                    year:'2024',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                },
-                {
-                    year:'2025',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                }
-            ]
-        },
-        {
-            spec:'1000K/Y',
-            tableData:[
-                {
-                    year:'2023',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                },
-                {
-                    year:'2024',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                },
-                {
-                    year:'2025',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                }
-            ]
-        },
-        {
-            spec:'2000K/Y',
-            tableData:[
-                {
-                    year:'2023',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                },
-                {
-                    year:'2024',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                },
-                {
-                    year:'2025',
-                    pcsPrice:0.00,
-                    monthFreight:0.00,
-                    monthStorage:0.00,
-                    monthRequirement:0.00,
-                    pcsFreight:0.00,
-                    pcsFreightCost:0.00,
-                    remark:'',
-                }
-            ]
-    }];
-    return res;
+const getListData=()=>{
+    let param={
+        AuditFlowId: 100,
+        ProductId:Number(data.currentPlan)
+    }
+    GetListAll(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      console.log("物流列表", data);
+      cardData.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
 }
 
-const pcsPriceChange=(value: any,index :any,item:any)=>{
-    console.log("单片价格变化",value);
-    console.log(`index===${index}`,item);
-}
-const monthFreightChange=(value: any,index :any,item:any)=>{
-    console.log("运费变化",value);
-    console.log(`index===${index}`,item);
+const planChange=(value:any)=>{
+    console.log("当前方案",value);
+    getListData();
 }
 
-const monthStorageChange=(value: any,index :any,item:any)=>{
-    console.log("仓储费用变化",value);
-    console.log(`index===${index}`,item);
+//单PCS包装价格/元发生变化
+const pcsPriceChange = (value: any, index: any, item: any) => {
+    console.log("单片价格变化", value);
+    console.log(`index===${index}`, item);
+    if(item.packagingPrice&&item.singlyDemandPrice){
+        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
+    }
+}
+//运费/月发生变化
+const freightPriceChange = (value: any, index: any, item: any) => {
+    console.log("运费变化", value);
+    console.log(`index===${index}`, item);
+    let yearCount=12000;
+    let monthlyDemandPrice=yearCount/12;
+    item.monthlyDemandPrice=monthlyDemandPrice;
+    console.log("月需求量",monthlyDemandPrice);
+    let singlePCS= (item.freightPrice+item.storagePrice)/monthlyDemandPrice;
+    console.log("单PCS运输费",singlePCS);
+    item.singlyDemandPrice=Number(singlePCS.toFixed(2));
+    if(item.packagingPrice&&item.singlyDemandPrice){
+        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
+        console.log("单PCS总物流成本",item.transportPrice);
+    }
+}
+//仓储费用/月发生变化
+const storagePriceChange = (value: any, index: any, item: any) => {
+    console.log("仓储费用变化", value);
+    console.log(`index===${index}`, item);
+    let yearCount=12000;
+    let monthlyDemandPrice=yearCount/12;
+    item.monthlyDemandPrice=monthlyDemandPrice;
+    console.log("月需求量",monthlyDemandPrice);
+    let singlePCS= (item.freightPrice+item.storagePrice)/monthlyDemandPrice;
+    console.log("单PCS运输费",singlePCS);
+    item.singlyDemandPrice=Number(singlePCS.toFixed(2));
+    if(item.packagingPrice&&item.singlyDemandPrice){
+        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
+        console.log("单PCS总物流成本",item.transportPrice);
+    }
 }
 
-
-const resetTableData=()=>{
-    console.log("重置数据")
-    data.cardData=tempCardData;
-    data.editDisabled=true;
+//保存
+const saveTableData = () => {
+    console.log("保存数据",cardData.value);
+    let param={
+        auditFlowId: 100,
+        productId:Number(data.currentPlan),
+        logisticscostList:JSON.parse(JSON.stringify(cardData.value))
+    };
+    createProcess(param).then((response: any) => {
+      console.log("新增响应", response);
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '保存成功'
+        })
+        getListData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '保存失败'
+        })
+      }
+    })
 }
 
-const saveTableData=()=>{
-    console.log("保存数据");
-    data.editDisabled=true;
-}
-
-const openEdit=()=>{
+const openEdit = () => {
     console.log("开启编辑");
-    data.editDisabled=false;
-    tempCardData=JSON.parse(JSON.stringify(data.cardData));
+    data.editDisabled = false;
+    tempCardData = JSON.parse(JSON.stringify(cardData.value));
 }
 
-const handleEdit=(index :any,item:any)=>{
-    console.log(`启用编辑,下标:${index}`,item);
+const resetTableData = () => {
+    console.log("重置数据")
+    cardData.value = tempCardData;
+    data.editDisabled = true;
 }
 
 
-
-defineExpose({
-    ...toRefs(data),
-})
+const handleEdit = (index: any, item: any) => {
+    console.log(`启用编辑,下标:${index}`, item);
+}
 </script>
 <style></style>

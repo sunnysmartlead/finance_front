@@ -224,6 +224,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "结构BOM单价审核"
         }
+      },
+      {
+        path: "/bomVerify/index",
+        component: () => import("@/views/bomVerify/index.vue"),
+        name: "bom单价审核",
+        meta: {
+          title: "bom单价审核"
+        }
       }
     ]
   },

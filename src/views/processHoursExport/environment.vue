@@ -162,7 +162,6 @@ interface RuleForm {
   name: string,
   price: number,
   unit: string,
-  IsDeleted: number,
   laboratory: string
 }
 const ruleFormRef = ref<FormInstance>()
@@ -172,7 +171,6 @@ let ruleForm = reactive<RuleForm>({
   name: '',
   price: 0.00,
   unit: '',
-  IsDeleted: 1,
   laboratory: ''
 })
 const rules = reactive<FormRules<RuleForm>>({

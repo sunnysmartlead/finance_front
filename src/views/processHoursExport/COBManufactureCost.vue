@@ -25,7 +25,7 @@
             </div>
         </div>
         <!-- COB-UPH表格区 -->
-        <el-card class="u-m-b-30">
+        <!-- <el-card class="u-m-b-30">
             <el-scrollbar wrap-style="padding:10px 0px;">
                 <div class="u-flex u-row-left u-col-center u-text-center">
                     <div style="background-color: rgb(247, 247, 96);">
@@ -36,11 +36,11 @@
                             COB-UPH
                         </div>
                     </div>
-                    <template v-for="i in 10">
+                    <template v-if="COBUPHData.length>0">
                         <div v-for="(uph, uphIndex) in COBUPHData" :key="uphIndex"
                             style="background-color: rgb(247, 247, 96);;">
                             <div class="u-border u-width-200  u-height-26">
-                                <span>{{ uph.yearIndex }}</span>
+                                <span>{{ uph.year }}</span>
                             </div>
                             <div class="u-border u-width-200  u-height-26">
                                 <span>{{ uph.UPHValue }}</span>
@@ -49,7 +49,7 @@
                     </template>
                 </div>
             </el-scrollbar>
-        </el-card>
+        </el-card> -->
         <!-- 表格数据录入区 -->
         <div class="table-box">
             <el-scrollbar>
@@ -58,7 +58,7 @@
                         <el-card>
                             <template #header>
                                 <div class="title-box u-font-20">
-                                    <span>{{dataItem.spec}}</span>
+                                    <span>{{dataItem.classification}}</span>
                                 </div>
                             </template>
                             <div>
@@ -66,65 +66,61 @@
                                     <span>COB制造成本</span>
                                 </div>
                                 <div class="u-m-t-10">
-                                    <el-table :data="dataItem.COBCost" border style="color:#000000">
+                                    <el-table :data="dataItem.listBomEnter" border style="color:#000000">
                                         <el-table-column label="年份" align="center">
                                             <template #default="scope">
-                                                <span>{{ scope.row.yearIndex }}</span>
+                                                <span>{{ scope.row.year }}</span>
                                             </template>
                                         </el-table-column>
                                         <el-table-column label="直接制造成本" align="center">
                                             <el-table-column label="直接人工" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directCost.directLaborCosts }}</span>
+                                                    <span>{{ scope.row.directLaborPrice}}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="设备折旧" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directCost.equipmentDepreciation }}</span>
+                                                    <span>{{ scope.row.directDepreciation }}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="换线成本" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directCost.changeLineCost }}</span>
+                                                    <span>{{ scope.row.directLineChangeCost }}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="制造费用" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directCost.manuFree }}</span>
+                                                    <span>{{ scope.row.directManufacturingCosts }}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="小计" width="200" align="center"
                                                 label-class-name="labelClassName">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directCost.subTotal }}</span>
+                                                    <span>{{ scope.row.directSummary }}</span>
                                                 </template>
                                             </el-table-column>
                                         </el-table-column>
                                         <el-table-column label="间接制造成本" align="center">
                                             <el-table-column label="直接人工" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectCost.directLaborCosts }}</span>
+                                                    <span>{{ scope.row.indirectLaborPrice }}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="设备折旧" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectCost.equipmentDepreciation }}</span>
+                                                    <span>{{ scope.row.indirectDepreciation }}</span>
                                                 </template>
                                             </el-table-column>
-                                            <el-table-column label="换线成本" width="200" align="center">
-                                                <template #default="scope">
-                                                    <span>{{ scope.row.indirectCost.changeLineCost }}</span>
-                                                </template>
-                                            </el-table-column>
+                                            
                                             <el-table-column label="制造费用" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectCost.manuFree }}</span>
+                                                    <span>{{ scope.row.indirectManufacturingCosts }}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="小计" width="200" align="center"
                                                 label-class-name="labelClassName">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectCost.subTotal }}</span>
+                                                    <span>{{ scope.row.indirectSummary }}</span>
                                                 </template>
                                             </el-table-column>
                                         </el-table-column>
@@ -146,10 +142,10 @@
                                     <span>Other</span>
                                 </div>
                                 <div class="u-m-t-10">
-                                    <el-table :data="dataItem.Other" border style="width:600px;color: #000000;">
+                                    <el-table :data="dataItem.listBomEnterTotal" border style="width:600px;color: #000000;">
                                         <el-table-column label="年份" align="center" width="200">
                                             <template #default="scope">
-                                                <span>{{ scope.row.yearIndex }}</span>
+                                                <span>{{ scope.row.year }}</span>
                                             </template>
                                         </el-table-column>
                                         <el-table-column label="合计" align="center" width="200">
@@ -173,8 +169,9 @@
     </div>
 </template>
 <script setup lang="ts">
-import { table } from 'console';
 import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox,genFileId } from "element-plus"
+import { GetListAll, update, create, deleteItem, uploadAction } from "@/api/COB";
 //方案下拉选项
 const planOptions = ref([
     {
@@ -200,11 +197,11 @@ const currentPlan = ref("")
 const COBUPHData = ref<any>([])
 let tempUPHData = [
     {
-        yearIndex: '15/Jul',
+        year: '15/Jul',
         UPHValue: 'xxx',
     },
     {
-        yearIndex: '16/Jul',
+        year: '16/Jul',
         UPHValue: 'xxx',
     }
 ]
@@ -212,191 +209,83 @@ let tempUPHData = [
 const tableData = ref<any>([])
 let tempTableDataArr = [
     {
-        spec: "500K",
-        COBCost: [
+        classification: "500K",
+        listBomEnter: [
             {
-                yearIndex: '15/Jul',  //年份
+                year: '15/Jul',  //年份
                 //直接制造成本
-                directCost: {
-                    directLaborCosts: 'sss',    //直接人工
-                    equipmentDepreciation: 'vvv',//设备折旧
-                    changeLineCost: 'sss',//换线成本
-                    manuFree: 'aaa',    //制造费用
-                    subTotal: 'ggg',
-                },
+                directLaborPrice: 'sss',    //直接人工
+                directDepreciation: 'vvv',//设备折旧
+                directLineChangeCost: 'sss',//换线成本
+                directManufacturingCosts: 'aaa',    //制造费用
+                directSummary: 'ggg',
                 //间接制造成本
-                indirectCost: {
-                    directLaborCosts: 'www',    //直接人工
-                    equipmentDepreciation: 'qqq',//设备折旧
-                    changeLineCost: 'eee',//换线成本
-                    manuFree: 'trttt',    //制造费用
-                    subTotal: 'ggg',
-                },
+                indirectLaborPrice: 'www',    //直接人工
+                indirectDepreciation: 'qqq',//设备折旧
+                indirectManufacturingCosts: 'trttt',    //制造费用
+                indirectSummary: 'ggg',
                 totalCost: '12345', //合计成本
                 remark: 'fgdf'       //备注
             },
             {
-                yearIndex: '16/Jul',  //年份
+                year: '16/Jul',  //年份
                 //直接制造成本
-                directCost: {
-                    directLaborCosts: 'sss',    //直接人工
-                    equipmentDepreciation: 'vvv',//设备折旧
-                    changeLineCost: 'sss',//换线成本
-                    manuFree: 'aaa',    //制造费用
-                    subTotal: 'ggg',
-                },
+                directLaborPrice: 'sss',    //直接人工
+                directDepreciation: 'vvv',//设备折旧
+                directLineChangeCost: 'sss',//换线成本
+                directManufacturingCosts: 'aaa',    //制造费用
+                directSummary: 'ggg',
                 //间接制造成本
-                indirectCost: {
-                    directLaborCosts: 'www',    //直接人工
-                    equipmentDepreciation: 'qqq',//设备折旧
-                    changeLineCost: 'eee',//换线成本
-                    manuFree: 'trttt',    //制造费用
-                    subTotal: 'ggg',
-                },
+                indirectLaborPrice: 'www',    //直接人工
+                indirectDepreciation: 'qqq',//设备折旧
+                indirectManufacturingCosts: 'trttt',    //制造费用
+                indirectSummary: 'ggg',
                 totalCost: '12345', //合计成本
                 remark: 'fgdf'       //备注
             }
         ],
-        Other: [
+        listBomEnterTotal: [
             {
-                yearIndex: '15/Jul',
+                year: '15/Jul',
                 totalCost: 'xxx',
                 remark: 'yyyy',
             },
             {
-                yearIndex: '16/Jul',
+                year: '16/Jul',
                 totalCost: '1111',
                 remark: '2222',
             }
         ]
-    },
-    {
-        spec: "1000K",
-        COBCost: [
-            {
-                yearIndex: '15/Jul',  //年份
-                //直接制造成本
-                directCost: {
-                    directLaborCosts: 'sss',    //直接人工
-                    equipmentDepreciation: 'vvv',//设备折旧
-                    changeLineCost: 'sss',//换线成本
-                    manuFree: 'aaa',    //制造费用
-                    subTotal: 'ggg',
-                },
-                //间接制造成本
-                indirectCost: {
-                    directLaborCosts: 'www',    //直接人工
-                    equipmentDepreciation: 'qqq',//设备折旧
-                    changeLineCost: 'eee',//换线成本
-                    manuFree: 'trttt',    //制造费用
-                    subTotal: 'ggg',
-                },
-                totalCost: '12345', //合计成本
-                remark: 'fgdf'       //备注
-            },
-            {
-                yearIndex: '15/Jul',  //年份
-                //直接制造成本
-                directCost: {
-                    directLaborCosts: 'sss',    //直接人工
-                    equipmentDepreciation: 'vvv',//设备折旧
-                    changeLineCost: 'sss',//换线成本
-                    manuFree: 'aaa',    //制造费用
-                    subTotal: 'ggg',
-                },
-                //间接制造成本
-                indirectCost: {
-                    directLaborCosts: 'www',    //直接人工
-                    equipmentDepreciation: 'qqq',//设备折旧
-                    changeLineCost: 'eee',//换线成本
-                    manuFree: 'trttt',    //制造费用
-                    subTotal: 'ggg',
-                },
-                totalCost: '12345', //合计成本
-                remark: 'fgdf'       //备注
-            }
-        ],
-        Other: [
-            {
-                yearIndex: '15/Jul',
-                totalCost: 'xxx',
-                remark: 'yyyy',
-            },
-            {
-                yearIndex: '16/Jul',
-                totalCost: '1111',
-                remark: '2222',
-            }
-        ]
-    },
-    {
-        spec: "2000K",
-        COBCost: [
-            {
-                yearIndex: '15/Jul',  //年份
-                //直接制造成本
-                directCost: {
-                    directLaborCosts: 'sss',    //直接人工
-                    equipmentDepreciation: 'vvv',//设备折旧
-                    changeLineCost: 'sss',//换线成本
-                    manuFree: 'aaa',    //制造费用
-                    subTotal: 'ggg',
-                },
-                //间接制造成本
-                indirectCost: {
-                    directLaborCosts: 'www',    //直接人工
-                    equipmentDepreciation: 'qqq',//设备折旧
-                    changeLineCost: 'eee',//换线成本
-                    manuFree: 'trttt',    //制造费用
-                    subTotal: 'ggg',
-                },
-                totalCost: '12345', //合计成本
-                remark: 'fgdf'       //备注
-            },
-            {
-                yearIndex: '15/Jul',  //年份
-                //直接制造成本
-                directCost: {
-                    directLaborCosts: 'sss',    //直接人工
-                    equipmentDepreciation: 'vvv',//设备折旧
-                    changeLineCost: 'sss',//换线成本
-                    manuFree: 'aaa',    //制造费用
-                    subTotal: 'ggg',
-                },
-                //间接制造成本
-                indirectCost: {
-                    directLaborCosts: 'www',    //直接人工
-                    equipmentDepreciation: 'qqq',//设备折旧
-                    changeLineCost: 'eee',//换线成本
-                    manuFree: 'trttt',    //制造费用
-                    subTotal: 'ggg',
-                },
-                totalCost: '12345', //合计成本
-                remark: 'fgdf'       //备注
-            }
-        ],
-        Other: [
-            {
-                yearIndex: '15/Jul',
-                totalCost: 'xxx',
-                remark: 'yyyy',
-            },
-            {
-                yearIndex: '16/Jul',
-                totalCost: '1111',
-                remark: '2222',
-            }
-        ]
-    },
+    }
 ]
 //页面加载函数
 onMounted(async () => {
-    await initData();
+    initData();
 })
 
+const getListData = async () => {
+  let param = {
+    AuditFlowId: 100,
+    ProductId:100
+  }
+  await GetListAll(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      tableData.value =data;
+      console.log("列表数据", data);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
+}
+
 const initData = () => {
-    COBUPHData.value = tempUPHData;
+    //COBUPHData.value = tempUPHData;
     tableData.value = tempTableDataArr;
+    getListData();
 }
 </script>
 <style>

@@ -217,7 +217,7 @@
         </el-row>
       </div>
     </el-card>
-    <el-row justify="end" style="margin-top: 20px" v-if="isVertify">
+    <el-row justify="end" style="margin-top: 20px" v-if="isVertify && !isMergeVertify">
       <el-button type="primary" @click="handleSetBomState(true)" v-havedone :disabled="!isAll">同意</el-button>
       <el-button type="danger" @click="handleSetBomState(false)" v-havedone>拒绝</el-button>
     </el-row>
@@ -242,14 +242,14 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
-import { table } from "console"
 
 const router = useRouter()
 const Host = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()
 
 const props = defineProps({
-  isVertify: Boolean
+  isVertify: Boolean,
+  isMergeVertify: Boolean
 })
 
 const { jumpTodoCenter } = useJump()

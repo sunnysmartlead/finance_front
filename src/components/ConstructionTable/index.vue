@@ -3,7 +3,7 @@
     <div>
       <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
       <el-row justify="end">
-        <el-button m="2" v-if="!isVertify" type="primary" @click="queryModlueNumber">查看项目走量</el-button>
+        <el-button m="2" type="primary" @click="queryModlueNumber">查看项目走量</el-button>
         <ThreeDImage m="2" />
       </el-row>
       <div class="card-div" v-if="!isVertify">
@@ -267,7 +267,7 @@
         </div>
       </el-card>
     </div>
-    <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length">
+    <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
       <el-button type="primary" @click="handleSetBomState(true)" v-havedone :disabled="!isAll">同意</el-button>
       <el-button type="danger" @click="handleSetBomState(false)" v-havedone>拒绝</el-button>
     </el-row>
@@ -298,7 +298,8 @@ import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
 
 const props = defineProps({
-  isVertify: Boolean
+  isVertify: Boolean,
+  isMergeVertify: Boolean
 })
 
 enum upDownEunm {

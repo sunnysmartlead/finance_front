@@ -186,20 +186,17 @@ export function getUserList(data: UserParams) {
 
 /** 根据角色获取人员 */
 export function getUserListByRoleName(roleNames: string | string[]) {
-  let text = ""
-  if (Array.isArray(roleNames)) {
-    map(roleNames, (c: string, index: number) => (text += `roleNames[${index}]=${encodeURIComponent(c)}&`))
-  } else if (typeof roleNames === "string") {
-    text = `roleNames[0]=${roleNames}&`
+  let roles = roleNames
+  if (!Array.isArray(roleNames)) {
+    roles = [roleNames]
   }
-  console.log(text, "roleNames")
   return request({
-    url: `/api/services/app/User/GetUserListByRoleNames/?${encodeURIComponent(text)}maxResultCount=200&skipCount=0`,
-    method: "get"
-    // data: {
-    //   // roleNames,
-    //   maxResultCount: 200,
-    //   skipCount: 0
-    // }
+    url: `/api/services/app/User/GetUserListByRoleNames`,
+    method: "post",
+    data: {
+      roleNames: roles,
+      maxResultCount: 200,
+      skipCount: 0
+    }
   })
 }

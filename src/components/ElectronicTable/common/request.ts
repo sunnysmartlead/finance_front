@@ -1,5 +1,5 @@
 import { request } from "@/utils/service"
-import { ElectronicDto, ConstructionModel } from "../../../components/ElectronicTable/data.type"
+import { ElectronicDto, ConstructionModel } from "../data.type"
 
 // 资源部输入时,加载电子料结构件初始值
 export function GetElectronic(auditFlowId: number, solutionId: number): any {
@@ -87,5 +87,45 @@ export function GetProjectGoQuantity(data: { Id: number }): any {
     url: "/api/services/app/ResourceEntering/GetProjectGoQuantity",
     method: "get",
     data
+  })
+}
+
+// Bom审核
+export function SetBomState(data: {
+  auditFlowId: number
+  bomCheckType: number
+  isAgree: boolean
+  opinionDescription: string
+  unitPriceId: number[]
+  peopleId: number[]
+}): any {
+  return request({
+    url: "/api/services/app/BomCheck/SetBomState",
+    method: "post",
+    data
+  })
+}
+
+// BOM单价审核 加载电子料结构件初始值(单个零件)
+export function GetBOMElectronicSingle(auditFlowId: number, solutionId: number): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/GetBOMElectronicSingle",
+    method: "get",
+    data: {
+      auditFlowId,
+      solutionId
+    }
+  })
+}
+
+// BOM单价审核 加载结构料初始值(单个零件)
+export function GetBOMStructuralSingle(auditFlowId: number, solutionId: number): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/GetBOMStructuralSingle",
+    method: "get",
+    data: {
+      auditFlowId,
+      solutionId
+    }
   })
 }

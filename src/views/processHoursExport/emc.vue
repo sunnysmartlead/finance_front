@@ -168,6 +168,7 @@ interface RuleForm {
   name: string,
   price: number,
   unit: string,
+  IsDeleted: number,
   laboratory: string
 }
 const ruleFormRef = ref<FormInstance>()
@@ -177,6 +178,7 @@ let ruleForm = reactive<RuleForm>({
   name: '',
   price: 0.00,
   unit: '',
+  IsDeleted: 1,
   laboratory: ''
 })
 const rules = reactive<FormRules<RuleForm>>({
@@ -292,7 +294,7 @@ const submitSearch = () => {
 
 const downLoadEmc= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/EMC导入.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "Excel/EMC导入.xlsx"
   link.download = 'EMC导入模版.xls'
   document.body.appendChild(link)
   link.click()

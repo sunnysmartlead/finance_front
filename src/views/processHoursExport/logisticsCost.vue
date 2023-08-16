@@ -8,8 +8,8 @@
                     </div>
                     <div class="u-m-l-10">
                         <el-select @change="planChange"
-                                v-model="data.currentPlan" 
-                                placeholder="请选择方案" 
+                                v-model="data.currentPlan"
+                                placeholder="请选择方案"
                                 size="large">
                             <el-option v-for="item in data.planOptions" :key="item.value" :label="item.label"
                                 :value="item.value" />
@@ -18,7 +18,7 @@
                 </div>
                 <div>
                     <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1">提交</el-button>
-                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1" 
+                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1"
                         @click="saveTableData()">保存</el-button>
                     <!-- <template  v-if="!data.editDisabled">
                         <el-button type="info"     @click="resetTableData()">重置</el-button>
@@ -158,7 +158,7 @@ onMounted(() => {
 const getListData=()=>{
     let param={
         AuditFlowId: 100,
-        ProductId:Number(data.currentPlan)
+        SolutionId:Number(data.currentPlan)
     }
     GetListAll(param).then((response: any) => {
     if (response.success) {
@@ -225,7 +225,7 @@ const saveTableData = () => {
     console.log("保存数据",cardData.value);
     let param={
         auditFlowId: 100,
-        productId:Number(data.currentPlan),
+        solutionId:Number(data.currentPlan),
         logisticscostList:JSON.parse(JSON.stringify(cardData.value))
     };
     createProcess(param).then((response: any) => {

@@ -266,7 +266,7 @@ const submitSearch = () => {
 }
 const downLoad= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/工装库导入.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "Excel/工装库导入.xlsx"
   link.download = '工装库导入.xlsx'
   document.body.appendChild(link)
   link.click()

@@ -352,7 +352,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
 }
 const downLoad= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/软硬件.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "Excel/软硬件.xlsx"
   link.download = '软硬件.xlsx'
   document.body.appendChild(link)
   link.click()

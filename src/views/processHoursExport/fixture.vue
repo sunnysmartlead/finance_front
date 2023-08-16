@@ -453,7 +453,7 @@ const saveEdit = async (index: number, row: any) => {
 }
 const downLoad= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/检具.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "Excel/检具.xlsx"
   link.download = '检具.xlsx'
   document.body.appendChild(link)
   link.click()

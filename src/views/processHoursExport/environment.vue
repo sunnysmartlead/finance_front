@@ -162,6 +162,7 @@ interface RuleForm {
   name: string,
   price: number,
   unit: string,
+  IsDeleted: number,
   laboratory: string
 }
 const ruleFormRef = ref<FormInstance>()
@@ -171,6 +172,7 @@ let ruleForm = reactive<RuleForm>({
   name: '',
   price: 0.00,
   unit: '',
+  IsDeleted: 1,
   laboratory: ''
 })
 const rules = reactive<FormRules<RuleForm>>({
@@ -238,7 +240,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
 
 const downLoadEmc= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/环境导入.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "Excel/环境导入.xlsx"
   link.download = '环境导入模版.xlsx'
   document.body.appendChild(link)
   link.click()

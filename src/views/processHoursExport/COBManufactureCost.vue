@@ -111,7 +111,7 @@
                                                     <span>{{ scope.row.indirectDepreciation }}</span>
                                                 </template>
                                             </el-table-column>
-                                            
+
                                             <el-table-column label="制造费用" width="200" align="center">
                                                 <template #default="scope">
                                                     <span>{{ scope.row.indirectManufacturingCosts }}</span>
@@ -205,7 +205,7 @@ let tempUPHData = [
         UPHValue: 'xxx',
     }
 ]
-//表格数据    
+//表格数据
 const tableData = ref<any>([])
 let tempTableDataArr = [
     {
@@ -266,7 +266,7 @@ onMounted(async () => {
 const getListData = async () => {
   let param = {
     AuditFlowId: 100,
-    ProductId:100
+    SolutionId:100
   }
   await GetListAll(param).then((response: any) => {
     if (response.success) {

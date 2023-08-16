@@ -397,7 +397,7 @@ const getProcessName = (keyWord: String) => {
 }
 const downLoad= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/设备库导入.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "Excel/设备库导入.xlsx"
   link.download = '设备库导入.xlsx'
   document.body.appendChild(link)
   link.click()

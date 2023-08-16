@@ -14,9 +14,9 @@
       <div class="u-flex u-row-left u-col-center">
         <div  class="u-m-r-20">
           <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
-                     :show-file-list="false"
-                     :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
-                     :action="uploadAction" :limit="1">
+              :show-file-list="false"
+               :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                :action="uploadAction" :limit="1">
             <template #trigger>
               <el-button type="primary">工序库导入</el-button>
             </template>
@@ -29,7 +29,7 @@
 
       <div>
         <el-button type="primary"  @click="submitExportProcess">工序库导出</el-button>
-        <el-button type="primary" @click="submitSearch">工序库模板下载</el-button>
+        <el-button type="primary" @click="downLoad" >工序库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
@@ -66,8 +66,8 @@
               <template #default="scope">
                 <div>
                   <el-date-picker v-model="scope.row.lastModificationTime" :disabled="true" type="datetime"
-                                  value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" :disabled-date="disabledDate"
-                                  placeholder="系统自动生成" />
+                    value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" :disabled-date="disabledDate"
+                    placeholder="系统自动生成" />
                 </div>
               </template>
             </el-table-column>
@@ -75,13 +75,13 @@
             <el-table-column label="操作" align="center" width="200">
               <template #default="scope">
                 <template v-if="currentEditIndex == scope.$index">
-                  <el-button size="small" @click="cancalEdit(scope.$index, scope.row)">取消</el-button>
-                  <el-button type="primary" @click="handleSave(scope.$index, scope.row)"
-                             size="small">保存</el-button>
+                      <el-button size="small" @click="cancalEdit(scope.$index, scope.row)">取消</el-button>
+                      <el-button type="primary" @click="handleSave(scope.$index, scope.row)"
+                          size="small">保存</el-button>
                 </template>
                 <template v-else>
-                  <el-button type="primary" size="small"
-                             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="primary" size="small"
+                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 </template>
                 <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
               </template>
@@ -97,7 +97,7 @@
     </div>
 
     <div v-if="baseLibLogRecords.length>0"
-         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
+        class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar :min-size="10">
         <div class="u-flex u-row-between u-col-center u-p-r-20">
           <div>日志更新记录：</div>
@@ -110,9 +110,9 @@
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top"
-                              v-for="(activity, index) in baseLibLogRecords"
-                              :key="index"
-                              :timestamp="formatDateTime(activity.lastModificationTime)">
+              v-for="(activity, index) in baseLibLogRecords"
+              :key="index"
+               :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">
                 <div style="font-weight: bold; color: #909399">
                   <span>版本号：</span>
@@ -130,7 +130,7 @@
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
                       <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2" type="textarea"
-                                placeholder="更新日志记录内容" />
+                        placeholder="更新日志记录内容" />
                     </div>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ import { reactive, ref, toRefs, onMounted } from 'vue'
 import { ElMessage, ElMessageBox,genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { GetListAll, getProcessDetail, createProcess, exportProcess,
-  updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
+      updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
 const queryForm = reactive({
   processName: ''
 })
@@ -206,40 +206,48 @@ const submitSearch = () => {
   console.log('submitSearch!')
   getProcessList()
 }
+const downLoad= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "Excel/工序库导入.xlsx"
+  link.download = '工序库.xlsx'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
-  upload.value!.clearFiles()
-  const file = files[0] as UploadRawFile
-  file.uid = genFileId()
-  upload.value!.handleStart(file)
+    upload.value!.clearFiles()
+    const file = files[0] as UploadRawFile
+    file.uid = genFileId()
+    upload.value!.handleStart(file)
 }
 
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
-  console.log("responese", response);
-  console.log("uploadFile", uploadFile);
-  console.log("uploadFiles", uploadFiles);
-  if(response.result){
-    initData()
-    ElMessage({
-      type: 'success',
-      message: '导入成功',
-    })
-  }else{
-    ElMessage({
-      type: 'error',
-      message: '导入失败',
-    })
-  }
+    console.log("responese", response);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    if(response.result){
+      initData()
+      ElMessage({
+        type: 'success',
+        message: '导入成功',
+       })
+    }else{
+      ElMessage({
+        type: 'error',
+        message: '导入失败',
+       })
+    }
 }
 const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
-  console.log("error", error);
-  console.log("uploadFile", uploadFile);
-  console.log("uploadFiles", uploadFiles);
-  ElMessage({
-    type: 'error',
-    message: '导入失败',
-  })
+    console.log("error", error);
+    console.log("uploadFile", uploadFile);
+    console.log("uploadFiles", uploadFiles);
+    ElMessage({
+        type: 'error',
+        message: '导入失败',
+    })
 }
 
 const submitExportProcess=()=>{
@@ -247,22 +255,22 @@ const submitExportProcess=()=>{
     processName:queryForm.processName
   }
   exportProcess(param).then((response: any) => {
-    if (response) {
-      const data = new Blob([response],{ type: 'application/octet-stream'});
-      const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.setAttribute('download',"工序.xlsx");
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      ElMessage({
-        type: 'error',
-        message: '导出失败'
-      })
-    }
-  })
+      if (response) {
+          const data = new Blob([response],{ type: 'application/octet-stream'});
+          const url = URL.createObjectURL(data);
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download',"工序.xlsx");
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '导出失败'
+        })
+      }
+    })
 }
 
 
@@ -468,19 +476,19 @@ const saveLog =async () => {
   let data=JSON.parse(JSON.stringify(baseLibLogRecords.value))
   await saveProcessLog({
     listFoundationLogs:data
-  }).then((response:any) => {
-    if(response.success){
+    }).then((response:any) => {
+     if(response.success){
       ElMessage({
         type:'success',
         message:'修改成功'
       });
       initData()
-    }else{
+     }else{
       ElMessage({
         type:'error',
         message:'修改失败'
       });
-    }
+     }
   })
   editLogFlag.value = false
 }

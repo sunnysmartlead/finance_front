@@ -14,10 +14,10 @@
       <div>
         <div class="u-flex u-row-left u-col-center">
           <div  class="u-m-r-20">
-            <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"  
-                :show-file-list="false"
-                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
-                  :action="uploadAction" :limit="1">
+            <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
+                       :show-file-list="false"
+                       :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                       :action="uploadAction" :limit="1">
               <template #trigger>
                 <el-button type="primary">工时库导入</el-button>
               </template>
@@ -46,7 +46,7 @@
           <div class="u-text-center" style="background-color: rgb(223, 179, 122);">
             <div class="u-flex u-row-left u-col-center" v-if="dataArr.length > 0">
               <div v-for="(scopItem, sopIndex) in dataArr[0].listFoundationWorkingHour" :key="sopIndex"
-                class="u-text-center">
+                   class="u-text-center">
                 <div class="u-p-t-5 u-p-b-5 u-border"> SOP-{{ scopItem.year }}</div>
                 <div class="u-flex u-row-left u-col-center">
                   <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
@@ -91,30 +91,30 @@
         <!-- 数据区域 -->
         <template v-if="dataArr.length > 0">
           <div v-for="(dataItem, dataIndex) in dataArr" :key="dataIndex"
-              class="u-flex u-row-left u-col-center u-text-center">
+               class="u-flex u-row-left u-col-center u-text-center">
             <div class="u-flex u-row-left u-col-center  u-text-center">
               <div class="u-width-100 u-border  u-p-t-5 u-p-b-5">
                 <span>{{ dataIndex }}</span>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                  :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber" :loading="optionLoading">
+                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber" :loading="optionLoading">
                   <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                             :value="item.value" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                  :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName" :loading="optionLoading">
+                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName" :loading="optionLoading">
                   <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                             :value="item.value" />
                 </el-select>
               </div>
             </div>
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center">
                 <div v-for="(scopItem, sopIndex) in dataItem.listFoundationWorkingHour" :key="sopIndex"
-                  class="u-text-center">
+                     class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150  u-border">
                       <el-input-number v-model="scopItem.laborHour" :min="0" :disabled="isDisable(dataIndex)" />
@@ -141,10 +141,10 @@
               <div class="u-width-250 u-flex u-row-around u-col-center u-border u-p-t-4 u-p-b-4">
                 <template v-if="currentEditIndex == dataIndex">
                   <div class="u-width-80">
-                  <el-button size="small" @click="cancalEdit(dataIndex, dataItem)">取消</el-button>
+                    <el-button size="small" @click="cancalEdit(dataIndex, dataItem)">取消</el-button>
                   </div>
                   <div class="u-width-80">
-                  <el-button type="primary" size="small" @click="handleSave(dataIndex, dataItem)">保存</el-button>
+                    <el-button type="primary" size="small" @click="handleSave(dataIndex, dataItem)">保存</el-button>
                   </div>
                 </template>
                 <template v-else class="u-width-80">
@@ -153,7 +153,7 @@
                 <div class="u-width-80">
                   <el-button size="small" type="danger" @click="handleDelete(dataIndex, dataItem)">删除</el-button>
                 </div>
-              </div>      
+              </div>
             </div>
           </div>
         </template>
@@ -224,7 +224,7 @@ const addworkingHours = () => {
   } else {
     let size = dataArr.value.length;
     if(size>0){
-      let newItem=JSON.parse(JSON.stringify(dataArr.value[size - 1])); 
+      let newItem=JSON.parse(JSON.stringify(dataArr.value[size - 1]));
       newItem.id=0;
       newItem.processName="";
       newItem.processNumber="";
@@ -235,26 +235,26 @@ const addworkingHours = () => {
       let length= newItem.listFoundationWorkingHour.length;
       if(length>0){
         for(let i=0;i<length;i++){
-            let childItem={
-              foundationWorkingHourId:0,
-              laborHour:0,
-              lastModificationTime:'',
-              lastModifierUserId:"",
-              machineHour:"",
-              numberPersonnel:"",
-              year:newItem.listFoundationWorkingHour[i].year
-            };
-            listFoundationWorkingHour.push(childItem);
+          let childItem={
+            foundationWorkingHourId:0,
+            laborHour:0,
+            lastModificationTime:'',
+            lastModifierUserId:"",
+            machineHour:"",
+            numberPersonnel:"",
+            year:newItem.listFoundationWorkingHour[i].year
+          };
+          listFoundationWorkingHour.push(childItem);
         }
       }else{
         listFoundationWorkingHour=[{
-              foundationWorkingHourId:0,
-              laborHour:0,
-              lastModificationTime:'',
-              lastModifierUserId:"",
-              machineHour:"",
-              numberPersonnel:"",
-              year:new Date().getFullYear()
+          foundationWorkingHourId:0,
+          laborHour:0,
+          lastModificationTime:'',
+          lastModifierUserId:"",
+          machineHour:"",
+          numberPersonnel:"",
+          year:new Date().getFullYear()
         }]
       }
       newItem.listFoundationWorkingHour=listFoundationWorkingHour;
@@ -288,37 +288,37 @@ const addworkingHours = () => {
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
-    upload.value!.clearFiles()
-    const file = files[0] as UploadRawFile
-    file.uid = genFileId()
-    upload.value!.handleStart(file)
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
 }
 
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
-    console.log("responese", response);
-    console.log("uploadFile", uploadFile);
-    console.log("uploadFiles", uploadFiles);
-    if(response.result){
-      initData()
-      ElMessage({
-        type: 'success',
-        message: '导入成功',
-       })
-    }else{
-      ElMessage({
-        type: 'error',
-        message: '导入失败',
-       })
-    }
+  console.log("responese", response);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  if(response.result){
+    initData()
+    ElMessage({
+      type: 'success',
+      message: '导入成功',
+    })
+  }else{
+    ElMessage({
+      type: 'error',
+      message: '导入失败',
+    })
+  }
 }
 const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
-    console.log("error", error);
-    console.log("uploadFile", uploadFile);
-    console.log("uploadFiles", uploadFiles);
-    ElMessage({
-        type: 'error',
-        message: '导入失败',
-    })
+  console.log("error", error);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  ElMessage({
+    type: 'error',
+    message: '导入失败',
+  })
 }
 
 

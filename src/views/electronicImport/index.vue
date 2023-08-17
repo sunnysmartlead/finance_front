@@ -2,7 +2,7 @@
   <div class="electronic-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
     <CustomerSpecificity />
-    <TrDownLoad />
+    <TrView btnText="查看主方案设计" />
     <customerTargetPrice />
     <div class="electronic-import__btn-container">
       <el-form :inline="true">
@@ -99,7 +99,7 @@ import { SaveElectronicBom, DownloadFile, GetElectronicBom, getBoardInfomation }
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 // import ProductInfo from "@/components/ProductInfo/index.vue"
-import TrDownLoad from "@/components/TrDownLoad/index.vue"
+import TrView from "@/components/TrView/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"

@@ -19,9 +19,7 @@
               <el-button class="uploadBtn">NRE实验费模板上传</el-button>
             </el-upload>
             <SORDonwload />
-            <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
-              >查看设计方案</el-button
-            >
+            <TrView />
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">NRE实验费模板下载</el-button>
             <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
           </el-row>
@@ -102,7 +100,6 @@
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
     </div>
-    <designScheme v-model:dialogTableVisible="data.dialogTableVisible" @close="data.dialogTableVisible = false" />
   </div>
 </template>
 
@@ -122,7 +119,7 @@ import { downloadFileExcel } from "@/utils"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
-import { designScheme } from "@/views/demandApplyAudit"
+import TrView from "@/components/TrView/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 
 let { auditFlowId, productId } = getQuery()

@@ -1,5 +1,6 @@
-import { request } from "@/utils/service"
-
+import {baseDomain, request} from "@/utils/service"
+const uploadAction=baseDomain+"api/services/app/FoundationHardware/UploadFoundationHardware"
+export {uploadAction}
 
 /**
  * ResetPasswordDto
@@ -52,5 +53,14 @@ export function deleteFoundationHardware(id: number | undefined) {
     data: {
       id
     }
+  })
+}
+/** 导出 */
+export function exportFoundationFixture(data:any) {
+  return request({
+    url: "/api/services/app/FoundationHardware/FoundationHardwareDownloadStream",
+    method: "post",
+    responseType:'blob',
+    data: data
   })
 }

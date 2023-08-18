@@ -18,12 +18,27 @@
     </div>
     <div class="u-flex u-row-between u-col-center u-m-t-10">
       <div>
-        <el-button type="primary">软硬件导入</el-button>
-        <el-button type="primary" @click="addDevice">新增软硬件</el-button>
+        <div>
+          <div class="u-flex u-row-left u-col-center">
+            <div class="u-m-r-20">
+              <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
+                         :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                         :action="uploadAction" :limit="1">
+                <template #trigger>
+                  <el-button type="primary">软硬件导入</el-button>
+                </template>
+              </el-upload>
+            </div>
+            <div>
+              <el-button type="primary" @click="addDevice">新增软硬件</el-button>
+            </div>
+
+          </div>
+        </div>
       </div>
       <div>
-        <el-button type="primary">软硬件导出</el-button>
-        <el-button type="primary">软硬件库模板下载</el-button>
+        <el-button type="primary" @click="exportList">软硬件导出</el-button>
+        <el-button @click="downLoad" type="primary">软硬件库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
@@ -164,40 +179,39 @@
     </div>
 
 
-    <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-      <el-scrollbar  :min-size="10">
-        <div class="u-flex u-row-between u-col-center  u-p-r-20">
+    <div v-if="baseLibLogRecords.length > 0" class="u-m-t-20 u-p-10" style="background-color: #ffffff">
+      <el-scrollbar :min-size="10">
+        <div class="u-flex u-row-between u-col-center u-p-r-20">
           <div>日志更新记录：</div>
           <div>
-            <el-button v-if="editLogFlag==false" type="primary" @click="editLogFlag=true">编辑</el-button>
-            <el-button v-else @click="editLogFlag=false">取消</el-button>
+            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+            <el-button v-else @click="editLogFlag = false">取消</el-button>
             <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
         </div>
         <div class="u-m-t-20">
           <el-timeline>
-            <el-timeline-item placement="top"
-                              v-for="(activity, index) in baseLibLogRecords" :key="index"
-                              :timestamp="activity.timestamp">
+            <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
+                              :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">
-                <div style="font-weight: bold;color: #909399;">
+                <div style="font-weight: bold; color: #909399">
                   <span>版本号：</span>
-                  <span>{{ activity.version }}</span>
+                  <span>{{ activity.version ? activity.version : '--' }}</span>
                 </div>
                 <div>
-                  <div style="font-weight: bold;color: #909399;"
+                  <div style="font-weight: bold; color: #909399"
                        class="u-flex u-row-left u-col-center u-m-t-10">
                     <div>
                       <span>操作人：</span>
                     </div>
                     <div>
-                      <span>{{activity.optionUser}}</span>
+                      <span>{{ activity.lastModifierUserName }}</span>
                     </div>
                   </div>
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
-                      <el-input :disabled="!editLogFlag" v-model="activity.content" :rows="2"
-                                type="textarea" placeholder="更新日志记录内容"/>
+                      <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2"
+                                type="textarea" placeholder="更新日志记录内容" />
                     </div>
                   </div>
                 </div>
@@ -210,14 +224,16 @@
   </div>
 </template>
 <script setup lang="ts">
+import { formatDateTime } from "@/utils"
 import { reactive, toRefs, onMounted,ref } from 'vue';
-import { ElMessage, ElMessageBox } from "element-plus"
-import {getListAll,createFoundationHardware,updateFoundationHardware,getFoundationHardwareById,deleteFoundationHardware} from "@/api/foundationHardware";
+import {ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, UploadRawFile} from "element-plus"
+import {getListAll,createFoundationHardware,updateFoundationHardware,getFoundationHardwareById,deleteFoundationHardware,uploadAction,exportFoundationFixture} from "@/api/foundationHardware";
 import {
   createFoundationFixture,
   deleteFoundationPFoundationFixture,
   updateFoundationFixture
 } from "@/api/foundationFixtureDto";
+import {getDeviceLog} from "@/api/foundationDeviceDto";
 interface selectOptionListItem {
   value: string
   label: string
@@ -246,6 +262,7 @@ const initData = async () => {
   if (listResult.success) {
     data.tableData = listResult.result
   }
+  getDeviceOptionLog()
   console.log(data.tableData)
 }
 
@@ -309,6 +326,70 @@ const processIndexChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);
 }
 
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+  console.log("responese", response);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  if (response.result) {
+    initData()
+    ElMessage({
+      type: 'success',
+      message: '导入成功',
+    })
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '导入失败',
+    })
+  }
+}
+const downLoad= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/软硬件.xlsx"
+  link.download = '软硬件.xlsx'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+const exportList = () => {
+  let param = {
+    processName: queryForm.deviceName
+  }
+  exportFoundationFixture(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', "软硬件.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
+}
+
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+  console.log("error", error);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  ElMessage({
+    type: 'error',
+    message: '导入失败',
+  })
+}
 //模糊查询工序名称
 const remoteMethodForProcessName = (query: string) => {
   if (query) {
@@ -413,31 +494,30 @@ function handleDelete(index: number, row: any) {
 
 //日志更新记录相关
 const editLogFlag = ref(false);
-const baseLibLogRecords = reactive([
-  {
-    content: '修改记录1',
-    version: '2.0.0',
-    timestamp: '2023-07-15',
-    optionUser: '张三'
-  },
-  {
-    content: '修改记录2',
-    version: '2.0.0',
-    timestamp: '2023-07-14',
-    optionUser: '张三'
-  },
-  {
-    content: '修改记录3',
-    version: '2.0.0',
-    timestamp: '2013-07-13',
-    optionUser: '张三'
-  },
-])
+const baseLibLogRecords = ref([])
 const saveLog = () => {
   console.log(baseLibLogRecords);
   editLogFlag.value = false;
 }
-
+//获取日志记录
+const getDeviceOptionLog = () => {
+  let data = {
+    Type: 7
+  };
+  getDeviceLog(data).then((response) => {
+    console.log("======getDeviceLog ===response=======", response);
+    if (response.success) {
+      baseLibLogRecords.value = response.result
+      console.log("======baseLibLogRecords=======", baseLibLogRecords.value);
+    }
+    else {
+      ElMessage({
+        type: 'error',
+        message: '加载日志记录失败'
+      })
+    }
+  })
+}
 
 defineExpose({
   data,

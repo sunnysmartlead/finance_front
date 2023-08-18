@@ -26,22 +26,22 @@
         </el-table-column>
         <el-table-column prop="typeName" label="板部件长(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件长" />
+            <el-input v-model="row.typeName" placeholder="请录入板部件长" />
           </template>
         </el-table-column>
         <el-table-column prop="isInvolveItem" label="板部件宽(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件宽" />
+            <el-input v-model="row.isInvolveItem" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
         <el-table-column prop="sapItemNum" label="板部件面积(mm^2)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件面积" />
+            <el-input v-model="row.sapItemNum" placeholder="请录入板部件面积" />
           </template>
         </el-table-column>
         <el-table-column prop="sapItemName" label="拼板数量">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入拼板数量" />
+            <el-input v-model="row.sapItemName" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">

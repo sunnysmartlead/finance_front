@@ -1307,7 +1307,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted, toRefs, watch, computed, shallowRef } from "vue"
+import { ref, reactive, onMounted, toRefs, watch, computed } from "vue"
 import { productTypeMap, Pcs, YearListItem, updateFrequency } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
@@ -1835,9 +1835,11 @@ const yearChange = (val: number) => {
   yearCount.value = val
   let i = state.quoteForm.projectCycle
   state.yearCols = []
+  console.log(state.quoteForm.sopTime, "state.quoteForm.sopTime")
   for (let j = 0; j < i; j++) {
-    if (state.quoteForm.updateFrequency == updateFrequency.HalfYear)
+    if (state.quoteForm.updateFrequency == updateFrequency.HalfYear) {
       state.yearCols.push(Number(state.quoteForm.sopTime) + j)
+    }
     state.yearCols.push(Number(state.quoteForm.sopTime) + j)
   }
   // console.log(state.yearCols, "state.yearCols ")
@@ -1854,60 +1856,66 @@ const yearNote = (index: number) => {
 
 // 监听年数的变化，对应表格赋值年份
 watch(
-  () => state.yearCols,
+  () => [state.yearCols, state.quoteForm.updateFrequency],
   (val) => {
+    const [yearColsData, updateFrequencyData]: any = val
+
     if (isEdit) return
     pcsTableData.value.forEach((row: any) => {
-      row.pcsYearList = val.map((item: any, index: number) => {
+      console.log(row.pcsYearList, "[监听年数的变化，对应表格赋值年份]")
+      row.pcsYearList = state.yearCols.map((item: any, index: number) => {
         return {
           year: item,
           quantity: null,
-          upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+          upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
     })
     interiorPcsTableData.value.forEach((row: any) => {
-      row.pcsYearList = val.map((item: any, index: number) => {
+      row.pcsYearList = state.yearCols.map((item: any, index: number) => {
         return {
           year: item,
           quantity: null,
-          upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+          upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
     })
     moduleTableData.value.forEach((row: any) => {
-      row.modelCountYearList = val.map((item: any, index: number) => {
+      row.modelCountYearList = yearColsData.map((item: any, index: number) => {
         return {
           year: item,
           quantity: null,
-          upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+          upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
     })
     moduleTableDataV2.value.forEach((row: any) => {
       row.forEach((irow: any) => {
-        irow.modelCountYearList = val.map((item: any, index: number) => {
+        irow.modelCountYearList = yearColsData.map((item: any, index: number) => {
           return {
             year: item,
             quantity: 0,
-            upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+            upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
           }
         })
       })
     })
     // 要求表格动态加载行数
     requireTableData.value.splice(0, requireTableData.value.length)
-    val.forEach((year: any, index: number) => {
+    yearColsData.forEach((year: any, index: number) => {
       let pro = year
       requireTableData.value.push({
         year: pro,
-        upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1,
+        upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1,
         annualDeclineRate: 0,
         annualRebateRequirements: 0,
         oneTimeDiscountRate: 0,
         commissionRate: 0
       })
     })
+  },
+  {
+    deep: true
   }
 )
 
@@ -2621,6 +2629,7 @@ onMounted(async () => {
           }
         }
       })
+      kvPricingData.value = viewDataRes.result.gradient
       generateCustomTable()
     }
 

@@ -149,7 +149,7 @@ export function PostSalesDepartment(data: any): any {
 
 /**NRE 核价表 */
 
-export function GetPricingForm(data: { Id: number; solutionId: number }): any {
+export function GetPricingForm(data: { auditFlowId: number; solutionId: number }): any {
   return request({
     url: "/api/services/app/NrePricing/GetPricingForm",
     method: "get",

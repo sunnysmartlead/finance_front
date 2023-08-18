@@ -35,18 +35,18 @@
         <el-table-column type="index" width="50" />
         <el-table-column label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
-            <span v-if="isVertify">{{ row.testItem }}</span>
+            <span v-if="isVertify">{{ row.projectName }}</span>
             <SelectSearch
               v-else
               :request="GetFoundationEmc"
               :onChange="(record: any) => handleChangeData(record, $index)"
-              v-model:value="row.testItem"
+              v-model:value="row.projectName"
             />
           </template>
         </el-table-column>
         <el-table-column label="是否指定第三方" width="150">
           <template #default="{ row }">
-            <el-select v-model="row.isThirdParty">
+            <el-select v-model="row.isThirdParty" :disabled="isVertify">
               <el-option :value="true" label="是" />
               <el-option :value="false" label="否" />
             </el-select>
@@ -56,7 +56,7 @@
         <el-table-column label="调整系数" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
-            <el-input-number :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
           </template>
         </el-table-column>
         <el-table-column label="单位" prop="unit" width="180" />
@@ -143,7 +143,7 @@ const addLaboratoryFeeModel = () => {
     countBottomingOut: 0,
     countDV: 0,
     countPV: 0,
-    testItem: "实验项目1"
+    projectName: "实验项目1"
   })
 }
 
@@ -172,10 +172,7 @@ const submit = async (isSubmit: boolean) => {
       auditFlowId,
       solutionId: productId,
       isSubmit,
-      productDepartmentModels: {
-        productId,
-        laboratoryFeeModels: data.laboratoryFeeModels
-      }
+      productDepartmentModels: data.laboratoryFeeModels
     })
     if (success) ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
     console.log(success, "[PostProductDepartment RES]")
@@ -220,7 +217,7 @@ const handleChangeData = (row: any, i: number) => {
     if (i === index) {
       item.unit = row.unit
       item.unitPrice = row.price
-      item.testItem = row.query
+      item.projectName = row.query
     }
   })
 }

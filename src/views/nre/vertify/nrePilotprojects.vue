@@ -1,5 +1,5 @@
 <template>
-  <NrePilotprojectsTable />
+  <NrePilotprojectsTable is-vertify />
 </template>
 
 <script lang="ts" setup>

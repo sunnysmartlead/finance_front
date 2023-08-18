@@ -13,7 +13,7 @@ export const productTypeMap = {
 }
 export const updateFrequency = {
   HalfYear: "UpdateFrequency_HalfYear", // 半年份
-  Year:"UpdateFrequency_Year"
+  Year: "UpdateFrequency_Year"
 }
 
 /**

@@ -206,7 +206,7 @@ const data = reactive<any>({
 
 const initFetch = async () => {
   try {
-    const { success, result } = await GetPricingForm({ Id: auditFlowId, productId })
+    const { success, result } = await GetPricingForm({ auditFlowId, solutionId: productId })
     if (!success) throw Error()
     console.log(result, "result")
     data.handPieceCost = result.handPieceCost || []

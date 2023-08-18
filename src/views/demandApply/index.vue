@@ -254,7 +254,6 @@
               :prop="`pcsYearList[${index}].quantity`"
             >
               <template #default="{ row }">
-                <!-- {{ row.pcsYearList[index] }} -->
                 <el-input
                   v-model="row.pcsYearList[index].quantity"
                   @change="pcsYearQuantitySum(row, index)"
@@ -1433,7 +1432,7 @@ const state = reactive({
     sopTime: dayjs(new Date()).format("YYYY"), //Sop时间
     projectCycle: 0, //项目周期(年)
     updateFrequency: updateFrequency.Year, //价格有效期(二开新增属性)
-    kValue: 0, //走量系数K
+    kValue: 0.7, //走量系数K
     pcs: [] as any, //终端走量(PCS)
     sample: [] as any, //样品
     modelCount: [] as any, //模组数量
@@ -1835,13 +1834,15 @@ const yearChange = (val: number) => {
   yearCount.value = val
   let i = state.quoteForm.projectCycle
   state.yearCols = []
+  let arr = []
   console.log(state.quoteForm.sopTime, "state.quoteForm.sopTime")
   for (let j = 0; j < i; j++) {
     if (state.quoteForm.updateFrequency == updateFrequency.HalfYear) {
-      state.yearCols.push(Number(state.quoteForm.sopTime) + j)
+      arr.push(Number(state.quoteForm.sopTime) + j)
     }
-    state.yearCols.push(Number(state.quoteForm.sopTime) + j)
+    arr.push(Number(state.quoteForm.sopTime) + j)
   }
+  state.yearCols = arr
   // console.log(state.yearCols, "state.yearCols ")
 }
 
@@ -1856,57 +1857,59 @@ const yearNote = (index: number) => {
 
 // 监听年数的变化，对应表格赋值年份
 watch(
-  () => [state.yearCols, state.quoteForm.updateFrequency],
+  () => state.yearCols,
   (val) => {
-    const [yearColsData, updateFrequencyData]: any = val
+    // [state.yearCols, state.quoteForm.updateFrequency]
+    // const [yearColsData, updateFrequencyData]: any = val
 
     if (isEdit) return
     pcsTableData.value.forEach((row: any) => {
-      console.log(row.pcsYearList, "[监听年数的变化，对应表格赋值年份]")
-      row.pcsYearList = state.yearCols.map((item: any, index: number) => {
+      console.log(row.pcsYearList, "[监听年数的变化1，对应表格赋值年份]")
+      row.pcsYearList = val.map((item: any, index: number) => {
         return {
           year: item,
           quantity: null,
-          upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+          upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
+      console.log(row.pcsYearList, "[监听年数的变化2，对应表格赋值年份]")
     })
     interiorPcsTableData.value.forEach((row: any) => {
-      row.pcsYearList = state.yearCols.map((item: any, index: number) => {
+      row.pcsYearList = val.map((item: any, index: number) => {
         return {
           year: item,
           quantity: null,
-          upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+          upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
     })
     moduleTableData.value.forEach((row: any) => {
-      row.modelCountYearList = yearColsData.map((item: any, index: number) => {
+      row.modelCountYearList = state.yearCols.map((item: any, index: number) => {
         return {
           year: item,
           quantity: null,
-          upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+          upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
     })
     moduleTableDataV2.value.forEach((row: any) => {
       row.forEach((irow: any) => {
-        irow.modelCountYearList = yearColsData.map((item: any, index: number) => {
+        irow.modelCountYearList = state.yearCols.map((item: any, index: number) => {
           return {
             year: item,
             quantity: 0,
-            upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
+            upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
           }
         })
       })
     })
     // 要求表格动态加载行数
     requireTableData.value.splice(0, requireTableData.value.length)
-    yearColsData.forEach((year: any, index: number) => {
+    state.yearCols.forEach((year: any, index: number) => {
       let pro = year
       requireTableData.value.push({
         year: pro,
-        upDown: updateFrequencyData != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1,
+        upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1,
         annualDeclineRate: 0,
         annualRebateRequirements: 0,
         oneTimeDiscountRate: 0,
@@ -1948,8 +1951,7 @@ watch(
 //监听终端走量同步内部评估后的终端走量
 watch(
   () => [pcsTableData.value, state.quoteForm.kValue],
-  (val, _old) => {
-    const [_pcsTable] = val
+  (_val, _old) => {
     pcsTableData.value.forEach((item: any, index: number) => {
       var itemNew = _.cloneDeep(item)
       itemNew.pcsType = 1

@@ -75,7 +75,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/demandApply/index.vue"),
         name: "demandApply",
         meta: {
-          title: "营销部录入"
+          title: "核价需求录入"
         }
       },
       {

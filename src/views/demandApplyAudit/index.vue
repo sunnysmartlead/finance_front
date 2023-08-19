@@ -1,8 +1,8 @@
 <template>
   <div class="demand-apply">
     <div>
-      <el-row :gutter="12" class="demand-apply__card">
-        <el-button type="danger">退回</el-button>
+      <el-row class="demand-apply__card">
+        <el-button type="danger" @click="submit(1)">退回</el-button>
         <el-button type="warning">导出</el-button>
         <el-button type="info">重置</el-button>
       </el-row>
@@ -375,7 +375,9 @@ const state = reactive({
     engineerWorkHourTime: "", // 工程技术部-工序工时录入员期望完成时间
     productManageTime: "", // 生成管理部-物流成本录入员期望完成时间
     productCostInputTime: "", // 制造成本录入员期望完成时间
-    deadline: "" //营销要求核价完成时间
+    deadline: "", //营销要求核价完成时间
+    option: "",
+
   } as PricingTeamDto
 })
 const getList = async () => {
@@ -447,7 +449,8 @@ onMounted(async () => {
     isEdit = false
   }, 2000)
 })
-const submit = async (isSubmit: number) => {
+
+const submit = async (submitType: number) => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
   let value = {} as Response

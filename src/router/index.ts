@@ -354,7 +354,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nreResourcesDepartment.vue"),
         name: "nreResourcesDepartment",
         meta: {
-          title: "资源部NRE"
+          title: "模具费NRE"
         }
       },
       {
@@ -362,7 +362,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/vertify/nreResourcesDepartment.vue"),
         name: "nreResourcesDepartmentVertify",
         meta: {
-          title: "资源部NRE审核"
+          title: "模具费NRE审核"
         }
       },
       {
@@ -381,14 +381,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
           title: "品保部实验NRE审核"
         }
       },
-      {
-        path: "/nre/nreQCDepartment",
-        component: () => import("@/views/nre/nreQCDepartment.vue"),
-        name: "nreQCDepartment",
-        meta: {
-          title: "品保部-检具NRE"
-        }
-      },
+      // {
+      //   path: "/nre/nreQCDepartment",
+      //   component: () => import("@/views/nre/nreQCDepartment.vue"),
+      //   name: "nreQCDepartment",
+      //   meta: {
+      //     title: "品保部-检具NRE"
+      //   }
+      // },
       {
         path: "/nre/nreMarketingDepartment",
         component: () => import("@/views/nre/nreMarketingDepartment.vue"),

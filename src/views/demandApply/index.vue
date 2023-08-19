@@ -2681,13 +2681,11 @@ const ChangeShareCount = (row: any) => {
   console.log(state.quoteForm.updateFrequency, "updateFrequency")
   const total = moduleTableTotal.value
     .map((item) => {
-      return item.modelCountYearList?.filter((_c, i: number) => {
-        if (
+      return item.modelCountYearList?.filter((_: any, i: number) => {
+        return (
           (state.quoteForm.updateFrequency === updateFrequency.HalfYear && i < 6) ||
           (state.quoteForm.updateFrequency === updateFrequency.Year && i < 3)
-        ) {
-          return true
-        }
+        )
       })
     })
     .flat()
@@ -2696,7 +2694,7 @@ const ChangeShareCount = (row: any) => {
     row.count = total
     ElMessage({
       type: "error",
-      message: "分摊数量不能大于三年模组之合"
+      message: "分摊数量不能大于前三年模组走量之合"
     })
   }
   console.log(total, "ChangeShareCount")

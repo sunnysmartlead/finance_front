@@ -16,6 +16,21 @@
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
       </el-table>
+      <h6>修改项：</h6>
+      <el-table
+        :data="data.handPieceCost"
+        border
+        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')"
+        show-summary
+      >
+        <el-table-column type="index" width="50" />
+        <el-table-column prop="partName" label="手板件名称" />
+        <el-table-column prop="partNumber" label="料号" />
+        <el-table-column prop="unitPrice" label="单价" />
+        <el-table-column prop="quantity" label="数量" />
+        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="remark" label="备注" />
+      </el-table>
     </el-card>
     <el-card class="margin-top" header="模具费用">
       <el-table

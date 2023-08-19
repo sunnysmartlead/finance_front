@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 0 10px">
-    <VertifyBox :onSubmit="handleSubmit" />
+    <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
     <ThreeDImage m="3" />
     <el-card class="margin-top">
       <template #header> 资源部 - 业务员 </template>
@@ -56,6 +56,7 @@
             <el-input v-model="row.remark" :disabled="row.isSubmit" />
           </template>
         </el-table-column>
+        <el-table-column label="提交人" prop="peopleId" width="180" />
         <el-table-column label="操作" v-if="!isVertify" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link v-if="!row.isSubmit" :disabled="row.isSubmit" @click="submit(false, row)" type="danger"

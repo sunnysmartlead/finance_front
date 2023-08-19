@@ -254,11 +254,7 @@
               :prop="`pcsYearList[${index}].quantity`"
             >
               <template #default="{ row }">
-                <el-input
-                  v-model="row.pcsYearList[index].quantity"
-                  @change="pcsYearQuantitySum(row, index)"
-                  :disabled="isDisabled"
-                />
+                <el-input v-model="row.pcsYearList[index].quantity" :disabled="isDisabled" />
               </template>
             </el-table-column>
             <el-table-column prop="rowSum" label="合计">
@@ -629,7 +625,12 @@
             <el-table-column prop="name" label="产品名称" width="100" />
             <el-table-column prop="count" label="分摊数量" width="250">
               <template #default="{ row }">
-                <el-input-number controls-position="right" v-model="row.count" :disabled="isDisabled" />
+                <el-input-number
+                  @input="ChangeShareCount(row)"
+                  controls-position="right"
+                  v-model="row.count"
+                  :disabled="isDisabled"
+                />
               </template>
             </el-table-column>
           </el-table>
@@ -1373,6 +1374,7 @@ const options = [
   }
 ]
 const refForm = ref<FormInstance>()
+
 interface Options {
   id: number
   displayName: string
@@ -1426,6 +1428,7 @@ const shareCountTable = ref<any>([])
 const state = reactive({
   taebleLoading: false,
   quoteForm: {
+    opinion: "", // 审批意见
     countryType: "", // 国家类型
     isHasNre: false,
     isHasGradient: null,
@@ -1567,7 +1570,10 @@ const moduleTableTotal = computed(() => {
   const productModule = new Map()
   flatData.forEach((item: any) => {
     const currentData = productModule.get(item.product) || {}
-    if (item.product && _.isEmpty(productModule.get(`${item.product}-${item.pixel}-${item.productType}`))) {
+    if (
+      item.product &&
+      _.isEmpty(productModule.get(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`))
+    ) {
       productModule.set(`${item.product}-${item.pixel}-${item.productType}`, {
         ...item,
         productType: [item.productType],
@@ -1577,6 +1583,7 @@ const moduleTableTotal = computed(() => {
 
     if (
       currentData?.product &&
+      currentData?.code === item?.code &&
       currentData?.product === item?.product &&
       currentData?.pixel === item?.pixel &&
       currentData?.productType === item?.productType
@@ -1618,16 +1625,16 @@ const yearCount = ref(0)
 let route = useRoute()
 let router = useRouter()
 
-const pcsYearQuantitySum = (row: Pcs, count: number) => {
-  var numReg = /[^\d]/g
-  var numRe = new RegExp(numReg)
-  row.pcsYearList.forEach((item: any, index: number) => {
-    if (numRe.test(item.quantity) && count == index) {
-      ElMessage.warning("不能输入小数以及特殊符号!")
-      item.quantity = 0
-    }
-  })
-}
+// const pcsYearQuantitySum = (row: Pcs, count: number) => {
+//   var numReg = /[^\d]/g
+//   var numRe = new RegExp(numReg)
+//   row.pcsYearList.forEach((item: any, index: number) => {
+//     if (numRe.test(item.quantity) && count == index) {
+//       ElMessage.warning("不能输入小数以及特殊符号!")
+//       item.quantity = 0
+//     }
+//   })
+// }
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (cellValue) {
@@ -2536,6 +2543,8 @@ const ledTypeSelectChange = (val: any, index: number) => {
 
 onMounted(async () => {
   let query = getQuery()
+  const { processType } = query
+  state.quoteForm.opinion = processType
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
   state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
   state.quoteForm.quoteVersion = query.quoteVersion ? query.quoteVersion + "" : ""
@@ -2666,6 +2675,31 @@ const handleChangekvPricingData = (type: string, index?: number) => {
 const changeCountry = (country: string) => {
   const findData = state.countryOptions.find((item: any) => item.displayName === country)
   console.log(findData, state.countryOptions, "选择")
+}
+
+const ChangeShareCount = (row: any) => {
+  console.log(state.quoteForm.updateFrequency, "updateFrequency")
+  const total = moduleTableTotal.value
+    .map((item) => {
+      return item.modelCountYearList?.filter((_c, i: number) => {
+        if (
+          (state.quoteForm.updateFrequency === updateFrequency.HalfYear && i < 6) ||
+          (state.quoteForm.updateFrequency === updateFrequency.Year && i < 3)
+        ) {
+          return true
+        }
+      })
+    })
+    .flat()
+    .reduce((a, b) => a + b.quantity, 0)
+  if (row.count > total) {
+    row.count = total
+    ElMessage({
+      type: "error",
+      message: "分摊数量不能大于三年模组之合"
+    })
+  }
+  console.log(total, "ChangeShareCount")
 }
 
 defineExpose({

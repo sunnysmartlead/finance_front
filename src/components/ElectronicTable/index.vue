@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-row justify="end" style="margin-top: 20px" v-if="isVertify && !isMergeVertify">
+      <VertifyBox :onSubmit="handleSetBomState" />
+    </el-row>
     <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
     <el-card class="table-wrap" v-loading="tableLoading">
       <template #header v-if="!isVertify">
@@ -92,7 +95,7 @@
               :label="yearItem.year + upDownEunm[yearItem.upDown]"
               width="175"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`"
-              :formatter="filterStandardMoney"
+              :formatter="filterinTheRate"
             >
               <template #default="scope">
                 <el-input
@@ -102,6 +105,7 @@
                 >
                   <template #append> % </template>
                 </el-input>
+                <!-- <span v-else>{{ (scope.row.inTheRate?.[index]?.yearOrValueModes?.[iIndex]?.value || 0) * 100 }} %</span> -->
               </template>
             </el-table-column>
           </el-table-column>
@@ -217,10 +221,6 @@
         </el-row>
       </div>
     </el-card>
-    <el-row justify="end" style="margin-top: 20px" v-if="isVertify && !isMergeVertify">
-      <el-button type="primary" @click="handleSetBomState(true)" v-havedone :disabled="!isAll">同意</el-button>
-      <el-button type="danger" @click="handleSetBomState(false)" v-havedone>拒绝</el-button>
-    </el-row>
   </div>
 </template>
 
@@ -242,6 +242,7 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
+import VertifyBox from "@/components/VertifyBox/index.vue"
 
 const router = useRouter()
 const Host = "ElectronicPriceInput"
@@ -330,6 +331,10 @@ const formatDatas = (record: any, _row: any, cellValue: any) => {
 
 const filterStandardMoney = (record: any, _row: any, cellValue: any) => {
   return cellValue?.toFixed(5) || 0
+}
+
+const filterinTheRate = (record: any, _row: any, cellValue: any) => {
+  return `${(cellValue * 100 || 0).toFixed(2)} %`
 }
 
 onMounted(() => {

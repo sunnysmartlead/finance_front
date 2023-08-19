@@ -256,7 +256,7 @@ const submit = async (formEl: FormInstance | undefined) => {
           data.logisticsForm
         )
         let res: any = await SaveStructionBom(params)
-        //let resO: any = await SaveProductDevelopmentInput(params)
+        let resO: any = await SaveProductDevelopmentInput(params)
         loading.close()
         if (res.success) {
           ElMessage({

@@ -1,5 +1,6 @@
 <template>
   <div style="padding: 0 10px">
+    <VertifyBox :onSubmit="handleVertify" />
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -97,11 +98,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <div style="float: right; margin: 20px 0" v-if="isVertify">
-      <el-button type="primary" v-havedone m="2">同意</el-button>
-      <el-button type="primary" v-havedone>退回</el-button>
-    </div>
-    <div style="float: right; margin: 20px 0" v-else>
+    <div style="float: right; margin: 20px 0" v-if="!isVertify">
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
     </div>
@@ -129,6 +126,7 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import { designScheme } from "@/views/demandApplyAudit"
+import VertifyBox from "@/components/VertifyBox/index.vue"
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
@@ -250,6 +248,11 @@ const handleChangeData = (row: any, i: number) => {
       item.projectName = row.query
     }
   })
+}
+
+// 审核
+const handleVertify = () => {
+
 }
 
 onBeforeMount(() => {

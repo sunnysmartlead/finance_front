@@ -497,6 +497,11 @@
               width="180"
               :prop="`modelCountYearList.${index}.quantity`"
             />
+            <el-table-column label="模组总量" width="180" :formatter="formatThousandths">
+              <template #default="{ row }">
+                {{ price(row) }}
+              </template>
+            </el-table-column>
           </el-table>
         </el-card>
         <h6 />
@@ -711,19 +716,19 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="落地工厂:" prop="landingFactory">
-              <el-select v-model="state.quoteForm.landingFactory" placeholder="请选择" :disabled="isDisabled">
-                <el-option
-                  v-for="item in state.landingFactoryOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
         </el-row>
+        <el-col :span="6">
+          <el-form-item label="落地工厂:" prop="landingFactory">
+            <el-select v-model="state.quoteForm.landingFactory" placeholder="请选择" :disabled="isDisabled">
+              <el-option
+                v-for="item in state.landingFactoryOptions"
+                :key="item.id"
+                :label="item.displayName"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-card>
       <!-- 产品信息 -->
       <el-card class="demand-apply__card">
@@ -1246,7 +1251,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="出口国家:" prop="country">
-              <el-select v-model="state.quoteForm.country" placeholder="Select" :disabled="isDisabled">
+              <el-select
+                v-model="state.quoteForm.country"
+                @change="changeCountry"
+                placeholder="Select"
+                :disabled="isDisabled"
+              >
                 <el-option
                   v-for="item in state.countryOptions"
                   :key="item.id"
@@ -1254,6 +1264,11 @@
                   :value="item.id"
                 />
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="国家类型:" prop="countryType">
+              <el-input readonly :rows="10" v-model="state.quoteForm.countryType" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -1411,6 +1426,7 @@ const shareCountTable = ref<any>([])
 const state = reactive({
   taebleLoading: false,
   quoteForm: {
+    countryType: "", // 国家类型
     isHasNre: false,
     isHasGradient: null,
     title: "" as any, //标题
@@ -1843,7 +1859,7 @@ const yearChange = (val: number) => {
     arr.push(Number(state.quoteForm.sopTime) + j)
   }
   state.yearCols = arr
-  // console.log(state.yearCols, "state.yearCols ")
+  console.log(state.yearCols, "state.yearCols ")
 }
 
 const yearNote = (index: number) => {
@@ -1859,12 +1875,9 @@ const yearNote = (index: number) => {
 watch(
   () => state.yearCols,
   (val) => {
-    // [state.yearCols, state.quoteForm.updateFrequency]
-    // const [yearColsData, updateFrequencyData]: any = val
-
     if (isEdit) return
+    console.log(state.yearCols, "[监听年数的变化1，对应表格赋值年份]")
     pcsTableData.value.forEach((row: any) => {
-      console.log(row.pcsYearList, "[监听年数的变化1，对应表格赋值年份]")
       row.pcsYearList = val.map((item: any, index: number) => {
         return {
           year: item,
@@ -1872,7 +1885,6 @@ watch(
           upDown: state.quoteForm.updateFrequency != updateFrequency.HalfYear ? 0 : index % 2 ? 2 : 1
         }
       })
-      console.log(row.pcsYearList, "[监听年数的变化2，对应表格赋值年份]")
     })
     interiorPcsTableData.value.forEach((row: any) => {
       row.pcsYearList = val.map((item: any, index: number) => {
@@ -1974,12 +1986,11 @@ watch(
   () => [interiorPcsTableData.value, moduleTableDataV2.value],
   (val) => {
     const [interiorPcsTableDataList] = val
-    const rowOneData = interiorPcsTableDataList[0].pcsYearList
-
-    moduleTableDataV2.value.forEach((moduleTable: any) => {
+    moduleTableDataV2.value.forEach((moduleTable: any, index: number) => {
+      const currentInteriorPcs = interiorPcsTableDataList[index].pcsYearList
       moduleTable?.forEach((moduleItem: any) => {
         moduleItem?.modelCountYearList?.forEach((pscY: any, pscYIndex: number) => {
-          const { quantity } = rowOneData[pscYIndex] || {}
+          const { quantity } = currentInteriorPcs[pscYIndex] || {}
           pscY.quantity = Math.floor(
             (moduleItem.moduleCarryingRate / 100) *
               moduleItem.singleCarProductsQuantity *
@@ -2102,7 +2113,7 @@ watch(
             code: c.code,
             type: c.productType,
             gradientModelYear: map(c.modelCountYearList, (m: any) => ({
-              count: m.quantity,
+              count: item,
               upDown: m.upDown,
               year: m.year
             }))
@@ -2649,6 +2660,12 @@ const handleChangekvPricingData = (type: string, index?: number) => {
   } else {
     kvPricingData.value = kvPricingData.value.splice(index, 1)
   }
+}
+
+// to-do
+const changeCountry = (country: string) => {
+  const findData = state.countryOptions.find((item: any) => item.displayName === country)
+  console.log(findData, state.countryOptions, "选择")
 }
 
 defineExpose({

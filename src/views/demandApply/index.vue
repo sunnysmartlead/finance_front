@@ -247,9 +247,9 @@
               </template>
             </el-table-column>
             <el-table-column
-              :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
-              :key="year + ''"
+              :label="year + yearNote(index)"
+              :key="`pcsTableData-${year}-${index}`"
               width="150"
               :prop="`pcsYearList[${index}].quantity`"
             >
@@ -299,7 +299,7 @@
             <el-table-column
               :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
-              :key="year + ''"
+              :key="`interiorPcsTableData-${year}-${index}`"
               width="150"
               :prop="`pcsYearList[${index}].quantity`"
             >
@@ -421,7 +421,7 @@
               <el-table-column
                 :label="year + yearNote(index)"
                 v-for="(year, index) in state.yearCols"
-                :key="year + ''"
+                :key="`${Findex}-${year}-${index}`"
                 width="180"
                 :prop="`modelCountYearList.${index}.quantity`"
               >
@@ -489,7 +489,7 @@
             <el-table-column
               :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
-              :key="year + ''"
+              :key="`moduleTableTotal-${year}-${index}`"
               width="180"
               :prop="`modelCountYearList.${index}.quantity`"
             />
@@ -561,7 +561,7 @@
               <el-table-column
                 :label="year + yearNote(index)"
                 v-for="(year, index) in state.yearCols"
-                :key="year + ''"
+                :key="`gradientModelTable-${year}-${index}`"
                 width="180"
               >
                 <template #default="{ row }">
@@ -2004,11 +2004,11 @@ watch(
               (moduleItem.marketShare / 100) *
               (quantity || 0)
           )
-          console.log(pscY.quantity, "quantitymoduleTableDataV2")
+          // console.log(pscY.quantity, "quantitymoduleTableDataV2")
         })
       })
     })
-    console.log(moduleTableDataV2.value, "[rowOneDatarowOneData]")
+    // console.log(moduleTableDataV2.value, "[rowOneDatarowOneData]")
   },
   { deep: true }
 )
@@ -2631,7 +2631,6 @@ onMounted(async () => {
               result[item.carModel] = []
             }
             result[item.carModel].push(item)
-            console.log(item, "item1213")
             return result
           }, {})
         )

@@ -1,5 +1,7 @@
 <template>
   <div style="padding: 0 10px">
+    <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
+    <ThreeDImage m="3" />
     <el-card class="margin-top">
       <template #header> 资源部 - 业务员 </template>
       <el-table
@@ -54,21 +56,19 @@
             <el-input v-model="row.remark" :disabled="row.isSubmit" />
           </template>
         </el-table-column>
+        <el-table-column label="提交人" prop="peopleId" width="180" />
         <el-table-column label="操作" v-if="!isVertify" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link v-if="!row.isSubmit" :disabled="row.isSubmit" @click="submit(false, row)" type="danger"
               >保存</el-button
             >
-            <el-button v-if="!row.isSubmit" :disabled="row.isSubmit" link @click="submit(true, row)" type="warning"> 提交 </el-button>
+            <el-button v-if="!row.isSubmit" :disabled="row.isSubmit" link @click="submit(true, row)" type="warning"
+              >提交</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-
-    <div style="float: right; margin: 20px 0" v-if="isVertify">
-      <el-button type="primary" v-havedone m="2">同意</el-button>
-      <el-button type="primary" v-havedone>退回</el-button>
-    </div>
   </div>
 </template>
 
@@ -80,6 +80,9 @@ import { NreMarketingDepartmentModel } from "../../data.type"
 import { ElMessage } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import { debounce } from "lodash"
+import ThreeDImage from "@/components/ThreeDImage/index.vue"
+import VertifyBox from "@/components/VertifyBox/index.vue"
+
 const { auditFlowId, right = 1, productId }: any = getQuery()
 
 const props = defineProps({
@@ -125,6 +128,8 @@ watch(
     deep: true
   }
 )
+
+const handleSubmit = () => {}
 
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')

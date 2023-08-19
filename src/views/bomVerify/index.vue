@@ -1,12 +1,12 @@
 <template>
-  <el-row class="m-2" justify="end" style="margin-top: 20px" >
+  <el-row class="m-2" justify="end" style="margin-top: 20px">
     <el-button type="primary" @click="handleSetBomState(true)" v-havedone>同意</el-button>
     <el-button type="danger" @click="handleSetBomState(false)" v-havedone>拒绝</el-button>
   </el-row>
-  <el-card title="结构BOM" class="m-2">
+  <el-card header="结构BOM单价" class="m-2">
     <ConstructionTable isVertify isMergeVertify />
   </el-card>
-  <el-card title="电子BOM" class="m-2">
+  <el-card header="电子料单价" class="m-2">
     <ElectronicTable isVertify isMergeVertify />
   </el-card>
 </template>

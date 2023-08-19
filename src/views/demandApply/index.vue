@@ -1086,7 +1086,8 @@
         <h6 />
         <h6 />
         <h6>
-          客户目标价<el-button
+          客户目标价
+          <!-- <el-button
             type="primary"
             size="large"
             style="margin: 0px 20px"
@@ -1094,12 +1095,12 @@
             v-havedone
             v-if="!isDisabled"
             >计算</el-button
-          >
+          > -->
         </h6>
         <el-table :data="customerTargetPrice" border style="width: 100%">
           <el-table-column label="梯度">
             <template #default="{ row }">
-              <el-text class="mx-1" size="large">{{ row.kv }}</el-text>
+              <el-text class="mx-1" size="large">{{ row.kv }} (K/Y)</el-text>
             </template>
           </el-table-column>
           <el-table-column prop="产品名称" label="产品名称">
@@ -2136,6 +2137,26 @@ watch(
   }
 )
 
+watch(
+  () => [productTableData.value, kvPricingData.value],
+  (val) => {
+    const [productList, kvList] = val
+    let arr: any = []
+    kvList.forEach((kvItem: any) => {
+      productList.forEach((productItem: any) => {
+        arr.push({
+          kv: kvItem.gradientValue,
+          product: productItem.product,
+          targetPrice: 0,
+          currency: 0,
+        })
+      })
+    })
+    customerTargetPrice.value = arr
+    console.log(arr, "监听数据")
+    // customerTargetPrice
+  }
+)
 const compareString = (a: string, b: string) => {
   if (_.isArray(a)) {
     return uniq([...(a || []), b]).filter((v) => !!v)
@@ -2148,18 +2169,15 @@ const compareString = (a: string, b: string) => {
 const targetPriceCalcul = () => {
   customerTargetPrice.value.forEach((item: any) => {
     item.targetPrice = 0
-    customerTargetPrice.value
-      .filter((pro: any) => pro.carModel === item.carModel)
-      .forEach((customerTarget: any) => {
-        moduleTableDataV2.value.forEach((moduleTable: any) => {
-          let value = moduleTable.filter((p: any) => p.carModel == customerTarget.carModel)
-          value.forEach((valueitem: any) => {
-            if (valueitem.product == customerTarget.product) {
-              item.targetPrice += customerTarget.targetPrice * valueitem.singleCarProductsQuantity
-            }
-          })
-        })
+    moduleTableDataV2.value.forEach((moduleTable: any) => {
+      let value = _.cloneDeep(moduleTable)
+      value.forEach((valueitem: any) => {
+        console.log(valueitem, item, "targetPriceCalcul")
+        if (valueitem.product == item.product) {
+          item.targetPrice += item.targetPrice * valueitem.singleCarProductsQuantity
+        }
       })
+    })
   })
 }
 
@@ -2402,46 +2420,6 @@ const TypeSelectDisplayName = (label: string) => {
 }
 
 const customerTargetPriceTable = () => {
-  //客户目标价
-  {
-    customerTargetPrice.value = []
-    //获取所有梯度
-    let gradientAll = kvPricingData.value.map((item: any) => item.gradientValue)
-    gradientAll.forEach((item: any) => {
-      //获取所有产品名称
-      let productAll: string[] = []
-      moduleTableDataV2.value.forEach((moduleTable: any) => {
-        let value = moduleTable.filter((p: any) => p.gradientValue == item)
-        value.forEach((valueitem: any) => {
-          productAll.push(valueitem.product)
-        })
-      })
-      productAll = [...new Set(productAll)]
-      //判断产品名称中是否 前视 测试 后视 都在
-      // let isproductName = productAll.every(
-      //   (_item: any) => productAll.includes("前视") && productAll.includes("侧视") && productAll.includes("后视")
-      // )
-      productAll.forEach((pro: any) => {
-        let prop = {
-          kv: item, //梯度
-          product: pro,
-          targetPrice: 0,
-          currency: null,
-          exchangeRate: 0
-        }
-        customerTargetPrice.value.push(prop)
-      })
-      // if (isproductName) {
-      //   customerTargetPrice.value.push({
-      //     kv: item, //梯度
-      //     product: pro,
-      //     targetPrice: 0,
-      //     currency: null,
-      //     exchangeRate: 0
-      //   })
-      // }
-    })
-  }
   generateCustomTable()
 }
 
@@ -2451,18 +2429,7 @@ const setNumber = () => {
   let number = "BJHJ-ZL" + nowDate + "-001"
   quoteForm.number = number
 }
-// const rateChange = (val: any) => {
-//   // state.quoteForm.exchangeRate = 0
-//   state.ExchangeSelectOptions.forEach((item: any) => {
-//     if (item.id === val) {
-//       item.exchangeRateValue.forEach((yearItem: any) => {
-//         if (yearItem.year === Number(state.quoteForm.sopTime)) {
-//           state.quoteForm.exchangeRate = yearItem.value
-//         }
-//       })
-//     }
-//   })
-// }
+
 const cableTypeSelectChange = (val: any, index: number) => {
   state.ExchangeSelectOptions.forEach((item: any) => {
     if (item.id === val) {

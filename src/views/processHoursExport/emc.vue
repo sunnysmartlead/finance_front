@@ -35,7 +35,7 @@
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
         <div>
-          <el-table v-loading="loading" :data="tableData" style="width: 100%" border>
+          <el-table v-loading="loading" :data="tableData"  height="350" style="width: 100%" border>
             <el-table-column label="实验分类" align="center" prop="classification" />
             <el-table-column label="实验名称" align="center" prop="name" />
             <el-table-column label="单价" align="center" prop="price" />

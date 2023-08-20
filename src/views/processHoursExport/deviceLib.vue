@@ -35,7 +35,7 @@
         <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
             <el-scrollbar wrap-style="padding:10px 0px" always :max-height="500">
                 <!-- 表头 -->
-                <div class="u-flex u-row-left u-col-center u-text-center">
+                <div class="u-flex u-row-left u-col-center u-text-center" >
                     <div class="u-flex u-row-left u-col-center  u-text-center">
                         <div class="u-width-150  u-border u-height-60"><span>序号</span></div>
                         <div class="u-width-150 u-border u-height-60"><span>工序编号</span></div>

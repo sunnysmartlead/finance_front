@@ -283,3 +283,93 @@ export function GetFoundationreliableList(data: any): any {
     data
   })
 }
+
+// 手板件费用修改项添加
+export function AdditionOfCostModificationItemsForHandBoards(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AdditionOfCostModificationItemsForHandBoards",
+    method: "post",
+    data
+  })
+}
+
+// 模具费用修改项添加
+export function AddMoldCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddMoldCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 工装费用修改项添加
+export function AddToolingCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddToolingCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 治具费用修改项添加
+export function AdditionOfFixtureCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AdditionOfFixtureCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 检具费用修改项添加
+export function AddInspectionToolCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddInspectionToolCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 生产设备费用修改项添加
+export function AddProductionEquipmentCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddProductionEquipmentCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 实验费用修改项添加
+export function AddExperimentalFeeModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddExperimentalFeeModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 测试软件费用修改项添加
+export function AddingModificationItemsForTestingSoftwareCosts(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddingModificationItemsForTestingSoftwareCosts",
+    method: "post",
+    data
+  })
+}
+
+// 差旅费用修改项添加
+export function AddTravelExpenseModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddTravelExpenseModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 其他费用修改项添加
+export function OtherExpenseModificationItemsAdded(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/OtherExpenseModificationItemsAdded",
+    method: "post",
+    data
+  })
+}

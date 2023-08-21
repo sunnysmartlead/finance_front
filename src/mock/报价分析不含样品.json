@@ -1,0 +1,143 @@
+{
+  "isSuccess": true,
+  "message": "string",
+  "grossMarginList": [
+    0
+  ],
+ 
+  "nres": [// Nre相关
+    {
+      "solutionName": "string",//方案名
+      "models": [
+        {
+          "index": 0,//序号
+          "costName": "string",//费用名称
+          "pricingMoney": "string",//核价金额
+          "offerCoefficient": 0,//报价系数
+          "offerMoney": 0,//报价金额
+          "remark": 0//备注
+        }
+      ],
+      "devices": [//专用设备
+        {
+          "deviceName": "string",//设备名称
+          "devicePrice": 0,//单价
+          "number": 0,//数量
+          "equipmentMoney": 0//金额
+        }
+      ]
+    }
+  ],
+ 
+  "sops": [//SOP单价表（SOP年）
+    {
+      "gradientValue": 0,//梯度
+      "product": "string",产品
+      "grossValues": [
+        {
+          "gross": "string",//毛利
+          "grossvalue": 0//值
+        }
+      ]
+    }
+  ],
+  "quotedGrossMargins": [//报价毛利率测算
+    {
+      "project": "string",//方案名
+      "quotedGrossMarginSimples": [
+        {
+          "product": "string",//产品
+          "amount": 0,//单车产品数量
+          "interior": {//目标价（内部）
+            "price": 0,// 单价
+            "grossMargin": 0,// 毛利率
+            "clientGrossMargin": 0,// 增加客供料毛利率
+            "nreGrossMargin": 0// 剔除NRE分摊费用毛利率
+          },
+          "client": {// 目标价（客户）
+            "price": 0,
+            "grossMargin": 0,
+            "clientGrossMargin": 0,
+            "nreGrossMargin": 0
+          },
+          "thisQuotation": {// 本次报价
+            "price": 0,
+            "grossMargin": 0,
+            "clientGrossMargin": 0,
+            "nreGrossMargin": 0
+          },
+          "lastRound": {// 上轮报价
+            "price": 0,
+            "grossMargin": 0,
+            "clientGrossMargin": 0,
+            "nreGrossMargin": 0
+          }
+        }
+      ]
+    }
+  ],
+  "gradientQuotedGrossMargins": [// 报价毛利率测算-阶梯数量
+    {
+      "project": "string",//方案名
+      "quotedGrossMarginSimples": [
+        {
+          "product": "string",
+          "amount": 0,
+      {
+          "product": "string",//产品
+          "amount": 0,//单车产品数量
+          "interior": {//目标价（内部）
+            "price": 0,// 单价
+            "grossMargin": 0,// 毛利率
+            "clientGrossMargin": 0,// 增加客供料毛利率
+            "nreGrossMargin": 0// 剔除NRE分摊费用毛利率
+          },
+          "client": {// 目标价（客户）
+            "price": 0,
+            "grossMargin": 0,
+            "clientGrossMargin": 0,
+            "nreGrossMargin": 0
+          },
+          "thisQuotation": {// 本次报价
+            "price": 0,
+            "grossMargin": 0,
+            "clientGrossMargin": 0,
+            "nreGrossMargin": 0
+          },
+          "lastRound": {// 上轮报价
+            "price": 0,
+            "grossMargin": 0,
+            "clientGrossMargin": 0,
+            "nreGrossMargin": 0
+          }
+        }
+      ],
+      "gradient": "string"//梯度
+    }
+  ],
+  "fullLifeCycle": [// 项目全生命周期汇总分析表-实际数量
+    {
+      "itemName": "string",//项目名
+      "grosss": [
+        {
+          "grossMargin": 0,// 毛利率
+          "grossMarginNumber": 0//毛利率值
+        }
+      ]
+    }
+  ],
+  "gradientGrossMarginModels": [
+    {
+      "gradient": "string",//梯度
+      "_itemGrossMarginModels": [
+        {
+          "item": "string",// 项目
+          "interior": 0,// 目标价（内部）
+          "client": 0,// 目标价（客户）
+          "thisQuotation": 0,// 本次报价
+          "lastRound": 0// 上轮报价
+        }
+      ]
+    }
+  ]
+}

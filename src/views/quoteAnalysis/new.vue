@@ -98,7 +98,8 @@
     </el-card>
 
     <p>报价毛利率测算-阶梯数量</p>
-    <el-table :data="listOne" border>
+    <el-card class="card">
+      <el-table :data="listOne" border>
       <el-table-column label="梯度" prop="gradient" />
       <el-table-column label="产品" prop="product" />
       <el-table-column label="单车产品数量" prop="amount" />
@@ -170,6 +171,8 @@
         </template>
       </el-table-column>
     </el-table>
+    </el-card>
+
     <el-card class="card" v-for="(table, index) in data.allRes.gradientQuotedGrossMargins" :key="index">
       <el-row justify="end" m="2">
         <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
@@ -245,6 +248,18 @@
           </template>
         </el-table-column>
       </el-table>
+    </el-card>
+    <el-card class="card">
+      <div v-for="(table,index) in data.allRes.gradientGrossMarginModels" :key="index">
+        <p>{{ table.gradient }}</p>
+        <el-table :data="table._itemGrossMarginModels" border >
+        <el-table-column label="产品" prop="item" />
+        <el-table-column label="目标价（内部）" width="300" prop="interior" />
+        <el-table-column label="目标价（客户）" prop="client" />
+        <el-table-column label="本次报价" prop="thisQuotation"/>
+        <el-table-column label="上轮报价" prop="lastRound"/>
+      </el-table>
+      </div>
     </el-card>
   </div>
 </template>
@@ -700,7 +715,6 @@ const calculateFullGrossMargin = debounce(async (row: any, index: number, key1: 
   setData()
 }, 300)
 
-
 const openDialog = async (row: any) => {
   // let productBoards: any = []
   // if (!row) {
@@ -736,13 +750,120 @@ const addNewPlan = () => {
     name: "1/JAN"
   })
 }
+
+let ProjectUnitPrice: any = {
+  title: {
+    text: "项目单价对比"
+  },
+  tooltip: {
+    trigger: "item",
+    axisPointer: {
+      // Use axis to trigger tooltip
+      type: "shadow" // 'shadow' as default; can also be 'line' or 'shadow'
+    }
+  },
+  legend: {},
+  grid: {
+    left: "3%",
+    right: "4%",
+    bottom: "3%",
+    containLabel: true
+  },
+  xAxis: {
+    type: "category",
+    data: ["目标价（内部）", "目标价（客户）", "本次报价"]
+  },
+  // yAxis: {
+  //   type: "value"
+  // },
+  yAxis: [
+    {
+      type: "value",
+      name: "单价",
+      min: 0,
+      axisLabel: {
+        formatter: "{value} 元"
+      }
+    },
+    {
+      type: "value",
+      name: "毛利率",
+      min: 0,
+      axisLabel: {
+        formatter: "{value}%"
+      }
+    }
+  ],
+  series: []
+}
+let RevenueGrossMargin: any = {
+  title: {
+    text: "收入和毛利率对比"
+  },
+  xAxis: {
+    type: "category",
+    data: ["目标价(内部)", "目标价(客户)", "本次报价"]
+  },
+  tooltip: {
+    trigger: "item",
+    axisPointer: {
+      // Use axis to trigger tooltip
+      type: "shadow" // 'shadow' as default; can also be 'line' or 'shadow'
+    }
+  },
+  legend: {},
+  yAxis: [
+    {
+      type: "value",
+      name: "收入",
+      min: 0,
+      axisLabel: {
+        formatter: "{value} 元"
+      }
+    },
+    {
+      type: "value",
+      name: "毛利率",
+      min: 0,
+      axisLabel: {
+        formatter: "{value}%"
+      }
+    }
+  ],
+  series: [
+    // {
+    //   data: [120, 200, 150],
+    //   type: "bar",
+    //   name: "OV方案销售收入"
+    // },
+    // {
+    //   data: [0, 0.05, 0.1],
+    //   type: "line",
+    //   name: "OV方案毛利率",
+    //   yAxisIndex: 1
+    // }
+  ]
+}
+
+let chart1: any = null
+let chart2: any = null
+const initCharts = (id: string, chartOption: any) => {
+  // 基于准备好的dom，初始化echarts实例
+  let chartEl: HTMLElement | null = document.getElementById(id)
+  if (chartEl) {
+    var chart = echarts.init(chartEl)
+    // 绘制图表
+    chart.setOption(chartOption)
+    return chart
+  }
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
-watchEffect(() => { })
+watchEffect(() => {})
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

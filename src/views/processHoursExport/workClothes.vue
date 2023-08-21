@@ -40,42 +40,29 @@
           <el-table-column label="序号" type="index" width="80" align="center" />
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
-              <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processNumber"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForprocessNumber"
-                  @change="processNumberChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
-              </div>
+                <div>
+                  <el-input v-model="scope.row.processNumber" :disabled="currentEditProcessIndex != scope.$index"
+                            placeholder="请输入工序编号" />
+                </div>
             </template>
           </el-table-column>
 
           <el-table-column label="工序名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
-              <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processName" filterable
-                  remote reserve-keyword :remote-method="remoteMethodForProcessName"
-                  @change="processNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
-              </div>
+                <div>
+                  <el-input v-model="scope.row.processName" :disabled="currentEditProcessIndex != scope.$index"
+                            placeholder="请输入工序名称" />
+                </div>
             </template>
           </el-table-column>
 
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index"
-                  v-model="scope.row.installationName"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
-                  @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in installationNameOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value" />
-                </el-select>
+                <el-input v-model="scope.row.installationName" :disabled="currentEditProcessIndex != scope.$index"
+                          placeholder="请输入工装名称" />
+              </div>
+              <div>
               </div>
             </template>
           </el-table-column>

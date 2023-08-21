@@ -52,7 +52,7 @@
         </el-card> -->
         <!-- 表格数据录入区 -->
         <div class="table-box">
-            <el-scrollbar>
+            <el-scrollbar max-height="600px">
                 <div style="color:#000000">
                     <div class="u-m-b-20" v-for="(dataItem, dataIndex) in tableData" :key="dataIndex">
                         <el-card>
@@ -66,7 +66,7 @@
                                     <span>COB制造成本</span>
                                 </div>
                                 <div class="u-m-t-10">
-                                    <el-table :data="dataItem.listBomEnter" border style="color:#000000">
+                                    <el-table :data="dataItem.listBomEnter" border style="color:#000000" max-height="400px">
                                         <el-table-column label="年份" align="center">
                                             <template #default="scope">
                                                 <span>{{ scope.row.year }}</span>
@@ -142,7 +142,7 @@
                                     <span>Other</span>
                                 </div>
                                 <div class="u-m-t-10">
-                                    <el-table :data="dataItem.listBomEnterTotal" border style="width:600px;color: #000000;">
+                                    <el-table :data="dataItem.listBomEnterTotal" border max-height="400px" style="width:600px;color: #000000;">
                                         <el-table-column label="年份" align="center" width="200">
                                             <template #default="scope">
                                                 <span>{{ scope.row.year }}</span>

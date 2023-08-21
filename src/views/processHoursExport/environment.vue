@@ -30,9 +30,9 @@
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-      <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
+      <el-scrollbar wrap-style="padding:10px 0px" :max-height="500" native>
         <div>
-          <el-table v-loading="loading" :data="tableData" style="width: 100%" border>
+          <el-table v-loading="loading" :data="tableData" style="width: 100%" border height="400px">
             <el-table-column label="实验分类" align="center" prop="classification" />
             <el-table-column label="实验名称" align="center" prop="name" />
             <el-table-column label="单价" align="center" prop="price" />
@@ -60,18 +60,18 @@
     </div>
 
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-      <el-scrollbar :min-size="10">
-        <div class="u-flex u-row-between u-col-center u-p-r-20">
-          <div>日志更新记录：</div>
-          <div>
-            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-            <el-button v-else @click="editLogFlag = false">取消</el-button>
-            <el-button type="primary" @click="saveLog">保存</el-button>
-          </div>
+      <div class="u-flex u-row-between u-col-center" style="width: 100%;">
+        <div>日志更新记录：</div>
+        <div>
+          <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+          <el-button v-else @click="editLogFlag = false">取消</el-button>
+          <el-button type="primary" @click="saveLog">保存</el-button>
         </div>
+      </div>
+      <el-scrollbar :min-size="10" :max-height="500">
         <div class="u-m-t-20">
           <el-timeline>
-            <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
+            <el-timeline-item  placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
               :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">
                 <div style="font-weight: bold; color: #909399">

@@ -1,8 +1,7 @@
 <template>
       <!-- 日志记录 -->
       <div  class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-      <el-scrollbar :min-size="10">
-        <div class="u-flex u-row-between u-col-center u-p-r-20">
+        <div class="u-flex u-row-between u-col-center" style="width: 100%;">
           <div>日志更新记录：</div>
           <div>
             <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
@@ -10,6 +9,7 @@
             <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
         </div>
+      <el-scrollbar :min-size="10" max-height="500px">
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in props.baseLibLogRecords" :key="index"

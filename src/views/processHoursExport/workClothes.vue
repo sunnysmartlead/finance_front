@@ -36,7 +36,7 @@
     <!-- 数据表格区域 -->
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <div class="table-box">
-        <el-table :data="tableData" style="width: 100%;" :scrollbar-always-on="false" max-height="400" border>
+        <el-table :data="tableData" style="width: 100%;" :scrollbar-always-on="false" max-height="600px" border>
           <el-table-column label="序号" type="index" width="80" align="center" />
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
@@ -167,15 +167,15 @@
     <!-- 日志记录 -->
     <div v-if="baseLibLogRecords.length>0"
         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-      <el-scrollbar :min-size="10">
-        <div class="u-flex u-row-between u-col-center u-p-r-20">
-          <div>日志更新记录：</div>
-          <div>
-            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-            <el-button v-else @click="editLogFlag = false">取消</el-button>
-            <el-button type="primary" @click="saveLog">保存</el-button>
-          </div>
+      <div class="u-flex u-row-between u-col-center" style="width: 100%;">
+        <div>日志更新记录：</div>
+        <div>
+          <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+          <el-button v-else @click="editLogFlag = false">取消</el-button>
+          <el-button type="primary" @click="saveLog">保存</el-button>
         </div>
+      </div>
+      <el-scrollbar :min-size="10" max-height="600px">
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
@@ -207,7 +207,6 @@
         </div>
       </el-scrollbar>
     </div>
-
   </div>
 </template>
 <script lang="ts" setup>

@@ -47,7 +47,7 @@
                         </div>
                     </template>
                     <div>
-                        <el-table :data="(cardItem.logisticscostList)" style="width: 100%" border>
+                        <el-table :data="(cardItem.logisticscostList)" max-height="300px" style="width: 100%" border>
                             <el-table-column label="年份" align="center">
                                 <template #default="scope">
                                     <div>

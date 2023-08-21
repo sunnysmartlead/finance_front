@@ -1,26 +1,26 @@
 import { request,baseDomain} from "@/utils/service"
-
-const uploadAction=baseDomain+"api/services/app/FProcesses/UploadFoundationFProcesses"
+const uploadAction = baseDomain + "api/services/app/ProcessHoursEnter/UploadFoundationFProcesses"
 
 export {uploadAction}
 
 export interface QueryParams {
-    ProcessName?: string
+  AuditFlowId:Number,
+  SolutionId:Number
 }
   /**
 /** 工序列表 */
 export function GetListAll(data: QueryParams) {
     return request({
-      url: "/api/services/app/FProcesses/GetListAll",
+      url: "/api/services/app/ProcessHoursEnter/GetListAll",
       method: "get",
       data
     })
 }
 
 //查询工序详细
-export function getProcessDetail(id: number) {
+export function getProcessHourDetail(id: number) {
     return request({
-      url: "/api/services/app/FProcesses/GetById",
+      url: "/api/services/app/ProcessHoursEnter/GetById",
       method: "get",
       data: {
         id
@@ -29,26 +29,26 @@ export function getProcessDetail(id: number) {
  }
 
 /** 创建工序 */
-export function createProcess(data:any) {
+export function handleCreate(data:any) {
     return request({
-      url: "/api/services/app/FProcesses/Create",
+      url: "/api/services/app/ProcessHoursEnter/Create",
       method: "post",
       data: data
     })
   }
 
  /** 修改工序 */
-export function updateProcess(data:any) {
+export function handleUpdate(data:any) {
     return request({
-      url: "/api/services/app/FProcesses/Update",
+      url: "/api/services/app/ProcessHoursEnter/Update",
       method: "put",
       data
     })
   }
 /** 删除工序 */
-  export function deleteProcess(id: number | undefined) {
+  export function handleDelete(id: number | undefined) {
     return request({
-      url: "/api/services/app/FProcesses/Delete",
+      url: "/api/services/app/ProcessHoursEnter/Delete",
       method: "delete",
       data: {
         id
@@ -60,7 +60,7 @@ export function updateProcess(data:any) {
 /** 导出 */
 export function exportProcess(data:any) {
   return request({
-    url: "/api/services/app/FProcesses/FoundationProcedureDownloadStream",
+    url: "/api/services/app/ProcessHoursEnter/FoundationProcedureDownloadStream",
     method: "post",
     responseType:'blob',
     data: data

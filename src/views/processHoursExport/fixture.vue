@@ -33,9 +33,9 @@
             </div>
         </div>
         <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-            <el-scrollbar wrap-style="padding:10px 0px" always :max-height="500">
+            <el-scrollbar wrap-style="padding:0px 0px 10px 0px" always :max-height="500">
                 <!-- 表头 -->
-                <div class="u-flex u-row-left u-col-center u-text-center">
+                <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
                     <div class="u-flex u-row-left u-col-center  u-text-center">
                         <div class="u-width-150  u-border u-height-60"><span>序号</span></div>
                         <div class="u-width-150 u-border u-height-60"><span>工序编号</span></div>
@@ -171,15 +171,16 @@
 
 
       <div v-if="baseLibLogRecords.length > 0" class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-        <el-scrollbar :min-size="10">
-          <div class="u-flex u-row-between u-col-center u-p-r-20">
-            <div>日志更新记录：</div>
-            <div>
-              <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-              <el-button v-else @click="editLogFlag = false">取消</el-button>
-              <el-button type="primary" @click="saveLog">保存</el-button>
-            </div>
+        <div class="u-flex u-row-between u-col-center" style="width: 100%">
+          <div>日志更新记录：</div>
+          <div>
+            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+            <el-button v-else @click="editLogFlag = false">取消</el-button>
+            <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
+        </div>
+        <el-scrollbar :min-size="10" max-height="500px">
+
           <div class="u-m-t-20">
             <el-timeline>
               <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"

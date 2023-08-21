@@ -32,7 +32,7 @@
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
       <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
         <div>
-          <el-table v-loading="loading" :data="tableData" style="width: 100%" border>
+          <el-table v-loading="loading" :data="tableData" style="width: 100%"  height="350" border>
             <el-table-column label="实验分类" align="center" prop="classification" />
             <el-table-column label="实验名称" align="center" prop="name" />
             <el-table-column label="单价" align="center" prop="price" />
@@ -172,7 +172,6 @@ let ruleForm = reactive<RuleForm>({
   name: '',
   price: 0.00,
   unit: '',
-  IsDeleted: 1,
   laboratory: ''
 })
 const rules = reactive<FormRules<RuleForm>>({

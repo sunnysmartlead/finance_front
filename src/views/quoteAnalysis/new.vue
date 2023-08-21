@@ -98,6 +98,92 @@
         <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
       </el-row>
     </el-card>
+    <el-card class="card">
+      <el-row justify="end" m="2">
+        <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
+      </el-row>
+      <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
+        <el-table-column label="产品" prop="productName" />
+        <el-table-column label="单车产品数量" prop="productNumber" />
+        <el-table-column label="目标价（内部）" width="300">
+          <el-table-column label="单价" prop="interiorTargetUnitPrice" :formatter="formatThousandths" />
+          <el-table-column label="毛利率" prop="interiorTargetGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.interiorTargetGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column label="目标价（客户）">
+          <el-table-column label="单价" prop="clientTargetUnitPrice">
+            <template #default="scope">
+              <el-input v-model="scope.row.clientTargetUnitPrice">
+                <template #append>
+                  <el-button
+                    @click="
+                      calculateFullGrossMargin(
+                        scope.row,
+                        scope.$index,
+                        'clientTargetUnitPrice',
+                        'clientTargetGrossMargin'
+                      )
+                    "
+                    >计算</el-button
+                  >
+                </template>
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率" prop="clientTargetGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.clientTargetGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column label="本次报价">
+          <el-table-column label="单价">
+            <template #default="scope">
+              <el-input v-model="scope.row.offerUnitPrice">
+                <template #append>
+                  <el-button
+                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')"
+                    >计算</el-button
+                  >
+                </template>
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率" prop="offeGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.offeGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column
+          :label="'第' + (index + 1) + '轮'"
+          v-for="(item, index) in data.productBoard.length > 0 ? data.productBoard[0].oldOffer : []"
+          :key="index"
+          width="300"
+        >
+          <el-table-column label="单价" :prop="`oldOffer[${index}].unitPrice`" :formatter="formatThousandths">
+            <!-- <template #default="{ row }">
+              <div>{{ row.oldOffer[index].unitPrice.toFixed(2) }}</div>
+            </template> -->
+          </el-table-column>
+          <el-table-column label="毛利率">
+            <template #default="{ row }">
+              <div>{{ `${row.oldOffer[index].grossMargin.toFixed(2)} %` }}</div>
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column width="140" label="操作">
+          <template #default="{ row }">
+            <el-row justify="end" m="2">
+              <el-button @click="openDialog(row)" type="primary">年份维度对比</el-button>
+            </el-row>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
   </div>
 </template>
 

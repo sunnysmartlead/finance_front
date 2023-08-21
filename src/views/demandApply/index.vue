@@ -250,11 +250,15 @@
               v-for="(year, index) in state.yearCols"
               :label="year + yearNote(index)"
               :key="`pcsTableData-${year}-${index}`"
-              width="150"
+              width="175"
               :prop="`pcsYearList[${index}].quantity`"
             >
               <template #default="{ row }">
-                <el-input v-model="row.pcsYearList[index].quantity" :disabled="isDisabled" />
+                <el-input-number
+                  controls-position="right"
+                  v-model="row.pcsYearList[index].quantity"
+                  :disabled="isDisabled"
+                />
               </template>
             </el-table-column>
             <el-table-column prop="rowSum" label="合计">
@@ -624,9 +628,9 @@
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
             <el-table-column prop="count" label="分摊数量" width="250">
-              <template #default="{ row }">
+              <template #default="{ row, $index }">
                 <el-input-number
-                  @input="ChangeShareCount(row)"
+                  @input="ChangeShareCount(row, $index)"
                   controls-position="right"
                   v-model="row.count"
                   :disabled="isDisabled"
@@ -1561,44 +1565,29 @@ const getPcsTableDatSummaries = (param: any) => {
 // 车型模组合计
 const moduleTableTotal = computed(() => {
   const flatData = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
-  const filterData = uniq(map(flatData, (c) => c?.product))
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-  shareCountTable.value = map(filterData, (item, index: number) => ({
-    count: shareCountTable.value?.[index]?.count || 0,
-    name: item
-  })).filter((c) => !!c.name)
 
   const productModule = new Map()
   flatData.forEach((item: any) => {
-    const currentData = productModule.get(item.product) || {}
-    if (
-      item.product &&
-      _.isEmpty(productModule.get(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`))
-    ) {
-      productModule.set(`${item.product}-${item.pixel}-${item.productType}`, {
+    const currentData = productModule.get(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`) || {}
+    if (item.product && item.pixel && item.productType && item?.code && _.isEmpty(currentData)) {
+      productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         ...item,
         productType: [item.productType],
         ourRole: [item.ourRole]
       })
     }
-
-    if (
-      currentData?.product &&
-      currentData?.code === item?.code &&
-      currentData?.product === item?.product &&
-      currentData?.pixel === item?.pixel &&
-      currentData?.productType === item?.productType
-    ) {
-      const carModal = compareString(currentData.carModel, item.carModel)
-      productModule.set(`${item.product}-${item.pixel}-${item.productType}`, {
-        carModal,
+    console.log(currentData, "[获取当前的模组]")
+    if (!_.isEmpty(currentData)) {
+      productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
+        carModel: compareString(currentData.carModel, item.carModel),
         product: item.product,
         partNumber: compareString(currentData.partNumber, item.partNumber),
         code: compareString(currentData.code, item.code),
         productType: compareString(currentData.productType, item.productType),
         ourRole: compareString(currentData.ourRole, item.ourRole),
         pixel: compareString(currentData.pixel, item.pixel),
-        marketShare: compareString(currentData.marketShare, item.marketShare),
+        marketShare: (currentData.marketShare += item.marketShare || 0),
         moduleCarryingRate: (currentData.moduleCarryingRate += item.moduleCarryingRate || 0),
         singleCarProductsQuantity: (currentData.singleCarProductsQuantity += item.singleCarProductsQuantity || 0),
         modelTotal: (currentData.modelTotal += item.modelTotal || 0),
@@ -1614,7 +1603,6 @@ const moduleTableTotal = computed(() => {
   })
 
   const filterProductModuleTotal = [...productModule.values()]
-
   console.log(filterProductModuleTotal, "[productName]")
   return filterProductModuleTotal
 })
@@ -1979,7 +1967,7 @@ watch(
       let pscRowSum = 0
       itemNew.pcsYearList.forEach((pro: any) => {
         pscRowSum += Number(pro.quantity)
-        pro.quantity = Math.floor(Number(pro.quantity || 0) * state.quoteForm.kValue)
+        pro.quantity = (Number(pro.quantity || 0) * state.quoteForm.kValue).toFixed(2)
         itemRowSum += Number(pro.quantity)
       })
       item.rowSum = pscRowSum
@@ -1999,13 +1987,11 @@ watch(
       moduleTable?.forEach((moduleItem: any) => {
         moduleItem?.modelCountYearList?.forEach((pscY: any, pscYIndex: number) => {
           const { quantity } = currentInteriorPcs[pscYIndex] || {}
-          pscY.quantity = Math.floor(
+          pscY.quantity =
             (moduleItem.moduleCarryingRate / 100) *
-              moduleItem.singleCarProductsQuantity *
-              (moduleItem.marketShare / 100) *
-              (quantity || 0)
-          )
-          // console.log(pscY.quantity, "quantitymoduleTableDataV2")
+            moduleItem.singleCarProductsQuantity *
+            (moduleItem.marketShare / 100) *
+            (quantity || 0)
         })
       })
     })
@@ -2106,7 +2092,6 @@ watch(
   () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue)],
   (val) => {
     const [moduleTableTotalData, kvList] = val
-    console.log(kvList, "kvList")
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       let filterData = _.cloneDeep(kvList)
 
@@ -2128,7 +2113,7 @@ watch(
           }))
         }
       })
-      console.log(filterData, "[filterDatafilterData]")
+      // console.log(filterData, "[filterDatafilterData]")
       gradientModelTable.value = filterData
     }
   },
@@ -2148,15 +2133,27 @@ watch(
           kv: kvItem.gradientValue,
           product: productItem.product,
           targetPrice: 0,
-          currency: 0,
+          currency: 0
         })
       })
     })
     customerTargetPrice.value = arr
-    console.log(arr, "监听数据")
-    // customerTargetPrice
+  },
+  {
+    deep: true
   }
 )
+
+watch(
+  () => moduleTableTotal.value,
+  () => {
+    shareCountTable.value = map(moduleTableTotal.value, (item, index: number) => ({
+      count: shareCountTable.value?.[index]?.count || 0,
+      name: item.product
+    })).filter((c) => !!c.name)
+  }
+)
+
 const compareString = (a: string, b: string) => {
   if (_.isArray(a)) {
     return uniq([...(a || []), b]).filter((v) => !!v)
@@ -2166,20 +2163,20 @@ const compareString = (a: string, b: string) => {
   return [a, b]
 }
 
-const targetPriceCalcul = () => {
-  customerTargetPrice.value.forEach((item: any) => {
-    item.targetPrice = 0
-    moduleTableDataV2.value.forEach((moduleTable: any) => {
-      let value = _.cloneDeep(moduleTable)
-      value.forEach((valueitem: any) => {
-        console.log(valueitem, item, "targetPriceCalcul")
-        if (valueitem.product == item.product) {
-          item.targetPrice += item.targetPrice * valueitem.singleCarProductsQuantity
-        }
-      })
-    })
-  })
-}
+// const targetPriceCalcul = () => {
+//   customerTargetPrice.value.forEach((item: any) => {
+//     item.targetPrice = 0
+//     moduleTableDataV2.value.forEach((moduleTable: any) => {
+//       let value = _.cloneDeep(moduleTable)
+//       value.forEach((valueitem: any) => {
+//         console.log(valueitem, item, "targetPriceCalcul")
+//         if (valueitem.product == item.product) {
+//           item.targetPrice += item.targetPrice * valueitem.singleCarProductsQuantity
+//         }
+//       })
+//     })
+//   })
+// }
 
 const price = (row: any) => {
   let modelTotal = 0
@@ -2643,27 +2640,23 @@ const changeCountry = (country: string) => {
   console.log(findData, state.countryOptions, "选择")
 }
 
-const ChangeShareCount = (row: any) => {
-  console.log(state.quoteForm.updateFrequency, "updateFrequency")
-  const total = moduleTableTotal.value
-    .map((item) => {
-      return item.modelCountYearList?.filter((_: any, i: number) => {
-        return (
-          (state.quoteForm.updateFrequency === updateFrequency.HalfYear && i < 6) ||
-          (state.quoteForm.updateFrequency === updateFrequency.Year && i < 3)
-        )
-      })
+const ChangeShareCount = (row: any, index: number) => {
+  const total = moduleTableTotal.value[index]?.modelCountYearList
+    ?.filter((_: any, i: number) => {
+      return (
+        (state.quoteForm.updateFrequency === updateFrequency.HalfYear && i < 6) ||
+        (state.quoteForm.updateFrequency === updateFrequency.Year && i < 3)
+      )
     })
-    .flat()
-    .reduce((a, b) => a + b.quantity, 0)
+    .reduce((a: any, b: { quantity: any }) => a + b.quantity, 0)
+  console.log(moduleTableTotal.value[index]?.modelCountYearList, index, "[分摊数量3年之和]")
   if (row.count > total) {
-    row.count = total
+    row.count = total.toFixed(5)
     ElMessage({
       type: "error",
       message: "分摊数量不能大于前三年模组走量之合"
     })
   }
-  console.log(total, "ChangeShareCount")
 }
 
 defineExpose({

@@ -14,22 +14,22 @@
               <el-input v-model="row.remark" />
             </template>
           </el-table-column>
-          <el-table-column label="项目代码" width="120">
+          <el-table-column label="项目代码">
             <template #default="{ row }">
               <el-input v-model="row.remark" />
             </template>
           </el-table-column>
-          <el-table-column label="项目描述" width="120">
+          <el-table-column label="项目描述">
             <template #default="{ row }">
               <el-input v-model="row.remark" />
             </template>
           </el-table-column>
-          <el-table-column label="子项目代码（WBS）" width="120">
+          <el-table-column label="子项目代码（WBS）" width="170">
             <template #default="{ row }">
               <el-input v-model="row.remark" />
             </template>
           </el-table-column>
-          <el-table-column label="子项目描述" width="120">
+          <el-table-column label="子项目描述">
             <template #default="{ row }">
               <el-input v-model="row.remark" />
             </template>

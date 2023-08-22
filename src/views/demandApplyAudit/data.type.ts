@@ -45,6 +45,10 @@ export interface DesignSolutionDto {
    */
   id?: number;
   /**
+   * Id
+   */
+  solutionId?: number | string;
+  /**
    * lens
    */
   lens?: null | string;

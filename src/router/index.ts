@@ -860,6 +860,21 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/financeDepartment",
+    redirect: "/financeDepartment/selfBuilt",
+    component: Layout,
+    children: [
+      {
+        path: "selfBuilt",
+        component: () => import("@/views/financeDepartment/selfBuiltTable.vue"),
+        name: "selfBuilt",
+        meta: {
+          title: "自建项目表"
+        }
+      }
+    ]
+  },
+  {
     path: "/",
     redirect: "/UpdateLogInfo/index",
     component: Layout,
@@ -877,6 +892,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
+
   // {
   //   path: "/permission",
   //   component: Layout,

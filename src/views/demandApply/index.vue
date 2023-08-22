@@ -1335,7 +1335,7 @@ import { useRoute, useRouter } from "vue-router"
 
 import type { UploadProps, UploadUserFile } from "element-plus"
 
-import _, { uniq, map } from "lodash"
+import _, { uniq, map, debounce } from "lodash"
 import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
@@ -2640,7 +2640,7 @@ const changeCountry = (country: string) => {
   console.log(findData, state.countryOptions, "选择")
 }
 
-const ChangeShareCount = (row: any, index: number) => {
+const ChangeShareCount = debounce((row: any, index: number) => {
   const total = moduleTableTotal.value[index]?.modelCountYearList
     ?.filter((_: any, i: number) => {
       return (
@@ -2651,13 +2651,13 @@ const ChangeShareCount = (row: any, index: number) => {
     .reduce((a: any, b: { quantity: any }) => a + b.quantity, 0)
   console.log(moduleTableTotal.value[index]?.modelCountYearList, index, "[分摊数量3年之和]")
   if (row.count > total) {
-    row.count = total.toFixed(5)
+    row.count = total.toFixed(2)
     ElMessage({
       type: "error",
       message: "分摊数量不能大于前三年模组走量之合"
     })
   }
-}
+}, 300)
 
 defineExpose({
   ...toRefs(state)

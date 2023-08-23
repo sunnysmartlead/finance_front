@@ -83,15 +83,10 @@
                         <el-button type="primary" size="small"
                             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 </template>
-                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
-        </div>
-        <div v-show="tableData.length >= 10" class="u-flex u-row-center u-col-center u-m-t-20">
-          <div>
-            <el-pagination :page-size="10" :pager-count="5" layout="prev, pager, next" :total="tableData.length" />
-          </div>
         </div>
       </el-scrollbar>
     </div>
@@ -151,6 +146,7 @@ import { ElMessage, ElMessageBox,genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { GetListAll, getProcessDetail, createProcess, exportProcess,
       updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
+import {deleteFoundationEmc} from "@/api/foundationEmc";
 const queryForm = reactive({
   processName: ''
 })
@@ -347,19 +343,20 @@ const cancalEdit=(index: number, row: processItem)=>{
   }
 }
 
-const handleDelete = (index: number, row: processItem) => {
-  console.log(index, row);
-  ElMessageBox.confirm("是否删除该记录!", "温馨提示", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async () => {
-    tableData.value.splice(index);
-    ElMessage({
-      type: "success",
-      message: "删除成功"
+function handleDelete(row) {
+  const postIds = row.id
+  ElMessageBox.confirm("是否确认删除!")
+    .then(function () {
+      return deleteProcess(postIds)
     })
-  })
+    .then(() => {
+      initData()
+      ElMessage({
+        type: "success",
+        message: "删除成功"
+      })
+    })
+    .catch(() => { })
 }
 
 const isDisable = (index: number) => {

@@ -131,17 +131,22 @@ const isUnfoldChange = (val: any) => {
 
     <el-drawer v-model="show" size="500px" :with-header="false">
       <div>
-        <h3 class="drawer-title">
-          零件切换
-          <el-switch
-            @change="isUnfoldChange"
-            v-model="isUnfold"
-            inline-prompt
-            active-text=" 展开 "
-            inactive-text=" 合并 "
-            style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-          />
-        </h3>
+        <div class="u-flex u-row-left u-col-center">
+           <div>
+              <h3>零件切换</h3>
+           </div>
+           <div class="u-m-l-10">
+              <el-switch size="large"  width="80"
+              @change="isUnfoldChange"
+              v-model="isUnfold"
+              inline-prompt
+              active-text="展开"
+              inactive-text="合并"
+              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+            />
+           </div>
+        </div>  
+
         <div>
           <div class="drawer-container" v-if="isUnfold">
             <div>
@@ -169,7 +174,7 @@ const isUnfoldChange = (val: any) => {
 
 <style lang="scss" scoped>
 .handle-button {
-  width: 60px;
+  width: 80px;
   height: 48px;
   background-color: #152d3d;
   position: absolute;
@@ -178,7 +183,7 @@ const isUnfoldChange = (val: any) => {
   font-size: 14px;
   // border-radius: 6px 0 0 6px !important;
   border-radius: 6px !important;
-  z-index: 10;
+  z-index: 101;
   cursor: pointer;
   pointer-events: auto;
   color: #fff;

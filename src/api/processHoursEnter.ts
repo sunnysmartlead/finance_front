@@ -1,5 +1,5 @@
 import { request,baseDomain} from "@/utils/service"
-const uploadAction = baseDomain + "api/services/app/ProcessHoursEnter/UploadFoundationFProcesses"
+const uploadAction = baseDomain + "api/services/app/ProcessHoursEnter/UploadProcessHoursEnter"
 
 export {uploadAction}
 

@@ -22,8 +22,8 @@
           <div class="u-flex u-row-left u-col-center">
             <div class="u-m-r-20">
               <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
-                         :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
-                         :action="uploadAction" :limit="1">
+                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"
+                :limit="1">
                 <template #trigger>
                   <el-button type="primary">软硬件导入</el-button>
                 </template>
@@ -53,25 +53,42 @@
           <div class="u-text-center">
             <div class="u-text-center u-border  u-p-t-5 u-p-b-5" style="background-color:#79bbff;">硬软件部分</div>
             <div class="u-flex u-row-left u-col-center  u-text-center">
-              <div v-for="index in data.tableData[0]?.listHardware.length" :key="index"
-                   class="u-flex u-row-left u-col-center u-text-center">
-                <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
-                  <span>硬件{{ index }}名称</span>
+              <template v-if="data.tableData.length > 0">
+                <div v-for="index in data.tableData[0]?.listHardware.length" :key="index"
+                  class="u-flex u-row-left u-col-center u-text-center">
+                  <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
+                    <span>硬件{{ index }}名称</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5" style="background-color: #eebe77;">
+                    <span>硬件{{ index }}状态</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>硬件{{ index }}单价</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>硬件{{ index }}供应商</span>
+                  </div>
                 </div>
-                <div class="u-width-200  u-border   u-p-t-5 u-p-b-5" style="background-color: #eebe77;">
-                  <span>硬件{{ index }}状态</span>
+              </template>
+              <template v-else>
+                <div  class="u-flex u-row-left u-col-center u-text-center">
+                  <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
+                    <span>硬件名称</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5" style="background-color: #eebe77;">
+                    <span>硬件状态</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>硬件单价</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>硬件供应商</span>
+                  </div>
                 </div>
-                <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
-                  <span>硬件{{ index }}单价</span>
-                </div>
-                <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
-                  <span>硬件{{ index }}供应商</span>
-                </div>
-              </div>
+              </template>
             </div>
           </div>
           <div class="u-flex u-row-left u-col-center  u-text-center">
-
             <div class="u-width-150 u-border u-height-60"><span>软件名称</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件状态</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件单价</span></div>
@@ -84,38 +101,37 @@
         <template v-if="data.tableData?.length > 0">
           <div>
             <div v-for="(dataItem, dataIndex) in data.tableData" :key="dataIndex"
-                 class="u-flex u-row-left u-col-center u-text-center">
+              class="u-flex u-row-left u-col-center u-text-center">
               <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                 <div class="u-width-150 u-border">
                   <el-input v-model="dataItem.processNumber" style="border: none;"
-                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150 u-border">
                   <el-input v-model="dataItem.processName" style="border: none;"
-                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
               </div>
 
               <div class="u-text-center">
                 <div class="u-flex u-row-left u-col-center  u-text-center">
                   <div v-for="(deviceItem, deviceIndex) in dataItem.listHardware" :key="deviceIndex"
-                       class="u-flex u-row-left u-col-center u-text-center">
+                    class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-200   u-border">
-                      <el-input v-model="deviceItem.hardwareName"
-                                :disabled="data.currentEditProcessIndex != dataIndex" />
+                      <el-input v-model="deviceItem.hardwareName" :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input v-model="deviceItem.hardwareState"
-                                :disabled="data.currentEditProcessIndex != dataIndex" />
+                        :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input-number v-model="deviceItem.hardwarePrice" :min="1" :precision="2"
-                                       :disabled="data.currentEditProcessIndex != dataIndex" :step="0.01" />
+                        :disabled="data.currentEditProcessIndex != dataIndex" :step="0.01" />
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input v-model="deviceItem.hardwareBusiness"
-                                :disabled="data.currentEditProcessIndex != dataIndex" />
+                        :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                   </div>
                 </div>
@@ -124,30 +140,28 @@
               <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwareName" style="border: none;"
-                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwareState" style="border: none;"
-                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwarePrice" style="border: none;"
-                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwareBusiness" style="border: none;"
-                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input v-model="dataItem.lastModifierUserName" style="border: none;"
-                            disabled />
+                  <el-input v-model="dataItem.lastModifierUserName" style="border: none;" disabled />
                 </div>
                 <div class="u-width-200 u-border">
                   <!-- <el-input v-model="dataItem.deviceManageTime"  style="border: none;" /> -->
                   <el-date-picker v-model="dataItem.lastModificationTime" style="width: 200px;"
-                                  :disabled="data.currentEditProcessIndex != dataIndex" type="datetime"
-                                  value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange"
-                                  disabled placeholder="请输入工序维护时间" />
+                    :disabled="data.currentEditProcessIndex != dataIndex" type="datetime"
+                    value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" disabled placeholder="请输入工序维护时间" />
                 </div>
                 <div class="u-width-300 u-border  u-flex u-row-around u-col-center  u-text-center">
                   <template v-if="data.currentEditProcessIndex == dataIndex">
@@ -155,25 +169,28 @@
                       <el-button size="small" @click="cancelEdit(dataIndex, dataItem)">取消</el-button>
                     </div>
                     <div>
-                      <el-button type="primary" @click="saveEdit(dataIndex, dataItem)"
-                                 size="small">保存</el-button>
+                      <el-button type="primary" @click="saveEdit(dataIndex, dataItem)" size="small">保存</el-button>
                     </div>
                   </template>
                   <template v-else>
                     <div class="u-p-t-4 u-p-b-4">
-                      <el-button type="primary" size="small"
-                                 @click="handleEdit(dataIndex, dataItem)">编辑</el-button>
+                      <el-button type="primary" size="small" @click="handleEdit(dataIndex, dataItem)">编辑</el-button>
                     </div>
                   </template>
                   <div class="u-p-t-4 u-p-b-4">
-                    <el-button type="danger" size="small"
-                               @click="handleDelete(dataIndex, dataItem)">删除</el-button>
+                    <el-button type="danger" size="small" @click="handleDelete(dataIndex, dataItem)">删除</el-button>
                   </div>
                 </div>
               </div>
 
             </div>
           </div>
+        </template>
+        <template v-else>
+          <div class="u-text-center u-p-t-20 u-p-b-20"
+                        style="background-color: #f8f8f8;color: #909399;min-width: 2500px;">
+                        <span>暂无数据</span>
+           </div>
         </template>
       </el-scrollbar>
     </div>
@@ -192,15 +209,14 @@
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
-                              :timestamp="formatDateTime(activity.lastModificationTime)">
+              :timestamp="formatDateTime(activity.lastModificationTime)">
               <div class="u-p-10 u-border-bottom u-font-12">
                 <div style="font-weight: bold; color: #909399">
                   <span>版本号：</span>
                   <span>{{ activity.version ? activity.version : '--' }}</span>
                 </div>
                 <div>
-                  <div style="font-weight: bold; color: #909399"
-                       class="u-flex u-row-left u-col-center u-m-t-10">
+                  <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
                     <div>
                       <span>操作人：</span>
                     </div>
@@ -210,8 +226,8 @@
                   </div>
                   <div class="u-m-t-10">
                     <div class="u-m-t-5 u-font-12">
-                      <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2"
-                                type="textarea" placeholder="更新日志记录内容" />
+                      <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2" type="textarea"
+                        placeholder="更新日志记录内容" />
                     </div>
                   </div>
                 </div>
@@ -225,15 +241,15 @@
 </template>
 <script setup lang="ts">
 import { formatDateTime } from "@/utils"
-import { reactive, toRefs, onMounted,ref } from 'vue';
-import {ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, UploadRawFile} from "element-plus"
-import {getListAll,createFoundationHardware,updateFoundationHardware,getFoundationHardwareById,deleteFoundationHardware,uploadAction,exportFoundationFixture} from "@/api/foundationHardware";
+import { reactive, toRefs, onMounted, ref } from 'vue';
+import { ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus"
+import { getListAll, createFoundationHardware, updateFoundationHardware, getFoundationHardwareById, deleteFoundationHardware, uploadAction, exportFoundationFixture } from "@/api/foundationHardware";
 import {
   createFoundationFixture,
   deleteFoundationPFoundationFixture,
   updateFoundationFixture
 } from "@/api/foundationFixtureDto";
-import {getDeviceLog} from "@/api/foundationDeviceDto";
+import { getDeviceLog } from "@/api/foundationDeviceDto";
 interface selectOptionListItem {
   value: string
   label: string
@@ -258,7 +274,7 @@ onMounted(() => {
 })
 
 const initData = async () => {
-  let listResult: any = await getListAll({DeviceName: queryForm.deviceName,softwareName:queryForm.softwareName})
+  let listResult: any = await getListAll({ DeviceName: queryForm.deviceName, softwareName: queryForm.softwareName })
   if (listResult.success) {
     data.tableData = listResult.result
   }
@@ -291,7 +307,7 @@ const addDevice = () => {
     ]
   }
   data.tableData.push(item);
-  currentEditProcessItem= item;
+  currentEditProcessItem = item;
   data.currentEditProcessIndex = data.tableData.length - 1;
 }
 
@@ -350,7 +366,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     })
   }
 }
-const downLoad= async () => {
+const downLoad = async () => {
   const link = document.createElement('a')
   link.href = import.meta.env.VITE_BASE_API + "/Excel/软硬件.xlsx"
   link.download = '软硬件.xlsx'
@@ -452,9 +468,9 @@ const saveEdit = async (index: number, row: any) => {
   }
   //新增
   else if (row.id == -1) {
-    console.log("新增治置",row);
+    console.log("新增治置", row);
     tip = "新增治置";
-    let a ={
+    let a = {
       "processName": row.processName,
       "processNumber": row.processNumber,
       "ListHardware": row.listHardware,
@@ -489,7 +505,7 @@ function handleDelete(index: number, row: any) {
         message: "删除成功"
       })
     })
-    .catch(() => {})
+    .catch(() => { })
 }
 
 //日志更新记录相关

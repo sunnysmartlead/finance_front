@@ -41,7 +41,12 @@
         <el-button type="primary" @click="openPanelPartDialog">板部件以及拼版数量</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">工序工时导入</el-button>
+        <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false" :on-error="uploadErrror"
+          :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction" :limit="1">
+          <template #trigger>
+            <el-button type="primary">工序工时导入</el-button>
+          </template>
+        </el-upload>
       </div>
       <div class="u-m-5">
         <el-button type="primary">工序工时模板下载</el-button>
@@ -111,7 +116,7 @@
             </div>
             <div class="u-flex u-row-left u-col-center  u-text-center">
               <template v-if="dataArr.length > 0 && dataArr[0]?.developCostInfo?.hardwareInfo?.length > 0">
-                <div v-for="index in dataArr[0].developCostInfo.hardwareInfo.length" :key="index" 
+                <div v-for="index in dataArr[0].developCostInfo.hardwareInfo.length" :key="index"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                     <span>硬件设备{{ index }}</span>
@@ -267,27 +272,36 @@
           <div v-for="(dataItem, dataIndex) in dataArr" :key="dataIndex"
             class="u-flex u-row-left u-col-center u-text-center">
             <div class="u-flex u-row-left u-col-center  u-text-center">
-              <div class="u-width-300 u-border  u-flex u-row-left u-col-center  u-text-center">
-                <div class="u-width-150  u-p-t-2 u-p-b-2">
-                  <el-button type="primary" size="small">编辑</el-button>
-                </div>
-                <div class="u-width-150  u-p-t-2 u-p-b-2">
-                  <el-button type="danger" size="small" @click="$emit('delPH', dataIndex)">删除</el-button>
+              <div class="u-width-300 u-flex u-row-around u-col-center u-border u-p-t-2 u-p-b-2">
+                <template v-if="currentEditIndex == dataIndex">
+                  <div class="u-width-100">
+                    <el-button size="small" @click="cancalEdit(dataIndex, dataItem)">取消</el-button>
+                  </div>
+                  <div class="u-width-100">
+                    <el-button type="primary" size="small" @click="handleSave(dataIndex, dataItem)">保存</el-button>
+                  </div>
+                </template>
+                <template v-else class="u-width-100">
+                  <el-button type="primary" size="small" @click="handleEdit(dataIndex, dataItem)">编辑</el-button>
+                </template>
+                <div class="u-width-100">
+                  <el-button size="small" type="danger" @click="handleDel(dataIndex, dataItem)">删除</el-button>
                 </div>
               </div>
+
               <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">
                 <span>{{ dataIndex }}</span>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                  :remote-method="remoteMethod" :loading="processNumberloading">
+                <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
+                  reserve-keyword :remote-method="remoteMethod" :loading="processNumberloading">
                   <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
                     :value="item.value" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                  :remote-method="remoteMethodForProcessName" :loading="processNameLoading">
+                <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
+                  reserve-keyword :remote-method="remoteMethodForProcessName" :loading="processNameLoading">
                   <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
                     :value="item.value" />
                 </el-select>
@@ -299,14 +313,15 @@
                 <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150  u-border">
-                    <el-select v-model="deviceItem.deviceName" filterable remote reserve-keyword
-                      :remote-method="remoteMethodForDeviceName" :loading="deviceNameLoading">
+                    <el-select v-model="deviceItem.deviceName" :disabled="isDisable(dataIndex)" filterable remote
+                      reserve-keyword :remote-method="remoteMethodForDeviceName" :loading="deviceNameLoading">
                       <el-option v-for="item in deviceNameOptions" :key="item.value" :label="item.label"
                         :value="item.value" />
                     </el-select>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input v-model="deviceItem.deviceStatus" class="input-with-select">
+                    <el-input v-model="deviceItem.deviceStatus" :disabled="isDisable(dataIndex)"
+                      class="input-with-select">
                       <template #append>
                         <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width:75px">
                           <el-option label="正常" value="正常" />
@@ -316,12 +331,12 @@
                     </el-input>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="deviceItem.deviceNumber" :min="1"
+                    <el-input-number v-model="deviceItem.deviceNumber" :min="1" :disabled="isDisable(dataIndex)"
                       @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                   <div class="u-width-150  u-border">
                     <el-input-number v-model="deviceItem.devicePrice" :precision="2" :step="0.01"
-                      @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
+                      :disabled="isDisable(dataIndex)" @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                 </div>
                 <div class="u-width-150  u-border   u-p-t-5 u-p-b-5">
@@ -335,23 +350,25 @@
                 <div v-for="(hardInfo, hardIndex) in dataItem.developCostInfo.hardwareInfo" :key="hardIndex"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150  u-border">
-                    <el-select v-model="hardInfo.hardwareDeviceName" filterable remote reserve-keyword
-                      :remote-method="remoteMethodForHardwareDeviceName" :loading="hardwareDeviceNameLoading">
+                    <el-select v-model="hardInfo.hardwareDeviceName" :disabled="isDisable(dataIndex)" filterable remote
+                      reserve-keyword :remote-method="remoteMethodForHardwareDeviceName"
+                      :loading="hardwareDeviceNameLoading">
                       <el-option v-for="item in hardwareDeviceNameOptions" :key="item.value" :label="item.label"
                         :value="item.value" />
                     </el-select>
                   </div>
                   <div class="u-border u-width-150">
-                    <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="1"  
+                    <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="1" :disabled="isDisable(dataIndex)"
                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                   <div class="u-border u-width-150">
                     <el-input-number v-model="hardInfo.hardwareDevicePrice" :precision="2" :step="0.01"
+                      :disabled="isDisable(dataIndex)"
                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                   {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(2) }}
+                  {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(2) }}
                 </div>
                 <!-- <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.developCostInfo.zhuiSuSoft }}</span>
@@ -360,9 +377,9 @@
                   <span>{{ dataItem.developCostInfo.developCost_zhuisu }}</span>
                 </div> -->
                 <div class="u-width-150  u-border">
-                  <el-select v-model="dataItem.developCostInfo.openDrawingSoftware" filterable remote reserve-keyword
-                    @change="kaiTuChange($event, dataIndex)" :remote-method="remoteMethodForKaiTuName"
-                    :loading="kaiTuNameLoading">
+                  <el-select v-model="dataItem.developCostInfo.openDrawingSoftware" :disabled="isDisable(dataIndex)"
+                    filterable remote reserve-keyword @change="kaiTuChange($event, dataIndex)"
+                    :remote-method="remoteMethodForKaiTuName" :loading="kaiTuNameLoading">
                     <el-option v-for="item in kaiTuNameOptions" :key="item.value" :label="item.label"
                       :value="item.value" />
                   </el-select>
@@ -382,31 +399,31 @@
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150  u-border">
                     <el-select v-model="zhiju.fixtureName" filterable remote reserve-keyword
-                      :remote-method="remoteMethodForZhiJuName" @change="fixtureNameChange($event, dataIndex, zhijuindex)"
-                      :loading="fixtureNameLoading">
+                      :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhiJuName"
+                      @change="fixtureNameChange($event, dataIndex, zhijuindex)" :loading="fixtureNameLoading">
                       <el-option v-for="item in fixtureNameOptions" :key="item.value" :label="item.label"
                         :value="item.value" />
                     </el-select>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="zhiju.zhiJuCount" :min="1"
+                    <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
                       @change="handleZhiJuCountChange($event, dataIndex, zhijuindex)" />
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="zhiju.zhiJuPrice" :precision="2" :step="0.01" disabled
+                    <el-input-number v-model="zhiju.fixturePrice" :precision="2" :step="0.01" disabled
                       @change="handleZhiJuCountChange($event, dataIndex, zhijuindex)" />
                   </div>
                 </div>
                 <div class="u-width-150  u-border">
                   <el-select v-model="dataItem.toolInfo.fixtureName" filterable remote reserve-keyword
-                    :remote-method="remoteMethodForJianJuName" @change="jianJuNameChange($event, dataIndex)"
-                    :loading="jianJuNameLoading">
+                    :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForJianJuName"
+                    @change="jianJuNameChange($event, dataIndex)" :loading="jianJuNameLoading">
                     <el-option v-for="item in jianJuNameOptions" :key="item.value" :label="item.label"
                       :value="item.value" />
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="1"
+                  <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
                     @change="handleJianJuCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150  u-border u-p-t-5 u-p-b-5">
@@ -415,14 +432,14 @@
 
                 <div class="u-width-150  u-border">
                   <el-select v-model="dataItem.toolInfo.frockName" filterable remote reserve-keyword
-                    :remote-method="remoteMethodForGongZhuangName" @change="gongZhuangNameChange($event, dataIndex)"
-                    :loading="gongZhuangNameLoading">
+                    :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForGongZhuangName"
+                    @change="gongZhuangNameChange($event, dataIndex)" :loading="gongZhuangNameLoading">
                     <el-option v-for="item in gongZhuangNameOptions" :key="item.value" :label="item.label"
                       :value="item.value" />
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="1"
+                  <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="1" :disabled="isDisable(dataIndex)"
                     @change="handleGongZhuangCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150  u-border u-p-t-5 u-p-b-5">
@@ -431,14 +448,14 @@
 
                 <div class="u-width-150  u-border">
                   <el-select v-model="dataItem.toolInfo.testLineName" filterable remote reserve-keyword
-                    :remote-method="remoteMethodForTestLineName" @change="testLineNameChange($event, dataIndex)"
-                    :loading="testLineNameLoading">
+                    :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForTestLineName"
+                    @change="testLineNameChange($event, dataIndex)" :loading="testLineNameLoading">
                     <el-option v-for="item in testLineNameOptions" :key="item.value" :label="item.label"
                       :value="item.value" />
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="1"
+                  <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="1" :disabled="isDisable(dataIndex)"
                     @change="handleTestLineCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
@@ -456,19 +473,20 @@
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" />
+                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="1" />
+                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="1"
+                        :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="1" />
+                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="1"
+                        :disabled="isDisable(dataIndex)" />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </template>
       </el-scrollbar>
@@ -621,7 +639,8 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox, genFileId } from "element-plus"
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import {
   GetListAll, getProcessHourDetail, handleCreate,
   handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog
@@ -646,10 +665,161 @@ const options = [
     label: '侧视-方案二',
   },
 ]
-const dataArr = ref([])
+
+const tempData: any = {
+  "id": 0,
+  "processName": "名称",
+  "processNumber": "编号",
+  "auditFlowId": 100,
+  "solutionId": 100,
+  "deviceInfo": {
+    "deviceTotalCost": 0,
+    "deviceArr": [
+      {
+        "deviceName": "设备1",
+        "deviceNumber": 0,
+        "devicePrice": 0,
+        "deviceStatus": ""
+      },
+      {
+        "deviceName": "设备2",
+        "deviceNumber": 0,
+        "devicePrice": 0,
+        "deviceStatus": ""
+      },
+      {
+        "deviceName": "设备3",
+        "deviceNumber": 0,
+        "devicePrice": 0,
+        "deviceStatus": ""
+      }
+    ]
+  },
+  "developCostInfo": {
+    "openDrawingSoftware": "",
+    "hardwareDeviceTotalPrice": 0,
+    "hardwareInfo": [
+      {
+        "hardwareDeviceName": "硬件1",
+        "hardwareDeviceNumber": 0,
+        "hardwareDevicePrice": 0
+      },
+      {
+        "hardwareDeviceName": "硬件2",
+        "hardwareDeviceNumber": 0,
+        "hardwareDevicePrice": 0
+      }
+    ],
+    "hardwareTotalPrice": 0,
+    "softwarePrice": 0
+  },
+  "toolInfo": {
+    "zhiJuArr": [
+      {
+        "fixtureName": "治具1",
+        "fixtureNumber": 0,
+        "fixturePrice": 0
+      }, {
+        "fixtureName": "治具2",
+        "fixtureNumber": 0,
+        "fixturePrice": 0
+      }
+    ],
+    "fixtureName": "检具名称",
+    "fixtureNumber": 0,
+    "fixturePrice": 0,
+    "frockName": "工装名称",
+    "frockNumber": 0,
+    "frockPrice": 0,
+    "testLineName": "测试线",
+    "testLineNumber": 0,
+    "testLinePrice": 0,
+    "developTotalPrice": 0
+  },
+  "sopInfo": [
+    {
+      "id": 0,
+      "issues": [
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        },
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        },
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        }
+      ],
+      "year": "2023"
+    },
+    {
+      "id": 0,
+      "issues": [
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        },
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        },
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        }
+      ],
+      "year": "2024"
+    },
+    {
+      "id": 0,
+      "issues": [
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        },
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        },
+        {
+
+          "laborHour": 0,
+          "machineHour": 0,
+          "personnelNumber": 0
+        }
+      ],
+      "year": "2025"
+    }
+  ]
+}
+const dataArr = ref<any>([])
+
+const currentEditIndex = ref<number>()
+let currentEditItem: any = null;
+const addFlag = ref(false);
+
+
 const UPHData = reactive([])
 const lineData = reactive([])
-
 onMounted(() => {
   // console.log('数据结构',JSON.stringify(dataArr));
   getUPHData();
@@ -657,8 +827,9 @@ onMounted(() => {
   initData();
 })
 
-
 const initData = () => {
+  addFlag.value = false;
+  currentEditIndex.value = -1;
   getTableData()
 }
 
@@ -681,15 +852,130 @@ const getTableData = async () => {
   })
 }
 
-
-//新增工序
-const addPH = () => {
-  dataArr.value.push(dataArr.value[dataArr.value.length - 1]);
-  console.log("新增工序", dataArr.value.length);
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
 }
-//删除工序
-const delPH = (index: number) => {
-  console.log("====删除下标===", index);
+
+const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+  console.log("responese", response);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  if (response.result) {
+    initData()
+    ElMessage({
+      type: 'success',
+      message: '导入成功',
+    })
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '导入失败',
+    })
+  }
+}
+const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
+  console.log("error", error);
+  console.log("uploadFile", uploadFile);
+  console.log("uploadFiles", uploadFiles);
+  ElMessage({
+    type: 'error',
+    message: '导入失败',
+  })
+}
+
+
+//新增工序(新增的时候旧的记录作为模板,需要将数据复原)
+const addPH = () => {
+  if (addFlag.value == true) {
+    ElMessage({
+      type: 'warning',
+      message: '您有新的记录尚未保存'
+    })
+    return;
+  } else {
+    let size = dataArr.value.length;
+    if (size > 0) {
+      let item = JSON.parse(JSON.stringify(dataArr.value[size - 1]));
+      item.id = 0;
+      dataArr.value.push(item);
+    }
+    else {
+      dataArr.value.push(tempData);
+    }
+    addFlag.value = true;
+    currentEditIndex.value = dataArr.value.length - 1;
+  }
+}
+
+//保存
+const handleSave = (index: number, row: any) => {
+  let param = JSON.parse(JSON.stringify(row))
+  let id = row.id;
+  if (row.id && row.id != 0) {
+    console.log("保存修改")
+    handleUpdate(param).then((response: any) => {
+      console.log("修改响应", response);
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '修改成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '编辑保存失败'
+        })
+      }
+    })
+  }
+  //新增
+  else {
+    console.log("保存新增")
+    handleCreate(param).then((response: any) => {
+      console.log("新增响应", response);
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '保存成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '新增失败'
+        })
+      }
+    })
+  }
+}
+//取消保存
+const cancalEdit = (index: number, row: any) => {
+  currentEditIndex.value = -1;
+  if (addFlag.value == true) {
+    console.log("取消新增");
+    dataArr.value.splice(index);
+    addFlag.value = false;
+  } else {
+    console.log("取消修改");
+    dataArr.value[index] = currentEditItem;
+  }
+}
+
+//开启编辑
+const handleEdit = (index: number, row: any) => {
+  console.log(index, row);
+  currentEditIndex.value = index;
+  currentEditItem = JSON.parse(JSON.stringify(row))
+}
+
+//删除
+const handleDel = (index: number, row: any) => {
+  console.log(index, row);
   if (dataArr.value.length < 2) {
     ElMessage({
       type: "warning",
@@ -702,9 +988,24 @@ const delPH = (index: number) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    dataArr.value.splice(index);
+    handleDelete(row.id).then((response: any) => {
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '删除失败'
+        })
+      }
+    })
   })
 }
+
+
 
 //-------------------------工序序号代码块代码块------------------------------
 interface processNumberListItem {
@@ -923,7 +1224,7 @@ const getZhiJuName = (keyWord: String) => {
 const fixtureNameChange = (zhiju: any, dataIndex: number, zhiJuIndex: number) => {
   console.log("第" + dataIndex + "工序的第" + zhiJuIndex + "个的治具名称发生了变化" + zhiju);
   //模拟后台查询此治具的单价
-  dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].zhiJuPrice = Number(random(1000));
+  dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].fixturePrice = Number(random(1000));
   //这里还要计算总价
 }
 //治具数量变化监听
@@ -1074,7 +1375,7 @@ const calToolTotalCost = (dataIndex: number) => {
   let jzCost = Number(jzCount) * Number(jzPrice);
   let zhiJuCost = 0.00;
   toolInfo.zhiJuArr.forEach((item) => {
-    zhiJuCost = zhiJuCost + Number(item.zhiJuCount) * Number(item.zhiJuPrice);
+    zhiJuCost = zhiJuCost + Number(item.fixtureNumber) * Number(item.fixturePrice);
   })
   developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost;
   return developTotalPrice;
@@ -1304,6 +1605,14 @@ const openPanelPartDialog = () => {
 }
 //---------------------------板部件弹窗代码块 end-----------
 
+
+
+const isDisable = (index: number) => {
+  if (currentEditIndex.value == index) {
+    return false;
+  }
+  return true;
+}
 
 </script>
 

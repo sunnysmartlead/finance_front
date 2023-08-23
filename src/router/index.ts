@@ -627,7 +627,6 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       {
         path: "/processHoursExport/processLib",
         component: () => import("@/views/processHoursExport/processLib.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
         name: "processLib",
         meta: {
           title: "工序库"

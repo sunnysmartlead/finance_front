@@ -2,7 +2,6 @@
   <div style="padding: 0 10px">
     <!-- <VertifyBox :onSubmit="handleVertify" /> -->
     <ProcessVertifyBox :onSubmit="handleVertify" />
-
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -25,6 +24,7 @@
             <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
               >查看设计方案</el-button
             >
+            <el-button type="primary" @click="handleDownLoadExcel" m="2">环境试验费模板下载</el-button>
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">试验项目导出</el-button>
             <el-button v-if="!isVertify" type="primary" @click="addExperimentItemsData" m="2" v-havedone>
               新增
@@ -117,7 +117,8 @@ import {
   PostExperimentItems,
   GetReturnExperimentItems,
   GetFoundationreliableList,
-  GetExportOfEnvironmentalExperimentFeeForm
+  GetExportOfEnvironmentalExperimentFeeForm,
+  PostExperimentItemsSingleDownloadExcel
 } from "../../common/request"
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile } from "element-plus"

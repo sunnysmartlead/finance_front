@@ -1,5 +1,11 @@
 <template>
   <div class="demand-apply">
+    <div class="demand-apply_row">
+      <el-row :gutter="12">
+        <el-button @click="submit(0)">保存</el-button>
+        <el-button type="success" @click="submit(1)">提交</el-button>
+      </el-row>
+    </div>
     <div>
       <el-row class="demand-apply__card">
         <el-button type="danger" @click="submit(1)">退回</el-button>
@@ -321,13 +327,6 @@
         </el-col>
       </el-row>
     </el-card>
-    <div class="demand-apply_row">
-      <el-row :gutter="12">
-        <el-button @click="submit(0)">保存</el-button>
-        <el-button type="success" @click="submit(1)">提交</el-button>
-      </el-row>
-    </div>
-    <h5 />
   </div>
 </template>
 <script lang="ts" setup>
@@ -410,13 +409,11 @@ onMounted(async () => {
         designSolution.value.forEach((p: DesignSolutionDto) => {
           if (p.solutionName == item.product) {
             p.uuid = item.id
-            p.solutionId=item.id
           }
         })
         if (!designSchemeIsNull) {
           let pro = {
             uuid: item.id,
-            solutionId:item.id,
             solutionName: "",
             sensor: "",
             serial: "",
@@ -509,7 +506,6 @@ const addScheme = (item: SolutionTableDto[]) => {
 
   let pro: DesignSolutionDto = {
     uuid: id,
-    solutionId:id,
     solutionName: "",
     sensor: "",
     serial: "",
@@ -626,7 +622,6 @@ watch(
       designSolution.value.forEach((p: DesignSolutionDto) => {
         if (p.uuid == item.id) {
           p.solutionName = item.product
-          p.solutionId=item.id
         }
       })
     })

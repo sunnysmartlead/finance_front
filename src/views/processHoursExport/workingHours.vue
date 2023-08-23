@@ -34,9 +34,9 @@
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-      <el-scrollbar wrap-style="padding:10px 0px" always :max-height="500">
+      <el-scrollbar wrap-style="padding:0px 0px 10px 0px" always :max-height="600">
         <!-- 头部区 -->
-        <div class="u-flex u-row-left u-col-center u-text-center">
+        <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
           <div class="u-flex u-row-left u-col-center  u-text-center">
             <div class="u-width-100  u-border u-height-60"><span>序号</span></div>
             <div style="background-color: #f29100;" class="u-width-150 u-border u-height-60"><span>工序编号</span></div>

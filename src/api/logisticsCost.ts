@@ -23,3 +23,19 @@ export function createProcess(data:any) {
     })
   }
 
+/** 列表 */
+export function GetGradientllodelYearByProductId(data: QueryParams) {
+  return request({
+    url: "/api/services/app/DataInput/GetGradientModelYearByProductId",
+    method: "get",
+    data
+  })
+}
+
+export function GetGradientByAuditFlowId (data: QueryParams) {
+  return request({
+    url: "/api/services/app/DataInput/GetGradientByAuditFlowId",
+    method: "get",
+    data
+  })
+}

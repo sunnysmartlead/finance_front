@@ -29,13 +29,13 @@
 
       <div>
         <el-button type="primary"  @click="submitExportProcess">工序库导出</el-button>
-        <el-button type="primary" @click="downLoad" >工序库模板下载</el-button>
+        <el-button type="primary" @click="submitSearch">工序库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
         <div>
-          <el-table :data="tableData" style="width: 100%" border>
+          <el-table :data="tableData" style="width: 100%" border max-height="600">
             <el-table-column label="序号" type="index" width="180" align="center" />
             <el-table-column label="工序编号" align="center">
               <template #default="scope">
@@ -98,15 +98,15 @@
 
     <div v-if="baseLibLogRecords.length>0"
         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-      <el-scrollbar :min-size="10">
-        <div class="u-flex u-row-between u-col-center u-p-r-20">
-          <div>日志更新记录：</div>
-          <div>
-            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-            <el-button v-else @click="editLogFlag = false">取消</el-button>
-            <el-button type="primary" @click="saveLog">保存</el-button>
-          </div>
+      <div class="u-flex u-row-between u-col-center">
+        <div>日志更新记录：</div>
+        <div>
+          <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+          <el-button v-else @click="editLogFlag = false">取消</el-button>
+          <el-button type="primary" @click="saveLog">保存</el-button>
         </div>
+      </div>
+      <el-scrollbar :min-size="10" max-height="600px">
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top"
@@ -205,14 +205,6 @@ const getProcessList = async () => {
 const submitSearch = () => {
   console.log('submitSearch!')
   getProcessList()
-}
-const downLoad= async () => {
-  const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "Excel/工序库导入.xlsx"
-  link.download = '工序库.xlsx'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
 }
 
 const upload = ref<UploadInstance>()

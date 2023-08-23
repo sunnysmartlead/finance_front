@@ -123,6 +123,11 @@
             <el-input v-model="row.mcu" placeholder="请录入MCU" />
           </template>
         </el-table-column>
+        <el-table-column prop="connector" label="连接器" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.connector" placeholder="请录入连接器" />
+          </template>
+        </el-table-column>
         <el-table-column prop="harness" label="线束" width="150">
           <template #default="{ row }">
             <el-input v-model="row.harness" placeholder="请录入线束" />
@@ -182,20 +187,20 @@
         <el-form-item label="工程技术部-工序工时录入员">
           <SearchDepartMentPerson v-model="state.quoteForm.engineerId" roleName="工程技术部-工序工时录入员" />
         </el-form-item>
-        <el-form-item label="品质保证部-实验费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.qualityBenchId" roleName="品质保证部-实验费用录入员" />
+        <el-form-item label="品质保证部-环境实验费录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.qualityBenchId" roleName="品质保证部-环境实验费录入员" />
         </el-form-item>
-        <el-form-item label="产品开发部-EMC实验费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.emcId" roleName="产品开发部-EMC实验费用录入员" />
+        <el-form-item label="产品开发部-EMC+电性能实验费录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.emcId" roleName="产品开发部-EMC+电性能实验费录入员" />
         </el-form-item>
-        <el-form-item label="财务部-制造费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.productCostInputId" roleName="财务部-制造费用录入员" />
+        <el-form-item label="财务部-制造成本录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.productCostInputId" roleName="财务部-制造成本录入员" />
         </el-form-item>
-        <el-form-item label="生产管理部-物流费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流费用录入员" />
+        <el-form-item label="生产管理部-物流成本录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流成本录入员" />
         </el-form-item>
         <el-form-item label="项目核价审核员">
-          <SearchDepartMentPerson v-model="state.quoteForm.auditId" roleName="项目核价审核员" />
+          <SearchDepartMentPerson v-model="state.quoteForm.auditId" :roleName="['市场部-项目课长','项目管理部-项目课长']" />
         </el-form-item>
       </el-form>
     </el-card>

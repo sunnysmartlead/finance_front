@@ -1,0 +1,252 @@
+.hidden-scroll-bar{
+    ::-webkit-scrollbar{
+      display: none !important;
+      height: 0px  !important;
+      width: 0px !important;
+    }
+  }
+
+
+  /* start--去除webkit的默认样式--start */
+  .u-fix-ios-appearance {
+    -webkit-appearance:none;
+  }
+  /* end--去除webkit的默认样式--end */
+
+  /* start--icon图标外层套一个view，让其达到更好的垂直居中的效果--start */
+  .u-icon-wrap {
+    display: flex;
+    align-items: center;
+  }
+  /* end-icon图标外层套一个view，让其达到更好的垂直居中的效果--end */
+
+
+  /* start--各种hover点击反馈相关的类名-start */
+  .u-hover-class {
+    // background-color: #f7f8f9!important;
+    opacity: 0.6;
+  }
+
+  .u-cell-hover {
+    background-color: #f7f8f9!important;
+  }
+  /* end--各种hover点击反馈相关的类名--end */
+
+  /* start--文本行数限制--start */
+  .u-line-1 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .u-line-2 {
+    -webkit-line-clamp: 2;
+  }
+
+  .u-line-3 {
+    -webkit-line-clamp: 3;
+  }
+
+  .u-line-4 {
+    -webkit-line-clamp: 4;
+  }
+
+  .u-line-5 {
+    -webkit-line-clamp: 5;
+  }
+
+  .u-line-2, .u-line-3, .u-line-4, .u-line-5 {
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box; // 弹性伸缩盒
+    -webkit-box-orient: vertical; // 设置伸缩盒子元素排列方式
+  }
+
+
+
+  /* start--去除button的所有默认样式--start */
+  .u-reset-button {
+    padding: 0;
+    font-size: inherit;
+    line-height: inherit;
+    background-color: transparent;
+    color: inherit;
+  }
+
+  .u-reset-button::after {
+    border: none;
+  }
+  /* end--去除button的所有默认样式--end */
+
+  .u-relative,
+  .u-rela {
+    position: relative;
+  }
+
+  .u-absolute,
+  .u-abso {
+    position: absolute;
+  }
+
+
+  .u-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .u-flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  .u-flex-nowrap {
+    flex-wrap: nowrap;
+  }
+
+  .u-col-center {
+    align-items: center;
+  }
+
+  .u-col-top {
+    align-items: flex-start;
+  }
+
+  .u-col-bottom {
+    align-items: flex-end;
+  }
+
+  .u-row-center {
+    justify-content: center;
+  }
+
+  .u-row-left {
+    justify-content: flex-start;
+  }
+
+  .u-row-right {
+    justify-content: flex-end;
+  }
+
+  .u-row-between {
+    justify-content: space-between;
+  }
+
+  .u-row-around {
+    justify-content: space-around;
+  }
+
+  .u-text-left {
+    text-align: left;
+  }
+
+  .u-text-center {
+    text-align: center;
+  }
+
+  .u-text-right {
+    text-align: right;
+  }
+
+  .u-flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 定义flex等分
+  @for $i from 0 through 12 {
+    .u-flex-#{$i} {
+      flex: $i;
+    }
+  }
+
+  // 定义字体(px)单位，小于20都为px单位字体
+  @for $i from 9 to 20 {
+    .u-font-#{$i} {
+      font-size: $i + px;
+    }
+  }
+
+  // 定义字体(px)单位，大于或等于20的都为px单位字体
+  @for $i from 20 through 40 {
+    .u-font-#{$i} {
+      font-size: $i + px;
+    }
+  }
+
+  // 定义内外边距，历遍1-80
+  @for $i from 0 through 80 {
+    // 只要双数和能被5除尽的数
+    @if $i % 2 == 0 or $i % 5 == 0 {
+      // 得出：u-margin-30或者u-m-30
+      .u-margin-#{$i}, .u-m-#{$i} {
+        margin: $i + px!important;
+      }
+
+      // 得出：u-padding-30或者u-p-30
+      .u-padding-#{$i}, .u-p-#{$i} {
+        padding: $i + px!important;
+      }
+
+      @each $short, $long in l left, t top, r right, b bottom {
+        // 缩写版，结果如： u-m-l-30
+        // 定义外边距
+        .u-m-#{$short}-#{$i} {
+          margin-#{$long}: $i + px!important;
+        }
+
+        // 定义内边距
+        .u-p-#{$short}-#{$i} {
+          padding-#{$long}: $i + px!important;
+        }
+
+        // 完整版，结果如：u-margin-left-30
+        // 定义外边距
+        .u-margin-#{$long}-#{$i} {
+          margin-#{$long}: $i + px!important;
+        }
+
+        // 定义内边距
+        .u-padding-#{$long}-#{$i} {
+          padding-#{$long}: $i + px!important;
+        }
+      }
+    }
+  }
+
+  // 重置nvue的默认关于flex的样式
+  .u-reset-nvue {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .test-border{
+    border: 1px solid red;
+  }
+
+
+  .u-border{
+    border: 1px solid #DCDFE6;
+  }
+
+  .u-border-top{
+    border-top: 1px solid #E4E7ED;
+  }
+
+  .u-border-bottom{
+    border-bottom: 1px solid #DCDFE6;
+  }
+
+  // 宽度
+  @for $i from 100 through 1000 {
+    .u-width-#{$i} {
+       width: $i + px !important;
+    }
+  }
+
+  @for $i from 10 through 100 {
+    .u-height-#{$i} {
+       height: $i + px !important;
+       line-height: $i + px !important;
+    }
+  }

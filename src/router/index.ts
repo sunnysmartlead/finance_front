@@ -83,7 +83,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/demandApplyAudit/index.vue"),
         name: "demandApplyAudit",
         meta: {
-          title: "营销部审核"
+          title: "核价需求审核&方案录入"
         }
       },
       {

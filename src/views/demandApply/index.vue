@@ -487,9 +487,9 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="市场份额" prop="marketShare" width="180" />
+            <!-- <el-table-column label="市场份额" prop="marketShare" width="180" />
             <el-table-column label="模组搭载率" prop="moduleCarryingRate" width="180" />
-            <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" />
+            <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" /> -->
             <el-table-column
               :label="year + yearNote(index)"
               v-for="(year, index) in state.yearCols"
@@ -507,7 +507,7 @@
         <h6 />
         <el-card>
           <el-form-item label="是否分梯度核价：">
-            <el-select v-model="state.quoteForm.isHasGradient" placeholder="是否包含样品核价" :disabled="isDisabled">
+            <el-select v-model="state.quoteForm.isHasGradient" placeholder="是否分梯度核价" :disabled="isDisabled">
               <el-option :value="true" label="是" />
               <el-option :value="false" label="否" />
             </el-select>
@@ -1135,7 +1135,6 @@
           </el-table-column>
           <el-table-column prop="汇率" label="汇率">
             <template #default="{ row }">
-              <!-- <el-text class="mx-1" size="large">{{ row.exchangeRate }}</el-text> -->
               <el-input v-model="row.exchangeRate" :disabled="isDisabled" />
             </template>
           </el-table-column>
@@ -2429,15 +2428,29 @@ const setNumber = () => {
 
 const cableTypeSelectChange = (val: any, index: number) => {
   state.ExchangeSelectOptions.forEach((item: any) => {
-    if (item.id === val) {
-      item.exchangeRateValue.forEach((yearItem: any) => {
-        if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          customerTargetPrice.value[index].exchangeRate = yearItem.value
-        }
-      })
+    if (index === 0) {
+      if (item.id === val) {
+        item.exchangeRateValue.forEach((yearItem: any) => {
+          if (yearItem.year === Number(state.quoteForm.sopTime)) {
+            customerTargetPrice.value.forEach((item: any) => {
+              item.currency = val
+              item.exchangeRate = yearItem.value
+            })
+          }
+        })
+      }
+    } else {
+      if (item.id === val) {
+        item.exchangeRateValue.forEach((yearItem: any) => {
+          if (yearItem.year === Number(state.quoteForm.sopTime)) {
+            customerTargetPrice.value[index].exchangeRate = yearItem.value
+          }
+        })
+      }
     }
   })
 }
+
 const SensorChange = (val: any, index: number) => {
   state.ExchangeSelectOptions.forEach((item: any) => {
     if (item.id === val) {

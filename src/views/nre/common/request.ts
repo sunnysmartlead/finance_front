@@ -373,3 +373,13 @@ export function OtherExpenseModificationItemsAdded(data: any): any {
     data
   })
 }
+
+// nre环境实验费excel下载
+export function PostExperimentItemsSingleDownloadExcel(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/PostExperimentItemsSingleDownloadExcel",
+    method: "post",
+    data,
+    responseType: "blob"
+  })
+}

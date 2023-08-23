@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 0 10px">
-    <VertifyBox :onSubmit="handleVertify" />
+    <VertifyBox :onSubmit="handleVertify" v-if="isVertify" />
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -23,6 +23,7 @@
             <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
               >查看设计方案</el-button
             >
+            <el-button type="primary" @click="handleDownLoadExcel" m="2">环境试验费模板下载</el-button>
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">试验项目导出</el-button>
             <el-button v-if="!isVertify" type="primary" @click="addExperimentItemsData" m="2" v-havedone>
               新增
@@ -115,7 +116,8 @@ import {
   PostExperimentItems,
   GetReturnExperimentItems,
   GetFoundationreliableList,
-  GetExportOfEnvironmentalExperimentFeeForm
+  GetExportOfEnvironmentalExperimentFeeForm,
+  PostExperimentItemsSingleDownloadExcel
 } from "../../common/request"
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile } from "element-plus"
@@ -253,6 +255,19 @@ const handleChangeData = (row: any, i: number) => {
 // 审核
 const handleVertify = () => {
 
+}
+
+// 下载excel
+const handleDownLoadExcel = async () => {
+  try {
+    const res: any = await PostExperimentItemsSingleDownloadExcel({
+      auditFlowId,
+      solutionId: productId
+    })
+    downloadFileExcel(res, "环境试验费模板")
+  } catch (err: any) {
+    console.log(err, "[ 环境试验费模板 失败 ]")
+  }
 }
 
 onBeforeMount(() => {

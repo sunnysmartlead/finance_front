@@ -123,6 +123,11 @@
             <el-input v-model="row.mcu" placeholder="请录入MCU" />
           </template>
         </el-table-column>
+        <el-table-column prop="connector" label="连接器" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.connector" placeholder="请录入连接器" />
+          </template>
+        </el-table-column>
         <el-table-column prop="harness" label="线束" width="150">
           <template #default="{ row }">
             <el-input v-model="row.harness" placeholder="请录入线束" />

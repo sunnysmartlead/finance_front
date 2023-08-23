@@ -2,12 +2,13 @@
   <div class="bomView">
     <CustomerSpecificity />
     <div class="bomView__btn">
-      <TrDownLoad />
-      <ProductInfo :auditFlowId="data.auditFlowId" />
-      <ThreeDImage style="margin-left: 30px" />
-      <LogisticsInfo style="margin-left: 30px" />
+      <ProductInfo :auditFlowId="data.auditFlowId" m="2" />
+      <ThreeDImage m="2" />
+      <TrView />
+      <LogisticsInfo m="2" />
     </div>
-    <div class="bomView__child">
+    <el-card class="bomView__child">
+      <el-button type="primary" @click="filterTableData">筛选涉及项</el-button>
       <h4>结构料</h4>
       <!-- <el-button type="primary" @click="jumpToImport(2)" style="float: right; margin: 10px 0">结构料导入</el-button> -->
       <el-table :data="data.structuralData" border style="width: 100%" height="500">
@@ -30,21 +31,21 @@
         <el-button type="primary" @click="agree(2, true)" v-havedone>同意</el-button>
         <el-button @click="agree(2, false)" type="danger" v-havedone>拒绝</el-button>
       </div>
-    </div>
+    </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, toRefs, onBeforeMount, onMounted, watchEffect } from "vue"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
-import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import ProductInfo from "@/components/ProductInfo/index.vue"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import LogisticsInfo from "@/components/LogisticsInfo/index.vue"
+import TrView from "@/components/TrView/index.vue"
 
 import { GetStructionBom, SetBomState } from "@/api/bom"
 import { ElMessage, ElMessageBox } from "element-plus"
-
+import { sortBy } from "lodash"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 
@@ -66,8 +67,10 @@ const { auditFlowId, productId }: any = getQuery()
 const data = reactive({
   electronicData: [],
   structuralData: [],
-  auditFlowId: auditFlowId
+  auditFlowId: auditFlowId,
+  isFilter: false
 })
+
 // const jumpToImport = (type: number) => {
 //   if (type === 1) {
 //     router.push({
@@ -99,6 +102,15 @@ const agree = async (bomCheckType: number, isAgree: boolean) => {
     }
   })
 }
+
+const filterTableData = () => {
+  data.isFilter = !data.isFilter
+  console.log(data.isFilter, "data.isFilter")
+  data.structuralData = sortBy(data.structuralData, (item) => {
+    return item.isInvolveItem === (data.isFilter ? "否" : "是")
+  })
+}
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

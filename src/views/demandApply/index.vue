@@ -1929,32 +1929,7 @@ watch(
   }
 )
 
-//同步产品名称
-// watch(
-//   moduleTableData,
-//   (val) => {
-//     val.forEach((item: any, index: any) => {
-//       // 同步带入下面表格的名称
-//       productTableData.value[index].name = item.product
-//       productTableData.value[index].product = item.product
-//       moduleTableData.value.forEach((row: any) => {
-//         row.modelCountYearList.forEach((item: any, index: any) => {
-//           if (row.marketShare && row.moduleCarryingRate && row.singleCarProductsQuantity && state.sumArr[index]) {
-//             item.quantity = Math.round(
-//               (row.marketShare * row.moduleCarryingRate * row.singleCarProductsQuantity * state.sumArr[index]) / 10000
-//             )
-//           }
-//         })
-//       })
-//       if (item.marketShare && item.moduleCarryingRate && item.singleCarProductsQuantity && state.carAnnualTotal) {
-//         item.modelTotal = Math.round(
-//           (item.marketShare * item.moduleCarryingRate * item.singleCarProductsQuantity * state.carAnnualTotal) / 10000
-//         )
-//       }
-//     })
-//   },
-//   { deep: true }
-// )
+
 //监听终端走量同步内部评估后的终端走量
 watch(
   () => [pcsTableData.value, state.quoteForm.kValue],
@@ -1994,27 +1969,9 @@ watch(
         })
       })
     })
-    // console.log(moduleTableDataV2.value, "[rowOneDatarowOneData]")
   },
   { deep: true }
 )
-
-//系数
-// watch(
-//   () => state.quoteForm.kValue,
-//   (val) => {
-//     pcsTableData.value.forEach((item: any, index: number) => {
-//       let itemNew = JSON.parse(JSON.stringify(item))
-//       // itemNew.kv = item.kv * val
-//       itemNew.pcsType = 1
-//       itemNew.pcsYearList.forEach((pro: any) => {
-//         pro.quantity = Math.floor(pro.quantity * val)
-//       })
-//       interiorPcsTableData.value[index] = itemNew
-//     })
-//   },
-//   { deep: true }
-// )
 
 //监听终端走量的车型
 watch(
@@ -2055,19 +2012,6 @@ watch(
   },
   { deep: true }
 )
-//监听产品信息第一行
-// watch(
-//   () => customerTargetPrice.value[0],
-//   (val) => {
-//     customerTargetPrice.value.forEach((item: any, index: number) => {
-//       if (index) {
-//         item.currency = val.currency
-//         item.exchangeRate = val.exchangeRate
-//       }
-//     })
-//   },
-//   { deep: true }
-// )
 
 watch(
   () => [state.quoteForm.isHasGradient, moduleTableTotal.value],
@@ -2150,6 +2094,56 @@ watch(
       count: shareCountTable.value?.[index]?.count || 0,
       name: item.product
     })).filter((c) => !!c.name)
+  }
+)
+
+watch(
+  () => moduleTableDataV2.value,
+  () => {
+    let product: any = []
+    moduleTableDataV2.value.forEach((item: any) => {
+      product.push(item.map((p: any) => p.product))
+    })
+    product = [...new Set(product.reduce((prev: any, curr: any) => prev.concat(curr), []))]
+    console.log(product, "product123123")
+    productTableData.value = product.map((item: any, index: number) => {
+      if (productTableData.value?.[index]?.product) {
+        return {
+          ...productTableData.value[index],
+          name: item,
+          product: item
+        }
+      } else {
+        const newLineP = {
+          product: item,
+          name: item,
+          sensor: "",
+          sensorTypeSelect: productTypeMap.recommend,
+          sensorPrice: 0,
+          lens: "",
+          lensTypeSelect: productTypeMap.recommend,
+          lensPrice: 0,
+          isp: "",
+          ispTypeSelect: productTypeMap.recommend,
+          ispPrice: 0,
+          serialChip: "",
+          serialChipTypeSelect: productTypeMap.recommend,
+          serialChipPrice: 0,
+          cable: "",
+          cableTypeSelect: productTypeMap.recommend,
+          cablePrice: 0,
+          other: "",
+          otherTypeSelect: productTypeMap.recommend,
+          otherPrice: 0,
+          manufactureProcess: "",
+          installationPosition: ""
+        }
+        return newLineP
+      }
+    })
+  },
+  {
+    deep: true
   }
 )
 

@@ -410,13 +410,11 @@ onMounted(async () => {
         designSolution.value.forEach((p: DesignSolutionDto) => {
           if (p.solutionName == item.product) {
             p.uuid = item.id
-            p.solutionId=item.id
           }
         })
         if (!designSchemeIsNull) {
           let pro = {
             uuid: item.id,
-            solutionId:item.id,
             solutionName: "",
             sensor: "",
             serial: "",
@@ -509,7 +507,6 @@ const addScheme = (item: SolutionTableDto[]) => {
 
   let pro: DesignSolutionDto = {
     uuid: id,
-    solutionId:id,
     solutionName: "",
     sensor: "",
     serial: "",
@@ -626,7 +623,6 @@ watch(
       designSolution.value.forEach((p: DesignSolutionDto) => {
         if (p.uuid == item.id) {
           p.solutionName = item.product
-          p.solutionId=item.id
         }
       })
     })

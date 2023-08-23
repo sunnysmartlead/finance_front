@@ -39,32 +39,31 @@
 // NRE手板件	Done
 // TR审核	YesOrNo
 
-const baseProcessType = {
-  approval: [
-    {
-      label: "不同意",
-      val: "YesOrNo_No"
-    },
-    {
-      label: "同意",
-      val: "YesOrNo_Yes"
-    },
-    {
-      label: "保存",
-      val: "YesOrNo_Save"
-    }
-  ],
-  confirm: [
-    {
-      label: "完成",
-      val: "Done"
-    },
-    {
-      label: "保存",
-      val: "Save"
-    }
-  ]
-}
+const baseProcessType = [
+  {
+    label: "不同意",
+    val: "YesOrNo_No"
+  },
+  {
+    label: "同意",
+    val: "YesOrNo_Yes"
+  },
+  {
+    label: "保存",
+    val: "YesOrNo_Save"
+  }
+]
+
+const confirmProcessType = [
+  {
+    label: "完成",
+    val: "Done"
+  },
+  {
+    label: "保存",
+    val: "Save"
+  }
+]
 
 // 报价反馈
 const quoteFeedbackProcessType = [
@@ -177,6 +176,7 @@ const bomCostProcessType = [
 
 export {
   baseProcessType,
+  confirmProcessType,
   quoteFeedbackProcessType,
   complianceProcessType,
   electronicBomProcessType,

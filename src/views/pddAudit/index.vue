@@ -1,6 +1,7 @@
 <template>
   <div>
-    <VertifyBox :onSubmit="handleSubmit" />
+    <!-- <VertifyBox :onSubmit="handleSubmit" /> -->
+    <ProcessVertifyBox :onSubmit="handleSubmit" />
     <el-card class="pddAudit">
       <template #header>
         <div class="card-header">
@@ -35,7 +36,8 @@ import { ElMessage } from "element-plus"
 import { AuditExport } from "@/views/demandApplyAudit/service"
 import getQuery from "@/utils/getQuery"
 import { designScheme } from "@/views/demandApplyAudit"
-import VertifyBox from "@/components/VertifyBox/index.vue"
+// import VertifyBox from "@/components/VertifyBox/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const data = reactive({
   dialogTableVisible: false,
@@ -52,7 +54,6 @@ onMounted(async () => {
   if (query.auditFlowId) {
   }
 })
-
 </script>
 
 <style lang="scss" scoped>

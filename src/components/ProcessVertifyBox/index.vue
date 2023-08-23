@@ -15,7 +15,7 @@
       <el-form>
         <el-form-item label="选择类型">
           <el-select v-model="data.opinion">
-            <el-option v-for="item in data['processType']" :key="item.val" :label="item.label" />
+            <el-option v-for="item in data[props.processType]" :key="item.val" :label="item.label" />
           </el-select>
         </el-form-item>
         <el-form-item label="审批意见">
@@ -49,7 +49,7 @@ import {
   bomCostProcessType
 } from "@/constant/approvalProcess"
 
-const data = reactive({
+const data: any = reactive({
   dialogVisible: false,
   comment: "",
   opinion: "",

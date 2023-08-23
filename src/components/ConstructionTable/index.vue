@@ -1,7 +1,8 @@
 <template>
   <div class="margin-top">
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
-      <VertifyBox :onSubmit="handleSetBomState" />
+      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
+      <ProcessVertifyBox :onSubmit="handleSetBomState" />
     </el-row>
     <el-card>
       <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
@@ -18,9 +19,7 @@
             <div class="card-header">
               <span>{{ item.superTypeName }}</span>
               <span class="card-span">
-                未提交的数量:{{
-                item.structureMaterial.filter((p: any) => !p.isSubmit).length
-                }}</span
+                未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span
               >
             </div>
           </template>
@@ -279,6 +278,8 @@ import { ref, onBeforeMount, onMounted, watchEffect, computed, shallowRef, react
 import { ConstructionModel } from "../ElectronicTable/data.type"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import VertifyBox from "@/components/VertifyBox/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+
 import {
   GetStructural,
   PostStructuralMemberEntering,
@@ -580,11 +581,57 @@ const fetchConstructionInitData = async () => {
   }
 }
 
-const handleSetBomState = (isAgree: boolean) => {
+// const handleSetBomState = (isAgree: boolean) => {
+//   var construction = [[]]
+//   var people = [[]]
+//   var prop = window.sessionStorage.getItem("construction")
+//   if (!prop && !isAgree) {
+//     ElMessage({
+//       message: "请选择要退回那些条数据!",
+//       type: "warning"
+//     })
+//     return
+//   } else {
+//     if (prop) {
+//       var constructionProp = JSON.parse(prop)
+//       constructionProp.forEach((p: any) => {
+//         construction.push(p.constructionId)
+//         people.push(p.peopleId)
+//       })
+//     }
+//   }
+//   data.constructionId = [...new Set(construction.flat(Infinity))]
+//   data.peopleId = [...new Set(people.flat(Infinity))]
+//   if (!isAgree && (!data.constructionId.length || !data.peopleId.length)) {
+//     ElMessage({
+//       message: "请选择要退回那些条数据!",
+//       type: "warning"
+//     })
+//     return
+//   }
+//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
+//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     const { success } = await SetBomState({
+//       isAgree,
+//       auditFlowId,
+//       bomCheckType: 4,
+//       opinionDescription: !isAgree ? val.value : "",
+//       unitPriceId: data.constructionId,
+//       peopleId: data.peopleId
+//     })
+//     if (success) jumpTodoCenter()
+//   })
+// }
+
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
   var construction = [[]]
   var people = [[]]
   var prop = window.sessionStorage.getItem("construction")
-  if (!prop && !isAgree) {
+  if (!prop && opinion.includes("_No")) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -601,29 +648,24 @@ const handleSetBomState = (isAgree: boolean) => {
   }
   data.constructionId = [...new Set(construction.flat(Infinity))]
   data.peopleId = [...new Set(people.flat(Infinity))]
-  if (!isAgree && (!data.constructionId.length || !data.peopleId.length)) {
+  if (opinion.includes("_No") && (!data.constructionId.length || !data.peopleId.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    const { success } = await SetBomState({
-      isAgree,
-      auditFlowId,
-      bomCheckType: 4,
-      opinionDescription: !isAgree ? val.value : "",
-      unitPriceId: data.constructionId,
-      peopleId: data.peopleId
-    })
-    if (success) jumpTodoCenter()
+  const { success } = await SetBomState({
+    isAgree: !opinion.includes("_No"),
+    auditFlowId,
+    bomCheckType: 4,
+    opinionDescription: comment,
+    comment,
+    opinion,
+    unitPriceId: data.constructionId,
+    peopleId: data.peopleId
   })
+  if (success) jumpTodoCenter()
 }
 
 watch(

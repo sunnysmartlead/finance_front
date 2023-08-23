@@ -109,8 +109,9 @@
       </el-descriptions>
       <el-row justify="end" style="margin-top: 20px">
         <div v-if="data.userInfo.userJobs === '总经理'">
-          <el-button type="primary" @click="handleGeneralManagerQuoteCheck(true)" v-havedone>同意</el-button>
-          <el-button type="danger" @click="handleGeneralManagerQuoteCheck(false)" v-havedone>拒绝</el-button>
+          <!-- <el-button type="primary" @click="handleGeneralManagerQuoteCheck(true)" v-havedone>同意</el-button>
+          <el-button type="danger" @click="handleGeneralManagerQuoteCheck(false)" v-havedone>拒绝</el-button> -->
+          <ProcessVertifyBox :onSubmit="handleSubmit" />
         </div>
       </el-row>
     </el-card>
@@ -142,6 +143,8 @@ import { GetPicture3DByAuditFlowId, getProductByAuditFlowId } from "../processIm
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
 import { downloadFile, getAuditFlowVersion } from "../trAudit/service"
 import { useRoute } from "vue-router"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+
 const router = useRouter()
 const query = useJump()
 const route = useRoute()
@@ -231,28 +234,42 @@ const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) =
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
 
-const handleGeneralManagerQuoteCheck = (isAgree: boolean) => {
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "报价审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    if (!isAgree && !val?.value) {
-      ElMessage.warning("拒绝理由必填")
-      return
-    }
-    const { success } = await PostAuditQuotationList({
-      ...data.marketingQuotationData,
-      isPass: isAgree,
-      auditFlowId,
-      backReason: !isAgree ? val?.value : ""
-    })
-    if (success) {
-      ElMessage.success("操作成功")
-      closeSelectedTag(route.path)
-    }
+// const handleGeneralManagerQuoteCheck = (isAgree: boolean) => {
+//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
+//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "报价审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     if (!isAgree && !val?.value) {
+//       ElMessage.warning("拒绝理由必填")
+//       return
+//     }
+//     const { success } = await PostAuditQuotationList({
+//       ...data.marketingQuotationData,
+//       isPass: isAgree,
+//       auditFlowId,
+//       backReason: !isAgree ? val?.value : ""
+//     })
+//     if (success) {
+//       ElMessage.success("操作成功")
+//       closeSelectedTag(route.path)
+//     }
+//   })
+// }
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+  const { success } = await PostAuditQuotationList({
+    ...data.marketingQuotationData,
+    isPass: !opinion.includes("_No"),
+    auditFlowId,
+    backReason: comment,
+    comment,
+    nodeInstanceId
   })
+  if (success) {
+    ElMessage.success("操作成功")
+    closeSelectedTag(route.path)
+  }
 }
 const toProductPriceList = () => {
   router.push({

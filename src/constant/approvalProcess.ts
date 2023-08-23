@@ -40,6 +40,7 @@
 // TR审核	YesOrNo
 
 const baseProcessType = [
+  //YesOrNo
   {
     label: "不同意",
     val: "YesOrNo_No"
@@ -55,6 +56,7 @@ const baseProcessType = [
 ]
 
 const confirmProcessType = [
+  //Done
   {
     label: "完成",
     val: "Done"
@@ -67,6 +69,7 @@ const confirmProcessType = [
 
 // 报价反馈
 const quoteFeedbackProcessType = [
+  //EvalFeedback
   {
     label: "客户要求",
     val: "TypeSelect_Ask"
@@ -88,6 +91,7 @@ const quoteFeedbackProcessType = [
 
 // 贸易不合规
 const complianceProcessType = [
+  //MybhgSelect
   {
     val: "MybhgSelect_Cobzzcblr",
     label: "COB制造成本录入"
@@ -128,6 +132,7 @@ const complianceProcessType = [
 
 //电子BOM单价审核
 const electronicBomProcessType = [
+  //ElectronicBomEvalSelect
   {
     val: "ElectronicBomEvalSelect_Yes",
     label: "同意"
@@ -140,6 +145,7 @@ const electronicBomProcessType = [
 
 // 结构BOM单价审核
 const structBomProcessType = [
+  //StructBomEvalSelect
   {
     val: "StructBomEvalSelect_Jgbomppxg",
     label: "退回到【结构BOM匹配修改】"
@@ -156,6 +162,7 @@ const structBomProcessType = [
 
 //BOM成本审核
 const bomCostProcessType = [
+  //BomEvalSelect
   {
     val: "BomEvalSelect_Dzbomppxg",
     label: "电子BOM匹配修改"

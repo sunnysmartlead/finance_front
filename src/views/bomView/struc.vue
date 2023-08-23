@@ -28,8 +28,9 @@
         <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200" />
       </el-table>
       <div style="margin: 10px 0; float: right">
-        <el-button type="primary" @click="agree(2, true)" v-havedone>同意</el-button>
-        <el-button @click="agree(2, false)" type="danger" v-havedone>拒绝</el-button>
+        <ProcessVertifyBox :onSubmit="handleSetBomState" />
+        <!-- <el-button type="primary" @click="agree(2, true)" v-havedone>同意</el-button>
+        <el-button @click="agree(2, false)" type="danger" v-havedone>拒绝</el-button> -->
       </div>
     </el-card>
   </div>
@@ -48,6 +49,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import { sortBy } from "lodash"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const { jumpTodoCenter } = useJump()
 const { auditFlowId, productId }: any = getQuery()
@@ -82,25 +84,40 @@ const data = reactive({
 //     })
 //   }
 // }
-const agree = async (bomCheckType: number, isAgree: boolean) => {
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    let res: any = await SetBomState({
-      auditFlowId: auditFlowId,
-      productId: productId,
-      bomCheckType,
-      isAgree,
-      opinionDescription: !isAgree ? val?.value : ""
-    })
-    if (res.success) {
-      jumpTodoCenter()
-      ElMessage.success("操作成功")
-    }
+// const agree = async (bomCheckType: number, isAgree: boolean) => {
+//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
+//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     let res: any = await SetBomState({
+//       auditFlowId: auditFlowId,
+//       productId: productId,
+//       bomCheckType,
+//       isAgree,
+//       opinionDescription: !isAgree ? val?.value : ""
+//     })
+//     if (res.success) {
+//       jumpTodoCenter()
+//       ElMessage.success("操作成功")
+//     }
+//   })
+// }
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
+  let res: any = await SetBomState({
+    auditFlowId: auditFlowId,
+    productId: productId,
+    bomCheckType: 2,
+    isAgree: !opinion.includes("_No"),
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
   })
+  if (res.success) {
+    jumpTodoCenter()
+    ElMessage.success("操作成功")
+  }
 }
 
 const filterTableData = () => {

@@ -19,6 +19,15 @@ export function GetListAll(data: QueryParams) {
     })
 }
 
+
+export function getCOBUPH(data: QueryParams) {
+  return request({
+    url: "api/services/app/ProcessHoursEnterUph/GetListByAuditFlowIdOrSolutionId",
+    method: "get",
+    data
+  })
+}
+
 //制造成本详情
 export function getDetail(id: number) {
     return request({
@@ -34,6 +43,14 @@ export function getDetail(id: number) {
 export function create(data:any) {
     return request({
       url: prefix+"/Create",
+      method: "post",
+      data: data
+    })
+  }
+
+  export function handleSubmit(data:any) {
+    return request({
+      url: prefix+"/CreateSubmit",
       method: "post",
       data: data
     })

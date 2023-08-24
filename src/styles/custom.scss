@@ -5,7 +5,13 @@
       width: 0px !important;
     }
   }
-
+  .u-head-stop{
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: #ffffff;
+  }
 
   /* start--去除webkit的默认样式--start */
   .u-fix-ios-appearance {

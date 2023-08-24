@@ -7,18 +7,16 @@
                         <span>零件列表</span>
                     </div>
                     <div class="u-m-l-10">
-                        <el-select @change="planChange"
-                                v-model="data.currentPlan"
-                                placeholder="请选择方案"
-                                size="large">
+                        <el-select @change="planChange" v-model="data.currentPlan" placeholder="请选择方案" size="large">
                             <el-option v-for="item in data.planOptions" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
                     </div>
                 </div>
                 <div>
-                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1">提交</el-button>
-                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1"
+                    <el-button type="primary"
+                        :disabled="cardData.length < 1 || cardData[0].logisticscostList.length < 1">提交</el-button>
+                    <el-button type="primary" :disabled="cardData.length < 1 || cardData[0].logisticscostList.length < 1"
                         @click="saveTableData()">保存</el-button>
                     <!-- <template  v-if="!data.editDisabled">
                         <el-button type="info"     @click="resetTableData()">重置</el-button>
@@ -47,7 +45,7 @@
                         </div>
                     </template>
                     <div>
-                        <el-table :data="(cardItem.logisticscostList)" style="width: 100%" border>
+                        <el-table :data="(cardItem.logisticscostList)" max-height="300px" style="width: 100%" border>
                             <el-table-column label="年份" align="center">
                                 <template #default="scope">
                                     <div>
@@ -125,7 +123,7 @@
 <script setup lang="ts">
 import { ref, reactive, toRefs, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from "element-plus";
-import { GetListAll,createProcess} from "@/api/logisticsCost";
+import { GetListAll, createProcess, GetGradientllodelYearByProductId, GetGradientByAuditFlowId } from "@/api/logisticsCost";
 const data = reactive({
     currentPlan: '100',
     editDisabled: true,
@@ -148,118 +146,142 @@ const data = reactive({
         },
     ],
 })
-const cardData=ref([]);
+const cardData = ref([]);
 let tempCardData: any = [];
 
 onMounted(() => {
     getListData();
 })
 
-const getListData=()=>{
-    let param={
+const getListData = () => {
+    let param = {
         AuditFlowId: 100,
-        SolutionId:Number(data.currentPlan)
+        SolutionId: Number(data.currentPlan)
     }
-    GetListAll(param).then((response: any) => {
-    if (response.success) {
-      let data = response.result;
-      console.log("物流列表", data);
-      cardData.value = data;
-    } else {
-      ElMessage({
-        type: 'error',
-        message: '列表加载失败'
-      })
-    }
-  })
-}
-
-const planChange=(value:any)=>{
-    console.log("当前方案",value);
-    getListData();
-}
-
-//单PCS包装价格/元发生变化
-const pcsPriceChange = (value: any, index: any, item: any) => {
-    console.log("单片价格变化", value);
-    console.log(`index===${index}`, item);
-    if(item.packagingPrice&&item.singlyDemandPrice){
-        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
-    }
-}
-//运费/月发生变化
-const freightPriceChange = (value: any, index: any, item: any) => {
-    console.log("运费变化", value);
-    console.log(`index===${index}`, item);
-    let yearCount=12000;
-    let monthlyDemandPrice=yearCount/12;
-    item.monthlyDemandPrice=monthlyDemandPrice;
-    console.log("月需求量",monthlyDemandPrice);
-    let singlePCS= (item.freightPrice+item.storagePrice)/monthlyDemandPrice;
-    console.log("单PCS运输费",singlePCS);
-    item.singlyDemandPrice=Number(singlePCS.toFixed(2));
-    if(item.packagingPrice&&item.singlyDemandPrice){
-        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
-        console.log("单PCS总物流成本",item.transportPrice);
-    }
-}
-//仓储费用/月发生变化
-const storagePriceChange = (value: any, index: any, item: any) => {
-    console.log("仓储费用变化", value);
-    console.log(`index===${index}`, item);
-    let yearCount=12000;
-    let monthlyDemandPrice=yearCount/12;
-    item.monthlyDemandPrice=monthlyDemandPrice;
-    console.log("月需求量",monthlyDemandPrice);
-    let singlePCS= (item.freightPrice+item.storagePrice)/monthlyDemandPrice;
-    console.log("单PCS运输费",singlePCS);
-    item.singlyDemandPrice=Number(singlePCS.toFixed(2));
-    if(item.packagingPrice&&item.singlyDemandPrice){
-        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
-        console.log("单PCS总物流成本",item.transportPrice);
-    }
-}
-
-//保存
-const saveTableData = () => {
-    console.log("保存数据",cardData.value);
-    let param={
-        auditFlowId: 100,
-        solutionId:Number(data.currentPlan),
-        logisticscostList:JSON.parse(JSON.stringify(cardData.value))
-    };
-    createProcess(param).then((response: any) => {
-      console.log("新增响应", response);
-      if (response.success) {
-        ElMessage({
-          type: 'success',
-          message: '保存成功'
+    GetGradientllodelYearByProductId(param).then((response: any) => {
+        if (response.success) {
+            let data = response.result;
+            console.log("====GetGradientllodelYearByProductId=====", data);
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '列表加载失败'
+            })
+        }
         })
-        getListData()
-      } else {
-        ElMessage({
-          type: 'error',
-          message: '保存失败'
+
+        GetGradientByAuditFlowId(param).then((response: any) => {
+            if (response.success) {
+                let data = response.result;
+                console.log("====GetGradientByAuditFlowId=====", data);
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: '列表加载失败'
+                })
+            }
         })
-      }
-    })
-}
 
-const openEdit = () => {
-    console.log("开启编辑");
-    data.editDisabled = false;
-    tempCardData = JSON.parse(JSON.stringify(cardData.value));
-}
+        GetListAll(param).then((response: any) => {
+            if (response.success) {
+                let data = response.result;
+                console.log("物流列表", data);
+                cardData.value = data;
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: '列表加载失败'
+                })
+            }
+        })
+        }
 
-const resetTableData = () => {
-    console.log("重置数据")
-    cardData.value = tempCardData;
-    data.editDisabled = true;
-}
+const planChange = (value: any) => {
+            console.log("当前方案", value);
+            getListData();
+        }
+
+        //单PCS包装价格/元发生变化
+        const pcsPriceChange = (value: any, index: any, item: any) => {
+            console.log("单片价格变化", value);
+            console.log(`index===${index}`, item);
+            if (item.packagingPrice && item.singlyDemandPrice) {
+                item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice;
+            }
+        }
+        //运费/月发生变化
+        const freightPriceChange = (value: any, index: any, item: any) => {
+            console.log("运费变化", value);
+            console.log(`index===${index}`, item);
+            let yearCount = 12000;
+            let monthlyDemandPrice = yearCount / 12;
+            item.monthlyDemandPrice = monthlyDemandPrice;
+            console.log("月需求量", monthlyDemandPrice);
+            let singlePCS = (item.freightPrice + item.storagePrice) / monthlyDemandPrice;
+            console.log("单PCS运输费", singlePCS);
+            item.singlyDemandPrice = Number(singlePCS.toFixed(2));
+            if (item.packagingPrice && item.singlyDemandPrice) {
+                item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice;
+                console.log("单PCS总物流成本", item.transportPrice);
+            }
+        }
+        //仓储费用/月发生变化
+        const storagePriceChange = (value: any, index: any, item: any) => {
+            console.log("仓储费用变化", value);
+            console.log(`index===${index}`, item);
+            let yearCount = 12000;
+            let monthlyDemandPrice = yearCount / 12;
+            item.monthlyDemandPrice = monthlyDemandPrice;
+            console.log("月需求量", monthlyDemandPrice);
+            let singlePCS = (item.freightPrice + item.storagePrice) / monthlyDemandPrice;
+            console.log("单PCS运输费", singlePCS);
+            item.singlyDemandPrice = Number(singlePCS.toFixed(2));
+            if (item.packagingPrice && item.singlyDemandPrice) {
+                item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice;
+                console.log("单PCS总物流成本", item.transportPrice);
+            }
+        }
+
+        //保存
+        const saveTableData = () => {
+            console.log("保存数据", cardData.value);
+            let param = {
+                auditFlowId: 100,
+                solutionId: Number(data.currentPlan),
+                logisticscostList: JSON.parse(JSON.stringify(cardData.value))
+            };
+            createProcess(param).then((response: any) => {
+                console.log("新增响应", response);
+                if (response.success) {
+                    ElMessage({
+                        type: 'success',
+                        message: '保存成功'
+                    })
+                    getListData()
+                } else {
+                    ElMessage({
+                        type: 'error',
+                        message: '保存失败'
+                    })
+                }
+            })
+        }
+
+        const openEdit = () => {
+            console.log("开启编辑");
+            data.editDisabled = false;
+            tempCardData = JSON.parse(JSON.stringify(cardData.value));
+        }
+
+        const resetTableData = () => {
+            console.log("重置数据")
+            cardData.value = tempCardData;
+            data.editDisabled = true;
+        }
 
 
-const handleEdit = (index: any, item: any) => {
-    console.log(`启用编辑,下标:${index}`, item);
-}
+        const handleEdit = (index: any, item: any) => {
+            console.log(`启用编辑,下标:${index}`, item);
+        }
 </script>
 <style></style>

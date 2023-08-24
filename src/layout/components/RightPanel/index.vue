@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ElMessage, ElMessageBox } from "element-plus";
 // import { Setting } from "@element-plus/icons-vue"
 import { ref, reactive, onMounted, watch, computed } from "vue"
 import { useProductStore } from "@/store/modules/productList"
@@ -25,8 +26,8 @@ const emit = defineEmits(["change"])
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
-const state = reactive<any>({
-  productId: null,
+const state = reactive({
+  productId: null as any,
   auditFlowId: ""
 })
 
@@ -40,16 +41,11 @@ watch(
     } else showPanel.value = false
   }
 )
-// watch(
-//   () => productStore.productList,
-//   (newV) => {
-//     if (newV) {
-//       state.productId = newV[0]?.id
-//       handleChange(newV[0]?.id)
-//     }
-//   },
-//   { deep: true }
-// )
+watch(() => productStore.productList, (newV) => {
+  state.productId = newV[0]?.id
+  handleChange(newV[0]?.id)
+}, { deep: true }
+)
 onMounted(() => {
   // 判断当前页面路由是否在白名单内
   if (wahiteRotes.includes(route.name)) {
@@ -58,43 +54,53 @@ onMounted(() => {
   } else showPanel.value = false
 })
 
-const safeJsonParse = (data) => {
-  try {
-    return JSON.parse(data)
-  } catch {
-    return data
-  }
-}
-
 const init = async () => {
   // 未执行todocenter里的跳转时打开会造成state.auditFlowId为undefined
   try {
     state.productId = null
     const { productId, auditFlowId } = route.query
-
-    if (auditFlowId) {
+    console.log("零件列表组件===路径上的参数auditFlowId", auditFlowId);
+    console.log("零件列表组件===路径上的参数productId", productId);
+    if (auditFlowId != null && auditFlowId != undefined) {
       await productStore.setProductList(Number(auditFlowId))
+      if (productId != null && productId != undefined) {
+        //如url中存在productId则选中
+        state.productId = Number(productId)
+        window.sessionStorage.setItem("productId", String(state.productId))
+      } else {
+        // const intro = IntroJs().setOptions({ steps: [ {
+        //     element: document.querySelector(".handle-button"),
+        //     intro: "录入零件数据前请先选择零件"
+        //   }
+        // ]
+        // })
+        // intro.start() 
+        let pID= productStore.productId;
+          if(pID==null||pID==undefined){
+            ElMessageBox.confirm("录入零件数据前请先选择零件!", "提醒", {
+            confirmButtonText: "确认",
+            cancelButtonText: "取消",
+            type: "warning"
+          }).then(async () => {
+            let pId = productStore.productList[0].id;
+            state.productId = Number(pId)
+            window.sessionStorage.setItem("productId", String(state.productId))
+          })
+        }
+      }
     }
-    if (productId) {
-      //如url中存在productId则选中
-
-      state.productId = Number(productId)
-      console.log(Number(productId), "productId")
-      window.sessionStorage.setItem("productId", String(state.productId))
-    } else {
-      // const intro = IntroJs().setOptions({
-      //   steps: [
-      //     {
-      //       element: document.querySelector(".handle-button"),
-      //       intro: "录入零件数据前请先选择零件"
-      //     }
-      //   ]
-      // })
-      // intro.start()
+    else {
+      ElMessage({
+        type: 'error',
+        message: '参数未知! 非法入侵!'
+      })
+      return;
     }
-    const isUnfoldData = localStorage.getItem("isUnfold") || ""
-    let isUnfoldValue = safeJsonParse(isUnfoldData)
-    isUnfold.value = isUnfoldValue
+    let isUnfoldVal = localStorage.getItem("isUnfold");
+    if (isUnfoldVal && isUnfoldVal.length > 0) {
+      let isUnfoldValue = JSON.parse(isUnfoldVal)
+      isUnfold.value = isUnfoldValue
+    }
   } catch (err) {
     console.log(err, "出错啦")
   }
@@ -145,20 +151,14 @@ const isUnfoldChange = (val: any) => {
     <el-drawer v-model="show" size="500px" :with-header="false">
       <div>
         <div class="u-flex u-row-left u-col-center">
-           <div>
-              <h3>零件切换</h3>
-           </div>
-           <div class="u-m-l-10">
-              <el-switch size="large"  width="80"
-              @change="isUnfoldChange"
-              v-model="isUnfold"
-              inline-prompt
-              active-text="展开"
-              inactive-text="合并"
-              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-            />
-           </div>
-        </div>  
+          <div>
+            <h3>零件切换</h3>
+          </div>
+          <div class="u-m-l-10">
+            <el-switch size="large" width="80" @change="isUnfoldChange" v-model="isUnfold" inline-prompt active-text="展开"
+              inactive-text="合并" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
+          </div>
+        </div>
 
         <div>
           <div class="drawer-container" v-if="isUnfold">
@@ -204,27 +204,31 @@ const isUnfoldChange = (val: any) => {
   align-items: center;
   justify-content: center;
 }
+
 .drawer-container {
   padding: 24px;
   font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
+
   .drawer-title {
     margin-bottom: 12px;
     font-size: 14px;
     line-height: 22px;
   }
+
   .drawer-item {
     font-size: 14px;
     padding: 12px 0;
   }
+
   .drawer-switch {
     float: right;
   }
 }
 </style>
 <style>
-.demo-tabs > .el-tabs__content {
+.demo-tabs>.el-tabs__content {
   padding: 32px;
   color: #6b778c;
   font-size: 32px;

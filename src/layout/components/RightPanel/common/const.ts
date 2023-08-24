@@ -31,5 +31,6 @@ export const wahiteRotes: any[] = [
   "tradeCompliance", // 贸易合规
   "processHoursExport",
   "processLib",
-  "logisticsCost"
+  "logisticsCost",
+  "COBManufactureCost"
 ]

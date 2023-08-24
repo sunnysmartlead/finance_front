@@ -119,7 +119,7 @@ export function updateFoundationReliable(data) {
 /** 删除用户 */
 export function deleteFoundationReliable(id: number | undefined) {
   return request({
-    url: "/api/services/app/Foundationreliable/Delete",
+    url: "/api/services/app/User/Delete",
     method: "delete",
     data: {
       id

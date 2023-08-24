@@ -28,5 +28,9 @@ export const wahiteRotes: any[] = [
   "strucView",
   "processImport", // 工序工时导入
   "manufacturingCost", //制造成本录入
-  "tradeCompliance" // 贸易合规
+  "tradeCompliance", // 贸易合规
+  "processHoursExport",
+  "processLib",
+  "logisticsCost",
+  "COBManufactureCost"
 ]

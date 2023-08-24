@@ -25,7 +25,7 @@
             </div>
         </div>
         <!-- COB-UPH表格区 -->
-        <!-- <el-card class="u-m-b-30">
+        <el-card class="u-m-b-30">
             <el-scrollbar wrap-style="padding:10px 0px;">
                 <div class="u-flex u-row-left u-col-center u-text-center">
                     <div style="background-color: rgb(247, 247, 96);">
@@ -49,16 +49,18 @@
                     </template>
                 </div>
             </el-scrollbar>
-        </el-card> -->
+        </el-card>
         <!-- 表格数据录入区 -->
         <div class="table-box">
-            <el-scrollbar max-height="600px">
+            <!-- max-height="800px" -->
+            <el-scrollbar>
                 <div style="color:#000000">
                     <div class="u-m-b-20" v-for="(dataItem, dataIndex) in tableData" :key="dataIndex">
                         <el-card>
                             <template #header>
                                 <div class="title-box u-font-20">
                                     <span>{{ dataItem.classification }}</span>
+                                    <span>K/Y</span>
                                 </div>
                             </template>
                             <div>
@@ -75,22 +77,30 @@
                                         <el-table-column label="直接制造成本" align="center">
                                             <el-table-column label="直接人工" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directLaborPrice }}</span>
+                                                    <!-- <span>{{ scope.row.directLaborPrice }}</span> -->
+                                                    <el-input-number v-model="scope.row.directLaborPrice" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="设备折旧" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directDepreciation }}</span>
+                                                    <!-- <span>{{ scope.row.directDepreciation }}</span> -->
+                                                    <el-input-number v-model="scope.row.directDepreciation" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="换线成本" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directLineChangeCost }}</span>
+                                                    <!-- <span>{{ scope.row.directLineChangeCost }}</span> -->
+                                                    <el-input-number v-model="scope.row.directLineChangeCost" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="制造费用" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directManufacturingCosts }}</span>
+                                                    <!-- <span>{{ scope.row.directManufacturingCosts }}</span> -->
+                                                    <el-input-number v-model="scope.row.directManufacturingCosts" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="小计" width="200" align="center"
@@ -103,18 +113,24 @@
                                         <el-table-column label="间接制造成本" align="center">
                                             <el-table-column label="直接人工" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectLaborPrice }}</span>
+                                                    <!-- <span>{{ scope.row.indirectLaborPrice }}</span> -->
+                                                    <el-input-number v-model="scope.row.indirectLaborPrice" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="设备折旧" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectDepreciation }}</span>
+                                                    <!-- <span>{{ scope.row.indirectDepreciation }}</span> -->
+                                                    <el-input-number v-model="scope.row.indirectDepreciation" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
 
                                             <el-table-column label="制造费用" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.indirectManufacturingCosts }}</span>
+                                                    <!-- <span>{{ scope.row.indirectManufacturingCosts }}</span> -->
+                                                    <el-input-number v-model="scope.row.indirectManufacturingCosts" 
+                                                                :precision="2" :step="0.01"/>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="小计" width="200" align="center"
@@ -131,7 +147,8 @@
                                         </el-table-column>
                                         <el-table-column label="备注" align="center" width="200">
                                             <template #default="scope">
-                                                <span>{{ scope.row.remark }}</span>
+                                                <!-- <span>{{ scope.row.remark }}</span> -->
+                                                <el-input type="textarea" autosize v-model="scope.row.remark" placeholder="请输入备注内容" />
                                             </template>
                                         </el-table-column>
                                     </el-table>
@@ -151,12 +168,15 @@
                                         </el-table-column>
                                         <el-table-column label="合计" align="center" width="200">
                                             <template #default="scope">
-                                                <span>{{ scope.row.totalCost }}</span>
+                                                <!-- <span>{{ scope.row.totalCost }}</span> -->
+                                                <el-input-number v-model="scope.row.totalCost" 
+                                                                :precision="2" :step="0.01"/>
                                             </template>
                                         </el-table-column>
                                         <el-table-column label="备注" align="center" width="200">
                                             <template #default="scope">
-                                                <span>{{ scope.row.remark }}</span>
+                                                <!-- <span>{{ scope.row.remark }}</span> -->
+                                                <el-input type="textarea" autosize v-model="scope.row.remark" placeholder="请输入备注内容" />
                                             </template>
                                         </el-table-column>
                                     </el-table>
@@ -292,7 +312,7 @@ const getListData = async () => {
 }
 
 const initData = () => {
-    //COBUPHData.value = tempUPHData;
+    COBUPHData.value = tempUPHData;
     //tableData.value = tempTableDataArr;
     getListData();
 }

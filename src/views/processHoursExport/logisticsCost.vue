@@ -258,6 +258,7 @@ const saveTableData = () => {
 const submitData = () => {
     let param = {
         auditFlowId: queryParam.value.AuditFlowId,
+        solutionId: queryParam.value.SolutionId,
     };
     createSubmit(param).then((response: any) => {
         console.log("提交响应", response);

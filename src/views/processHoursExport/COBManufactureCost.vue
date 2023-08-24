@@ -172,7 +172,7 @@
                                         <el-table-column label="合计" align="center" width="200">
                                             <template #default="scope">
                                                 <!-- <span>{{ scope.row.totalCost }}</span> -->
-                                                <el-input-number v-model="scope.row.totalCost" 
+                                                <el-input-number v-model="scope.row.totalCost"
                                                                 :precision="2" :step="0.01"/>
                                             </template>
                                         </el-table-column>
@@ -337,7 +337,7 @@ const directChange=(value: any, index: any, item: any,tableIndex:number) => {
     tableData.value[tableIndex].listBomEnter[index].directSummary=subTotal;
     let indirectSummary=tableData.value[tableIndex].listBomEnter[index].indirectSummary
     tableData.value[tableIndex].listBomEnter[index].totalCost=subTotal+(indirectSummary?indirectSummary:0.00);
-}    
+}
 
 const indirectChange=(value: any, index: any, item: any,tableIndex:number) => {
     let indirectLaborPrice= item.indirectLaborPrice?item.indirectLaborPrice:0.00;

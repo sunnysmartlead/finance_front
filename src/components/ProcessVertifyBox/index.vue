@@ -15,7 +15,7 @@
       <el-form>
         <el-form-item label="选择类型">
           <el-select v-model="data.opinion">
-            <el-option v-for="item in data[props.processType]" :key="item.val" :label="item.label" />
+            <el-option v-for="item in data[props.processType]" :key="item.val" :label="item.label" :value="item.val" />
           </el-select>
         </el-form-item>
         <el-form-item label="审批意见">
@@ -40,8 +40,11 @@
 <script lang="ts" setup>
 import { reactive, PropType } from "vue"
 import { ElMessage } from "element-plus"
+import { useRoute } from "vue-router"
+
 import {
   baseProcessType,
+  confirmProcessType,
   quoteFeedbackProcessType,
   complianceProcessType,
   electronicBomProcessType,
@@ -54,6 +57,7 @@ const data: any = reactive({
   comment: "",
   opinion: "",
   baseProcessType,
+  confirmProcessType,
   quoteFeedbackProcessType,
   complianceProcessType,
   electronicBomProcessType,
@@ -74,12 +78,13 @@ const props = defineProps({
     default: 0
   }
 })
-
+const route = useRoute()
 const onSubmit = () => {
+  let { nodeInstanceId } = route.query
   props.onSubmit({
     comment: data.comment,
     opinion: data.opinion,
-    nodeInstanceId: props.nodeInstanceId
+    nodeInstanceId: nodeInstanceId
   })
 }
 </script>

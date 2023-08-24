@@ -41,7 +41,7 @@
       <!-- <el-descriptions-item label="审核/日期"> {{ data.tradeComplianceCheck.deletionTime }} </el-descriptions-item> -->
     </el-descriptions>
     <div style="float: right; margin: 20px 0">
-      <ProcessVertifyBox :onSubmit="handleSubmit" />
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
       <!-- <el-button @click="agree(true)" v-havedone>退回</el-button>
       <el-button type="primary" @click="agree(false)" v-havedone>归档</el-button> -->
     </div>
@@ -113,7 +113,8 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
     opinionDescription: comment,
     comment,
     nodeInstanceId,
-    isAgree: opinion.includes("Done") ? true : false
+    isAgree: opinion.includes("Done") ? true : false,
+    opinion: opinion
   })
   if (res.success) {
     ElMessage({

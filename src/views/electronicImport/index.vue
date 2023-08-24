@@ -50,13 +50,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-upload
-        :action="$baseUrl + 'api/services/app/ElectronicBom/UploadExcel'"
-        :on-success="handleSuccess"
-        :on-error="handleUploadError"
-        show-file-list
-        :on-progress="handleGetUploadProgress"
-      >
+      <el-upload :action="$baseUrl + 'api/services/app/ElectronicBom/UploadExcel'" :on-success="handleSuccess"
+        :on-error="handleUploadError" show-file-list :on-progress="handleGetUploadProgress">
         <el-button :style="{ margin: '15px' }" type="primary">电子料上传</el-button>
       </el-upload>
 
@@ -72,7 +67,8 @@
     </el-card>
 
     <div style="float: right; margin-top: 20px">
-      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
+      <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
     </div>
 
     <el-dialog v-model="data.setVisible">
@@ -95,7 +91,7 @@ import { ref, reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom} from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 // import ProductInfo from "@/components/ProductInfo/index.vue"
@@ -103,6 +99,8 @@ import TrView from "@/components/TrView/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+
 const Host = "ElectronicBomImport"
 
 let auditFlowId: any = null
@@ -176,7 +174,32 @@ const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
 
-const submit = async () => {
+// const submit = async () => {
+//   const loading = ElLoading.service({
+//     lock: true,
+//     text: "加载中",
+//     background: "rgba(0, 0, 0, 0.7)"
+//   })
+//   if (!productId) {
+//     loading.close()
+//     ElMessage.error("未选择零件！")
+//     return
+//   }
+//   try {
+//     let { success }: any = await SaveElectronicBom({
+//       auditFlowId,
+//       solutionId: productId,
+//       electronicBomDtos: data.tableData,
+//       boardDtos: platePart.value
+//     })
+//     loading.close()
+//     success && ElMessage.success("提交成功！")
+//   } catch (error) {
+//     loading.close()
+//   }
+// }
+
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -192,7 +215,10 @@ const submit = async () => {
       auditFlowId,
       solutionId: productId,
       electronicBomDtos: data.tableData,
-      boardDtos: platePart.value
+      boardDtos: platePart.value,
+      comment,
+      opinion,
+      nodeInstanceId
     })
     loading.close()
     success && ElMessage.success("提交成功！")
@@ -200,7 +226,6 @@ const submit = async () => {
     loading.close()
   }
 }
-
 const init = async () => {
   let resElectronic: any = await GetElectronicBom({ auditFlowId, solutionId: productId })
   data.tableData = resElectronic.result

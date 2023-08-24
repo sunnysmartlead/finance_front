@@ -2,7 +2,7 @@
   <div>
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && !isMergeVertify">
       <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
-      <ProcessVertifyBox :onSubmit="handleSetBomState" />
+      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="electronicBomProcessType" />
     </el-row>
     <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
     <el-card class="table-wrap" v-loading="tableLoading">

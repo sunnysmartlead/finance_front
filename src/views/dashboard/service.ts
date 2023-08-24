@@ -144,6 +144,9 @@ export function SetFinancePriceState(
   auditFlowId: number,
   isAgree: boolean,
   opinionDescription: string,
+  comment: string,
+  opinion: string,
+  nodeInstanceId: number,
   backProcessIdentifiers?: any[]
 ) {
   return request({
@@ -153,7 +156,10 @@ export function SetFinancePriceState(
       auditFlowId,
       isAgree,
       backProcessIdentifiers,
-      opinionDescription
+      opinionDescription,
+      comment,
+      opinion,
+      nodeInstanceId
     }
   })
 }

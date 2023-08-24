@@ -902,7 +902,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "财务参数管理",
-      roles: ["finance"]
+      // roles: ["finance"]
     },
     name: "fnDepartment",
     children: [

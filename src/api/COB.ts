@@ -6,8 +6,8 @@ export {uploadAction}
 
 
 export interface QueryParams {
-  AuditFlowId: Number,
-  ProductId:Number
+  AuditFlowId?: Number,
+  ProductId?: Number
 }
   /**
 /** 制造成本列表 */

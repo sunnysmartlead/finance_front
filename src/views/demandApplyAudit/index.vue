@@ -1,13 +1,19 @@
 <template>
   <div class="demand-apply">
+    <div class="demand-apply_row">
+      <el-row :gutter="12">
+        <el-button @click="submit(0)">保存</el-button>
+        <el-button type="success" @click="submit(1)">提交</el-button>
+      </el-row>
+    </div>
     <div>
-      <el-row :gutter="12" class="demand-apply__card">
-        <el-button type="danger">退回</el-button>
+      <el-row class="demand-apply__card">
+        <el-button type="danger" @click="submit(1)">退回</el-button>
         <el-button type="warning">导出</el-button>
         <el-button type="info">重置</el-button>
       </el-row>
     </div>
-    <demandApply :isDisabled="true"></demandApply>
+    <demandApply :isDisabled="true" />
     <el-card>
       <el-card v-for="(item, index) in schemeTableMap" :key="index">
         <template #header>
@@ -92,7 +98,7 @@
         </div>
       </template>
       <el-table :data="designSolution" border>
-        <el-table-column prop="solutionName" label="方案名称" width="150"> </el-table-column>
+        <el-table-column prop="solutionName" label="方案名称" width="150" />
         <el-table-column prop="sensor" label="SENSOR" width="150">
           <template #default="{ row }">
             <el-input v-model="row.sensor" placeholder="请录入SENSOR" />
@@ -121,6 +127,11 @@
         <el-table-column prop="mcu" label="MCU" width="150">
           <template #default="{ row }">
             <el-input v-model="row.mcu" placeholder="请录入MCU" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="connector" label="连接器" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.connector" placeholder="请录入连接器" />
           </template>
         </el-table-column>
         <el-table-column prop="harness" label="线束" width="150">
@@ -182,20 +193,20 @@
         <el-form-item label="工程技术部-工序工时录入员">
           <SearchDepartMentPerson v-model="state.quoteForm.engineerId" roleName="工程技术部-工序工时录入员" />
         </el-form-item>
-        <el-form-item label="品质保证部-实验费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.qualityBenchId" roleName="品质保证部-实验费用录入员" />
+        <el-form-item label="品质保证部-环境实验费录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.qualityBenchId" roleName="品质保证部-环境实验费录入员" />
         </el-form-item>
-        <el-form-item label="产品开发部-EMC实验费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.emcId" roleName="产品开发部-EMC实验费用录入员" />
+        <el-form-item label="产品开发部-EMC+电性能实验费录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.emcId" roleName="产品开发部-EMC+电性能实验费录入员" />
         </el-form-item>
-        <el-form-item label="财务部-制造费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.productCostInputId" roleName="财务部-制造费用录入员" />
+        <el-form-item label="财务部-制造成本录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.productCostInputId" roleName="财务部-制造成本录入员" />
         </el-form-item>
-        <el-form-item label="生产管理部-物流费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流费用录入员" />
+        <el-form-item label="生产管理部-物流成本录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流成本录入员" />
         </el-form-item>
         <el-form-item label="项目核价审核员">
-          <SearchDepartMentPerson v-model="state.quoteForm.auditId" roleName="项目核价审核员" />
+          <SearchDepartMentPerson v-model="state.quoteForm.auditId" :roleName="['市场部-项目课长','项目管理部-项目课长']" />
         </el-form-item>
       </el-form>
     </el-card>
@@ -316,13 +327,6 @@
         </el-col>
       </el-row>
     </el-card>
-    <div class="demand-apply_row">
-      <el-row :gutter="12">
-        <el-button @click="submit(0)">保存</el-button>
-        <el-button type="success" @click="submit(1)">提交</el-button>
-      </el-row>
-    </div>
-    <h5 />
   </div>
 </template>
 <script lang="ts" setup>
@@ -375,7 +379,9 @@ const state = reactive({
     engineerWorkHourTime: "", // 工程技术部-工序工时录入员期望完成时间
     productManageTime: "", // 生成管理部-物流成本录入员期望完成时间
     productCostInputTime: "", // 制造成本录入员期望完成时间
-    deadline: "" //营销要求核价完成时间
+    deadline: "", //营销要求核价完成时间
+    option: "",
+
   } as PricingTeamDto
 })
 const getList = async () => {
@@ -447,14 +453,15 @@ onMounted(async () => {
     isEdit = false
   }, 2000)
 })
-const submit = async (isSubmit: number) => {
+
+const submit = async (submitType: number) => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
   let value = {} as Response
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
   value.designSolutionList = _.cloneDeep(designSolution.value)
-  value.solutionTableList =_.cloneDeep(solutionTable.value)
+  value.solutionTableList = _.cloneDeep(solutionTable.value)
   console.log(value, "value")
   value.solutionTableList.forEach((item: any) => {
     if (!isNumeric(item.id)) {
@@ -484,10 +491,10 @@ const schemeTableData = (item: string) => {
 }
 const addScheme = (item: SolutionTableDto[]) => {
   let id = uuidv4()
-  console.log(item,"item")
+  console.log(item, "item")
   let prop: SolutionTableDto = {
     id: id,
-    productld:item[0].productld,
+    productld: item[0].productld,
     moduleName: item[0].moduleName,
     solutionName: "",
     product: "",

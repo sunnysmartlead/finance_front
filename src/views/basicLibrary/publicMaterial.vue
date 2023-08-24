@@ -14,19 +14,16 @@
     </div>
     <el-card>
       <el-row>
-        <el-form :inline="true">
-          <el-form-item label="">
-            <el-upload
-              :action="$baseUrl + 'api/services/app/UnitPriceLibrary/ImportPublicMaterialWarehouse'"
-              :on-success="handleSuccess"
-              show-file-list
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadError"
-            >
-              <el-button type="primary">共用库导入</el-button>
-            </el-upload>
-          </el-form-item>
-        </el-form>
+        <el-upload
+          :action="$baseUrl + 'api/services/app/UnitPriceLibrary/ImportPublicMaterialWarehouse'"
+          :on-success="handleSuccess"
+          show-file-list
+          :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError"
+        >
+          <el-button type="primary">共用库导入</el-button>
+        </el-upload>
+        <el-button type="warning" style="margin-left: 12px" @click="handleExportPublicMateial">共用库导出</el-button>
         <el-button type="danger" @click="handleDelete">批量删除</el-button>
       </el-row>
       <el-table
@@ -63,13 +60,25 @@
 </template>
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue"
+import { useRoute } from "vue-router"
 import type { UploadProps } from "element-plus"
 import { ElMessageBox, ElTable, ElMessage } from "element-plus"
 import { unitCols } from "./common/const"
-import { getQueryPublicMaterialWarehouse, deleteMultiplePublicMaterials } from "./service"
+import {
+  getQueryPublicMaterialWarehouse,
+  deleteMultiplePublicMaterials,
+  exportSharedMaterialWarehouse
+} from "./service"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { isEmpty, map } from "lodash"
+import { CommonDownloadFile } from "@/api/bom"
 
+/**
+ * 路由对象
+ */
+const route = useRoute()
+
+let { auditFlowId, productId } = route.query
 const multipleTableRef = ref<InstanceType<typeof ElTable>>()
 
 const data = reactive<any>({
@@ -120,8 +129,9 @@ const handleDelete = async () => {
       cancelButtonText: "Cancel",
       type: "warning"
     }).then(async () => {
-      const ids = map(data.deleteIds, (c: any) => c.materialCode)
-      const { success } = await deleteMultiplePublicMaterials(ids)
+      let text = ""
+      map(data.deleteIds, (c: any, index: number) => (text += `Ids[${index}]=${c.id}&`))
+      const { success } = await deleteMultiplePublicMaterials(text)
       if (success) {
         ElMessage({
           type: "success",
@@ -151,6 +161,26 @@ const search = () => {
 
 const handlePageChange = () => {
   getList()
+}
+
+const handleExportPublicMateial = async () => {
+  let downRes: any = await exportSharedMaterialWarehouse()
+
+  const blob = downRes
+  const reader = new FileReader()
+  reader.readAsDataURL(blob)
+  reader.onload = function () {
+    let url = URL.createObjectURL(blob)
+    console.log(url, "downRes")
+    let a = document.createElement("a")
+    document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    a.href = url
+    a.download = '共用库'
+    a.target = "_blank"
+    a.click()
+    a.remove() //将a标签移除
+  }
+  // data.setVisible = false
 }
 
 onMounted(() => {

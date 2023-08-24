@@ -1,5 +1,5 @@
 <template>
-  <div class="unitPrice-import">
+  <el-card class="unitPrice-import">
     <div class="unitPrice-import__btn-container">
       <div>
         <el-form :model="data.searchForm" inline>
@@ -28,38 +28,47 @@
         </el-form-item> -->
       </el-form>
     </div>
-    <el-table :data="data.tableData" border style="width: 100%" height="700">
+    <el-table :v-loading="data.loading" :data="data.tableData" border style="width: 100%" height="700">
       <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols" :key="col.key" width="150" />
       <el-table-column label="返点率" prop="uInitPriceFormYearOrValueModes" width="175">
         <el-table-column
           v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 0)"
           :key="iIndex"
-          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
           :label="item.year"
           :formatter="formatDatas"
-        />
+        >
+          <template #default="{ row }">
+            {{ filter(row.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 0)[iIndex].value }}
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column label="年降率" width="175">
         <el-table-column
           v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 1)"
           :key="iIndex"
-          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
           :label="item.year"
           :formatter="formatDatas"
-        />
+        >
+          <template #default="{ row }">
+            {{ filter(row.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 1)[iIndex].value }}
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column label="年未税价" width="300">
         <el-table-column
           v-for="(item, iIndex) in filter(data.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 2)"
           :key="iIndex"
-          :prop="`uInitPriceFormYearOrValueModes.${iIndex}.value`"
           :label="item.year"
           :formatter="formatDatas"
-        />
+        >
+          <template #default="{ row }">
+            {{ filter(row.uInitPriceFormYearOrValueModes, (k) => k?.uInitPriceFormType === 2)[iIndex].value }}
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols2" :key="col.key" width="150" />
     </el-table>
-    <div>
+    <el-row justify="end" style="margin-top: 10px;">
       <el-pagination
         background
         layout="prev, pager, next"
@@ -68,8 +77,8 @@
         v-model:currentPage="data.pageNo"
         @update:current-page="handlePageChange"
       />
-    </div>
-  </div>
+    </el-row>
+  </el-card>
 </template>
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
@@ -81,6 +90,7 @@ import { filter } from "lodash"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 
 const data = reactive<any>({
+  loading: false,
   tableData: [],
   setVisible: false,
   downloadSetForm: {
@@ -132,15 +142,14 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 // }
 
 const getList = async () => {
+  data.loading = true
   let { searchForm } = data
   searchForm.skipCount = (data.pageNo - 1) * searchForm.maxResultCount
   let res: any = await getUInitPrice(searchForm)
   data.uInitPriceFormYearOrValueModes = res.result.items[0]?.uInitPriceFormYearOrValueModes
-  console.log(data.uInitPriceFormYearOrValueModes, "data.uInitPriceFormYearOrValueModes")
-  setTimeout(() => {
-    data.tableData = res.result.items
-    data.total = res.result.totalCount
-  }, 300)
+  data.loading = false
+  data.tableData = res.result.items
+  data.total = res.result.totalCount
 }
 
 const search = () => {
@@ -163,6 +172,8 @@ const formatDatas = (record: any, _row: any, cellValue: any) => {
 </script>
 <style lang="scss" scoped>
 .unitPrice-import {
+  margin-top: 20px;
+
   &__btn-container {
     margin: 20px 0;
     position: relative;

@@ -1,12 +1,12 @@
 import { request } from "@/utils/service"
-import { ElectronicDto, ConstructionModel } from "../data.type"
+import { ElectronicDto, ConstructionModel } from "../../../components/ElectronicTable/data.type"
 
 // 资源部输入时,加载电子料结构件初始值
-export function GetElectronic(auditFlowId: number, productId: number): any {
+export function GetElectronic(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/ResourceEntering/GetElectronicSingle",
     method: "get",
-    data: { auditFlowId, productId }
+    data: { auditFlowId, solutionId }
   })
 }
 
@@ -19,10 +19,10 @@ export function PostElectronicMaterialCalculate(data: ElectronicDto[]): any {
   })
 }
 
-// 计算电子料单价录入 根据原币计算
+// 计算电子料单价录入
 export function PosToriginalCurrencyCalculate(data: ElectronicDto[]): any {
   return request({
-    url: "/api/services/app/ResourceEntering/PosToriginalCurrencyCalculateSingle",
+    url: "/api/services/app/ResourceEntering/ElectronicMaterialUnitPriceInputCalculation",
     method: "post",
     data
   })
@@ -72,10 +72,10 @@ export function ToriginalCurrencyStructural(data: ElectronicDto): any {
   })
 }
 
-// 计算结构料单价录入 ==>根据年降计算
+// 计算结构料单价录入
 export function PostStructuralMaterialCalculate(data: ElectronicDto): any {
   return request({
-    url: "/api/services/app/ResourceEntering/PostStructuralMaterialCalculateSingle",
+    url: "/api/services/app/ResourceEntering/CalculationOfStructuralMaterials",
     method: "post",
     data
   })

@@ -26,12 +26,12 @@
             <el-input v-model="row.partNumber" />
           </template>
         </el-table-column>
-        <el-table-column label="单价" width="100">
+        <el-table-column label="单价" width="175">
           <template #default="{ row }">
             <el-input-number v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" width="150">
+        <el-table-column label="数量" width="175">
           <template #default="{ row }">
             <el-input-number v-model="row.quantity" :min="0" controls-position="right" />
           </template>
@@ -49,6 +49,72 @@
         <el-table-column label="操作" fixed="right" width="90">
           <template #default="{ $index }">
             <el-button @click="deletehandboardCost($index)" type="danger" v-havedone>删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <el-card class="margin-top">
+      <template #header>
+        <el-row style="width: 100%" justify="space-between" align="middle">
+          差旅费
+          <el-button type="primary" @click="addTravelCostData" v-havedone>新增</el-button>
+        </el-row>
+      </template>
+      <el-table
+        :data="data.travelExpense"
+        style="width: 100%"
+        border
+        height="300"
+        show-summary
+        :summary-method="getTravelCostSummaries"
+      >
+        <el-table-column type="index" width="50" />
+        <el-table-column label="事由" width="150">
+          <template #default="{ row }">
+            <el-select v-model="row.reasonsId">
+              <el-option
+                v-for="item in data.nreResonOptions"
+                :key="item.id"
+                :label="item.displayName"
+                :value="item.id"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="人数" width="150">
+          <template #default="{ row }">
+            <el-input-number
+              v-model="row.peopleCount"
+              :min="0"
+              controls-position="right"
+              @change="calculateCost(row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="费用/天" width="175">
+          <template #default="{ row }">
+            <el-input-number v-model="row.costSky" :min="0" controls-position="right" @change="calculateCost(row)" />
+          </template>
+        </el-table-column>
+        <el-table-column label="天数" width="175">
+          <template #default="{ row }">
+            <el-input-number v-model="row.skyCount" :min="0" controls-position="right" @change="calculateCost(row)" />
+          </template>
+        </el-table-column>
+        <el-table-column label="费用" width="175">
+          <template #default="{ row }">
+            {{ row.peopleCount * row.costSky * row.skyCount }}
+          </template>
+        </el-table-column>
+        <el-table-column label="备注">
+          <template #default="{ row }">
+            <el-input v-model="row.remark" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right" width="90">
+          <template #default="{ $index }">
+            <el-button @click="deleteTravelCostData($index)" type="danger" v-havedone>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,67 +154,6 @@
         <el-table-column label="操作" fixed="right" width="90">
           <template #default="{ $index }">
             <el-button @click="deleteOtherCostData($index)" type="danger" v-havedone>删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <el-card class="margin-top">
-      <template #header>
-        <el-row style="width: 100%" justify="space-between" align="middle">
-          差旅费
-          <el-button type="primary" @click="addTravelCostData" v-havedone>新增</el-button>
-        </el-row>
-      </template>
-      <el-table
-        :data="data.travelExpense"
-        style="width: 100%"
-        border
-        height="300"
-        show-summary
-        :summary-method="getTravelCostSummaries"
-      >
-        <el-table-column type="index" width="50" />
-        <el-table-column label="事由" width="150">
-          <template #default="{ row }">
-            <el-select v-model="row.reasonsId">
-              <el-option
-                v-for="item in data.nreResonOptions"
-                :key="item.id"
-                :label="item.displayName"
-                :value="item.id"
-              />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="人数" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.peopleCount" :min="0" controls-position="right" @change="calculateCost(row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="费用/天" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.costSky" :min="0" controls-position="right" @change="calculateCost(row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="天数" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.skyCount" :min="0" controls-position="right" @change="calculateCost(row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="费用" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.cost" :min="0" controls-position="right" />
-          </template>
-        </el-table-column>
-        <el-table-column label="备注">
-          <template #default="{ row }">
-            <el-input v-model="row.remark" />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" fixed="right" width="90">
-          <template #default="{ $index }">
-            <el-button @click="deleteTravelCostData($index)" type="danger" v-havedone>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -223,7 +228,7 @@ const submit = async () => {
           cost: (item.unitPrice || 0) * (item.quantity || 0)
         }
       }),
-      productId
+      solutionid: productId
     },
     auditFlowId
   })

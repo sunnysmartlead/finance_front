@@ -7,10 +7,14 @@
         </div>
       </template>
       <el-row :gutter="12">
-        <el-col :span="8">
-          <el-card shadow="hover" class="card" @click="createFlow(0)">
-            <img style="width: 100px; height: 100px" src="@/assets/images/mainProcess.png" :style="{ filter: `hue-rotate(${hueRotate}deg)` }"/>
-            <div class="text">主流程-变更</div>
+        <el-col :span="4" v-for="item in PROCESS_EUNM" :key="item.id">
+          <el-card shadow="hover" class="card" @click="createFlow(item.id)">
+            <img
+              style="width: 100px; height: 100px"
+              src="@/assets/images/mainProcess.png"
+              :style="{ filter: `hue-rotate(${hueRotate}deg)` }"
+            />
+            <div class="text">{{ item.name }}</div>
           </el-card>
         </el-col>
       </el-row>
@@ -21,13 +25,19 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router"
 const router = useRouter()
-const createFlow = (index: number) => {
-  if (index==0) {
-    router.push({
-      path: "/demandApply/index"
-    })
-  }
+import { PROCESS_EUNM } from "./common/const"
+
+const hueRotate = 10
+
+const createFlow = (id: string) => {
+  router.push({
+    path: "/demandApply/index",
+    query: {
+      processType: id
+    }
+  })
 }
+
 </script>
 <style scoped lang="scss">
 .div-card {
@@ -36,14 +46,15 @@ const createFlow = (index: number) => {
     width: 150px;
     cursor: pointer;
     border-radius: 10px;
+    margin-bottom: 10px;
     .text {
       margin: 5px;
-      color:cadetblue;
+      text-align: center;
+      color: cadetblue;
     }
   }
-  .card:hover
-  {
-    background-color:azure;
+  .card:hover {
+    background-color: azure;
   }
 }
 </style>

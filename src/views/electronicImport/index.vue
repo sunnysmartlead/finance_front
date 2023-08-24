@@ -2,7 +2,7 @@
   <div class="electronic-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
     <CustomerSpecificity />
-    <TrDownLoad />
+    <TrView btnText="查看主方案设计" />
     <customerTargetPrice />
     <div class="electronic-import__btn-container">
       <el-form :inline="true">
@@ -26,22 +26,22 @@
         </el-table-column>
         <el-table-column prop="typeName" label="板部件长(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件长" />
+            <el-input v-model="row.typeName" placeholder="请录入板部件长" />
           </template>
         </el-table-column>
         <el-table-column prop="isInvolveItem" label="板部件宽(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件宽" />
+            <el-input v-model="row.isInvolveItem" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
         <el-table-column prop="sapItemNum" label="板部件面积(mm^2)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件面积" />
+            <el-input v-model="row.sapItemNum" placeholder="请录入板部件面积" />
           </template>
         </el-table-column>
         <el-table-column prop="sapItemName" label="拼板数量">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入拼板数量" />
+            <el-input v-model="row.sapItemName" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -95,17 +95,19 @@ import { ref, reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom } from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom} from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
-import ProductInfo from "@/components/ProductInfo/index.vue"
-import TrDownLoad from "@/components/TrDownLoad/index.vue"
+// import ProductInfo from "@/components/ProductInfo/index.vue"
+import TrView from "@/components/TrView/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-let Host: string = "ElectronicBomImport"
+const Host = "ElectronicBomImport"
+
 let auditFlowId: any = null
 let productId: any = null
+
 const platePart: any = ref([
   {
     date: "2016-05-03",
@@ -113,6 +115,7 @@ const platePart: any = ref([
     address: "No. 189, Grove St, Los Angeles"
   }
 ])
+
 const data = reactive({
   activeIndex: 0,
   productList: [],
@@ -121,7 +124,7 @@ const data = reactive({
   downloadSetForm: {
     number: 0
   },
-  auditFlowId: null as any
+  auditFlowId: null as any,
 })
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
@@ -136,6 +139,17 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
     })
   }
 }
+
+const queryBoardInfomation = async () => {
+  const { success, result } = await getBoardInfomation({
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+  })
+  if (success && result?.length) {
+    platePart.value = result
+  }
+}
+
 const downLoadTemplate = async () => {
   let res: any = await DownloadFile(Number(data.downloadSetForm.number))
   const blob = res
@@ -153,12 +167,15 @@ const downLoadTemplate = async () => {
   }
   data.setVisible = false
 }
+
 const addPlatePart = async () => {
   platePart.value.push({})
 }
+
 const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
+
 const submit = async () => {
   const loading = ElLoading.service({
     lock: true,
@@ -173,8 +190,9 @@ const submit = async () => {
   try {
     let { success }: any = await SaveElectronicBom({
       auditFlowId,
-      productId,
-      electronicBomDtos: data.tableData
+      solutionId: productId,
+      electronicBomDtos: data.tableData,
+      boardDtos: platePart.value
     })
     loading.close()
     success && ElMessage.success("提交成功！")
@@ -182,14 +200,21 @@ const submit = async () => {
     loading.close()
   }
 }
+
+const init = async () => {
+  let resElectronic: any = await GetElectronicBom({ auditFlowId, solutionId: productId })
+  data.tableData = resElectronic.result
+
+}
+
 onMounted(async () => {
   let query = getQuery()
   auditFlowId = Number(query.auditFlowId) || null
   productId = Number(query.productId) || null
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
   if (auditFlowId && productId) {
-    let resElectronic: any = await GetElectronicBom({ auditFlowId, productId })
-    data.tableData = resElectronic.result
+    init()
+    queryBoardInfomation()
   }
 })
 </script>

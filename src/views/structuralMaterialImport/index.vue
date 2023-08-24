@@ -4,36 +4,26 @@
     <CustomerSpecificity />
     <TrDownLoad />
     <customerTargetPrice />
-    <div class="electronic-import__btn-container">
-      <el-form :inline="true">
-        <el-form-item label="">
-          <el-upload
-            :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
-            :on-success="handleSuccess"
-            show-file-list
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError"
-          >
-            <el-button type="primary">结构料上传</el-button>
-          </el-upload>
-        </el-form-item>
-        <!-- <el-form-item label="">
-          <el-upload
-            :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-            :on-success="handleSuccess3D"
-            show-file-list
-          >
-            <el-button type="primary">附件上传：3D爆炸图</el-button>
-          </el-upload>
-        </el-form-item> -->
-        <el-form-item label="">
-          <el-button type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
-        </el-form-item>
-        <el-form-item label="">
-          <ProductInfo :auditFlowId="data.auditFlowId" />
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-row class="electronic-import__btn-container">
+      <el-upload
+        :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
+        :on-success="handleSuccess"
+        show-file-list
+        :on-progress="handleGetUploadProgress"
+        :on-error="handleUploadError"
+      >
+        <el-button type="primary">结构料上传</el-button>
+      </el-upload>
+      <el-upload
+        :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+        :on-success="handleSuccess3D"
+        show-file-list
+      >
+        <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
+      </el-upload>
+      <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
+      <ProductInfo :auditFlowId="data.auditFlowId" />
+    </el-row>
 
     <h5>结构料导入</h5>
     <el-table :data="data.tableData" border style="width: 100%" height="700">
@@ -60,14 +50,13 @@
       <el-form :model="data.logisticsForm" inline ref="refForm" :rules="rules">
         <!-- <h5>物流基础信息</h5> -->
         <h6>镜头参数</h6>
-        <el-form-item label="像素" prop="outerPackagingLength">
-          <el-input v-model="data.logisticsForm.outerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
+        <el-form-item label="像素" prop="pixel">
+          <el-input v-model="data.logisticsForm.pixel" oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>M</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="FOV" prop="outerPackagingLength">
-          <el-input v-model="data.logisticsForm.outerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
-          </el-input>
+        <el-form-item label="FOV" prop="fov">
+          <el-input v-model="data.logisticsForm.fov" oninput="value=value.replace(/[^0-9.]/g,'')" />
         </el-form-item>
         <h6>外包装体积</h6>
         <el-form-item label="外包装长" prop="outerPackagingLength">
@@ -162,7 +151,7 @@ import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
-let Host: string = "StructBomImport"
+let Host = "StructBomImport"
 const refForm = ref<FormInstance>()
 let auditFlowId: any = null
 let productId: any = null
@@ -206,9 +195,9 @@ onMounted(async () => {
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
 
   if (auditFlowId && productId) {
-    let resStruction: any = await GetStructionBom({ auditFlowId, productId })
+    let resStruction: any = await GetStructionBom({ auditFlowId, solutionId: productId })
     data.tableData = resStruction.result
-    let resForm: any = await getProductDevelopmentInput({ auditFlowId, productId })
+    let resForm: any = await getProductDevelopmentInput({ auditFlowId, solutionId: productId })
     Object.keys(data.logisticsForm).forEach((key: string) => {
       data.logisticsForm[key] = resForm.result[key]
     })
@@ -256,13 +245,6 @@ const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      if (!data.logisticsForm.picture3DFileId) {
-        ElMessage({
-          message: "3d爆炸图必传",
-          type: "error"
-        })
-        return
-      }
       const loading = ElLoading.service({
         lock: true,
         text: "加载中",
@@ -270,11 +252,11 @@ const submit = async (formEl: FormInstance | undefined) => {
       })
       try {
         let params: SaveBOM = Object.assign(
-          { auditFlowId, productId, structureBomDtos: data.tableData },
+          { auditFlowId, solutionId: productId, structureBomDtos: data.tableData },
           data.logisticsForm
         )
         let res: any = await SaveStructionBom(params)
-        //let resO: any = await SaveProductDevelopmentInput(params)
+        let resO: any = await SaveProductDevelopmentInput(params)
         loading.close()
         if (res.success) {
           ElMessage({
@@ -300,6 +282,9 @@ const submit = async (formEl: FormInstance | undefined) => {
   &__btn-container {
     margin: 20px 0;
     position: relative;
+  }
+  .gap {
+    margin: 0 5px;
   }
 }
 </style>

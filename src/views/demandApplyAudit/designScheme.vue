@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-dialog v-model="dialogTableVisible" :title="title" @close="dialogClose" draggable width="85%">
+    <el-dialog v-model="props.dialogTableVisible" :title="title" @close="dialogClose" draggable width="85%">
       <el-table :data="designScheme" border>
-        <el-table-column prop="solutionName" label="方案名称" width="150"> </el-table-column>
+        <el-table-column prop="solutionName" label="方案名称" width="150" />
         <el-table-column prop="sensor" label="SENSOR" width="150">
           <template #default="{ row }">
             <el-input v-model="row.sensor" disabled />
@@ -31,6 +31,11 @@
         <el-table-column prop="mcu" label="MCU" width="150">
           <template #default="{ row }">
             <el-input v-model="row.mcu" :disabled="disabled" />
+          </template>
+        </el-table-column>
+          <el-table-column prop="connector" label="连接器" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.connector" placeholder="请录入连接器" />
           </template>
         </el-table-column>
         <el-table-column prop="harness" label="线束" width="150">
@@ -63,6 +68,21 @@
             <el-input v-model="row.rests" :disabled="disabled" />
           </template>
         </el-table-column>
+        <el-table-column prop="rests" label="币别" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.rests" :disabled="disabled" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="rests" label="汇率" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.rests" :disabled="disabled" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="rests" label="合计" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.rests" :disabled="disabled" />
+          </template>
+        </el-table-column>
         <el-table-column prop="file.fileName" label="3D爆炸图截图下载" fixed="right" width="300">
           <template #default="{ row }">
             <el-button type="success" @click="downLoad(row.fileId, row.file?.fileName)">{{
@@ -75,7 +95,7 @@
   </div>
 </template>
 
-<script  lang="ts" setup>
+<script lang="ts" setup>
 import { ref, onMounted, watch, defineEmits } from "vue"
 import { AuditExport } from "./service"
 import getQuery from "@/utils/getQuery"
@@ -134,5 +154,4 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

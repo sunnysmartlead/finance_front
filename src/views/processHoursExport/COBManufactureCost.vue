@@ -2,14 +2,14 @@
     <div class="u-p-20">
         <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
             <div class="u-flex u-row-left u-col-center">
-                <div style="font-size: 14px;font-weight: bold;">
+                <!-- <div style="font-size: 14px;font-weight: bold;">
                     <span>零件列表</span>
                 </div>
                 <div class="u-m-l-10">
                     <el-select v-model="currentPlan" placeholder="请选择方案" size="large">
                         <el-option v-for="item in planOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
-                </div>
+                </div> -->
             </div>
             <div>
                 <el-button type="primary">提交</el-button>
@@ -58,7 +58,7 @@
                         <el-card>
                             <template #header>
                                 <div class="title-box u-font-20">
-                                    <span>{{dataItem.classification}}</span>
+                                    <span>{{ dataItem.classification }}</span>
                                 </div>
                             </template>
                             <div>
@@ -75,7 +75,7 @@
                                         <el-table-column label="直接制造成本" align="center">
                                             <el-table-column label="直接人工" width="200" align="center">
                                                 <template #default="scope">
-                                                    <span>{{ scope.row.directLaborPrice}}</span>
+                                                    <span>{{ scope.row.directLaborPrice }}</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column label="设备折旧" width="200" align="center">
@@ -142,7 +142,8 @@
                                     <span>Other</span>
                                 </div>
                                 <div class="u-m-t-10">
-                                    <el-table :data="dataItem.listBomEnterTotal" border max-height="400px" style="width:600px;color: #000000;">
+                                    <el-table :data="dataItem.listBomEnterTotal" border max-height="400px"
+                                        style="width:600px;color: #000000;">
                                         <el-table-column label="年份" align="center" width="200">
                                             <template #default="scope">
                                                 <span>{{ scope.row.year }}</span>
@@ -170,7 +171,8 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ElMessage, ElMessageBox,genFileId } from "element-plus"
+import getQuery from "@/utils/getQuery";
+import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import { GetListAll, update, create, deleteItem, uploadAction } from "@/api/COB";
 //方案下拉选项
 const planOptions = ref([
@@ -193,6 +195,12 @@ const planOptions = ref([
 ])
 //选中的方案
 const currentPlan = ref("")
+//路径上的参数
+const queryParam = ref({
+    AuditFlowId: undefined,
+    SolutionId: undefined,
+})
+const { auditFlowId, productId }: any = getQuery()
 //COB-UPH
 const COBUPHData = ref<any>([])
 let tempUPHData = [
@@ -260,31 +268,32 @@ let tempTableDataArr = [
 ]
 //页面加载函数
 onMounted(async () => {
+    queryParam.value.AuditFlowId = auditFlowId
+    queryParam.value.SolutionId = productId;
     initData();
 })
 
 const getListData = async () => {
-  let param = {
-    AuditFlowId: 100,
-    SolutionId:100
-  }
-  await GetListAll(param).then((response: any) => {
-    if (response.success) {
-      let data = response.result;
-      tableData.value =data;
-      console.log("列表数据", data);
-    } else {
-      ElMessage({
-        type: 'error',
-        message: '列表加载失败'
-      })
+    let param = queryParam.value;
+    if (param.SolutionId != undefined && param.AuditFlowId != undefined) {
+        await GetListAll(param).then((response: any) => {
+            if (response.success) {
+                let data = response.result;
+                tableData.value = data;
+                console.log("COB列表数据", data);
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: 'COB列表数据加载失败'
+                })
+            }
+        })
     }
-  })
 }
 
 const initData = () => {
     //COBUPHData.value = tempUPHData;
-    tableData.value = tempTableDataArr;
+    //tableData.value = tempTableDataArr;
     getListData();
 }
 </script>
@@ -310,4 +319,5 @@ const initData = () => {
 
 .labelClassName {
     background-color: rgb(247, 247, 96) !important;
-}</style>
+}
+</style>

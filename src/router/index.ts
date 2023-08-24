@@ -83,7 +83,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/demandApplyAudit/index.vue"),
         name: "demandApplyAudit",
         meta: {
-          title: "营销部审核"
+          title: "核价需求审核&方案录入"
         }
       },
       {
@@ -975,6 +975,21 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/financeDepartment",
+    redirect: "/financeDepartment/selfBuilt",
+    component: Layout,
+    children: [
+      {
+        path: "selfBuilt",
+        component: () => import("@/views/financeDepartment/selfBuiltTable.vue"),
+        name: "selfBuilt",
+        meta: {
+          title: "自建项目表"
+        }
+      }
+    ]
+  },
+  {
     path: "/",
     redirect: "/UpdateLogInfo/index",
     component: Layout,
@@ -992,6 +1007,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
+
   // {
   //   path: "/permission",
   //   component: Layout,

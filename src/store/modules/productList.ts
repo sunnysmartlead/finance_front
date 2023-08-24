@@ -19,6 +19,7 @@ export const useProductStore = defineStore({
     async setProductList(id: number) {
       const res: any = await getProductByAuditFlowId(id)
       this.productList = res.result
+      console.log("=========================请求零件列表结果=======================",this.productList)
     },
     setProductId(id: number | string) {
       this.productId = id

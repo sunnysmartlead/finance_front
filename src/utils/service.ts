@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus"
 import { get } from "lodash-es"
 import { getToken } from "@/utils/cookies"
 import { ElLoading } from "element-plus"
-export const baseDomain="https://localhost:44311/"
+export const baseDomain=import.meta.env.VITE_BASE_API
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例
@@ -119,7 +119,7 @@ function createRequestFunction(service: AxiosInstance) {
         "Content-Type": get(config, "headers.Content-Type", "application/json")
       },
       timeout: 300000,
-      baseURL: "https://localhost:44311/",   //import.meta.env.VITE_BASE_API,
+      baseURL: import.meta.env.VITE_BASE_API,   //import.meta.env.VITE_BASE_API,
       data: {},
       onDownloadProgress: function (progressEvent: any) {
         // 对原生进度事件的处理

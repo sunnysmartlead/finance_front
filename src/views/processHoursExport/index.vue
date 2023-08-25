@@ -924,6 +924,8 @@ const addPH = () => {
       dataArr.value.push(item);
     }
     else {
+      tempData.auditFlowId=auditFlowId;
+      tempData.solutionId=productId;
       dataArr.value.push(tempData);
     }
     addFlag.value = true;

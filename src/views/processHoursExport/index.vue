@@ -2,17 +2,10 @@
   <div>
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center">
-        <div style="font-size: 14px;font-weight: bold;">
-          <span>零件列表</span>
-        </div>
-        <div class="u-m-l-10">
-          <el-select v-model="currentPlan" placeholder="请选择方案" size="large">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </div>
+       
       </div>
       <div>
-        <el-button type="primary">提交</el-button>
+        <el-button   type="primary">提交</el-button>
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10  u-flex u-flex-wrap u-row-left u-col-center">
@@ -489,10 +482,15 @@
             </div>
           </div>
         </template>
+        <template v-else>
+          <div class="u-text-center u-p-t-20 u-p-b-20" style="color: #909399;width:100%;">
+            <span>暂无数据</span>
+          </div>
+        </template>
       </el-scrollbar>
     </div>
 
-    <div class="u-p-10 u-m-t-10 u-border uph-box">
+    <div class="u-p-10 u-m-t-10 u-border uph-box" v-if="UPHData.length>0">
       <div style="color:#000000;font-weight:bold">
         <span>UPH录入</span>
       </div>
@@ -517,20 +515,20 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="uphItem.smtVal" />
+              <el-input v-model="uphItem.smtuph" />
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="uphItem.cobVal" class="u-text-center" />
+              <el-input v-model="uphItem.cobuph" class="u-text-center" />
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="uphItem.groupTestVal" class="u-text-center" />
+              <el-input v-model="uphItem.zcuph" class="u-text-center" />
             </div>
           </div>
         </div>
       </el-scrollbar>
     </div>
 
-    <div class="u-p-10 u-m-t-10 u-border uph-box">
+    <div class="u-p-10 u-m-t-10 u-border uph-box" v-if="lineData.length>0">
       <div style="color:#000000;font-weight:bold">
         <span>线体数量、共线分辨率</span>
       </div>
@@ -552,10 +550,10 @@
               <span>{{ lineItem.year }}</span>
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="lineItem.lineBodyCount" />
+              <el-input v-model="lineItem.xtsl" />
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="lineItem.fenBianLvVal" class="u-text-center" />
+              <el-input v-model="lineItem.gxftl" class="u-text-center" />
             </div>
           </div>
         </div>
@@ -640,9 +638,10 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
+import getQuery from "@/utils/getQuery";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import {
-  GetListAll, getProcessHourDetail, handleCreate,
+  GetListAll, getProcessHourDetail, handleCreate,getListUphOrLine, 
   handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog
 } from "@/api/processHoursEnter"
 import { random } from 'lodash'
@@ -816,27 +815,26 @@ const dataArr = ref<any>([])
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null;
 const addFlag = ref(false);
-
-
-const UPHData = reactive([])
-const lineData = reactive([])
+const { auditFlowId, productId }: any = getQuery()
+const UPHData = ref<any>([])
+const lineData = ref<any>([])
 onMounted(() => {
-  // console.log('数据结构',JSON.stringify(dataArr));
-  getUPHData();
-  getLineData();
   initData();
 })
 
 const initData = () => {
   addFlag.value = false;
   currentEditIndex.value = -1;
-  getTableData()
+  if (auditFlowId != undefined && productId != undefined) {
+    getTableData();
+    getUPHAndLineData();
+  }
 }
 
 const getTableData = async () => {
   let param = {
-    AuditFlowId: 100,
-    SolutionId: 100
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
   }
   await GetListAll(param).then((response: any) => {
     if (response.success) {
@@ -851,6 +849,28 @@ const getTableData = async () => {
     }
   })
 }
+
+const getUPHAndLineData = async () => {
+  let param = {
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
+  }
+  await getListUphOrLine(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      console.log("UPHLine列表", data);
+      UPHData.value= data.processHoursEnterUphList;
+      lineData.value=data.processHoursEnterLineList;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
+}
+
+
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -1383,28 +1403,6 @@ const calToolTotalCost = (dataIndex: number) => {
 
 
 
-const getUPHData = () => {
-  for (let i = 25; i >= 10; i--) {
-    let item = {
-      year: '20' + i,
-      smtVal: random(100 * i),
-      cobVal: random(500 * i),
-      groupTestVal: random(1000 * i)
-    }
-    UPHData.unshift(item)
-  }
-}
-
-const getLineData = () => {
-  for (let i = 25; i >= 10; i--) {
-    let item = {
-      year: '20' + i,
-      lineBodyCount: random(100 * i),
-      fenBianLvVal: random(500 * i),
-    }
-    lineData.unshift(item)
-  }
-}
 
 const showProjectDialog = () => {
   dialogTableVisible.value = true

@@ -17,6 +17,15 @@ export function GetListAll(data: QueryParams) {
     })
 }
 
+
+export function getListUphOrLine(data: QueryParams) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetListUphOrLine",
+    method: "get",
+    data
+  })
+}
+
 //查询工序详细
 export function getProcessHourDetail(id: number) {
     return request({

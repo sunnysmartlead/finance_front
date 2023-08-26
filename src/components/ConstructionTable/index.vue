@@ -2,7 +2,7 @@
   <div class="margin-top">
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
       <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
-      <ProcessVertifyBox :onSubmit="handleSetBomState" />
+      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
     </el-row>
     <el-card>
       <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
@@ -662,6 +662,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
     opinionDescription: comment,
     comment,
     opinion,
+    nodeInstanceId,
     unitPriceId: data.constructionId,
     peopleId: data.peopleId
   })

@@ -41,8 +41,9 @@
       <!-- <el-descriptions-item label="审核/日期"> {{ data.tradeComplianceCheck.deletionTime }} </el-descriptions-item> -->
     </el-descriptions>
     <div style="float: right; margin: 20px 0">
-      <el-button @click="agree(true)" v-havedone>退回</el-button>
-      <el-button type="primary" @click="agree(false)" v-havedone>归档</el-button>
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
+      <!-- <el-button @click="agree(true)" v-havedone>退回</el-button>
+      <el-button type="primary" @click="agree(false)" v-havedone>归档</el-button> -->
     </div>
   </el-card>
 </template>
@@ -55,6 +56,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const { jumpTodoCenter } = useJump()
 const { auditFlowId = 1, productId = 1 }: any = getQuery()
@@ -85,25 +87,42 @@ const initFetch = async () => {
   data.tradeComplianceCheck = result.tradeComplianceCheck || {}
   console.log(result, "res")
 }
-const agree = async (isAgree: boolean) => {
-  ElMessageBox[isAgree ? "prompt" : "confirm"]("确定执行该操作吗", "请审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    let res: any = await IsTradeComplianceCheck({
-      AuditFlowId: auditFlowId,
-      opinionDescription: isAgree ? val.value : "",
-      isAgree
-    })
-    if (res.success) {
-      ElMessage({
-        type: "success",
-        message: "操作成功"
-      })
-      jumpTodoCenter()
-    }
+// const agree = async (isAgree: boolean) => {
+//   ElMessageBox[isAgree ? "prompt" : "confirm"]("确定执行该操作吗", "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     let res: any = await IsTradeComplianceCheck({
+//       AuditFlowId: auditFlowId,
+//       opinionDescription: isAgree ? val.value : "",
+//       isAgree
+//     })
+//     if (res.success) {
+//       ElMessage({
+//         type: "success",
+//         message: "操作成功"
+//       })
+//       jumpTodoCenter()
+//     }
+//   })
+// }
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+  let res: any = await IsTradeComplianceCheck({
+    AuditFlowId: auditFlowId,
+    opinionDescription: comment,
+    comment,
+    nodeInstanceId,
+    isAgree: opinion.includes("Done") ? true : false,
+    opinion: opinion
   })
+  if (res.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+    jumpTodoCenter()
+  }
 }
 watchEffect(() => {})
 </script>

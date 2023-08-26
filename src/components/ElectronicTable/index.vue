@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && !isMergeVertify">
-      <VertifyBox :onSubmit="handleSetBomState" />
+      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
+      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="electronicBomProcessType" />
     </el-row>
     <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
     <el-card class="table-wrap" v-loading="tableLoading">
@@ -242,7 +243,8 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
-import VertifyBox from "@/components/VertifyBox/index.vue"
+// import VertifyBox from "@/components/VertifyBox/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const router = useRouter()
 const Host = "ElectronicPriceInput"
@@ -484,11 +486,57 @@ const handleEdit = (row: any, isEdit: boolean) => {
   row.isEdit = isEdit
 }
 
-const handleSetBomState = (isAgree: boolean) => {
+// const handleSetBomState = (isAgree: boolean) => {
+//   var construction = [[]]
+//   var people = [[]]
+//   var prop = window.sessionStorage.getItem("construction")
+//   if (!prop && !isAgree) {
+//     ElMessage({
+//       message: "请选择要退回那些条数据!",
+//       type: "warning"
+//     })
+//     return
+//   } else {
+//     if (prop) {
+//       var constructionProp = JSON.parse(prop)
+//       constructionProp.forEach((p: any) => {
+//         construction.push(p.constructionId)
+//         people.push(p.peopleId)
+//       })
+//     }
+//   }
+//   electronicId.value = [...new Set(construction.flat(Infinity))]
+//   peopleId.value = [...new Set(people.flat(Infinity))]
+
+//   if (!isAgree && (!electronicId.value.length || !peopleId.value.length)) {
+//     ElMessage({
+//       message: "请选择要退回那些条数据!",
+//       type: "warning"
+//     })
+//     return
+//   }
+//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
+//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     const { success } = await SetBomState({
+//       isAgree,
+//       auditFlowId,
+//       bomCheckType: 3,
+//       opinionDescription: !isAgree ? val?.value : "",
+//       unitPriceId: electronicId.value,
+//       peopleId: peopleId.value
+//     })
+//     if (success) jumpTodoCenter()
+//   })
+// }
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
   var construction = [[]]
   var people = [[]]
   var prop = window.sessionStorage.getItem("construction")
-  if (!prop && !isAgree) {
+  if (!prop && opinion.includes("_No")) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -506,31 +554,25 @@ const handleSetBomState = (isAgree: boolean) => {
   electronicId.value = [...new Set(construction.flat(Infinity))]
   peopleId.value = [...new Set(people.flat(Infinity))]
 
-  if (!isAgree && (!electronicId.value.length || !peopleId.value.length)) {
+  if (opinion.includes("_No") && (!electronicId.value.length || !peopleId.value.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    const { success } = await SetBomState({
-      isAgree,
-      auditFlowId,
-      bomCheckType: 3,
-      opinionDescription: !isAgree ? val?.value : "",
-      unitPriceId: electronicId.value,
-      peopleId: peopleId.value
-    })
-    if (success) jumpTodoCenter()
+  const { success } = await SetBomState({
+    isAgree: !opinion.includes("_No"),
+    auditFlowId,
+    bomCheckType: 3,
+    opinionDescription: comment,
+    unitPriceId: electronicId.value,
+    peopleId: peopleId.value,
+    opinion,
+    nodeInstanceId
   })
+  if (success) jumpTodoCenter()
 }
-
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {
   electronicId.value = selection.map((p: any) => p.id)

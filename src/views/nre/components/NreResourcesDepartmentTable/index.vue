@@ -1,6 +1,7 @@
 <template>
   <div style="padding: 0 10px">
-    <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
+    <!-- <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" /> -->
+    <ProcessVertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
     <ThreeDImage m="3" />
     <el-card class="margin-top">
       <template #header> 资源部 - 业务员 </template>
@@ -81,7 +82,8 @@ import { ElMessage } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import { debounce } from "lodash"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
-import VertifyBox from "@/components/VertifyBox/index.vue"
+// import VertifyBox from "@/components/VertifyBox/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const { auditFlowId, right = 1, productId }: any = getQuery()
 

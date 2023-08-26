@@ -5,12 +5,13 @@
         <el-form-item label="标题">
           <el-input v-model="data.form.title" />
         </el-form-item>
-<!--         <el-form-item label="Tr主方案">
+        <!--         <el-form-item label="Tr主方案">
           <el-button @click="downLoad">点击下载附件</el-button>
         </el-form-item> -->
         <el-form-item>
-          <el-button type="primary" @click="save(true)" v-havedone>同意</el-button>
-          <el-button @click="save(false)" v-havedone>拒绝</el-button>
+          <!-- <el-button type="primary" @click="save(true)" v-havedone>同意</el-button>
+          <el-button @click="save(false)" v-havedone>拒绝</el-button> -->
+          <ProcessVertifyBox :onSubmit="handleSubmit" />
         </el-form-item>
       </el-form>
     </el-card>
@@ -25,6 +26,7 @@ import getQuery from "@/utils/getQuery"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { useRoute } from "vue-router"
 import useJump from "@/hook/useJump"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const route = useRoute()
 const { closeSelectedTag } = useJump()
@@ -71,6 +73,23 @@ const save = async (isAgree: boolean) => {
         closeSelectedTag(route.path)
       }
     })
+  }
+}
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+  if (trFileId) {
+    let res: any = await setTRMainSolutionState({
+      auditFlowId,
+      trCheckType: trCheckType ? Number(trCheckType) : 1, //1：“市场部TR主方案审核”，2：“产品开发部TR主方案审
+      isAgree: !opinion.includes("_No"),
+      opinionDescription: comment,
+      comment,
+      opinion,
+      nodeInstanceId
+    })
+    if (res.success) {
+      ElMessage.success("操作成功")
+      closeSelectedTag(route.path)
+    }
   }
 }
 const downLoad = async () => {

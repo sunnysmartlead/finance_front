@@ -3,22 +3,20 @@
         <div>
             <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
                 <div class="u-flex u-row-left u-col-center">
-                    <div style="font-size: 14px;font-weight: bold;">
+                    <!-- <div style="font-size: 14px;font-weight: bold;">
                         <span>零件列表</span>
                     </div>
                     <div class="u-m-l-10">
-                        <el-select @change="planChange"
-                                v-model="data.currentPlan"
-                                placeholder="请选择方案"
-                                size="large">
-                            <el-option v-for="item in data.planOptions" :key="item.value" :label="item.label"
-                                :value="item.value" />
-                        </el-select>
-                    </div>
+                        <el-select @change="planChange" v-model="queryParam.SolutionId" disabled placeholder="请选择方案"
+                            size="large">
+                            <el-option v-for="(item, index)  in  productStore.productList" :key="index"
+                                :label="item.moduleName" :value="item.id + ''" /></el-select>
+                    </div> -->
                 </div>
                 <div>
-                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1">提交</el-button>
-                    <el-button type="primary"  :disabled="cardData.length<1||cardData[0].logisticscostList.length<1"
+                    <el-button type="primary" :disabled="cardData.length < 1 || cardData[0].logisticscostList?.length < 1"
+                        @click="submitData()">提交</el-button>
+                    <el-button type="primary" :disabled="cardData.length < 1 || cardData[0].logisticscostList?.length < 1"
                         @click="saveTableData()">保存</el-button>
                     <!-- <template  v-if="!data.editDisabled">
                         <el-button type="info"     @click="resetTableData()">重置</el-button>
@@ -44,10 +42,11 @@
                     <template #header>
                         <div style="font-weight: bold;">
                             <span>{{ cardItem.classification }}</span>
+                            <span>K/Y</span>
                         </div>
                     </template>
                     <div>
-                        <el-table :data="(cardItem.logisticscostList)" style="width: 100%" border>
+                        <el-table :data="(cardItem.logisticscostList)" max-height="500px" style="width: 100%" border>
                             <el-table-column label="年份" align="center">
                                 <template #default="scope">
                                     <div>
@@ -85,7 +84,9 @@
                             <el-table-column label="月需求量" align="center">
                                 <template #default="scope">
                                     <div>
-                                        <span>{{ scope.row.monthlyDemandPrice }}</span>
+                                        <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / 12).toFixed(2)
+                                        }}</span>
+                                        <span v-else>--</span>
                                     </div>
                                 </template>
                             </el-table-column>
@@ -125,9 +126,10 @@
 <script setup lang="ts">
 import { ref, reactive, toRefs, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from "element-plus";
-import { GetListAll,createProcess} from "@/api/logisticsCost";
+import getQuery from "@/utils/getQuery";
+import { useProductStore } from "@/store/modules/productList"
+import { GetListAll, createProcess, createSubmit, GetGradientllodelYearByProductId, GetGradientByAuditFlowId } from "@/api/logisticsCost";
 const data = reactive({
-    currentPlan: '100',
     editDisabled: true,
     planOptions: [
         {
@@ -148,34 +150,42 @@ const data = reactive({
         },
     ],
 })
-const cardData=ref([]);
+const productStore = useProductStore()
+//路径上的参数
+const queryParam = ref({
+    AuditFlowId: "",
+    SolutionId: "",
+})
+const { auditFlowId, productId }: any = getQuery()
+const cardData = ref([]);
 let tempCardData: any = [];
 
 onMounted(() => {
+    queryParam.value.AuditFlowId = auditFlowId
+    queryParam.value.SolutionId = productId;
     getListData();
 })
 
-const getListData=()=>{
-    let param={
-        AuditFlowId: 100,
-        SolutionId:Number(data.currentPlan)
+const getListData = () => {
+    let param = queryParam.value;
+    if (param.SolutionId != undefined && param.AuditFlowId != undefined) {
+        GetListAll(param).then((response: any) => {
+            if (response.success) {
+                let data = response.result;
+                console.log("物流列表", data);
+                cardData.value = data;
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: '列表加载失败'
+                })
+            }
+        })
     }
-    GetListAll(param).then((response: any) => {
-    if (response.success) {
-      let data = response.result;
-      console.log("物流列表", data);
-      cardData.value = data;
-    } else {
-      ElMessage({
-        type: 'error',
-        message: '列表加载失败'
-      })
-    }
-  })
 }
 
-const planChange=(value:any)=>{
-    console.log("当前方案",value);
+const planChange = (value: any) => {
+    console.log("当前方案", value);
     getListData();
 }
 
@@ -183,65 +193,87 @@ const planChange=(value:any)=>{
 const pcsPriceChange = (value: any, index: any, item: any) => {
     console.log("单片价格变化", value);
     console.log(`index===${index}`, item);
-    if(item.packagingPrice&&item.singlyDemandPrice){
-        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
+    if (item.packagingPrice && item.singlyDemandPrice) {
+        item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice;
     }
 }
 //运费/月发生变化
 const freightPriceChange = (value: any, index: any, item: any) => {
     console.log("运费变化", value);
     console.log(`index===${index}`, item);
-    let yearCount=12000;
-    let monthlyDemandPrice=yearCount/12;
-    item.monthlyDemandPrice=monthlyDemandPrice;
-    console.log("月需求量",monthlyDemandPrice);
-    let singlePCS= (item.freightPrice+item.storagePrice)/monthlyDemandPrice;
-    console.log("单PCS运输费",singlePCS);
-    item.singlyDemandPrice=Number(singlePCS.toFixed(2));
-    if(item.packagingPrice&&item.singlyDemandPrice){
-        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
-        console.log("单PCS总物流成本",item.transportPrice);
+    let yearCount = item.yearMountCount ? item.yearMountCount : 1;
+    let monthlyDemandPrice = yearCount / 12;
+    item.monthlyDemandPrice = monthlyDemandPrice;
+    console.log("月需求量", monthlyDemandPrice);
+    let singlePCS = (item.freightPrice + item.storagePrice) / monthlyDemandPrice;
+    console.log("单PCS运输费", singlePCS);
+    item.singlyDemandPrice = Number(singlePCS.toFixed(2));
+    if (item.packagingPrice && item.singlyDemandPrice) {
+        item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice;
+        console.log("单PCS总物流成本", item.transportPrice);
     }
 }
 //仓储费用/月发生变化
 const storagePriceChange = (value: any, index: any, item: any) => {
     console.log("仓储费用变化", value);
     console.log(`index===${index}`, item);
-    let yearCount=12000;
-    let monthlyDemandPrice=yearCount/12;
-    item.monthlyDemandPrice=monthlyDemandPrice;
-    console.log("月需求量",monthlyDemandPrice);
-    let singlePCS= (item.freightPrice+item.storagePrice)/monthlyDemandPrice;
-    console.log("单PCS运输费",singlePCS);
-    item.singlyDemandPrice=Number(singlePCS.toFixed(2));
-    if(item.packagingPrice&&item.singlyDemandPrice){
-        item.transportPrice=Number(item.packagingPrice)+item.singlyDemandPrice;
-        console.log("单PCS总物流成本",item.transportPrice);
+    let yearCount = item.yearMountCount ? item.yearMountCount : 1;
+    let monthlyDemandPrice = yearCount / 12;
+    item.monthlyDemandPrice = monthlyDemandPrice;
+    console.log("月需求量", monthlyDemandPrice);
+    let singlePCS = (item.freightPrice + item.storagePrice) / monthlyDemandPrice;
+    console.log("单PCS运输费", singlePCS);
+    item.singlyDemandPrice = Number(singlePCS.toFixed(2));
+    if (item.packagingPrice && item.singlyDemandPrice) {
+        item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice;
+        console.log("单PCS总物流成本", item.transportPrice);
     }
 }
 
 //保存
 const saveTableData = () => {
-    console.log("保存数据",cardData.value);
-    let param={
-        auditFlowId: 100,
-        solutionId:Number(data.currentPlan),
-        logisticscostList:JSON.parse(JSON.stringify(cardData.value))
+    console.log("保存数据", cardData.value);
+    let param = {
+        auditFlowId: queryParam.value.AuditFlowId,
+        solutionId: queryParam.value.SolutionId,
+        logisticscostList: JSON.parse(JSON.stringify(cardData.value))
     };
     createProcess(param).then((response: any) => {
-      console.log("新增响应", response);
-      if (response.success) {
-        ElMessage({
-          type: 'success',
-          message: '保存成功'
-        })
-        getListData()
-      } else {
-        ElMessage({
-          type: 'error',
-          message: '保存失败'
-        })
-      }
+        console.log("新增响应", response);
+        if (response.success) {
+            ElMessage({
+                type: 'success',
+                message: '保存成功'
+            })
+            getListData()
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '保存失败'
+            })
+        }
+    })
+}
+
+const submitData = () => {
+    let param = {
+        auditFlowId: queryParam.value.AuditFlowId,
+        solutionId: queryParam.value.SolutionId,
+    };
+    createSubmit(param).then((response: any) => {
+        console.log("提交响应", response);
+        if (response.success) {
+            ElMessage({
+                type: 'success',
+                message: response.result
+            })
+            getListData()
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '失败'
+            })
+        }
     })
 }
 

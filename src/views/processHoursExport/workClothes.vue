@@ -36,33 +36,46 @@
     <!-- 数据表格区域 -->
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <div class="table-box">
-        <el-table :data="tableData" style="width: 100%;" :scrollbar-always-on="false" max-height="400" border>
+        <el-table :data="tableData" style="width: 100%;" :scrollbar-always-on="false" max-height="600px" border>
           <el-table-column label="序号" type="index" width="80" align="center" />
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
-                <div>
-                  <el-input v-model="scope.row.processNumber" :disabled="currentEditProcessIndex != scope.$index"
-                            placeholder="请输入工序编号" />
-                </div>
+              <div>
+                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processNumber"
+                  filterable remote reserve-keyword :remote-method="remoteMethodForprocessNumber"
+                  @change="processNumberChange($event, scope.$index)" :loading="optionLoading">
+                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
+                    :value="item.value" />
+                </el-select>
+              </div>
             </template>
           </el-table-column>
 
           <el-table-column label="工序名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
-                <div>
-                  <el-input v-model="scope.row.processName" :disabled="currentEditProcessIndex != scope.$index"
-                            placeholder="请输入工序名称" />
-                </div>
+              <div>
+                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processName" filterable
+                  remote reserve-keyword :remote-method="remoteMethodForProcessName"
+                  @change="processNameChange($event, scope.$index)" :loading="optionLoading">
+                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
+                    :value="item.value" />
+                </el-select>
+              </div>
             </template>
           </el-table-column>
 
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-input v-model="scope.row.installationName" :disabled="currentEditProcessIndex != scope.$index"
-                          placeholder="请输入工装名称" />
-              </div>
-              <div>
+                <el-select :disabled="currentEditProcessIndex != scope.$index"
+                  v-model="scope.row.installationName"
+                  filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
+                  @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
+                  <el-option v-for="item in installationNameOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value" />
+                </el-select>
               </div>
             </template>
           </el-table-column>
@@ -154,15 +167,15 @@
     <!-- 日志记录 -->
     <div v-if="baseLibLogRecords.length>0"
         class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-      <el-scrollbar :min-size="10">
-        <div class="u-flex u-row-between u-col-center u-p-r-20">
-          <div>日志更新记录：</div>
-          <div>
-            <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-            <el-button v-else @click="editLogFlag = false">取消</el-button>
-            <el-button type="primary" @click="saveLog">保存</el-button>
-          </div>
+      <div class="u-flex u-row-between u-col-center" style="width: 100%;">
+        <div>日志更新记录：</div>
+        <div>
+          <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+          <el-button v-else @click="editLogFlag = false">取消</el-button>
+          <el-button type="primary" @click="saveLog">保存</el-button>
         </div>
+      </div>
+      <el-scrollbar :min-size="10" max-height="600px">
         <div class="u-m-t-20">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
@@ -194,7 +207,6 @@
         </div>
       </el-scrollbar>
     </div>
-
   </div>
 </template>
 <script lang="ts" setup>
@@ -253,7 +265,7 @@ const submitSearch = () => {
 }
 const downLoad= async () => {
   const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "Excel/工装库导入.xlsx"
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/工装库导入.xlsx"
   link.download = '工装库导入.xlsx'
   document.body.appendChild(link)
   link.click()

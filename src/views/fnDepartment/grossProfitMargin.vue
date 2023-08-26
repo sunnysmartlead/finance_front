@@ -39,14 +39,8 @@
         </el-table-column>
       </el-table>
       <div class="grossProfitMargin__btn-container">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="data.total"
-          :page-size="20"
-          v-model:currentPage="data.pageNo"
-          @update:current-page="handlePageChange"
-        />
+        <el-pagination background layout="prev, pager, next" :total="data.total" :page-size="20"
+          v-model:currentPage="data.pageNo" @update:current-page="handlePageChange" />
       </div>
       <el-dialog v-model="data.dialogVisible" title="毛利率方案" @close="clearForm">
         <el-form :model="data.editForm">
@@ -57,22 +51,14 @@
             <el-switch v-model="data.editForm.isDefaultn" />
           </el-form-item>
           <el-form-item label="毛利率值">
-            <el-input
-              v-model="item.value"
-              placeholder="请输入毛利率"
-              style="margin-bottom: 20px"
-              v-for="(item, index) in data.editForm.grossMarginPrice"
-              :key="index"
-            >
+            <el-input v-model="item.value" placeholder="请输入毛利率" style="margin-bottom: 20px"
+              v-for="(item, index) in data.editForm.grossMarginPrice" :key="index">
               <template #append>
                 <el-button-group>
                   <el-button disabled>%</el-button>
                   <el-button :icon="Plus" @click="addGrossMarginItem" />
-                  <el-button
-                    :icon="Minus"
-                    @click="reduceGrossMarginItem(index)"
-                    :disabled="data.editForm.grossMarginPrice.length === 1"
-                  />
+                  <el-button :icon="Minus" @click="reduceGrossMarginItem(index)"
+                    :disabled="data.editForm.grossMarginPrice.length === 1" />
                 </el-button-group>
               </template>
             </el-input>
@@ -86,16 +72,66 @@
         </template>
       </el-dialog>
     </div>
+    <el-card>
+      <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
+        <el-scrollbar :min-size="10">
+          <div class="u-flex u-row-between u-col-center u-p-r-20">
+            <div>日志更新记录：</div>
+            <div>
+              <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+              <el-button v-else @click="editLogFlag = false">取消</el-button>
+              <el-button type="primary" @click="saveLog">保存</el-button>
+            </div>
+          </div>
+          <div class="u-m-t-20">
+            <el-timeline>
+              <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
+                :timestamp="formatDateTime(activity.lastModificationTime)">
+                <div class="u-p-10 u-border-bottom u-font-12">
+                  <div style="font-weight: bold; color: #909399">
+                    <span>版本号：</span>
+                    <span>{{ activity?.version || "--" }}</span>
+                  </div>
+                  <div>
+                    <div style="font-weight: bold; color: #909399" class="u-flex u-row-left u-col-center u-m-t-10">
+                      <div>
+                        <span>操作人：</span>
+                      </div>
+                      <div>
+                        <span>{{ activity.lastModifierUserName }}</span>
+                      </div>
+                    </div>
+                    <div class="u-m-t-10">
+                      <div class="u-m-t-5 u-font-12">
+                        <el-input :disabled="!editLogFlag" v-model="activity.remark" :rows="2" type="textarea"
+                          placeholder="更新日志记录内容" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
+        </el-scrollbar>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs, onBeforeMount, onMounted, watchEffect } from "vue"
+import { reactive, toRefs, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 // import { useRoute, useRouter } from "vue-router"
 import { getGrossMargin, saveGrossMargin, deleteGrossMargin } from "./service"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { GrossMarginItem, GrossMarginParams } from "./data.type"
 import { Plus, Minus } from "@element-plus/icons-vue"
+import { formatDateTime } from "@/utils"
+import { cloneDeep } from "lodash"
+import {
+  getEnvLog,
+  saveEnvLog,
+} from "@/api/foundationreliable"
+
 /**
  * 仓库
  */
@@ -133,6 +169,10 @@ const data = reactive({
   pageSize: 20,
   total: 0
 })
+
+const baseLibLogRecords = ref([])
+const editLogFlag = ref(false)
+
 const addGrossMarginItem = () => {
   data.editForm.grossMarginPrice.push({
     value: ""
@@ -155,7 +195,7 @@ const getList = async () => {
   data.tableData = res.result.items
   data.total = res.result.totalCount
 }
-const handlePageChange = () => {}
+const handlePageChange = () => { }
 const search = () => {
   getList()
 }
@@ -199,6 +239,7 @@ const clearForm = () => {
     isDefaultn: false
   }
 }
+
 const save = async () => {
   let res: any = null
   let { editForm } = data
@@ -217,16 +258,51 @@ const save = async () => {
     })
     data.dialogVisible = false
     getList()
+    getEnvOptionLog()
   }
 }
+
+//获取日志记录
+const getEnvOptionLog = () => {
+  let data = {
+    Type: 10
+  }
+  getEnvLog(data).then((response) => {
+    baseLibLogRecords.value = response.result
+    console.log("======baseLibLogRecords=======", baseLibLogRecords.value);
+  })
+}
+
+const saveLog = async () => {
+  let data = cloneDeep(baseLibLogRecords.value)
+  await saveEnvLog({
+    listFoundationLogs: data
+  }).then((response: any) => {
+    if (response.success) {
+      ElMessage({
+        type: "success",
+        message: "修改成功"
+      })
+      getEnvOptionLog()
+    } else {
+      ElMessage({
+        type: "error",
+        message: "修改失败"
+      })
+    }
+  })
+  editLogFlag.value = false
+}
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 onMounted(() => {
   search()
+  getEnvOptionLog()
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
-watchEffect(() => {})
+watchEffect(() => { })
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

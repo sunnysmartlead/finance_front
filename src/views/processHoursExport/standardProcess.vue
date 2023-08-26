@@ -16,10 +16,17 @@
             </div>
         </div>
         <div class="u-m-t-10">
-            <el-table :data="standardProcessList" :border="true">
+            <el-table :data="standardProcessList" :border="true" max-height="600px">
                 <el-table-column label="序号" type="index" min-width="80px" align="center" />
                 <el-table-column prop="name" label="标准工艺名称" align="center" />
-                <el-table-column prop="lastModificationTime" label="维护时间" align="center" />
+                <el-table-column prop="lastModificationTime" label="维护时间" align="center">
+                  <template #default="scope">
+                    <div>
+                        <span v-if="scope.row.lastModificationTime">{{formatDateTime(scope.row.lastModificationTime)}}</span>
+                        <span v-else>--</span>
+                    </div>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="lastModifierUserName" label="维护人" align="center" />
                 <el-table-column label="操作" align="center">
                     <template #default="scope">
@@ -32,15 +39,15 @@
         </div>
         <!-- 日志相关 -->
         <div v-if="baseLibLogRecords.length > 0" class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-            <el-scrollbar :min-size="10">
-                <div class="u-flex u-row-between u-col-center u-p-r-20">
-                    <div>日志更新记录：</div>
-                    <div>
-                        <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-                        <el-button v-else @click="editLogFlag = false">取消</el-button>
-                        <el-button type="primary" @click="saveLog">保存</el-button>
-                    </div>
-                </div>
+          <div class="u-flex u-row-between u-col-center" style="width: 100%">
+            <div>日志更新记录：</div>
+            <div>
+              <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+              <el-button v-else @click="editLogFlag = false">取消</el-button>
+              <el-button type="primary" @click="saveLog">保存</el-button>
+            </div>
+          </div>
+            <el-scrollbar :min-size="10" max-height="500px">
                 <div class="u-m-t-20">
                     <el-timeline>
                         <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
@@ -328,7 +335,7 @@ const handleView = (index: number, row: any) => {
     data.exportTableData = row.list;
     viewFlag.value = true;
     processDialogTableFlag.value = true;
-    
+
 }
 //关闭弹窗
 const closeViewDialog = () => {
@@ -360,7 +367,7 @@ const handleDelete = (index: number, row: any) => {
 }
 
 
-//#region 
+//#region
 const editLogFlag = ref(false);
 const baseLibLogRecords = ref([])
 //获取日志记录

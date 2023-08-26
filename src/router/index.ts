@@ -762,6 +762,117 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/processHoursExport",
+    redirect: "/processHoursExport/index",
+    component: Layout,
+    meta: {
+      //roles: ["admin"]
+      title: "工序工时",
+    },
+    children: [
+      {
+        path: "/processHoursExport/index",
+        component: () => import("@/views/processHoursExport/index.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "processHoursExport",
+        meta: {
+          title: "工序工时导入"
+        }
+      },
+      {
+        path: "/processHoursExport/processLib",
+        component: () => import("@/views/processHoursExport/processLib.vue"),
+        name: "processLib",
+        meta: {
+          title: "工序库"
+        }
+      },
+      {
+        path: "/processHoursExport/workingHours",
+        component: () => import("@/views/processHoursExport/workingHours.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "workingHours",
+        meta: {
+          title: "工时库"
+        }
+      },
+      {
+        path: "/processHoursExport/environment",
+        component: () => import("@/views/processHoursExport/environment.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "environment",
+        meta: {
+          title: "环境"
+        }
+      },
+      {
+        path: "/processHoursExport/emc",
+        component: () => import("@/views/processHoursExport/emc.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
+        name: "emc",
+        meta: {
+          title: "emc"
+        }
+      },
+      {
+        path: "/processHoursExport/workClothes",
+        component: () => import("@/views/processHoursExport/workClothes.vue"),
+        name: "baseLibLog",
+        meta: {
+          title: "工装库"
+        }
+      },
+      {
+        path: "/processHoursExport/deviceLib",
+        component: () => import("@/views/processHoursExport/deviceLib.vue"),
+        name: "deviceLib",
+        meta: {
+          title: "设备库"
+        }
+      },
+      {
+        path: "/processHoursExport/fixture",
+        component: () => import("@/views/processHoursExport/fixture.vue"),
+        name: "fixture",
+        meta: {
+          title: "治具检具"
+        }
+      },
+      {
+        path: "/processHoursExport/softwareHardware",
+        component: () => import("@/views/processHoursExport/softwareHardware.vue"),
+        name: "softwareHardware",
+        meta: {
+          title: "硬件及软件"
+        }
+      },
+      {
+        path: "/processHoursExport/logisticsCost",
+        component: () => import("@/views/processHoursExport/logisticsCost.vue"),
+        name: "logisticsCost",
+        meta: {
+          title: "物流成本录入"
+        }
+      },
+      {
+        path: "/processHoursExport/standardProcess",
+        component: () => import("@/views/processHoursExport/standardProcess.vue"),
+        name: "standardProcess",
+        meta: {
+          title: "标准工艺库"
+        }
+      },
+      {
+        path: "/processHoursExport/COBManufactureCost",
+        component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
+        name: "COBManufactureCost",
+        meta: {
+          title: "COB制造成本录入"
+        }
+      }
+    ]
+  },
+  {
     path: "/versionManagement",
     redirect: "/versionManagement/index",
     component: Layout,
@@ -902,7 +1013,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "财务参数管理",
-      roles: ["finance"]
+      // roles: ["finance"]
     },
     name: "fnDepartment",
     children: [

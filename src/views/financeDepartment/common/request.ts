@@ -13,7 +13,7 @@ export function CreateProjectSelf(data: any) {
 export function UpdateProjectSelf(data: any) {
   return request({
     url: "/api/services/app/ProjectSelf/Update",
-    method: "post",
+    method: "put",
     data
   })
 }
@@ -22,7 +22,7 @@ export function UpdateProjectSelf(data: any) {
 export function DeleteProjectSelf(data: any) {
   return request({
     url: "/api/services/app/ProjectSelf/Delete",
-    method: "post",
+    method: "delete",
     data
   })
 }
@@ -32,6 +32,15 @@ export function GetBaseStoreLog(data: any) {
   return request({
     url: "/api/services/app/ProjectSelf/GetBaseStoreLog",
     method: "get",
+    data
+  })
+}
+
+// 更新基础库日志
+export function UpdateBaseStoreLog(data: any) {
+  return request({
+    url: "/api/services/app/ProjectSelf/UpdateBaseStoreLog",
+    method: "put",
     data
   })
 }

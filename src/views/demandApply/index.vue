@@ -1432,6 +1432,7 @@ const shareCountTable = ref<any>([])
 const state = reactive({
   taebleLoading: false,
   quoteForm: {
+    shareCount: [],
     opinion: "", // 审批意见
     countryType: "", // 国家类型
     isHasNre: false,
@@ -1674,8 +1675,12 @@ const save = async (formEl: FormInstance | undefined) => {
       saveloading.value = true
       let { quoteForm } = state
       quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
-      quoteForm.sample = specimenData //样品
-      console.log(interiorPcsTableData.value, "[interiorPcsTableData.value]")
+      if (quoteForm.isHasSample) {
+        quoteForm.sample = specimenData //样品
+      }
+      if (quoteForm.isHasNre) {
+        quoteForm.shareCount = shareCountTable.value
+      }
       quoteForm.pcs = [...pcsTableData.value, ...interiorPcsTableData.value] //终端走量（PCS）
       let prop = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
       prop.forEach((item: any, index: number) => {
@@ -1701,7 +1706,6 @@ const save = async (formEl: FormInstance | undefined) => {
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
-          shareCount: shareCountTable.value,
           gradient: kvPricingData.value,
           gradientModel: gradientModel
         })
@@ -2018,11 +2022,10 @@ watch(
   (val) => {
     const isHasGradient = val[0]
     const moduleTableTotalData = val[1]
-    if (!isHasGradient && !_.isEmpty(moduleTableTotalData)) {
-      const rowOne = moduleTableTotal.value[0]
+    const rowOne = moduleTableTotal?.value?.[0]
+    if (!isHasGradient && !_.isEmpty(moduleTableTotalData) && rowOne) {
       const yearTotal = state.yearCols.length
-      const countData = rowOne.modelCountYearList.map((item: any) => item.quantity || 0)
-      const totalData = countData.reduce((a: number, b: number) => a + b)
+      const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => (a.quantity || 0) + (b.quantity || 0))
       kvPricingData.value = [{ gradientValue: Number((totalData / yearTotal).toFixed(2)) }]
     }
   },

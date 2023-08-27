@@ -5,7 +5,8 @@
        
       </div>
       <div>
-        <el-button   type="primary">提交</el-button>
+         <el-button  @click="handleSaveData" type="primary">保存</el-button>
+        <el-button   @click="handleSubmit" type="primary">提交</el-button>
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10  u-flex u-flex-wrap u-row-left u-col-center">
@@ -317,8 +318,9 @@
                       class="input-with-select">
                       <template #append>
                         <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width:75px">
-                          <el-option label="正常" value="正常" />
-                          <el-option label="异常" value="异常" />
+                          <template  v-for="(option,optionIndex) in deviceStatusEnmu" :key="optionIndex">
+                            <el-option :label="option.label" :value="option.value"/>
+                            </template>
                         </el-select>
                       </template>
                     </el-input>
@@ -642,9 +644,11 @@ import getQuery from "@/utils/getQuery";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import {
   GetListAll, getProcessHourDetail, handleCreate,getListUphOrLine, 
-  handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog
+  handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog,handleSaveOption,
+  handleSubmitOption
 } from "@/api/processHoursEnter"
 import { random } from 'lodash'
+import { Console } from 'console';
 const currentPlan = ref('1')
 const options = [
   {
@@ -664,6 +668,29 @@ const options = [
     label: '侧视-方案二',
   },
 ]
+
+const deviceStatusEnmu=ref([
+  {
+    value:1,
+    label:'专用',//、共用；现有、新购、改造   
+  },
+  {
+    value:2,
+    label:'共用',
+  },  
+  {
+    value:1,
+    label:'现有',  
+  },
+  {
+    value:1,
+    label:'新购', 
+  },
+  {
+    value:1,
+    label:'改造',
+  }
+])
 
 const tempData: any = {
   "id": 0,
@@ -869,8 +896,54 @@ const getUPHAndLineData = async () => {
     }
   })
 }
-
-
+//整个页面保存
+const handleSaveData=()=>{
+  let param={
+    auditFlowId:auditFlowId,
+    solutionId:productId,
+    listItemDtos: JSON.parse(JSON.stringify(dataArr.value)),
+    processHoursEnterUphList:JSON.parse(JSON.stringify(UPHData.value)),
+    processHoursEnterLineList:JSON.parse(JSON.stringify(lineData.value))
+  };
+  console.log("保存参数",param);
+  handleSaveOption(param).then((response: any) => {
+      console.log("保存响应", response);
+      if (response.success) {
+        ElMessage({
+          type: 'success',
+          message: '保存成功'
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '新增失败'
+        })
+      }
+    })
+}
+//整个页面提交
+const handleSubmit=()=>{
+  let param = {
+        auditFlowId: auditFlowId,
+        solutionId: productId,
+    };
+    handleSubmitOption(param).then((response: any) => {
+        console.log("提交响应", response);
+        if (response.success) {
+            ElMessage({
+                type: 'success',
+                message: response.result
+            })
+            initData()
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '失败'
+            })
+        }
+    })
+}
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -881,14 +954,12 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
-  console.log("responese", response);
-  console.log("uploadFile", uploadFile);
-  console.log("uploadFiles", uploadFiles);
-  if (response.result) {
-    initData()
+  if (response.success) {
+    let exportData= response.result?response.result:[];
+    dataArr.value =exportData.concat(dataArr.value);
     ElMessage({
       type: 'success',
-      message: '导入成功',
+      message: '请确认无误后保存'
     })
   } else {
     ElMessage({

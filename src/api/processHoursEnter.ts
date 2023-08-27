@@ -65,6 +65,24 @@ export function handleUpdate(data:any) {
     })
   }
 
+  //保存
+  export function handleSaveOption(data:any) {
+    return request({
+      url: "/api/services/app/ProcessHoursEnter/CreateList ",
+      method: "post",
+      data: data
+    })
+  }
+
+
+  //提交
+  export function handleSubmitOption(data:any) {
+    return request({
+      url: "/api/services/app/ProcessHoursEnter/CreateSubmit ",
+      method: "post",
+      data: data
+    })
+  }
 
 /** 导出 */
 export function exportProcess(data:any) {

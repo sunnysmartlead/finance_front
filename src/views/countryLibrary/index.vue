@@ -4,10 +4,18 @@
       <el-button type="primary" @click="handleCreateCountry">创建国家</el-button>
     </div>
     <el-table :data="data.tableData" style="width: 100%">
-      <el-table-column label="id" prop="id" />
+      <el-table-column label="序号" type="index" />
       <el-table-column label="国家" prop="country" />
-      <el-table-column label="国家类型" prop="nationalType" />
-      <el-table-column label="比例" prop="rate" />
+      <el-table-column label="国家类型" prop="nationalType">
+        <template #default="{ row }">
+          <div v-for="item in countryType" :key="item.val" :label="item.label">
+            <span v-if="item.val === row.nationalType">{{ item.label }}</span>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="比例" prop="rate">
+        <template #default="scope"> {{ scope.row.rate + "%" }}</template>
+      </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -26,7 +34,7 @@
       />
     </div>
     <template v-if="baseLibLogRecords.length > 0">
-      <option-log-record :base-lib-log-records="baseLibLogRecords" @reload-data="initData" />
+      <option-log-record :base-lib-log-records="baseLibLogRecords" @reload-data="getOptionLog" />
     </template>
 
     <el-dialog v-model="data.dialogVisible" title="国家信息" @close="clearcountryForm">
@@ -35,7 +43,10 @@
           <el-input v-model="data.countryForm.country" autocomplete="off" />
         </el-form-item>
         <el-form-item label="国家类型" :label-width="data.formLabelWidth">
-          <el-input v-model="data.countryForm.nationalType" autocomplete="off" />
+          <el-select v-model="data.countryForm.nationalType">
+            <el-option v-for="item in countryType" :key="item.val" :label="item.label" />
+          </el-select>
+          <!-- <el-input v-model="data.countryForm.nationalType" autocomplete="off" /> -->
         </el-form-item>
         <el-form-item label="比例" :label-width="data.formLabelWidth">
           <el-input v-model="data.countryForm.rate" type="number">
@@ -65,7 +76,7 @@ import { getLogRecord } from "@/api/logRecord"
 const data = reactive({
   tableData: [],
   dialogVisible: false,
-  formLabelWidth: "140px",
+  formLabelWidth: "100px",
   pageSize: 20,
   pageNo: 1,
   total: 0,
@@ -85,6 +96,28 @@ onMounted(() => {
 })
 watchEffect(() => {})
 
+const countryType = ref([
+  {
+    label: "一级管制国家",
+    val: "1"
+  },
+  {
+    label: "二级管制国家",
+    val: "2"
+  },
+  {
+    label: "三级管制国家",
+    val: "3"
+  },
+  {
+    label: "四级管制国家",
+    val: "4"
+  },
+  {
+    label: "五级管制国家",
+    val: "5"
+  }
+])
 const handleCreateCountry = () => {
   data.dialogVisible = true
   data.isEdit = false
@@ -154,7 +187,7 @@ const getList = async () => {
 const baseLibLogRecords = ref([])
 const getOptionLog = () => {
   let data = {
-    Type: 8
+    type: 13
   }
   getLogRecord(data).then((response: any) => {
     if (response.success) {

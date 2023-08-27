@@ -18,7 +18,7 @@ export const getSummaries = (param: SummaryMethodProps, name?: string, key?: str
     let values: any[] = []
     if (key) {
       values = data.map((item: any) => Number(item[key].toFixed(2)) || 0)
-      console.log(values, "getSummaries111")
+      // console.log(values, "getSummaries111")
     }
     if (!values.every((value) => Number.isNaN(value)) && index === 2) {
       sums[index] = `¥ ${values.reduce((prev, curr) => {

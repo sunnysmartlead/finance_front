@@ -18,8 +18,9 @@
         <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
       </el-table>
       <div style="margin: 10px 0; float: right">
-        <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
-        <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button>
+        <ProcessVertifyBox :onSubmit="handleSetBomState" />
+        <!-- <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
+        <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button> -->
       </div>
     </div>
   </div>
@@ -35,6 +36,7 @@ import TrView from "@/components/TrView/index.vue"
 import ProductInfo from "@/components/ProductInfo/index.vue"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const { jumpTodoCenter } = useJump()
 
@@ -68,26 +70,42 @@ const data = reactive({
 //     })
 //   }
 // }
-const agree = async (bomCheckType: number, isAgree: boolean) => {
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    let res: any = await SetBomState({
-      auditFlowId: auditFlowId,
-      productId: productId,
-      bomCheckType,
-      isAgree,
-      opinionDescription: !isAgree ? val?.value : ""
-    })
-    if (res.success) {
-      jumpTodoCenter()
-      ElMessage.success("操作成功")
-    }
+// const agree = async (bomCheckType: number, isAgree: boolean) => {
+//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
+//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     let res: any = await SetBomState({
+//       auditFlowId: auditFlowId,
+//       productId: productId,
+//       bomCheckType,
+//       isAgree,
+//       opinionDescription: !isAgree ? val?.value : ""
+//     })
+//     if (res.success) {
+//       jumpTodoCenter()
+//       ElMessage.success("操作成功")
+//     }
+//   })
+// }
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
+  let res: any = await SetBomState({
+    auditFlowId: auditFlowId,
+    productId: productId,
+    bomCheckType: 1,
+    isAgree: !opinion.includes("_No"),
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
   })
+  if (res.success) {
+    jumpTodoCenter()
+    ElMessage.success("操作成功")
+  }
 }
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

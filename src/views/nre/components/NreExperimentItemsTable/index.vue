@@ -1,6 +1,7 @@
 <template>
   <div style="padding: 0 10px">
-    <VertifyBox :onSubmit="handleVertify" v-if="isVertify" />
+    <!-- <VertifyBox :onSubmit="handleVertify" /> -->
+    <ProcessVertifyBox :onSubmit="handleVertify" />
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -128,7 +129,8 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import { designScheme } from "@/views/demandApplyAudit"
-import VertifyBox from "@/components/VertifyBox/index.vue"
+// import VertifyBox from "@/components/VertifyBox/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
@@ -253,22 +255,7 @@ const handleChangeData = (row: any, i: number) => {
 }
 
 // 审核
-const handleVertify = () => {
-
-}
-
-// 下载excel
-const handleDownLoadExcel = async () => {
-  try {
-    const res: any = await PostExperimentItemsSingleDownloadExcel({
-      auditFlowId,
-      solutionId: productId
-    })
-    downloadFileExcel(res, "环境试验费模板")
-  } catch (err: any) {
-    console.log(err, "[ 环境试验费模板 失败 ]")
-  }
-}
+const handleVertify = () => {}
 
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')

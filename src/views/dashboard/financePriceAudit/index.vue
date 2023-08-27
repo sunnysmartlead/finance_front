@@ -58,13 +58,8 @@
         </div>
 
         <!-- 损耗成本  -->
-        <el-table
-          v-if="data.mode === '2'"
-          :data="data.lossData"
-          height="675"
-          :summary-method="(val: any) => getSummaries(val, '损耗成本', 'wastageCost')"
-          show-summary
-        >
+        <el-table v-if="data.mode === '2'" :data="data.lossData" height="675"
+          :summary-method="(val: any) => getSummaries(val, '损耗成本', 'wastageCost')" show-summary>
           <el-table-column type="index" width="50" />
           <el-table-column prop="name" label="成本项目" />
           <el-table-column prop="wastageCost" label="损耗成本" :formatter="toFixedTwo" />
@@ -76,58 +71,25 @@
           <el-table-column prop="costItem" label="成本项目" width="180" />
           <!-- <el-table-column prop="typeName" label="年份" width="180" /> -->
           <el-table-column prop="manufacturingCostDirect" label="直接制造成本" :formatter="toFixedTwo">
-            <el-table-column
-              prop="manufacturingCostDirect.directLabor"
-              label="直接人工"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostDirect.equipmentDepreciation"
-              label="设备折旧"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostDirect.lineChangeCost"
-              label="换线成本"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostDirect.manufacturingExpenses"
-              label="制造费用"
-              width="150"
-              :formatter="toFixedTwo"
-            />
+            <el-table-column prop="manufacturingCostDirect.directLabor" label="直接人工" width="150"
+              :formatter="toFixedTwo" />
+            <el-table-column prop="manufacturingCostDirect.equipmentDepreciation" label="设备折旧" width="150"
+              :formatter="toFixedTwo" />
+            <el-table-column prop="manufacturingCostDirect.lineChangeCost" label="换线成本" width="150"
+              :formatter="toFixedTwo" />
+            <el-table-column prop="manufacturingCostDirect.manufacturingExpenses" label="制造费用" width="150"
+              :formatter="toFixedTwo" />
             <el-table-column prop="manufacturingCostDirect.subtotal" label="小计" width="150" :formatter="toFixedTwo" />
           </el-table-column>
           <el-table-column prop="manufacturingCostIndirect" label="间接制造成本">
-            <el-table-column
-              prop="manufacturingCostIndirect.directLabor"
-              label="直接人工"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostIndirect.equipmentDepreciation"
-              label="设备折旧"
-              width="150"
-              :formatter="toFixedTwo"
-            />
+            <el-table-column prop="manufacturingCostIndirect.directLabor" label="直接人工" width="150"
+              :formatter="toFixedTwo" />
+            <el-table-column prop="manufacturingCostIndirect.equipmentDepreciation" label="设备折旧" width="150"
+              :formatter="toFixedTwo" />
             <!-- <el-table-column prop="manufacturingCostIndirect.typeName" label="换线成本" width="180" /> -->
-            <el-table-column
-              prop="manufacturingCostIndirect.manufacturingExpenses"
-              label="制造费用"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostIndirect.subtotal"
-              label="小计"
-              width="150"
-              :formatter="toFixedTwo"
-            />
+            <el-table-column prop="manufacturingCostIndirect.manufacturingExpenses" label="制造费用" width="150"
+              :formatter="toFixedTwo" />
+            <el-table-column prop="manufacturingCostIndirect.subtotal" label="小计" width="150" :formatter="toFixedTwo" />
           </el-table-column>
           <el-table-column label="合计" prop="subtotal" :formatter="toFixedTwo" />
         </el-table>
@@ -173,23 +135,18 @@
         </el-row>
       </el-card>
       <el-card style="margin-top: 10px">
-        <el-upload
-          v-model:file-list="fileList"
-          show-file-list
-          :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-          :on-success="handleSuccess"
-          :on-change="handleFileChange"
-          style="float: right"
-          :on-progress="handleGetUploadProgress"
-          :on-error="handleUploadError"
-        >
+        <el-upload v-model:file-list="fileList" show-file-list
+          :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
+          :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError">
           <el-button type="primary">TR方案上传</el-button>
         </el-upload>
         <!-- 产品总成本推移图 -->
         <div id="selectCostChart" />
         <div style="float: right; margin: 20px 0" v-havedone>
-          <el-button type="primary" :disabled="!data.compliance" @click="setPriceBoardStateAgree(true)">同意</el-button>
-          <el-button type="primary" @click="dialogVisible = true">退回</el-button>
+          <ProcessVertifyBox :onSubmit="handleSubmit" />
+          <!-- <el-button type="primary" :disabled="!data.compliance" @click="setPriceBoardStateAgree(true)">同意</el-button>
+          <el-button type="primary" @click="dialogVisible = true">退回</el-button> -->
         </div>
       </el-card>
     </el-card>
@@ -216,7 +173,7 @@
       <template #footer>
         <span>
           <el-button @click="dialogVisible = false" v-havedone>取消</el-button>
-          <el-button type="primary" @click="setPriceBoardStateAgree(false)" v-havedone>确定</el-button>
+          <!-- <el-button type="primary" @click="setPriceBoardStateAgree(false)" v-havedone>确定</el-button> -->
         </span>
       </template>
     </el-dialog>
@@ -247,6 +204,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { reactive, onMounted, onBeforeUnmount, onBeforeMount, ref } from "vue"
 import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "./common/const"
 import {
@@ -327,7 +285,7 @@ const initCharts = (id: string, chartOption: any) => {
   }
 }
 
-onBeforeMount(() => {})
+onBeforeMount(() => { })
 
 onMounted(() => {
   if (!auditFlowId) return false
@@ -616,6 +574,43 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
     }
   })
 }
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+  let res: any
+  if (opinion.includes("_Yes")) {
+    res = await SetFinancePriceState(
+      auditFlowId,
+      opinion.includes("_Yes"),
+      opinionDescription.value,
+      comment,
+      opinion,
+      nodeInstanceId
+    )
+  } else {
+    if (opinionDescription.value) {
+      res = await SetFinancePriceState(
+        auditFlowId,
+        opinion.includes("_Yes"),
+        opinionDescription.value,
+        comment,
+        opinion,
+        nodeInstanceId,
+        checkList.value
+      )
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "拒绝理由必填"
+      })
+    }
+  }
+  if (res.success) {
+    closeSelectedTag(route.path)
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+  }
+}
 
 const fetchAllData = async () => {
   console.log(data.year, "data")
@@ -670,10 +665,12 @@ const handleSetPriceEvaluationTableInputCount = debounce(async () => {
     margin: 10px 0;
     height: 400px;
   }
+
   #selectCostChart {
     margin: 10px 0;
     height: 400px;
   }
+
   #percentageCostChart {
     margin: 10px 0;
     height: 300px;

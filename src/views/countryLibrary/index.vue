@@ -187,7 +187,7 @@ const getList = async () => {
 const baseLibLogRecords = ref([])
 const getOptionLog = () => {
   let data = {
-    type: 13
+    type: 14
   }
   getLogRecord(data).then((response: any) => {
     if (response.success) {

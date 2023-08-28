@@ -26,11 +26,13 @@ export interface GetLossCostProps {
   /**
    * 模组数量Id（即零件Id）
    */
-  ModelCountId?: number
+  SolutionId?: number
   /**
    * 年份
    */
   Year?: string
+  UpDown?: number
+  GradientId?: number
 }
 
 /**

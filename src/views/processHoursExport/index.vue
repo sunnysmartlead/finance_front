@@ -318,9 +318,11 @@
                       class="input-with-select">
                       <template #append>
                         <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width:75px">
-                          <template  v-for="(option,optionIndex) in deviceStatusEnmu" :key="optionIndex">
-                            <el-option :label="option.label" :value="option.value"/>
-                            </template>
+                            <el-option label="专用" value="1"></el-option>
+                            <el-option label="共用" value="2"></el-option>
+                            <el-option label="现有" value="3"></el-option>
+                            <el-option label="新购" value="4"></el-option>
+                            <el-option label="改造" value="5"></el-option>
                         </el-select>
                       </template>
                     </el-input>
@@ -648,50 +650,6 @@ import {
   handleSubmitOption
 } from "@/api/processHoursEnter"
 import { random } from 'lodash'
-import { Console } from 'console';
-const currentPlan = ref('1')
-const options = [
-  {
-    value: '1',
-    label: '前视-方案一',
-  },
-  {
-    value: '2',
-    label: '前视-方案二',
-  },
-  {
-    value: '3',
-    label: '侧视-方案一',
-  },
-  {
-    value: '4',
-    label: '侧视-方案二',
-  },
-]
-
-const deviceStatusEnmu=ref([
-  {
-    value:1,
-    label:'专用',//、共用；现有、新购、改造   
-  },
-  {
-    value:2,
-    label:'共用',
-  },  
-  {
-    value:1,
-    label:'现有',  
-  },
-  {
-    value:1,
-    label:'新购', 
-  },
-  {
-    value:1,
-    label:'改造',
-  }
-])
-
 const tempData: any = {
   "id": 0,
   "processName": "名称",
@@ -838,7 +796,6 @@ const tempData: any = {
   ]
 }
 const dataArr = ref<any>([])
-
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null;
 const addFlag = ref(false);
@@ -853,17 +810,17 @@ const initData = () => {
   addFlag.value = false;
   currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
-    getTableData();
+    //getTableData();
     getUPHAndLineData();
   }
 }
 
-const getTableData = async () => {
+const getTableData = () => {
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
   }
-  await GetListAll(param).then((response: any) => {
+  GetListAll(param).then((response: any) => {
     if (response.success) {
       let data = response.result;
       console.log("工时工序列表", data);
@@ -877,12 +834,12 @@ const getTableData = async () => {
   })
 }
 
-const getUPHAndLineData = async () => {
+const getUPHAndLineData = () => {
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
   }
-  await getListUphOrLine(param).then((response: any) => {
+  getListUphOrLine(param).then((response: any) => {
     if (response.success) {
       let data = response.result;
       console.log("UPHLine列表", data);

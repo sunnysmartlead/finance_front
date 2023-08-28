@@ -990,6 +990,21 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/engineeringDepartment",
+    redirect: "/engineeringDepartment/lossRate",
+    component: Layout,
+    children: [
+      {
+        path: "lossRate",
+        component: () => import("@/views/engineeringDepartment/lossRate.vue"),
+        name: "lossRate",
+        meta: {
+          title: "损耗率-参数"
+        }
+      }
+    ]
+  },
+  {
     path: "/",
     redirect: "/UpdateLogInfo/index",
     component: Layout,

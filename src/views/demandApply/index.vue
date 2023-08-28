@@ -464,7 +464,7 @@
             <el-table-column label="产品名称" prop="product" width="180" />
             <el-table-column label="产品大类" width="180">
               <template #default="{ row }">
-                <el-select v-model="row.productType" placeholder="产品大类" multiple disabled>
+                <el-select v-model="row.productType" placeholder="产品大类" disabled>
                   <el-option
                     v-for="item in state.productTypeOptions"
                     :key="item.id"
@@ -1134,8 +1134,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="汇率" label="汇率">
-            <template #default="{ row }">
-              <el-input v-model="row.exchangeRate" :disabled="isDisabled" />
+            <template #default="{ row, $index }">
+              <el-input v-model="row.exchangeRate" :disabled="isDisabled" @change="(val) => changeExchangRate(val, $index)" />
             </template>
           </el-table-column>
         </el-table>
@@ -1327,7 +1327,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onMounted, toRefs, watch, computed } from "vue"
-import { productTypeMap, Pcs, YearListItem, updateFrequency } from "./data.type"
+import { productTypeMap, YearListItem, updateFrequency } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 // import { Search } from "@element-plus/icons-vue"
@@ -1584,7 +1584,7 @@ const moduleTableTotal = computed(() => {
         product: item.product,
         partNumber: compareString(currentData.partNumber, item.partNumber),
         code: compareString(currentData.code, item.code),
-        productType: compareString(currentData.productType, item.productType),
+        productType: item.productType,
         ourRole: compareString(currentData.ourRole, item.ourRole),
         pixel: compareString(currentData.pixel, item.pixel),
         marketShare: (currentData.marketShare += item.marketShare || 0),
@@ -1700,8 +1700,10 @@ const save = async (formEl: FormInstance | undefined) => {
       ).flat(2)
       quoteForm.modelCount = map(moduleTableTotal.value, (v: any) => ({
         ...v,
-        productType: v.productType?.join(",") || "",
-        ourRole: v.ourRole?.join(",") || ""
+        ourRole: v.ourRole?.join(",") || "",
+        partNumber: v.partNumber?.join(",") || "",
+        code: v.code?.join(",") || "",
+        pixel: v.pixel?.join(",") || "",
       }))
       try {
         let res: any = await saveApplyInfo({
@@ -2020,13 +2022,13 @@ watch(
 watch(
   () => [state.quoteForm.isHasGradient, moduleTableTotal.value],
   (val) => {
-    const isHasGradient = val[0]
-    const moduleTableTotalData = val[1]
+    const [isHasGradient, moduleTableTotalData] = val
     const rowOne = moduleTableTotal?.value?.[0]
     if (!isHasGradient && !_.isEmpty(moduleTableTotalData) && rowOne) {
       const yearTotal = state.yearCols.length
-      const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => (a.quantity || 0) + (b.quantity || 0))
+      const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => a + (b.quantity || 0), 0)
       kvPricingData.value = [{ gradientValue: Number((totalData / yearTotal).toFixed(2)) }]
+      // to-do 更新kvPricingData的值取合计模组的值
     }
   },
   {
@@ -2083,6 +2085,7 @@ watch(
         })
       })
     })
+    console.log(kvList, arr ,"kvList")
     customerTargetPrice.value = arr
   },
   {
@@ -2668,6 +2671,14 @@ const ChangeShareCount = debounce((row: any, index: number) => {
     })
   }
 }, 300)
+
+const changeExchangRate = (val: string, index: number) => {
+  if (index === 0) {
+    customerTargetPrice.value.forEach((item: any) => {
+      item.exchangeRate = val
+    })
+  }
+}
 
 defineExpose({
   ...toRefs(state)

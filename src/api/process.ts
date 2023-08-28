@@ -6,6 +6,7 @@ export {uploadAction}
 
 export interface QueryParams {
     ProcessName?: string
+    ProcessNumber?:string
 }
   /**
 /** 工序列表 */

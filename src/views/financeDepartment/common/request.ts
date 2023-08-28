@@ -48,9 +48,10 @@ export function UpdateBaseStoreLog(data: any) {
 // 获取导入模板
 export function GetImportTemplate(data: any) {
   return request({
-    url: "/api/services/app/ProjectSelf/GetImportTemplate",
+    url: "/api/services/app/ProjectSelf/GetProjectSelfImport",
     method: "get",
-    data
+    data,
+    responseType: "blob"
   })
 }
 

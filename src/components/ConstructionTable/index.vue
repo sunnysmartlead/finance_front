@@ -58,7 +58,7 @@
                   v-for="(yearItem, iIndex) in c?.yearOrValueModes"
                   :key="iIndex"
                   :prop="`materialsUseCount.${i}.yearOrValueModes.${iIndex}.value`"
-                  :label="yearItem.year + upDownEunm[yearItem.upDown]"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
                   :formatter="formatDatas"
                 />
               </el-table-column>
@@ -87,7 +87,7 @@
                 <el-table-column
                   v-for="(yearItem, iIndex) in c?.yearOrValueModes"
                   :key="iIndex"
-                  :label="yearItem.year + upDownEunm[yearItem.upDown]"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
                   width="175"
                 >
                   <template #default="scope">
@@ -118,7 +118,7 @@
                 <el-table-column
                   v-for="(yearItem, yIndex) in c?.yearOrValueModes"
                   :key="yIndex"
-                  :label="yearItem.year + upDownEunm[yearItem.upDown]"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
                   width="175"
                 >
                   <template #default="scope">
@@ -144,7 +144,7 @@
             <el-table-column v-for="(c, i) in item.structureMaterial[0]?.iginalCurrency" align="center"
               :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">
               <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                :label="yearItem.year + upDownEunm[yearItem.upDown]" width="175" :formatter="formatDatas">
+                :label="yearItem.year + upDownEnum[yearItem.upDown]" width="175" :formatter="formatDatas">
                 <template #default="scope">
                   <el-input-number v-if="scope.row.isEdit"
                     v-model="scope.row.iginalCurrency[i].yearOrValueModes[yIndex].value" controls-position="right"
@@ -167,7 +167,7 @@
                 <el-table-column
                   v-for="(yearItem, yIndex) in c?.yearOrValueModes"
                   :key="yIndex"
-                  :label="yearItem.year + upDownEunm[yearItem.upDown]"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
                   width="175"
                   :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`"
                   :formatter="filterStandardMoney"
@@ -260,7 +260,7 @@
                 <el-descriptions-item
                   v-for="yearItem in c.yearOrValueModes"
                   :key="yearItem.year"
-                  :label="yearItem.year + upDownEunm[yearItem.upDown]"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
                 >
                   {{ yearItem.value.toFixed(4) }}
                 </el-descriptions-item>
@@ -302,7 +302,7 @@ const props = defineProps({
   isMergeVertify: Boolean
 })
 
-enum upDownEunm {
+enum upDownEnum {
   "全年",
   "上半年",
   "下半年"

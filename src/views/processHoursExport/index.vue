@@ -271,9 +271,9 @@
                   <div class="u-width-100">
                     <el-button size="small" @click="cancalEdit(dataIndex, dataItem)">取消</el-button>
                   </div>
-                  <div class="u-width-100">
+                  <!-- <div class="u-width-100">
                     <el-button type="primary" size="small" @click="handleSave(dataIndex, dataItem)">保存</el-button>
-                  </div>
+                  </div> -->
                 </template>
                 <template v-else class="u-width-100">
                   <el-button type="primary" size="small" @click="handleEdit(dataIndex, dataItem)">编辑</el-button>
@@ -289,15 +289,15 @@
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
                   reserve-keyword :remote-method="remoteMethod" :loading="processNumberloading">
-                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                  <el-option v-for="item in processNumberOptions" 
+                        :key="item.id" :label="item.processNumber"  :value="item.processNumber" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
                   reserve-keyword :remote-method="remoteMethodForProcessName" :loading="processNameLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                  <el-option v-for="item in processNameOptions" 
+                        :key="item.id" :label="item.processName" :value="item.processName"/>
                 </el-select>
               </div>
             </div>
@@ -318,9 +318,11 @@
                       class="input-with-select">
                       <template #append>
                         <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width:75px">
-                          <template  v-for="(option,optionIndex) in deviceStatusEnmu" :key="optionIndex">
-                            <el-option :label="option.label" :value="option.value"/>
-                            </template>
+                            <el-option label="专用" value="1"></el-option>
+                            <el-option label="共用" value="2"></el-option>
+                            <el-option label="现有" value="3"></el-option>
+                            <el-option label="新购" value="4"></el-option>
+                            <el-option label="改造" value="5"></el-option>
                         </el-select>
                       </template>
                     </el-input>
@@ -647,51 +649,8 @@ import {
   handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog,handleSaveOption,
   handleSubmitOption
 } from "@/api/processHoursEnter"
+import { GetListAll as queryProcessList}  from "@/api/process";
 import { random } from 'lodash'
-import { Console } from 'console';
-const currentPlan = ref('1')
-const options = [
-  {
-    value: '1',
-    label: '前视-方案一',
-  },
-  {
-    value: '2',
-    label: '前视-方案二',
-  },
-  {
-    value: '3',
-    label: '侧视-方案一',
-  },
-  {
-    value: '4',
-    label: '侧视-方案二',
-  },
-]
-
-const deviceStatusEnmu=ref([
-  {
-    value:1,
-    label:'专用',//、共用；现有、新购、改造   
-  },
-  {
-    value:2,
-    label:'共用',
-  },  
-  {
-    value:1,
-    label:'现有',  
-  },
-  {
-    value:1,
-    label:'新购', 
-  },
-  {
-    value:1,
-    label:'改造',
-  }
-])
-
 const tempData: any = {
   "id": 0,
   "processName": "名称",
@@ -838,7 +797,6 @@ const tempData: any = {
   ]
 }
 const dataArr = ref<any>([])
-
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null;
 const addFlag = ref(false);
@@ -858,12 +816,12 @@ const initData = () => {
   }
 }
 
-const getTableData = async () => {
+const getTableData = () => {
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
   }
-  await GetListAll(param).then((response: any) => {
+  GetListAll(param).then((response: any) => {
     if (response.success) {
       let data = response.result;
       console.log("工时工序列表", data);
@@ -877,12 +835,12 @@ const getTableData = async () => {
   })
 }
 
-const getUPHAndLineData = async () => {
+const getUPHAndLineData = () => {
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
   }
-  await getListUphOrLine(param).then((response: any) => {
+  getListUphOrLine(param).then((response: any) => {
     if (response.success) {
       let data = response.result;
       console.log("UPHLine列表", data);
@@ -1006,6 +964,8 @@ const addPH = () => {
 
 //保存
 const handleSave = (index: number, row: any) => {
+  handleSaveData();
+  return;
   let param = JSON.parse(JSON.stringify(row))
   let id = row.id;
   if (row.id && row.id != 0) {
@@ -1102,31 +1062,39 @@ const handleDel = (index: number, row: any) => {
 
 //-------------------------工序序号代码块代码块------------------------------
 interface processNumberListItem {
-  value: string
-  label: string
+  id:Number,
+  processName:String,
+  processNumber:String
 }
 const processNumberOptions = ref<processNumberListItem[]>([])
 const processNumberloading = ref(false)
 //模糊查询工序序号
-const remoteMethod = (query: string) => {
+const remoteMethod =async (query: string) => {
   if (query) {
     processNumberloading.value = true;
-    setTimeout(() => {
-      processNumberloading.value = false;
-      processNumberOptions.value = getProcessIndex(query);
-    }, 200)
+    await getProcessIndex(query);
+    processNumberloading.value = false;
   } else {
     processNumberOptions.value = []
   }
 }
 //获取工序序号
-const getProcessIndex = (keyWord: String) => {
-  return [
-    { label: keyWord + '00000', value: 'aaaaa' },
-    { label: keyWord + '11111', value: 'bbbbb' },
-    { label: keyWord + '22222', value: 'ccccc' },
-    { label: keyWord + '33333', value: 'ddddd' }
-  ]
+const getProcessIndex =async (keyWord: String) => {
+  let param = {
+    processNumber: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNumberOptions.value=data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNumberOptions.value=[];
+    }
+  })
 }
 //-----------------------------------end------------------------------------
 
@@ -1134,31 +1102,41 @@ const getProcessIndex = (keyWord: String) => {
 
 //-----------------------------工序名称代码块---------------------------------
 interface processNameListItem {
-  value: string
-  label: string
+  id:Number,
+  processName:String,
+  processNumber:String
 }
 const processNameOptions = ref<processNameListItem[]>([])
 const processNameLoading = ref(false)
 //模糊查询工序名称
-const remoteMethodForProcessName = (query: string) => {
+const remoteMethodForProcessName =async (query: string) => {
   if (query) {
     processNameLoading.value = true;
-    setTimeout(() => {
-      processNameLoading.value = false;
-      processNameOptions.value = getProcessName(query);
-    }, 200)
+    await getProcessName(query);
+    processNameLoading.value = false;
   } else {
     processNameOptions.value = []
   }
 }
-const getProcessName = (keyWord: String) => {
-  return [
-    { label: "工序名称1" + keyWord, value: 'aaaaa' },
-    { label: "工序名称2" + keyWord, value: 'bbbbb' },
-    { label: "工序名称3" + keyWord, value: 'ccccc' },
-    { label: "工序名称4" + keyWord, value: 'ddddd' }
-  ]
+
+const getProcessName =async (keyWord: String) => {
+  let param = {
+      ProcessName: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNameOptions.value=data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNameOptions.value=[];
+    }
+  })
 }
+
 //------------------------------end------------------------------------------
 
 

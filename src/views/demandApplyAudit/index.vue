@@ -1,18 +1,9 @@
 <template>
   <div class="demand-apply">
-    <div class="demand-apply_row">
-      <el-row :gutter="12">
-        <el-button @click="submit(0)">保存</el-button>
-        <el-button type="success" @click="submit(1)">提交</el-button>
-      </el-row>
-    </div>
-    <div>
-      <el-row class="demand-apply__card">
-        <el-button type="danger" @click="submit(1)">退回</el-button>
-        <el-button type="warning">导出</el-button>
-        <el-button type="info">重置</el-button>
-      </el-row>
-    </div>
+    <el-row justify="end" style="margin-top: 20px" >
+      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
+      <ProcessVertifyBox :onSubmit="submit" />
+    </el-row>
     <demandApply :isDisabled="true" />
     <el-card>
       <el-card v-for="(item, index) in schemeTableMap" :key="index">
@@ -346,6 +337,7 @@ import { downloadFileExcel } from "@/utils"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import { Response, DesignSolutionDto, FileUploadOutputDto, PricingTeamDto, SolutionTableDto, user } from "./data.type"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 let route = useRoute()
 let router = useRouter()
 let isEdit = false
@@ -354,6 +346,11 @@ const designSolution = ref<DesignSolutionDto[]>([])
 const elecEngineerId = ref<user[]>([])
 const structEngineerId = ref<user[]>([])
 const { closeSelectedTag } = useJump()
+const props = defineProps({
+  isVertify: Boolean,
+  isMergeVertify: Boolean
+})
+
 /**
  * 数据部分
  */
@@ -454,7 +451,7 @@ onMounted(async () => {
   }, 2000)
 })
 
-const submit = async (submitType: number) => {
+const submit = async () => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
   let value = {} as Response

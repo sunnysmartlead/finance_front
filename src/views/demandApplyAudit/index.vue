@@ -2,7 +2,7 @@
   <div class="demand-apply">
     <el-row justify="end" style="margin-top: 20px">
       <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
-      <ProcessVertifyBox :onSubmit="submit" />
+      <ProcessVertifyBox :onSubmit="submit" v-havedone />
     </el-row>
     <demandApply :isDisabled="true" />
     <el-card>
@@ -481,7 +481,9 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       })
       closeSelectedTag(route.path)
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 }
 const isNumeric = (value: any) => {
   return /^\d+$/.test(value)

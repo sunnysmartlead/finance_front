@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <VertifyBox :onSubmit="handleSubmit" /> -->
-    <ProcessVertifyBox :onSubmit="handleSubmit" />
+    <ProcessVertifyBox :onSubmit="handleSubmit" v-havedone />
     <el-card class="pddAudit">
       <template #header>
         <div class="card-header">
@@ -40,7 +40,7 @@ import { designScheme } from "@/views/demandApplyAudit"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import useJump from "@/hook/useJump"
 import { useRoute, useRouter } from "vue-router"
-import {ProductDevelopmentDepartmentReview} from "./service"
+import { ProductDevelopmentDepartmentReview } from "./service"
 let route = useRoute()
 const { closeSelectedTag } = useJump()
 const data = reactive({
@@ -51,12 +51,12 @@ const data = reactive({
 })
 
 // 审核
-const handleSubmit = ({ comment, opinion, nodeInstanceId }:any) => {
+const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
   try {
-   let res: any= ProductDevelopmentDepartmentReview({
-    opinionDescription: comment,
-    opinion,
-    nodeInstanceId
+    let res: any = ProductDevelopmentDepartmentReview({
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
     })
     if (res.success) {
       ElMessage({

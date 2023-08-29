@@ -25,7 +25,7 @@ export const permission: Directive = {
 export const havedone: Directive = {
   mounted(el) {
     const val = getQueryParam("right")
-    // "1"代表已办，已办按钮不显示
+    // "1"代表已办，已办按钮不显示 2待办
     if (val == "1") {
       el.style.display = "none"
     }

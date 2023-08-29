@@ -61,6 +61,7 @@ const urlMap = {
   NRE_ReliabilityExperimentFeeInputoExamine:{path:"/nre/nreExperimentItemsVertify",query: {}},//可靠性实验费录入审核
   NRE_MoldFeeEntry:{path:"/nre/nreResourcesDepartment",query: {}},//模具费录入
   NRE_MoldFeeEntryToExamine:{path:"/nre/nreResourcesDepartmentVertify",query: {}},//模具费审核
+  NRE_ManualComponentInput:{path:"/nre/nreProjectManageMent",query: {}},//手板件费录入
 
   PriceEvaluationBoard:{path:"/dashboard/index",query: {}},//核价看板
 }

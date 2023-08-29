@@ -445,7 +445,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nreProjectManageMent.vue"),
         name: "nreProjectManageMent",
         meta: {
-          title: "项目管理部NRE"
+          title: "项目管理部手板件录入"
         }
       },
       {

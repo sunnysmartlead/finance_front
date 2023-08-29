@@ -453,7 +453,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nrePilotprojects.vue"),
         name: "nrePilotprojects",
         meta: {
-          title: "产品部NRE"
+          title: "产品部EMC实验费录入"
         }
       },
       {
@@ -461,7 +461,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/vertify/nrePilotprojects.vue"),
         name: "nrePilotprojectsVertify",
         meta: {
-          title: "产品部NRE审核"
+          title: "产品部EMC实验费录入审核"
         }
       },
       {
@@ -485,7 +485,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nreExperimentItems.vue"),
         name: "nreExperimentItems",
         meta: {
-          title: "品保部实验NRE"
+          title: "品保部可靠性实验费"
         }
       },
       {
@@ -493,7 +493,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/vertify/nreExperimentItems.vue"),
         name: "nreExperimentItemsVertify",
         meta: {
-          title: "品保部实验NRE审核"
+          title: "品保部可靠性实验费审核"
         }
       },
       // {

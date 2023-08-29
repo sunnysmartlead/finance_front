@@ -8,7 +8,7 @@ vue<template>
             <el-upload
               v-model:file-list="fileList"
               show-file-list
-              :action="$baseUrl + '/api/services/app/UnitPriceLibrary/LossRateImport'"
+              :action="$baseUrl + 'api/services/app/UnitPriceLibrary/LossRateImport'"
               :on-success="handleSuccess"
               name="fileName"
               :on-error="handleUploadTemplateError"
@@ -26,12 +26,17 @@ vue<template>
         <el-button m="2" @click="onReset" type="primary">重置</el-button>
       </el-row>
       <el-table :data="tableData" height="500">
-        <el-table-column label="超级大种类" prop="superType" width="120">
+        <el-table-column label="产品大类" prop="superType" width="120">
           <template #default="{ row }">
             <el-input v-model="row.superType" v-if="row.isEdit" />
           </template>
         </el-table-column>
-        <el-table-column label="物料大类" prop="categoryName" width="120">
+          <el-table-column label="物料大类" prop="materialCategory" width="120">
+          <template #default="{ row }">
+            <el-input v-model="row.materialCategory" v-if="row.isEdit" />
+          </template>
+        </el-table-column>
+        <el-table-column label="物料种类" prop="categoryName" width="120">
           <template #default="{ row }">
             <el-input v-model="row.categoryName" v-if="row.isEdit" />
           </template>
@@ -53,7 +58,7 @@ vue<template>
         />
       </el-row>
     </el-card>
-    <LogList :type="10" />
+    <LogList :type="12" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -189,6 +194,7 @@ const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
     tableData.value = res.result || []
     console.log(res, "导入项目自建表")
     ElMessage.success("导入成功！")
+    fetchTableData()
   } else {
     ElMessage.error(res.error.message)
   }

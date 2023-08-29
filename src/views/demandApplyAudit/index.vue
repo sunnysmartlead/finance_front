@@ -1,6 +1,6 @@
 <template>
   <div class="demand-apply">
-    <el-row justify="end" style="margin-top: 20px" >
+    <el-row justify="end" style="margin-top: 20px">
       <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
       <ProcessVertifyBox :onSubmit="submit" />
     </el-row>
@@ -197,7 +197,10 @@
           <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流成本录入员" />
         </el-form-item>
         <el-form-item label="项目核价审核员">
-          <SearchDepartMentPerson v-model="state.quoteForm.auditId" :roleName="['市场部-项目课长','项目管理部-项目课长']" />
+          <SearchDepartMentPerson
+            v-model="state.quoteForm.auditId"
+            :roleName="['市场部-项目课长', '项目管理部-项目课长']"
+          />
         </el-form-item>
       </el-form>
     </el-card>
@@ -377,8 +380,7 @@ const state = reactive({
     productManageTime: "", // 生成管理部-物流成本录入员期望完成时间
     productCostInputTime: "", // 制造成本录入员期望完成时间
     deadline: "", //营销要求核价完成时间
-    option: "",
-
+    option: ""
   } as PricingTeamDto
 })
 const getList = async () => {
@@ -451,14 +453,19 @@ onMounted(async () => {
   }, 2000)
 })
 
-const submit = async () => {
+const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
-  let value = {} as Response
+  let value = {
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
+  } as Response
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
   value.designSolutionList = _.cloneDeep(designSolution.value)
   value.solutionTableList = _.cloneDeep(solutionTable.value)
+
   console.log(value, "value")
   value.solutionTableList.forEach((item: any) => {
     if (!isNumeric(item.id)) {

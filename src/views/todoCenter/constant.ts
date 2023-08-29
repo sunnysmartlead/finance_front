@@ -62,5 +62,6 @@ const urlMap = {
   NRE_MoldFeeEntry:{path:"/nre/nreResourcesDepartment",query: {}},//模具费录入
   NRE_MoldFeeEntryToExamine:{path:"/nre/nreResourcesDepartmentVertify",query: {}},//模具费审核
 
+  PriceEvaluationBoard:{path:"/dashboard/index",query: {}},//核价看板
 }
 export default urlMap

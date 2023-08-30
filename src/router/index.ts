@@ -485,7 +485,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nreExperimentItems.vue"),
         name: "nreExperimentItems",
         meta: {
-          title: "品保部可靠性实验费"
+          title: "品保部环境实验费"
         }
       },
       {
@@ -493,7 +493,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/vertify/nreExperimentItems.vue"),
         name: "nreExperimentItemsVertify",
         meta: {
-          title: "品保部可靠性实验费审核"
+          title: "品保部环境实验费审核"
         }
       },
       // {

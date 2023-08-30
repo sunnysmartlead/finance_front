@@ -475,6 +475,7 @@ export interface MouldInventoryModel {
  * 录入营销部
  */
 export interface NreMarketingDepartmentModel {
+
   /**
    * 表单名称  如{手板件费用,模具费,生产设备费}
    */

@@ -41,9 +41,9 @@ const urlMap = {
   PriceDemandReview:{path:"/demandApplyAudit/index",query: {} },//核价需求审核&方案录入
   TRToExamine:{path:"/pddAudit/index",query: {} },//产品开发部TR审核
   StructureBOM:{path:"/structuralMaterialImport/index",query: {} },//结构bom导入
-  StructureBOMToExamine:{path:"/structuralMaterialImport/index",query: {} },//结构bom导入审核
+  StructureBOMToExamine:{path:"/bomView/struc",query: {} },//结构bom导入审核
   ElectronicsBOM:{path:"/electronicImport/index",query: {} },//电子Bom导入
-  ElectronicsBOMToExamine:{path:"/electronicImport/index",query: {} },//电子Bom导入审核
+  ElectronicsBOMToExamine:{path:"/bomView/elec",query: {} },//电子Bom导入审核
   LogisticsCostEntry:{path:"/processHoursExport/logisticsCost",query: {}},//物流成本录入
   FormulaOperationAddition:{path:"/processHoursExport/index",query: {}},//工序工时导入
   CustomizedStructuralComponents:{},//定制结构件

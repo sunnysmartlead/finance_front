@@ -90,7 +90,7 @@ const data = reactive({
 //     }
 //   })
 // }
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await SetBomState({
     auditFlowId: auditFlowId,
     productId: productId,
@@ -112,7 +112,7 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   // let resStruction: any = await GetStructionBom()
-  let resElectronic: any = await GetElectronicBom({ auditFlowId, productId })
+  let resElectronic: any = await GetElectronicBom({ auditFlowId,productId, solutionId:productId })
   data.electronicData = resElectronic.result
   // data.structuralData = resStruction.result
 })

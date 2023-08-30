@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div style="margin: 10px 0; float: right">
+      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="confirmProcessType"/>
+      <!-- <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
+        <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button> -->
+    </div>
     <div>
       <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
         <div class="u-flex u-row-left u-col-center">
@@ -14,7 +19,7 @@
                     </div> -->
         </div>
         <div>
-          <el-button
+          <!-- <el-button
             type="primary"
             :disabled="cardData.length < 1 || cardData[0].logisticscostList?.length < 1"
             @click="submitData()"
@@ -25,7 +30,7 @@
             :disabled="cardData.length < 1 || cardData[0].logisticscostList?.length < 1"
             @click="saveTableData()"
             >保存</el-button
-          >
+          > -->
           <!-- <template  v-if="!data.editDisabled">
                         <el-button type="info"     @click="resetTableData()">重置</el-button>
                         <el-button type="primary"  @click="saveTableData()">保存</el-button>
@@ -147,6 +152,7 @@ import { ref, reactive, toRefs, onMounted } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import {
   GetListAll,
   createProcess,
@@ -207,6 +213,11 @@ const getListData = () => {
       }
     })
   }
+}
+
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
+  saveTableData()
+  submitData({ comment, opinion, nodeInstanceId })
 }
 
 const planChange = (value: any) => {
@@ -280,10 +291,13 @@ const saveTableData = () => {
   })
 }
 
-const submitData = () => {
+const submitData = ({ comment, opinion, nodeInstanceId }: any) => {
   let param = {
     auditFlowId: queryParam.value.AuditFlowId,
-    solutionId: queryParam.value.SolutionId
+    solutionId: queryParam.value.SolutionId,
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
   }
   createSubmit(param).then((response: any) => {
     console.log("提交响应", response)

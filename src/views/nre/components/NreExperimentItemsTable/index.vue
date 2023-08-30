@@ -1,7 +1,7 @@
 <template>
   <div style="padding: 0 10px">
     <!-- <VertifyBox :onSubmit="handleVertify" /> -->
-    <ProcessVertifyBox :onSubmit="handleVertify" />
+    <ProcessVertifyBox :onSubmit="isVertify?NREToExamineFun:submit"  :processType="isVertify?'baseProcessType':'confirmProcessType'"/>
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -115,6 +115,7 @@ import { QADepartmentTestModel } from "../../data.type"
 import { getQaTestDepartmentsSummaries } from "../../common/nreQCDepartmentSummaries"
 import {
   PostExperimentItems,
+  NREToExamine,
   GetReturnExperimentItems,
   GetFoundationreliableList,
   GetExportOfEnvironmentalExperimentFeeForm,
@@ -136,7 +137,7 @@ let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
 
 const props = defineProps({
-  isVertify: Boolean
+  isVertify: Boolean,
 })
 
 console.log(props, "props")
@@ -190,16 +191,38 @@ const addExperimentItemsData = () => {
   })
 }
 
-const submit = async (isSubmit: boolean) => {
+const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   try {
+    const isSubmit: boolean=true
     const { success } = await PostExperimentItems({
       auditFlowId,
       solutionId: productId,
       isSubmit,
-      environmentalExperimentFeeModels: experimentItems.value
+      environmentalExperimentFeeModels: experimentItems.value,
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
     })
     if (!success) throw Error()
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+    // jumpTodoCenter()
+  } catch (err) {
+    console.log(err, "[PostExperimentItems err]")
+    // ElMessage.error("提交失败")
+  }
+}
+
+const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
+  try {
+    const { success } = await NREToExamine({
+      auditFlowId,
+      nreCheckType:2,
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
+    })
+    if (!success) throw Error()
+    ElMessage.success(`提交成功`)
     // jumpTodoCenter()
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")

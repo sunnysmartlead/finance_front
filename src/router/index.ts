@@ -773,7 +773,6 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       {
         path: "/processHoursExport/index",
         component: () => import("@/views/processHoursExport/index.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
         name: "processHoursExport",
         meta: {
           title: "工序工时导入"

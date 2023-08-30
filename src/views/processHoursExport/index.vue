@@ -2,17 +2,11 @@
   <div>
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center">
-        <div style="font-size: 14px;font-weight: bold;">
-          <span>零件列表</span>
-        </div>
-        <div class="u-m-l-10">
-          <el-select v-model="currentPlan" placeholder="请选择方案" size="large">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </div>
+
       </div>
       <div>
-        <el-button type="primary">提交</el-button>
+        <el-button @click="handleSaveData" type="primary">保存</el-button>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10  u-flex u-flex-wrap u-row-left u-col-center">
@@ -29,13 +23,13 @@
         <el-button type="primary" @click="addPH()">新增工序</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">3D爆炸图下载</el-button>
+        <el-button type="primary" @click="downLoad3D()">3D爆炸图下载</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">结果BOM查看</el-button>
+        <el-button type="primary" @click="viewBOM(1)">结构BOM查看</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">电子BOM查看</el-button>
+        <el-button type="primary" @click="viewBOM(2)">电子BOM查看</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="openPanelPartDialog">板部件以及拼版数量</el-button>
@@ -277,9 +271,9 @@
                   <div class="u-width-100">
                     <el-button size="small" @click="cancalEdit(dataIndex, dataItem)">取消</el-button>
                   </div>
-                  <div class="u-width-100">
+                  <!-- <div class="u-width-100">
                     <el-button type="primary" size="small" @click="handleSave(dataIndex, dataItem)">保存</el-button>
-                  </div>
+                  </div> -->
                 </template>
                 <template v-else class="u-width-100">
                   <el-button type="primary" size="small" @click="handleEdit(dataIndex, dataItem)">编辑</el-button>
@@ -295,15 +289,15 @@
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
                   reserve-keyword :remote-method="remoteMethod" :loading="processNumberloading">
-                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                  <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
+                    :value="item.processNumber" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
                   reserve-keyword :remote-method="remoteMethodForProcessName" :loading="processNameLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                  <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
+                    :value="item.processName" />
                 </el-select>
               </div>
             </div>
@@ -324,8 +318,11 @@
                       class="input-with-select">
                       <template #append>
                         <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width:75px">
-                          <el-option label="正常" value="正常" />
-                          <el-option label="异常" value="异常" />
+                          <el-option label="专用" value="1"></el-option>
+                          <el-option label="共用" value="2"></el-option>
+                          <el-option label="现有" value="3"></el-option>
+                          <el-option label="新购" value="4"></el-option>
+                          <el-option label="改造" value="5"></el-option>
                         </el-select>
                       </template>
                     </el-input>
@@ -489,10 +486,15 @@
             </div>
           </div>
         </template>
+        <template v-else>
+          <div class="u-text-center u-p-t-20 u-p-b-20" style="color: #909399;width:100%;">
+            <span>暂无数据</span>
+          </div>
+        </template>
       </el-scrollbar>
     </div>
 
-    <div class="u-p-10 u-m-t-10 u-border uph-box">
+    <div class="u-p-10 u-m-t-10 u-border uph-box" v-if="UPHData.length > 0">
       <div style="color:#000000;font-weight:bold">
         <span>UPH录入</span>
       </div>
@@ -517,20 +519,20 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="uphItem.smtVal" />
+              <el-input v-model="uphItem.smtuph" />
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="uphItem.cobVal" class="u-text-center" />
+              <el-input v-model="uphItem.cobuph" class="u-text-center" />
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="uphItem.groupTestVal" class="u-text-center" />
+              <el-input v-model="uphItem.zcuph" class="u-text-center" />
             </div>
           </div>
         </div>
       </el-scrollbar>
     </div>
 
-    <div class="u-p-10 u-m-t-10 u-border uph-box">
+    <div class="u-p-10 u-m-t-10 u-border uph-box" v-if="lineData.length > 0">
       <div style="color:#000000;font-weight:bold">
         <span>线体数量、共线分辨率</span>
       </div>
@@ -552,10 +554,10 @@
               <span>{{ lineItem.year }}</span>
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="lineItem.lineBodyCount" />
+              <el-input v-model="lineItem.xtsl" />
             </div>
             <div class="u-border  u-width-150 u-text-center">
-              <el-input v-model="lineItem.fenBianLvVal" class="u-text-center" />
+              <el-input v-model="lineItem.gxftl" class="u-text-center" />
             </div>
           </div>
         </div>
@@ -608,11 +610,10 @@
     <el-dialog v-model="dialogFormVisible" :close-on-click-modal="false">
       <el-form :model="dialogForm">
         <el-form-item label="标准工艺名称" label-width="150px">
-          <el-select v-model="dialogForm.standardProcessName" filterable remote reserve-keyword clearable
-            :remote-method="remoteMethodForStandardProcessName" placeholder="输入关键字查询"
-            :loading="standardProcessNameLoading">
-            <el-option v-for="item in standardProcessNameOptions" :key="item.value" :label="item.label"
-              :value="item.value" />
+          <el-select v-model="dialogForm" value-key="id" filterable remote reserve-keyword clearable
+            @change="standardProcessSelectChange" :remote-method="remoteMethodForStandardProcessName"
+            placeholder="输入关键字查询" :loading="standardProcessNameLoading">
+            <el-option v-for="item in standardProcessNameOptions" :key="item.id" :label="item.name" :value="item" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -626,11 +627,11 @@
 
     <el-dialog v-model="panelPartDialogTableVisible" title="板部件及拼板数量" width="60%" :close-on-click-modal="false">
       <el-table :data="panelPartTableData" border>
-        <el-table-column property="panelPartName" label="板部件名称" align="center" />
-        <el-table-column property="panelPartLength" label="板部件长(mm)" align="center" />
-        <el-table-column property="panelPartWidth" label="板部件宽(mm)" align="center" />
-        <el-table-column property="panelPartArea" label="板部件面积(mm^)" align="center" />
-        <el-table-column property="panelPartCount" label="拼板数量" align="center" />
+        <el-table-column property="boardName" label="板部件名称" align="center" />
+        <el-table-column property="boardLenth" label="板部件长(mm)" align="center" />
+        <el-table-column property="boardWidth" label="板部件宽(mm)" align="center" />
+        <el-table-column property="boardSquare" label="板部件面积(mm^)" align="center" />
+        <el-table-column property="stoneQuantity" label="拼板数量" align="center" />
       </el-table>
     </el-dialog>
 
@@ -640,32 +641,17 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
+import getQuery from "@/utils/getQuery";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import {
-  GetListAll, getProcessHourDetail, handleCreate,
-  handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog
+  GetListAll, getProcessHourDetail, handleCreate, getListUphOrLine,
+  handleUpdate, handleDelete, uploadAction, getProcessLog, saveProcessLog, handleSaveOption,
+  handleSubmitOption, downLoad3DImg, FindStructureBomByProcess, FindElectronicBomByProcess, GetBoardInfomation
 } from "@/api/processHoursEnter"
+import { GetListAll as queryProcessList } from "@/api/process";
+import { getListAll as getStandardProcessList } from "@/api/standardProcess";
 import { random } from 'lodash'
-const currentPlan = ref('1')
-const options = [
-  {
-    value: '1',
-    label: '前视-方案一',
-  },
-  {
-    value: '2',
-    label: '前视-方案二',
-  },
-  {
-    value: '3',
-    label: '侧视-方案一',
-  },
-  {
-    value: '4',
-    label: '侧视-方案二',
-  },
-]
-
+import { number } from 'echarts';
 const tempData: any = {
   "id": 0,
   "processName": "名称",
@@ -812,33 +798,31 @@ const tempData: any = {
   ]
 }
 const dataArr = ref<any>([])
-
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null;
 const addFlag = ref(false);
-
-
-const UPHData = reactive([])
-const lineData = reactive([])
+const { auditFlowId, productId }: any = getQuery()
+const UPHData = ref<any>([])
+const lineData = ref<any>([])
 onMounted(() => {
-  // console.log('数据结构',JSON.stringify(dataArr));
-  getUPHData();
-  getLineData();
   initData();
 })
 
 const initData = () => {
   addFlag.value = false;
   currentEditIndex.value = -1;
-  getTableData()
+  if (auditFlowId != undefined && productId != undefined) {
+    getTableData();
+    getUPHAndLineData();
+  }
 }
 
-const getTableData = async () => {
+const getTableData = () => {
   let param = {
-    AuditFlowId: 100,
-    SolutionId: 100
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
   }
-  await GetListAll(param).then((response: any) => {
+  GetListAll(param).then((response: any) => {
     if (response.success) {
       let data = response.result;
       console.log("工时工序列表", data);
@@ -847,6 +831,74 @@ const getTableData = async () => {
       ElMessage({
         type: 'error',
         message: '列表加载失败'
+      })
+    }
+  })
+}
+
+const getUPHAndLineData = () => {
+  let param = {
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
+  }
+  getListUphOrLine(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      console.log("UPHLine列表", data);
+      UPHData.value = data.processHoursEnterUphList;
+      lineData.value = data.processHoursEnterLineList;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
+}
+//整个页面保存
+const handleSaveData = () => {
+  let param = {
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+    listItemDtos: JSON.parse(JSON.stringify(dataArr.value)),
+    processHoursEnterUphList: JSON.parse(JSON.stringify(UPHData.value)),
+    processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
+  };
+  console.log("保存参数", param);
+  handleSaveOption(param).then((response: any) => {
+    console.log("保存响应", response);
+    if (response.success) {
+      ElMessage({
+        type: 'success',
+        message: '保存成功'
+      })
+      initData()
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '新增失败'
+      })
+    }
+  })
+}
+//整个页面提交
+const handleSubmit = () => {
+  let param = {
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+  };
+  handleSubmitOption(param).then((response: any) => {
+    console.log("提交响应", response);
+    if (response.success) {
+      ElMessage({
+        type: 'success',
+        message: response.result
+      })
+      initData()
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '失败'
       })
     }
   })
@@ -861,14 +913,12 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
-  console.log("responese", response);
-  console.log("uploadFile", uploadFile);
-  console.log("uploadFiles", uploadFiles);
-  if (response.result) {
-    initData()
+  if (response.success) {
+    let exportData = response.result ? response.result : [];
+    dataArr.value = exportData.concat(dataArr.value);
     ElMessage({
       type: 'success',
-      message: '导入成功',
+      message: '请确认无误后保存'
     })
   } else {
     ElMessage({
@@ -904,6 +954,8 @@ const addPH = () => {
       dataArr.value.push(item);
     }
     else {
+      tempData.auditFlowId = auditFlowId;
+      tempData.solutionId = productId;
       dataArr.value.push(tempData);
     }
     addFlag.value = true;
@@ -913,6 +965,8 @@ const addPH = () => {
 
 //保存
 const handleSave = (index: number, row: any) => {
+  handleSaveData();
+  return;
   let param = JSON.parse(JSON.stringify(row))
   let id = row.id;
   if (row.id && row.id != 0) {
@@ -1009,31 +1063,39 @@ const handleDel = (index: number, row: any) => {
 
 //-------------------------工序序号代码块代码块------------------------------
 interface processNumberListItem {
-  value: string
-  label: string
+  id: Number,
+  processName: String,
+  processNumber: String
 }
 const processNumberOptions = ref<processNumberListItem[]>([])
 const processNumberloading = ref(false)
 //模糊查询工序序号
-const remoteMethod = (query: string) => {
+const remoteMethod = async (query: string) => {
   if (query) {
     processNumberloading.value = true;
-    setTimeout(() => {
-      processNumberloading.value = false;
-      processNumberOptions.value = getProcessIndex(query);
-    }, 200)
+    await getProcessIndex(query);
+    processNumberloading.value = false;
   } else {
     processNumberOptions.value = []
   }
 }
 //获取工序序号
-const getProcessIndex = (keyWord: String) => {
-  return [
-    { label: keyWord + '00000', value: 'aaaaa' },
-    { label: keyWord + '11111', value: 'bbbbb' },
-    { label: keyWord + '22222', value: 'ccccc' },
-    { label: keyWord + '33333', value: 'ddddd' }
-  ]
+const getProcessIndex = async (keyWord: String) => {
+  let param = {
+    processNumber: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNumberOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNumberOptions.value = [];
+    }
+  })
 }
 //-----------------------------------end------------------------------------
 
@@ -1041,31 +1103,41 @@ const getProcessIndex = (keyWord: String) => {
 
 //-----------------------------工序名称代码块---------------------------------
 interface processNameListItem {
-  value: string
-  label: string
+  id: Number,
+  processName: String,
+  processNumber: String
 }
 const processNameOptions = ref<processNameListItem[]>([])
 const processNameLoading = ref(false)
 //模糊查询工序名称
-const remoteMethodForProcessName = (query: string) => {
+const remoteMethodForProcessName = async (query: string) => {
   if (query) {
     processNameLoading.value = true;
-    setTimeout(() => {
-      processNameLoading.value = false;
-      processNameOptions.value = getProcessName(query);
-    }, 200)
+    await getProcessName(query);
+    processNameLoading.value = false;
   } else {
     processNameOptions.value = []
   }
 }
-const getProcessName = (keyWord: String) => {
-  return [
-    { label: "工序名称1" + keyWord, value: 'aaaaa' },
-    { label: "工序名称2" + keyWord, value: 'bbbbb' },
-    { label: "工序名称3" + keyWord, value: 'ccccc' },
-    { label: "工序名称4" + keyWord, value: 'ddddd' }
-  ]
+
+const getProcessName = async (keyWord: String) => {
+  let param = {
+    ProcessName: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNameOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNameOptions.value = [];
+    }
+  })
 }
+
 //------------------------------end------------------------------------------
 
 
@@ -1381,28 +1453,86 @@ const calToolTotalCost = (dataIndex: number) => {
   return developTotalPrice;
 }
 
-
-
-const getUPHData = () => {
-  for (let i = 25; i >= 10; i--) {
-    let item = {
-      year: '20' + i,
-      smtVal: random(100 * i),
-      cobVal: random(500 * i),
-      groupTestVal: random(1000 * i)
-    }
-    UPHData.unshift(item)
+//3D爆炸图下载
+const downLoad3D = () => {
+  let param = {
+    AuditFlowId: auditFlowId,
+    productId: productId
   }
+  downLoad3DImg(param).then((response: any) => {
+    console.log("3D爆炸图下载结果", response);
+    if (response.success) {
+      let data = response.result;
+      let fileId = data.threeDFileId;
+      let fileName = data.threeDFileName;
+      let url = "" + fileName;
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', fileName);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '失败'
+      })
+    }
+  })
 }
 
-const getLineData = () => {
-  for (let i = 25; i >= 10; i--) {
-    let item = {
-      year: '20' + i,
-      lineBodyCount: random(100 * i),
-      fenBianLvVal: random(500 * i),
-    }
-    lineData.unshift(item)
+const viewBOM = (type: Number) => {
+  let param = {
+    AuditFlowId: 11,//auditFlowId,
+    SolutionId: 11,//productId
+  }
+  //结构
+  if (type == 1) {
+    FindStructureBomByProcess(param).then((response: any) => {
+      console.log("结构BOM", response);
+      return;
+      if (response.success) {
+        let data = response.result;
+        let fileId = data.threeDFileId;
+        let fileName = data.threeDFileName;
+        let url = "" + fileName;
+        const a = document.createElement('a');
+        a.href = url;
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '失败'
+        })
+      }
+    })
+  }
+  //电子
+  else {
+    FindElectronicBomByProcess(param).then((response: any) => {
+      console.log("电子BOM", response);
+      return;
+      if (response.success) {
+        let data = response.result;
+        let fileId = data.threeDFileId;
+        let fileName = data.threeDFileName;
+        let url = "" + fileName;
+        const a = document.createElement('a');
+        a.href = url;
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '失败'
+        })
+      }
+    })
   }
 }
 
@@ -1521,56 +1651,100 @@ const dialogProData = reactive([
 
 //-----------------------------标准工艺名称代码块---------------------------------
 const dialogFormVisible = ref(false)
-const dialogForm = reactive({
-  standardProcessName: '',
+const dialogForm = ref({
+  name: '',
+  id: 0,
+  list:[]
 })
 const openStandardProcessDialogForm = () => {
-  dialogForm.standardProcessName = "";
+  dialogForm.value.name = "";
+  dialogForm.value.id = 0;
+  dialogForm.value.list=[];
   dialogFormVisible.value = true;
 }
 interface standardProcessNameListItem {
-  value: string
-  label: string
+  id: number,
+  name: string,
+  list: Array<any>
 }
 const standardProcessNameOptions = ref<standardProcessNameListItem[]>([])
 const standardProcessNameLoading = ref(false)
 //模糊查询标准工艺名称
-const remoteMethodForStandardProcessName = (query: string) => {
+const remoteMethodForStandardProcessName = async (query: string) => {
   if (query) {
     standardProcessNameLoading.value = true;
-    setTimeout(() => {
-      standardProcessNameLoading.value = false;
-      standardProcessNameOptions.value = getStandardProcessName(query);
-    }, 200)
+    await getStandardProcessName(query);
+    standardProcessNameLoading.value = false;
   } else {
     standardProcessNameOptions.value = []
   }
 }
-const getStandardProcessName = (keyWord: String) => {
-  return [
-    { label: "标准工艺名称1" + keyWord, value: 'aaaaa' },
-    { label: "标准工艺名称2" + keyWord, value: 'bbbbb' },
-    { label: "标准工艺名称3" + keyWord, value: 'ccccc' },
-    { label: "标准工艺名称4" + keyWord, value: 'ddddd' }
-  ]
+const getStandardProcessName = async (keyWord: String) => {
+  let param = {
+    name: keyWord
+  }
+  standardProcessNameOptions.value = [];
+  await getStandardProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        // for (let i = 0; i < data.length; i++) {
+        //   let item = data[i];
+        //   standardProcessNameOptions.value.push({
+        //     id: item.id,
+        //     name: item.name,
+        //     list: item.list
+        //   })
+        // }
+        standardProcessNameOptions.value = data;
+      }
+      else {
+        ElMessage({
+          type: 'warning',
+          message: '查询标准工艺不存在'
+        })
+        standardProcessNameOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '查询标准工艺名称失败'
+      })
+      standardProcessNameOptions.value = [];
+    }
+  })
+}
+
+const standardProcessSelectChange = (value: any) => {
+ // console.log("value", value);
 }
 
 const cancelSelectStandardProcessName = () => {
-  ElMessage({
-    type: "warning",
-    message: "取消选择标准工序"
-  })
+  // ElMessage({
+  //   type: "warning",
+  //   message: "取消选择标准工序"
+  // })
   dialogFormVisible.value = false;
 }
 
 const confirmSelectStandardProcessName = () => {
-  if (dialogForm.standardProcessName.length < 1) {
+  console.log("选择的标准工艺",dialogForm.value);
+  if (dialogForm.value.name.length < 1||dialogForm.value.id==0) {
     ElMessage({
       type: "error",
       message: "标准工艺不能为空!"
     })
     return;
   }
+  let pList=dialogForm.value.list;
+  if(pList==null||pList.length<1){
+    ElMessage({
+      type: "error",
+      message: "标准工艺所含工序数据为空!"
+    })
+    return
+  }
+  dataArr.value =pList.concat(dataArr.value);
   dialogFormVisible.value = false;
   ElMessage({
     type: "success",
@@ -1584,24 +1758,26 @@ const confirmSelectStandardProcessName = () => {
 
 // --------------------------板部件弹窗代码块 start-----------
 const panelPartDialogTableVisible = ref(false)
-const panelPartTableData = reactive([
-  {
-    panelPartName: '名称1',
-    panelPartLength: '长度1',
-    panelPartWidth: '宽度1',
-    panelPartArea: '面积1',
-    panelPartCount: '数量1'
-  },
-  {
-    panelPartName: '名称2',
-    panelPartLength: '长度2',
-    panelPartWidth: '宽度2',
-    panelPartArea: '面积2',
-    panelPartCount: '数量2'
-  }
-])
+const panelPartTableData = ref<any>([])
 const openPanelPartDialog = () => {
-  panelPartDialogTableVisible.value = true;
+  let param = {
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
+  }
+  GetBoardInfomation(param).then((response: any) => {
+    console.log("板部件", response);
+    if (response.success) {
+      let data = response.result;
+      panelPartTableData.value = data;
+      panelPartDialogTableVisible.value = true;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '失败'
+      })
+      panelPartDialogTableVisible.value = false;
+    }
+  })
 }
 //---------------------------板部件弹窗代码块 end-----------
 

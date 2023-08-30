@@ -17,6 +17,15 @@ export function GetListAll(data: QueryParams) {
     })
 }
 
+
+export function getListUphOrLine(data: QueryParams) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetListUphOrLine",
+    method: "get",
+    data
+  })
+}
+
 //查询工序详细
 export function getProcessHourDetail(id: number) {
     return request({
@@ -56,6 +65,24 @@ export function handleUpdate(data:any) {
     })
   }
 
+  //保存
+  export function handleSaveOption(data:any) {
+    return request({
+      url: "/api/services/app/ProcessHoursEnter/CreateList ",
+      method: "post",
+      data: data
+    })
+  }
+
+
+  //提交
+  export function handleSubmitOption(data:any) {
+    return request({
+      url: "/api/services/app/ProcessHoursEnter/CreateSubmit ",
+      method: "post",
+      data: data
+    })
+  }
 
 /** 导出 */
 export function exportProcess(data:any) {
@@ -85,3 +112,39 @@ export function saveProcessLog(data:any){
   })
 }
 
+
+export function downLoad3DImg(data:any) {
+  return request({
+    url: "/api/services/app/WorkingHours/GetPicture3DByAuditFlowId",
+    method: "get",
+    data: data
+  })
+}
+
+
+export function FindStructureBomByProcess(data:any) {
+  return request({
+    url: "/api/services/app/StructionBom/FindStructureBomByProcess",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
+
+export function FindElectronicBomByProcess(data:any) {
+  return request({
+    url: "/api/services/app/ElectronicBom/FindElectronicBomByProcess",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
+
+
+export function GetBoardInfomation(data: QueryParams) {
+  return request({
+    url: "/api/services/app/ElectronicBom/GetBoardInfomation",
+    method: "get",
+    data
+  })
+}

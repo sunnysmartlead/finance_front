@@ -249,7 +249,7 @@ import { useRoute } from "vue-router"
 const router = useRouter()
 const Host = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()
-
+const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
   isMergeVertify: Boolean
@@ -414,7 +414,7 @@ const fetchElectronicInitData = async () => {
     tableLoading.value = false
   }, 500)
 }
-const route = useRoute()
+
 // 提交电子料单价行数据
 const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: number) => {
   if (isSubmit) {

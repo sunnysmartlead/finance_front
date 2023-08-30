@@ -584,9 +584,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/tradeCompliance",
     redirect: "/tradeCompliance/index",
     component: Layout,
-    meta: {
-      hidden: true
-    },
+    // meta: {
+    //   hidden: true
+    // },
     children: [
       {
         path: "/tradeCompliance/index",

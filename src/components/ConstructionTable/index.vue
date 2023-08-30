@@ -296,7 +296,8 @@ import getQuery from "@/utils/getQuery"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
-
+import { useRoute } from "vue-router"
+const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
   isMergeVertify: Boolean
@@ -478,10 +479,13 @@ const submitFun = async (
   iginalCurrencyIndex: number
 ) => {
   const row = constructionBomList.value[bomIndex].structureMaterial[iginalCurrencyIndex]
+  let { nodeInstanceId } = route.query
   const { success } = await PostStructuralMemberEntering({
     isSubmit,
     structuralMaterialEntering: [{ ...row, productId }],
-    auditFlowId
+    auditFlowId,
+     opinion:"Done",
+    nodeInstanceId
   })
   if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功！`)
   fetchInitData()
@@ -627,7 +631,7 @@ const fetchConstructionInitData = async () => {
 //   })
 // }
 
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
   var construction = [[]]
   var people = [[]]
   var prop = window.sessionStorage.getItem("construction")

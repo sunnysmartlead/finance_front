@@ -56,7 +56,9 @@ export function GetStructural(data: any): any {
 export function PostStructuralMemberEntering(data: {
   isSubmit: number
   structuralMaterialEntering: ConstructionModel[]
-  auditFlowId: number
+  auditFlowId: number,
+  opinion:string,
+  nodeInstanceId:any
 }): any {
   return request({
     url: "/api/services/app/ResourceEntering/PostStructuralMemberEntering",

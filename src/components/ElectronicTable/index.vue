@@ -235,6 +235,7 @@ import {
   PostElectronicMaterialEntering,
   PosToriginalCurrencyCalculate,
   SetBomState,
+  BomReview,
   GetBOMElectronicSingle
 } from "./common/request"
 import { getExchangeRate } from "@/views/demandApply/service"
@@ -477,7 +478,7 @@ const submitFun = async (record: ElectronicDto, isSubmit: number, index: number)
     isSubmit,
     electronicDtoList: [electronicBomList.value[index]],
     auditFlowId,
-    opinion:"Done",
+    opinion: "Done",
     nodeInstanceId
   })
   if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
@@ -535,11 +536,11 @@ const handleEdit = (row: any, isEdit: boolean) => {
 //     if (success) jumpTodoCenter()
 //   })
 // }
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   var construction = [[]]
   var people = [[]]
   var prop = window.sessionStorage.getItem("construction")
-  if (!prop && opinion.includes("_No")) {
+  if (!prop && !opinion.includes("_Yes")) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -557,22 +558,30 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
   electronicId.value = [...new Set(construction.flat(Infinity))]
   peopleId.value = [...new Set(people.flat(Infinity))]
 
-  if (opinion.includes("_No") && (!electronicId.value.length || !peopleId.value.length)) {
+  if (!opinion.includes("_Yes") && (!electronicId.value.length || !peopleId.value.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  const { success } = await SetBomState({
-    isAgree: !opinion.includes("_No"),
+  // const { success } = await SetBomState({
+  //   isAgree: !opinion.includes("_No"),
+  //   auditFlowId,
+  //   bomCheckType: 3,
+  //   opinionDescription: comment,
+  //   unitPriceId: electronicId.value,
+  //   peopleId: peopleId.value,
+  //   opinion,
+  //   nodeInstanceId
+  // })
+  const { success } = await BomReview({
     auditFlowId,
-    bomCheckType: 3,
-    opinionDescription: comment,
-    unitPriceId: electronicId.value,
-    peopleId: peopleId.value,
+    bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
+    comment,
     opinion,
-    nodeInstanceId
+    nodeInstanceId,
+    electronicsUnitPriceId: electronicId.value
   })
   if (success) jumpTodoCenter()
 }

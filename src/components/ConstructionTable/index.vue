@@ -285,7 +285,8 @@ import {
   PostStructuralMemberEntering,
   GetBOMStructuralSingle,
   PostStructuralMaterialCalculate,
-  SetBomState
+  SetBomState,
+  BomReview
 } from "../ElectronicTable/common/request"
 import { useRouter } from "vue-router"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
@@ -484,7 +485,7 @@ const submitFun = async (
     isSubmit,
     structuralMaterialEntering: [{ ...row, productId }],
     auditFlowId,
-     opinion:"Done",
+    opinion: "Done",
     nodeInstanceId
   })
   if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功！`)
@@ -631,11 +632,11 @@ const fetchConstructionInitData = async () => {
 //   })
 // }
 
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   var construction = [[]]
   var people = [[]]
   var prop = window.sessionStorage.getItem("construction")
-  if (!prop && opinion.includes("_No")) {
+  if (!prop && !opinion.includes("_Yes")) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -652,24 +653,36 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
   }
   data.constructionId = [...new Set(construction.flat(Infinity))]
   data.peopleId = [...new Set(people.flat(Infinity))]
-  if (opinion.includes("_No") && (!data.constructionId.length || !data.peopleId.length)) {
+  if (!opinion.includes("_Yes") && (!data.constructionId.length || !data.peopleId.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  const { success } = await SetBomState({
-    isAgree: !opinion.includes("_No"),
+  // const { success } = await SetBomState({
+  //   isAgree: !opinion.includes("_No"),
+  //   auditFlowId,
+  //   bomCheckType: 4,
+  //   opinionDescription: comment,
+  //   comment,
+  //   opinion,
+  //   nodeInstanceId,
+  //   unitPriceId: data.constructionId,
+  //   peopleId: data.peopleId
+  // })
+  const { success } = await BomReview({
+    // isAgree: !opinion.includes("_No"),
     auditFlowId,
-    bomCheckType: 4,
-    opinionDescription: comment,
+    bomCheckType: 4, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
+    // opinionDescription: comment,
     comment,
     opinion,
     nodeInstanceId,
-    unitPriceId: data.constructionId,
-    peopleId: data.peopleId
+    structureUnitPriceId: data.constructionId
+    // peopleId: data.peopleId
   })
+
   if (success) jumpTodoCenter()
 }
 

@@ -1,20 +1,12 @@
-vue<template>
+<template>
   <div>
     <el-card m="2">
       <template #header>
         <el-row wrap="false" justify="space-between">
           <span>损耗率-参数</span>
           <el-row>
-            <el-upload
-              v-model:file-list="fileList"
-              show-file-list
-              :action="$baseUrl + 'api/services/app/UnitPriceLibrary/LossRateImport'"
-              :on-success="handleSuccess"
-              name="fileName"
-              :on-error="handleUploadTemplateError"
-            >
-              <el-button style="margin-top: 8px" m="2">损耗率导入</el-button>
-            </el-upload>
+            <CommonUpload path="api/services/app/UnitPriceLibrary/LossRateImport" btn-text="损耗率导入"
+              v-model:file-list="fileList" :onSuccess="handleSuccess" />
             <el-button m="2" type="primary" @click="handleExport">损耗率导出</el-button>
             <el-button m="2" type="primary" @click="handleExportTemplate">损耗率模板导出</el-button>
           </el-row>
@@ -31,7 +23,7 @@ vue<template>
             <el-input v-model="row.superType" v-if="row.isEdit" />
           </template>
         </el-table-column>
-          <el-table-column label="物料大类" prop="materialCategory" width="120">
+        <el-table-column label="物料大类" prop="materialCategory" width="120">
           <template #default="{ row }">
             <el-input v-model="row.materialCategory" v-if="row.isEdit" />
           </template>
@@ -41,24 +33,19 @@ vue<template>
             <el-input v-model="row.categoryName" v-if="row.isEdit" />
           </template>
         </el-table-column>
-        <el-table-column v-for="(item, index) in lossRateYearList" :key="item.year" :label="item.yearAlias" :prop="`lossRateYearList.${index}.rate`" width="120">
+        <el-table-column v-for="(item, index) in lossRateYearList" :key="item.year" :label="item.yearAlias"
+          :prop="`lossRateYearList.${index}.rate`" width="120">
           <template #default="{ row }">
             <el-input v-model="row.lossRateYearList[index].rate" v-if="row.isEdit" />
           </template>
         </el-table-column>
       </el-table>
       <el-row justify="end" m="2">
-        <el-pagination
-          :page-size="20"
-          :pager-count="data.selfTableParams.skipCount"
-          layout="prev, pager, next"
-          :total="data.selfTabletotal"
-          background
-          @current-change="(val) => changeCurrent(val, data.selfTableParams)"
-        />
+        <el-pagination :page-size="20" :pager-count="data.selfTableParams.skipCount" layout="prev, pager, next"
+          :total="data.selfTabletotal" background @current-change="(val) => changeCurrent(val, data.selfTableParams)" />
       </el-row>
     </el-card>
-    <LogList :type="12" />
+    <LogList :type="12" ref="logListRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -69,13 +56,12 @@ import {
   ExportOfLossRateTemplate,
   LossRateExport,
 } from "./common/request"
-
 import { downloadFileExcel } from "@/utils"
 import type { UploadProps, UploadUserFile } from "element-plus"
-import { handleUploadTemplateError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
 import type { FormInstance, FormRules } from "element-plus"
-import LogList from "@/components/LogList/index.vue"
+import LogList, { LogListAPI } from "@/components/LogList/index.vue"
+import CommonUpload from '@/components/CommonUpload/index.vue'
 
 const data = reactive({
   selfTabletotal: 0,
@@ -93,6 +79,7 @@ const data = reactive({
 const fileList = ref<UploadUserFile[]>([])
 const tableData = ref<any>([])
 const lossRateYearList = ref<any>([])
+const logListRef = ref<LogListAPI | null>(null)
 
 watch(
   () => data.selfTableParams.skipCount,
@@ -109,7 +96,7 @@ const changeCurrent = (val: number, row: any) => {
 }
 
 const fetchTableData = async () => {
-  const { result } = await LossRateQuery({
+  const { result }: any = await LossRateQuery({
     ...data.selfTableParams,
     skipCount: (data.selfTableParams.skipCount - 1) * 20,
     maxResultCount: 20
@@ -124,47 +111,14 @@ const fetchTableData = async () => {
   }
 }
 
-const handleConfirm = async (row: any) => {
-  console.log(row, "row132")
-  handleUpdateProjectSelf(row)
-}
 
 const handleStartEdit = (row: any, isEdit: boolean) => {
   row.isEdit = isEdit
 }
 
-const handleCreateProjectSelf = async (row: any) => {
-  const { success } = await CreateProjectSelf({ ...row })
-  if (success) {
-    fetchTableData()
-  }
-}
-
-const handleUpdateProjectSelf = async (row: any) => {
-  const { success } = await UpdateProjectSelf({ ...row })
-  if (success) {
-    fetchTableData()
-  }
-}
-
-const handleAddTableData = () => {
-  visible.value = true
-  console.log(formRef.value, "formRef123")
-  if (formRef.value) {
-    formRef.value.resetFields()
-  }
-}
-
 const onReset = () => {
   data.selfTableParams.filter = ""
   fetchTableData()
-}
-
-const handleDelete = async (row: any) => {
-  const { success } = (await DeleteProjectSelf({ id: row.id })) || {}
-  if (success) {
-    fetchTableData()
-  }
 }
 
 // 损耗率-参数导出
@@ -195,6 +149,8 @@ const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
     console.log(res, "导入项目自建表")
     ElMessage.success("导入成功！")
     fetchTableData()
+    logListRef.value?.onRefresh()
+    console.log(logListRef.value, "123123")
   } else {
     ElMessage.error(res.error.message)
   }

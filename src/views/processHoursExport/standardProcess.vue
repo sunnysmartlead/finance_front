@@ -162,11 +162,11 @@ const initData = () => {
     getProcessOptionLog()
 }
 //获取列表
-const getStandardProcessList = async () => {
+const getStandardProcessList = () => {
     let param = {
         name: data.queryForm.standardProcessName
     }
-    await getListAll(param).then((response: any) => {
+    getListAll(param).then((response: any) => {
         if (response.success) {
             let data = response.result;
             console.log("标准工艺列表", data);

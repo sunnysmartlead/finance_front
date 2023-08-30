@@ -1,5 +1,6 @@
 <template>
     <div class="u-p-20">
+
         <div>
             <el-form :inline="true" :model="queryForm" class="demo-form-inline">
                 <el-form-item label="设备名称">

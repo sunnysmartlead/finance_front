@@ -148,7 +148,7 @@ import { GetListAll, getProcessDetail, createProcess, exportProcess,
       updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 const queryForm = reactive({
-  processName: ''
+  processName:''
 })
 
 interface processItem {
@@ -182,8 +182,9 @@ const initData = () => {
 
 const getProcessList = async () => {
   let param = {
-    ProcessName: queryForm.processName
+    ProcessName: queryForm.processName?queryForm.processName:null
   }
+  console.log("请求工序列表",param);
   await GetListAll(param).then((response: any) => {
     if (response.success) {
       let data = response.result;

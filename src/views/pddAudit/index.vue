@@ -51,9 +51,9 @@ const data = reactive({
 })
 
 // 审核
-const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSubmit =async ({ comment, opinion, nodeInstanceId }: any) => {
   try {
-    let res: any = ProductDevelopmentDepartmentReview({
+    let res: any =await ProductDevelopmentDepartmentReview({
       opinionDescription: comment,
       opinion,
       nodeInstanceId

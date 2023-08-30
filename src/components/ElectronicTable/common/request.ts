@@ -32,7 +32,9 @@ export function PosToriginalCurrencyCalculate(data: ElectronicDto[]): any {
 export function PostElectronicMaterialEntering(data: {
   isSubmit: number
   electronicDtoList: ElectronicDto[]
-  auditFlowId: number
+  auditFlowId: number,
+  opinion:string,
+  nodeInstanceId:any
 }): any {
   return request({
     url: "/api/services/app/ResourceEntering/PostElectronicMaterialEntering",

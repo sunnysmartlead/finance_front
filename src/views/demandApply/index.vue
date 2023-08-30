@@ -464,7 +464,7 @@
             <el-table-column label="产品名称" prop="product" width="180" />
             <el-table-column label="产品大类" width="180">
               <template #default="{ row }">
-                <el-select v-model="row.productType" placeholder="产品大类" multiple disabled>
+                <el-select v-model="row.productType" placeholder="产品大类" disabled>
                   <el-option
                     v-for="item in state.productTypeOptions"
                     :key="item.id"
@@ -552,7 +552,7 @@
               <el-table-column label="产品名称" prop="name" width="180" />
               <el-table-column label="产品大类" width="180">
                 <template #default="{ row }">
-                  <el-select v-model="row.type" placeholder="产品大类" multiple disabled>
+                  <el-select v-model="row.type" placeholder="产品大类" disabled>
                     <el-option
                       v-for="item in state.productTypeOptions"
                       :key="item.id"
@@ -1134,8 +1134,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="汇率" label="汇率">
-            <template #default="{ row }">
-              <el-input v-model="row.exchangeRate" :disabled="isDisabled" />
+            <template #default="{ row, $index }">
+              <el-input v-model="row.exchangeRate" :disabled="isDisabled" @change="(val) => changeExchangRate(val, $index)" />
             </template>
           </el-table-column>
         </el-table>
@@ -1327,7 +1327,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onMounted, toRefs, watch, computed } from "vue"
-import { productTypeMap, Pcs, YearListItem, updateFrequency } from "./data.type"
+import { productTypeMap, YearListItem, updateFrequency } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 // import { Search } from "@element-plus/icons-vue"
@@ -1573,7 +1573,7 @@ const moduleTableTotal = computed(() => {
     if (item.product && item.pixel && item.productType && item?.code && _.isEmpty(currentData)) {
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         ...item,
-        productType: [item.productType],
+        productType: item.productType,
         ourRole: [item.ourRole]
       })
     }
@@ -1583,10 +1583,10 @@ const moduleTableTotal = computed(() => {
         carModel: compareString(currentData.carModel, item.carModel),
         product: item.product,
         partNumber: compareString(currentData.partNumber, item.partNumber),
-        code: compareString(currentData.code, item.code),
-        productType: compareString(currentData.productType, item.productType),
+        code: item.code,
+        productType: item.productType,
         ourRole: compareString(currentData.ourRole, item.ourRole),
-        pixel: compareString(currentData.pixel, item.pixel),
+        pixel: item.pixel,
         marketShare: (currentData.marketShare += item.marketShare || 0),
         moduleCarryingRate: (currentData.moduleCarryingRate += item.moduleCarryingRate || 0),
         singleCarProductsQuantity: (currentData.singleCarProductsQuantity += item.singleCarProductsQuantity || 0),
@@ -1631,6 +1631,23 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   } else {
     return 0
   }
+}
+
+const dealWithItem = (v: any) => {
+  if (Array.isArray(v)) {
+    return v.join(",")
+  }
+  return v
+}
+const handleDealWithModelCount = (arr: any) => {
+  return map(arr, (item: any) => {
+    return {
+      ...item,
+      carModel: dealWithItem(item.carModel),
+      partNumber: dealWithItem(item.partNumber),
+      ourRole: dealWithItem(item.ourRole),
+    }
+  })
 }
 
 const save = async (formEl: FormInstance | undefined) => {
@@ -1691,18 +1708,13 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
       // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
-      console.log(gradientModelTable.value, "gradientModel123")
       let gradientModel = map(gradientModelTable.value, (item: any) =>
-        map(item.children, (v) => ({
-          ...v,
-          type: v.type?.join(",")
+        map(item.children, c => ({
+          ...c,
+          number: Array.isArray(c.number) ? c.number.join(",") : c.number
         }))
       ).flat(2)
-      quoteForm.modelCount = map(moduleTableTotal.value, (v: any) => ({
-        ...v,
-        productType: v.productType?.join(",") || "",
-        ourRole: v.ourRole?.join(",") || ""
-      }))
+      quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
@@ -2020,12 +2032,11 @@ watch(
 watch(
   () => [state.quoteForm.isHasGradient, moduleTableTotal.value],
   (val) => {
-    const isHasGradient = val[0]
-    const moduleTableTotalData = val[1]
+    const [isHasGradient, moduleTableTotalData] = val
     const rowOne = moduleTableTotal?.value?.[0]
     if (!isHasGradient && !_.isEmpty(moduleTableTotalData) && rowOne) {
       const yearTotal = state.yearCols.length
-      const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => (a.quantity || 0) + (b.quantity || 0))
+      const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => a + (b.quantity || 0), 0)
       kvPricingData.value = [{ gradientValue: Number((totalData / yearTotal).toFixed(2)) }]
     }
   },
@@ -2035,13 +2046,14 @@ watch(
 )
 
 watch(
-  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue)],
+  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient],
   (val) => {
-    const [moduleTableTotalData, kvList] = val
+    const [moduleTableTotalData, kvList, isHasGradient] = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       let filterData = _.cloneDeep(kvList)
 
       filterData = filterData.map((item: any) => {
+        console.log(isHasGradient, "isHasGradient12313")
         return {
           kv: item,
           children: map(moduleTableTotalData, (c, index: number) => ({
@@ -2052,7 +2064,7 @@ watch(
             code: c.code,
             type: c.productType,
             gradientModelYear: map(c.modelCountYearList, (m: any) => ({
-              count: item,
+              count: isHasGradient ? item : m.quantity,
               upDown: m.upDown,
               year: m.year
             }))
@@ -2083,6 +2095,7 @@ watch(
         })
       })
     })
+    console.log(kvList, arr ,"kvList")
     customerTargetPrice.value = arr
   },
   {
@@ -2668,6 +2681,14 @@ const ChangeShareCount = debounce((row: any, index: number) => {
     })
   }
 }, 300)
+
+const changeExchangRate = (val: string, index: number) => {
+  if (index === 0) {
+    customerTargetPrice.value.forEach((item: any) => {
+      item.exchangeRate = val
+    })
+  }
+}
 
 defineExpose({
   ...toRefs(state)

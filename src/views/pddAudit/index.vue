@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <VertifyBox :onSubmit="handleSubmit" /> -->
-    <ProcessVertifyBox :onSubmit="handleSubmit" />
+    <ProcessVertifyBox :onSubmit="handleSubmit" v-havedone />
     <el-card class="pddAudit">
       <template #header>
         <div class="card-header">
@@ -38,7 +38,11 @@ import getQuery from "@/utils/getQuery"
 import { designScheme } from "@/views/demandApplyAudit"
 // import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-
+import useJump from "@/hook/useJump"
+import { useRoute, useRouter } from "vue-router"
+import { ProductDevelopmentDepartmentReview } from "./service"
+let route = useRoute()
+const { closeSelectedTag } = useJump()
 const data = reactive({
   dialogTableVisible: false,
   dialogVisible: false,
@@ -47,7 +51,22 @@ const data = reactive({
 })
 
 // 审核
-const handleSubmit = () => {}
+const handleSubmit =async ({ comment, opinion, nodeInstanceId }: any) => {
+  try {
+    let res: any =await ProductDevelopmentDepartmentReview({
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
+    })
+    if (res.success) {
+      ElMessage({
+        type: "success",
+        message: "保存成功"
+      })
+      closeSelectedTag(route.path)
+    }
+  } catch (error) {}
+}
 
 onMounted(async () => {
   let query = getQuery()

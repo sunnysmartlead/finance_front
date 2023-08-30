@@ -5,12 +5,20 @@
     <TrDownLoad />
     <customerTargetPrice />
     <el-row class="electronic-import__btn-container">
-      <el-upload :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'" :on-success="handleSuccess" show-file-list
-        :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
+      <el-upload
+        :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
+        :on-success="handleSuccess"
+        show-file-list
+        :on-progress="handleGetUploadProgress"
+        :on-error="handleUploadError"
+      >
         <el-button type="primary">结构料上传</el-button>
       </el-upload>
-      <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess3D"
-        show-file-list>
+      <el-upload
+        :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+        :on-success="handleSuccess3D"
+        show-file-list
+      >
         <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
       </el-upload>
       <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
@@ -111,13 +119,17 @@
           </el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="data.logisticsForm.remarks" type="textarea" placeholder="若无具体包装数据,填写参考的具体项目及产品" />
+          <el-input
+            v-model="data.logisticsForm.remarks"
+            type="textarea"
+            placeholder="若无具体包装数据,填写参考的具体项目及产品"
+          />
         </el-form-item>
       </el-form>
       <div style="float: right; margin: 20px 0">
         <!-- <el-button type="primary" @click="submit(refForm)" v-havedone>提交</el-button> -->
         <el-button type="primary" @click="submit(refForm)" v-havedone>校验</el-button>
-        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" />
+        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" v-havedone />
       </div>
     </el-card>
   </div>
@@ -282,7 +294,7 @@ const submit = async (formEl: FormInstance | undefined) => {
     }
   })
 }
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -294,7 +306,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
       data.logisticsForm
     )
     let res: any = await SaveStructionBom(params)
-    let resO: any = await SaveProductDevelopmentInput(params)
+    await SaveProductDevelopmentInput(params)
     loading.close()
     if (res.success) {
       ElMessage({

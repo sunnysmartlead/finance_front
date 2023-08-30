@@ -71,13 +71,10 @@ export function QueryWorkingHour(auditFlowId: number, productId: number) {
 }
 
 /**获取3D爆炸图 */
-export function GetPicture3DByAuditFlowId(auditFlowId: any, productId: any) {
+export function GetPicture3DByAuditFlowId(data: any) {
   return request({
-    url: "/api/services/app/WorkingHours/GetPicture3DByAuditFlowId",
+    url: "/api/services/app/DemandApplyAudit/DownloadExplosives",
     method: "get",
-    data: {
-      auditFlowId,
-      productId
-    }
+    data
   })
 }

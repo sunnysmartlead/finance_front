@@ -13,7 +13,7 @@
     </el-table-column>
     <el-table-column label="操作" width="200">
       <template #default="{ row }">
-        <el-row >
+        <el-row>
           <el-button type="primary" v-if="!isEdit" @click="handleEdit" link>修改</el-button>
           <el-button type="primary" v-if="isEdit" link>确认</el-button>
           <el-button link type="primary" v-if="isEdit" @click="handleUpload">上传佐证资料</el-button>

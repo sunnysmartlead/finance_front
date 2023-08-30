@@ -445,7 +445,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nreProjectManageMent.vue"),
         name: "nreProjectManageMent",
         meta: {
-          title: "项目管理部NRE"
+          title: "项目管理部手板件录入"
         }
       },
       {
@@ -453,7 +453,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nrePilotprojects.vue"),
         name: "nrePilotprojects",
         meta: {
-          title: "产品部NRE"
+          title: "产品部EMC实验费录入"
         }
       },
       {
@@ -461,7 +461,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/vertify/nrePilotprojects.vue"),
         name: "nrePilotprojectsVertify",
         meta: {
-          title: "产品部NRE审核"
+          title: "产品部EMC实验费录入审核"
         }
       },
       {
@@ -485,7 +485,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/nreExperimentItems.vue"),
         name: "nreExperimentItems",
         meta: {
-          title: "品保部实验NRE"
+          title: "品保部环境实验费"
         }
       },
       {
@@ -493,7 +493,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/nre/vertify/nreExperimentItems.vue"),
         name: "nreExperimentItemsVertify",
         meta: {
-          title: "品保部实验NRE审核"
+          title: "品保部环境实验费审核"
         }
       },
       // {
@@ -1095,6 +1095,21 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "selfBuilt",
         meta: {
           title: "自建项目表"
+        }
+      }
+    ]
+  },
+  {
+    path: "/engineeringDepartment",
+    redirect: "/engineeringDepartment/lossRate",
+    component: Layout,
+    children: [
+      {
+        path: "lossRate",
+        component: () => import("@/views/engineeringDepartment/lossRate.vue"),
+        name: "lossRate",
+        meta: {
+          title: "损耗率-参数"
         }
       }
     ]

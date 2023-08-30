@@ -50,8 +50,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-upload :action="$baseUrl + 'api/services/app/ElectronicBom/UploadExcel'" :on-success="handleSuccess"
-        :on-error="handleUploadError" show-file-list :on-progress="handleGetUploadProgress">
+      <el-upload
+        :action="$baseUrl + 'api/services/app/ElectronicBom/UploadExcel'"
+        :on-success="handleSuccess"
+        :on-error="handleUploadError"
+        show-file-list
+        :on-progress="handleGetUploadProgress"
+      >
         <el-button :style="{ margin: '15px' }" type="primary">电子料上传</el-button>
       </el-upload>
 
@@ -68,7 +73,7 @@
 
     <div style="float: right; margin-top: 20px">
       <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
     </div>
 
     <el-dialog v-model="data.setVisible">
@@ -122,7 +127,7 @@ const data = reactive({
   downloadSetForm: {
     number: 0
   },
-  auditFlowId: null as any,
+  auditFlowId: null as any
 })
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
@@ -141,7 +146,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 const queryBoardInfomation = async () => {
   const { success, result } = await getBoardInfomation({
     auditFlowId: auditFlowId,
-    solutionId: productId,
+    solutionId: productId
   })
   if (success && result?.length) {
     platePart.value = result
@@ -199,7 +204,7 @@ const deletePlatePart = async (index: number) => {
 //   }
 // }
 
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -229,7 +234,6 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
 const init = async () => {
   let resElectronic: any = await GetElectronicBom({ auditFlowId, solutionId: productId })
   data.tableData = resElectronic.result
-
 }
 
 onMounted(async () => {

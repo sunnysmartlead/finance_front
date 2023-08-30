@@ -245,7 +245,7 @@ import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
 // import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-
+import { useRoute } from "vue-router"
 const router = useRouter()
 const Host = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()
@@ -414,7 +414,7 @@ const fetchElectronicInitData = async () => {
     tableLoading.value = false
   }, 500)
 }
-
+const route = useRoute()
 // 提交电子料单价行数据
 const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: number) => {
   if (isSubmit) {
@@ -472,10 +472,13 @@ const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
 }
 
 const submitFun = async (record: ElectronicDto, isSubmit: number, index: number) => {
+  let { nodeInstanceId } = route.query
   const { success } = await PostElectronicMaterialEntering({
     isSubmit,
     electronicDtoList: [electronicBomList.value[index]],
-    auditFlowId
+    auditFlowId,
+    opinion:"Done",
+    nodeInstanceId
   })
   if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
   fetchInitData()

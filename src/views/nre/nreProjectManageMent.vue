@@ -1,5 +1,6 @@
 <template>
   <div style="padding: 0 10px">
+    <ProcessVertifyBox :onSubmit="submit" processType="confirmProcessType" />
     <el-card class="margin-top">
       <template #header>
         <el-row style="width: 100%" justify="space-between" align="middle">
@@ -177,7 +178,7 @@ import { PostProjectManagement, GetReturnProjectManagement } from "./common/requ
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
-
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 const { auditFlowId = 1, productId = 1 }: any = getQuery()
 
 /**
@@ -218,7 +219,7 @@ const calculateCost = (row: TravelExpenseModel) => {
   row.cost = (row.costSky || 0) * (row.peopleCount || 0) * (row?.skyCount || 0)
 }
 
-const submit = async () => {
+const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const { success } = await PostProjectManagement({
     projectManagement: {
       ...data,
@@ -230,7 +231,10 @@ const submit = async () => {
       }),
       solutionid: productId
     },
-    auditFlowId
+    auditFlowId,
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
   })
   if (success) ElMessage.success("提交成功！")
 }

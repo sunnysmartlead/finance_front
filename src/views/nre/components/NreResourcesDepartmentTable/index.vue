@@ -11,7 +11,12 @@
         border
         :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost')"
         show-summary
+        @selection-change="handleSelectionChange"
       >
+         <el-table-column
+      type="selection"
+      width="55">
+    </el-table-column>
         <el-table-column type="index" label="序号" width="70" />
         <el-table-column label="费用名称" prop="modelName" width="180" />
         <el-table-column label="模穴数" width="150">
@@ -57,7 +62,7 @@
             <el-input v-model="row.remark" :disabled="row.isSubmit" />
           </template>
         </el-table-column>
-        <el-table-column label="提交人" prop="peopleId" width="180" />
+        <el-table-column label="提交人" prop="peopleName" width="180" />
         <el-table-column label="操作" v-if="!isVertify" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link v-if="!row.isSubmit" :disabled="row.isSubmit" @click="submit(false, row)" type="danger"
@@ -75,18 +80,20 @@
 
 <script lang="ts" setup>
 import { ref, onBeforeMount, onMounted, watch } from "vue"
-import { GetInitialResourcesManagementSingle, PostSalesDepartment } from "../../common/request"
+import { GetInitialResourcesManagementSingle, PostSalesDepartment, NREToExamine } from "../../common/request"
 import { getMouldSummaries } from "../../common/mouldSummaries"
-import { NreMarketingDepartmentModel } from "../../data.type"
+import { NreMarketingDepartmentModel ,MouldInventoryModel} from "../../data.type"
 import { ElMessage } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import { debounce } from "lodash"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 // import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-
+import { useRoute } from "vue-router"
+import useJump from "@/hook/useJump"
+const route = useRoute()
 const { auditFlowId, right = 1, productId }: any = getQuery()
-
+const { closeSelectedTag } = useJump()
 const props = defineProps({
   isVertify: Boolean
 })
@@ -98,7 +105,11 @@ const initFetch = async () => {
   console.log(result, "result")
   mouldInventoryData.value = result?.mouldInventoryModels
 }
-
+const multipleSelection = ref<MouldInventoryModel[]>([])
+const handleSelectionChange = (val: MouldInventoryModel[]) => {
+  console.log(val, "val")
+  multipleSelection.value = val
+}
 // const queryDoneData = async () => {
 //   const { result } = (await GetReturnInitialSalesDepartment(auditFlowId)) || {}
 //   console.log(result, "result")
@@ -106,12 +117,15 @@ const initFetch = async () => {
 // }
 
 const submit = debounce(async (isSubmit: boolean, row: any) => {
+  let { nodeInstanceId } = route.query
   const { success } = await PostSalesDepartment({
     auditFlowId,
     resourcesManagementModels: {
       solutionId: productId,
       mouldInventory: { ...row, isSubmit }
-    }
+    },
+    nodeInstanceId,
+    opinion: "Done"
   })
   if (success) {
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
@@ -131,7 +145,20 @@ watch(
   }
 )
 
-const handleSubmit = () => {}
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  const { success } = await NREToExamine({
+    auditFlowId,
+    nreCheckType:1,
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId,
+    nreId:multipleSelection.value.map(p=>p.id)
+  })
+   if (success) {
+    ElMessage.success(`提交成功`)
+    closeSelectedTag(route.path)
+  }
+}
 
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')

@@ -15,7 +15,10 @@ export function PostProjectManagement(data: {
   /**
    * Nre核价 项目管理部 实体
    */
-  projectManagement?: ProjectManagementModel | null
+  projectManagement?: ProjectManagementModel | null,
+  opinionDescription: string,
+  opinion:string,
+  nodeInstanceId:number
 }): any {
   return request({
     url: "/api/services/app/NrePricing/PostProjectManagementSingle",
@@ -54,25 +57,21 @@ export function PostQADepartment(data: any): any {
 }
 
 // Nre 品保部=>试验项目 录入
-export function PostExperimentItems(data: {
-  /**
-   * 流程Id
-   */
-  auditFlowId?: number
-  solutionId?: number
-  /**
-   * 带零件id 的 品保录入模型
-   */
-  environmentalExperimentFeeModels?: any
-  isSubmit: boolean
-}): any {
+export function PostExperimentItems(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/PostExperimentItemsSingle",
     method: "post",
     data
   })
 }
-
+// Nre 品保部=>试验项目 审核
+export function NREToExamine(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/NREToExamine",
+    method: "post",
+    data
+  })
+}
 // 资源部录入
 export function PostResourcesManagement(data: {
   /**
@@ -138,7 +137,7 @@ export function GetInitialSalesDepartment(data: any): any {
   })
 }
 
-// Ner 营销部录入
+// Ner 资源部 模具费录入(单个方案)
 export function PostSalesDepartment(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/PostResourcesManagementSingle",

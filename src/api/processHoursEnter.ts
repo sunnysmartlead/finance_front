@@ -112,3 +112,39 @@ export function saveProcessLog(data:any){
   })
 }
 
+
+export function downLoad3DImg(data:any) {
+  return request({
+    url: "/api/services/app/WorkingHours/GetPicture3DByAuditFlowId",
+    method: "get",
+    data: data
+  })
+}
+
+
+export function FindStructureBomByProcess(data:any) {
+  return request({
+    url: "/api/services/app/StructionBom/FindStructureBomByProcess",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
+
+export function FindElectronicBomByProcess(data:any) {
+  return request({
+    url: "/api/services/app/ElectronicBom/FindElectronicBomByProcess",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
+
+
+export function GetBoardInfomation(data: QueryParams) {
+  return request({
+    url: "/api/services/app/ElectronicBom/GetBoardInfomation",
+    method: "get",
+    data
+  })
+}

@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="u-m-t-10">
-            <el-table :data="standardProcessList" :border="true" max-height="600px">
+            <el-table :data="standardProcessList" :border="true">
                 <el-table-column label="序号" type="index" min-width="80px" align="center" />
                 <el-table-column prop="name" label="标准工艺名称" align="center" />
                 <el-table-column prop="lastModificationTime" label="维护时间" align="center">
@@ -162,11 +162,11 @@ const initData = () => {
     getProcessOptionLog()
 }
 //获取列表
-const getStandardProcessList = () => {
+const getStandardProcessList =async () => {
     let param = {
         name: data.queryForm.standardProcessName
     }
-    getListAll(param).then((response: any) => {
+    await getListAll(param).then((response: any) => {
         if (response.success) {
             let data = response.result;
             console.log("标准工艺列表", data);

@@ -98,16 +98,18 @@
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber" :loading="optionLoading">
-                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
-                             :value="item.value" />
+                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber" 
+                            :loading="optionLoading">
+                  <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
+                    :value="item.processNumber" />           
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName" :loading="optionLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
-                             :value="item.value" />
+                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName" 
+                           :loading="optionLoading">
+                  <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
+                             :value="item.processName"/>
                 </el-select>
               </div>
             </div>
@@ -178,6 +180,7 @@ import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import optionLogRecord from '@/components/processHoursExport/option-log-records.vue';
 import { getLogRecord } from "@/api/logRecord";
 import { GetListAll, update, create, deleteItem, uploadAction } from "@/api/workHour";
+import { GetListAll as queryProcessList } from "@/api/process";
 import { formatDateTime } from '@/utils';
 const queryForm = reactive({
   processName: ''
@@ -350,58 +353,73 @@ const submitSearch = () => {
 
 //下拉选项的数据类型定义
 interface selectOptionListItem {
-  value: string
-  label: string
+  id: Number,
+  processName: String,
+  processNumber: String
 }
 //异步请求loading
 const optionLoading = ref(false)
 const processNumberOptions = ref<selectOptionListItem[]>([])
 
 //填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
-const remoteMethodForProcessNumber = (query: string) => {
+const remoteMethodForProcessNumber =async (query: string) => {
   if (query) {
     optionLoading.value = true;
-    setTimeout(() => {
-      optionLoading.value = false;
-      processNumberOptions.value = getProcessNumber(query);
-    }, 200)
+    await getProcessIndex(query);
+    optionLoading.value = false;
   } else {
     processNumberOptions.value = []
   }
 }
 //查询工装名称的方法,用于渲染工装名称下拉框选项
-const getProcessNumber = (keyWord: String) => {
-  return [
-    { label: "工序序号1" + keyWord, value: '工序序号1' },
-    { label: "工序序号2" + keyWord, value: '工序序号2' },
-    { label: "工序序号3" + keyWord, value: '工序序号3' },
-    { label: "工序序号4" + keyWord, value: '工序序号4' }
-  ]
+const getProcessIndex = async (keyWord: String) => {
+  let param = {
+    processNumber: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNumberOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNumberOptions.value = [];
+    }
+  })
 }
 
 
 const processNameOptions = ref<selectOptionListItem[]>([])
 
 //填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
-const remoteMethodForProcessName = (query: string) => {
+const remoteMethodForProcessName =async (query: string) => {
   if (query) {
     optionLoading.value = true;
-    setTimeout(() => {
-      optionLoading.value = false;
-      processNameOptions.value = getProcessName(query);
-    }, 200)
+    await getProcessName(query);
+    optionLoading.value = false;
   } else {
     processNameOptions.value = []
   }
 }
 //查询工装名称的方法,用于渲染工装名称下拉框选项
-const getProcessName = (keyWord: String) => {
-  return [
-    { label: "工序名称1" + keyWord, value: '工序名称1' },
-    { label: "工序名称2" + keyWord, value: '工序名称2' },
-    { label: "工序名称3" + keyWord, value: '工序名称3' },
-    { label: "工序名称4" + keyWord, value: '工序名称4' }
-  ]
+const getProcessName =async (keyWord: String) => {
+  let param = {
+    ProcessName: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNameOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNameOptions.value = [];
+    }
+  })
 }
 
 //保存

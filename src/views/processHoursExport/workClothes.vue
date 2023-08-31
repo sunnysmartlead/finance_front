@@ -41,11 +41,13 @@
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processNumber"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForprocessNumber"
+                <el-select :disabled="currentEditProcessIndex != scope.$index" 
+                  v-model="scope.row.processNumber"
+                  filterable remote reserve-keyword :remote-method="remoteMethodForProcessNumber"
                   @change="processNumberChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in processNumberOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                  <el-option v-for="item in processNumberOptions" 
+                        :key="item.id" :label="item.processNumber"
+                        :value="item.processNumber" />
                 </el-select>
               </div>
             </template>
@@ -57,8 +59,8 @@
                 <el-select :disabled="currentEditProcessIndex != scope.$index" v-model="scope.row.processName" filterable
                   remote reserve-keyword :remote-method="remoteMethodForProcessName"
                   @change="processNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
+                  <el-option v-for="item in processNameOptions"
+                     :key="item.id" :label="item.processName" :value="item.processName" />
                 </el-select>
               </div>
             </template>
@@ -215,6 +217,7 @@ import { ElMessage, ElMessageBox,genFileId} from "element-plus"
 import {baseURL,getListAll, createFoundationProcedure,
   updateFoundationProcedure, deleteFoundationProcedure,
   getLog,saveOptionLog,exportWorkClothes} from '@/api/foundationProcedure';
+  import { GetListAll as queryProcessList } from "@/api/process";
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from '@/utils';
@@ -460,56 +463,79 @@ const getinstallationName = (keyWord: String) => {
 const installationNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装名称变化了${value}`);
 }
+
+interface processOptionListItem {
+  id: Number,
+  processName: String,
+  processNumber: String
+}
+
 //工序名称下拉数据列表
-const processNameOptions = ref<selectOptionListItem[]>([])
+const processNameOptions = ref<processOptionListItem[]>([])
 //填写工序名称时候的回调,需要从后台模糊查询工序名称,然后下拉选择
-const remoteMethodForProcessName = (query: string) => {
+const remoteMethodForProcessName =async (query: string) => {
   if (query) {
     optionLoading.value = true;
-    setTimeout(() => {
-      optionLoading.value = false;
-      processNameOptions.value = getProcessName(query);
-    }, 200)
+    await getProcessName(query);
+    optionLoading.value = false;
   } else {
     processNameOptions.value = []
   }
 }
 //模糊查询工序名称,用于渲染工序名称下拉框选项
-const getProcessName = (keyWord: String) => {
-  return [
-    { label: "工序名称1" + keyWord, value: 'aaaaa' },
-    { label: "工序名称2" + keyWord, value: 'bbbbb' },
-    { label: "工序名称3" + keyWord, value: 'ccccc' },
-    { label: "工序名称4" + keyWord, value: 'ddddd' }
-  ]
+const getProcessName =async (keyWord: String) => {
+  let param = {
+    ProcessName: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNameOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNameOptions.value = [];
+    }
+  })
 }
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
 }
-//模糊查询工装编号
-const processNumberOptions = ref<selectOptionListItem[]>([])
+//工序序号下拉数据列表
+const processNumberOptions = ref<processOptionListItem[]>([])
 //填写工装编号时候的回调,需要从后台模糊查询编号,然后下拉选择
-const remoteMethodForprocessNumber = (query: string) => {
+const remoteMethodForProcessNumber =async (query: string) => {
   if (query) {
     optionLoading.value = true;
-    setTimeout(() => {
-      optionLoading.value = false;
-      processNumberOptions.value = getprocessNumber(query);
-    }, 200)
+    await getProcessIndex(query);
+    optionLoading.value = false;
   } else {
     processNumberOptions.value = []
   }
 }
 //模糊查询工装编号的接口请求
-const getprocessNumber = (keyWord: String) => {
-  return [
-    { label: "工序编号1" + keyWord, value: '11111' },
-    { label: "工序编号2" + keyWord, value: '22222' },
-    { label: "工序编号3" + keyWord, value: '33333' },
-    { label: "工序编号4" + keyWord, value: '44444' }
-  ]
+//查询工装名称的方法,用于渲染工装名称下拉框选项
+const getProcessIndex = async (keyWord: String) => {
+  let param = {
+    processNumber: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNumberOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNumberOptions.value = [];
+    }
+  })
 }
+
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);

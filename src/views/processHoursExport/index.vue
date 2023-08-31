@@ -337,7 +337,7 @@
                   </div>
                 </div>
                 <div class="u-width-150  u-border   u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.deviceInfo.deviceTotalCost.toFixed(2) }}</span>
+                  <span>{{ dataItem.deviceInfo.deviceTotalCost?dataItem.deviceInfo.deviceTotalCost.toFixed(2):0.00}}</span>
                 </div>
               </div>
             </div>
@@ -365,7 +365,7 @@
                   </div>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(2) }}
+                  {{ dataItem.developCostInfo.hardwareTotalPrice?dataItem.developCostInfo.hardwareTotalPrice.toFixed(2):0.00 }}
                 </div>
                 <!-- <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.developCostInfo.zhuiSuSoft }}</span>
@@ -382,7 +382,7 @@
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.developCostInfo.softwarePrice.toFixed(2) }}</span>
+                  <span>{{ dataItem.developCostInfo.softwarePrice?dataItem.developCostInfo.softwarePrice.toFixed(2):0.00 }}</span>
                 </div>
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.developCostInfo.hardwareDeviceTotalPrice }}</span>
@@ -1462,16 +1462,16 @@ const downLoad3D = () => {
   downLoad3DImg(param).then((response: any) => {
     console.log("3D爆炸图下载结果", response);
     if (response.success) {
-      let data = response.result;
-      let fileId = data.threeDFileId;
-      let fileName = data.threeDFileName;
-      let url = "" + fileName;
-      const a = document.createElement('a');
-      a.href = url;
-      a.setAttribute('download', fileName);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      // let data = response.result;
+      // let fileId = data.threeDFileId;
+      // let fileName = data.threeDFileName;
+      // let url = "" + fileName;
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.setAttribute('download', fileName);
+      // document.body.appendChild(a);
+      // a.click();
+      // document.body.removeChild(a);
     } else {
       ElMessage({
         type: 'error',
@@ -1490,48 +1490,28 @@ const viewBOM = (type: Number) => {
   if (type == 1) {
     FindStructureBomByProcess(param).then((response: any) => {
       console.log("结构BOM", response);
-      return;
-      if (response.success) {
-        let data = response.result;
-        let fileId = data.threeDFileId;
-        let fileName = data.threeDFileName;
-        let url = "" + fileName;
-        const a = document.createElement('a');
-        a.href = url;
-        a.setAttribute('download', fileName);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        ElMessage({
-          type: 'error',
-          message: '失败'
-        })
-      }
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"结构BOM.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     })
   }
   //电子
   else {
     FindElectronicBomByProcess(param).then((response: any) => {
       console.log("电子BOM", response);
-      return;
-      if (response.success) {
-        let data = response.result;
-        let fileId = data.threeDFileId;
-        let fileName = data.threeDFileName;
-        let url = "" + fileName;
-        const a = document.createElement('a');
-        a.href = url;
-        a.setAttribute('download', fileName);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        ElMessage({
-          type: 'error',
-          message: '失败'
-        })
-      }
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"电子BOM.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     })
   }
 }

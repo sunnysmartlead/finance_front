@@ -244,7 +244,7 @@ const queryForm = reactive({
     deviceName: ''
 })
 const initData = async () => {
-    let listResult: any = await getListAll({ DeviceName: queryForm.deviceName })
+    let listResult: any = await getListAll({ DeviceName: data.queryForm.deviceName })
     if (listResult.success) {
         data.tableData = listResult.result;
         console.log("工装数据数量", data.tableData.value);

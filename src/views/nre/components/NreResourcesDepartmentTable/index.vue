@@ -73,6 +73,7 @@ const route = useRoute()
 const { auditFlowId, right = 1, productId }: any = getQuery()
 const { closeSelectedTag } = useJump()
 import { ElTable } from 'element-plus'
+import { map } from "lodash"
 
 const props = defineProps({
   isVertify: Boolean
@@ -80,7 +81,7 @@ const props = defineProps({
 
 const mouldInventoryData = ref<NreMarketingDepartmentModel[]>([])
 const multipleTableRef = ref<InstanceType<typeof ElTable>>()
-const multipleSelection = ref<MouldInventoryModel[]>([])
+const multipleSelection = ref<any[]>([])
 
 const initFetch = async () => {
   const { result } = await GetInitialResourcesManagementSingle({ auditFlowId, solutionId: productId })
@@ -93,29 +94,32 @@ const initFetch = async () => {
 }
 const handleToggleSelection = () => {
   const selectionData = getSessionStorage('mouldInventorySelection')
-    if (selectionData) {
-      let filterData: any = []
-      try {
-        filterData = JSON.parse(selectionData)
-      } catch (err) {
-        console.log(err, '赋值失败')
-      }
-      console.log(filterData, selectionData, "filterData")
-      if (filterData?.length) {
-        multipleSelection.value = filterData
-        filterData.forEach((item: any) => {
-          const findItem = mouldInventoryData.value.find(c => c.id === item.id)
-          multipleTableRef.value!.toggleRowSelection(findItem, true)
-        })
-      }
+  if (selectionData) {
+    let filterData: any = []
+    try {
+      filterData = JSON.parse(selectionData)
+    } catch (err) {
+      console.log(err, '赋值失败')
     }
+    console.log(filterData, selectionData, "filterData")
+    const selectionList = filterData?.[productId]
+    if (selectionList?.length) {
+      multipleSelection.value = selectionList
+      selectionList.forEach((item: any) => {
+        const findItem = mouldInventoryData.value.find((c: any) => c.id === item)
+        multipleTableRef.value!.toggleRowSelection(findItem, true)
+      })
+    }
+  }
 }
 
 const handleSelectionChange = (val: MouldInventoryModel[]) => {
   console.log(val, "val")
-  multipleSelection.value = val
-
-  setSessionStorage('mouldInventorySelection', JSON.stringify(val))
+  const ids = map(val, v => v.id)
+  multipleSelection.value = ids
+  setSessionStorage('mouldInventorySelection', JSON.stringify({
+    [productId]: ids
+  }))
 }
 // const queryDoneData = async () => {
 //   const { result } = (await GetReturnInitialSalesDepartment(auditFlowId)) || {}
@@ -153,14 +157,13 @@ watch(
 )
 
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
-  console.log(multipleSelection.value, "multipleSelection.value")
   const { success } = await NREToExamine({
     auditFlowId,
     nreCheckType: 1,
     opinionDescription: comment,
     opinion,
     nodeInstanceId,
-    nreId: multipleSelection.value.map(p => p.id)
+    nreId: multipleSelection.value
   })
   if (success) {
     ElMessage.success(`提交成功`)

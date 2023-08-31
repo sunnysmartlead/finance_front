@@ -24,24 +24,20 @@
             <el-input v-model="row.categoryName" placeholder="请录入板部件名称" />
           </template>
         </el-table-column>
-        <el-table-column prop="typeName" label="板部件长(mm)">
+        <el-table-column prop="typeName"  width="175" label="板部件长(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.typeName" placeholder="请录入板部件长" />
+            <el-input-number v-model="row.typeName" controls-position="right" :min="0" placeholder="请录入板部件长" />
           </template>
         </el-table-column>
-        <el-table-column prop="isInvolveItem" label="板部件宽(mm)">
+        <el-table-column prop="isInvolveItem" width="175" label="板部件宽(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.isInvolveItem" placeholder="请录入板部件宽" />
+            <el-input-number v-model="row.isInvolveItem" controls-position="right" :min="0" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
-        <el-table-column prop="sapItemNum" label="板部件面积(mm^2)">
-          <template #default="{ row }">
-            <el-input v-model="row.sapItemNum" placeholder="请录入板部件面积" />
-          </template>
-        </el-table-column>
+        <el-table-column prop="sapItemNum" label="板部件面积(mm^2)" />
         <el-table-column prop="sapItemName" label="拼板数量">
           <template #default="{ row }">
-            <el-input v-model="row.sapItemName" placeholder="请录入拼板数量" />
+            <!-- <el-input-number v-model="row.sapItemName" placeholder="请录入拼板数量" /> -->
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -92,7 +88,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, onMounted, watch } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
@@ -105,6 +101,7 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import { GetBoardInfomation } from "@/api/processHoursEnter"
 
 const Host = "ElectronicBomImport"
 
@@ -118,6 +115,18 @@ const platePart: any = ref([
     address: "No. 189, Grove St, Los Angeles"
   }
 ])
+
+watch(
+  () => platePart.value,
+  () => {
+    platePart.value.forEach((item) => {
+      item.sapItemNum = (item.typeName || 0) * (item.isInvolveItem || 0)
+    })
+  },
+  {
+    deep: true
+  }
+)
 
 const data = reactive({
   activeIndex: 0,
@@ -144,10 +153,10 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 }
 
 const queryBoardInfomation = async () => {
-  const { success, result } = await getBoardInfomation({
+  const { success, result } = (await GetBoardInfomation({
     auditFlowId: auditFlowId,
     solutionId: productId
-  })
+  })) || {}
   if (success && result?.length) {
     platePart.value = result
   }

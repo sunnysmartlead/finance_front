@@ -146,7 +146,10 @@ const saveNew = async (formEl: FormInstance | undefined) => {
 const clickToPage = (row: any, scopeP: any) => {
   productStore.setProductList(scopeP.row.auditFlowId) // 只在这里执行获取零件列表
   let pathItem: any = urlMap[row.processIdentifier as keyof typeof urlMap]
-  let query: any = Object.assign({ auditFlowId: scopeP.row.auditFlowId, right: row.right }, pathItem.query)
+  let query: any = Object.assign(
+    { auditFlowId: scopeP.row.auditFlowId, right: row.right, nodeInstanceId: row.id },
+    pathItem.query
+  )
   if (window.sessionStorage.getItem("productId")) {
     query.productId = window.sessionStorage.getItem("productId")
   }

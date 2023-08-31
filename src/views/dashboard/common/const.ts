@@ -18,7 +18,7 @@ export const percentageCostChartData = {
   label: {
     alignTo: "edge",
     formatter: (item: any) => {
-      console.log(item, "itemitem")
+      // console.log(item, "itemitem")
       return `${item.name}: ${bigNumberTransform(item.value || 0)}`
     },
     minMargin: 5,
@@ -138,5 +138,9 @@ export const dashboardPannel = [
   {
     title: "质量成本",
     value: "5"
+  },
+  {
+    title: "其他成本",
+    value: "6"
   }
 ]

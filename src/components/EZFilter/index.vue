@@ -1,7 +1,7 @@
 <template>
   <el-card class="EZFilter-wrap">
     <el-form ref="ruleFormRef" :inline="true" :model="formValue">
-      <template v-for="item in props.filterNnum" :key="item.key">
+      <template v-for="item in filterNnum" :key="item.key">
         <el-form-item :label="item.label" v-if="!item.role" :prop="item.key">
           <el-input :placeholder="item.placeholder || `请输入${item.label}`" v-model="formValue[item.key]" />
         </el-form-item>

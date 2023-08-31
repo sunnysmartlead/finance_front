@@ -15,7 +15,10 @@ export function PostProjectManagement(data: {
   /**
    * Nre核价 项目管理部 实体
    */
-  projectManagement?: ProjectManagementModel | null
+  projectManagement?: ProjectManagementModel | null,
+  opinionDescription: string,
+  opinion:string,
+  nodeInstanceId:number
 }): any {
   return request({
     url: "/api/services/app/NrePricing/PostProjectManagementSingle",
@@ -54,25 +57,21 @@ export function PostQADepartment(data: any): any {
 }
 
 // Nre 品保部=>试验项目 录入
-export function PostExperimentItems(data: {
-  /**
-   * 流程Id
-   */
-  auditFlowId?: number
-  solutionId?: number
-  /**
-   * 带零件id 的 品保录入模型
-   */
-  environmentalExperimentFeeModels?: any
-  isSubmit: boolean
-}): any {
+export function PostExperimentItems(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/PostExperimentItemsSingle",
     method: "post",
     data
   })
 }
-
+// Nre 品保部=>试验项目 审核
+export function NREToExamine(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/NREToExamine",
+    method: "post",
+    data
+  })
+}
 // 资源部录入
 export function PostResourcesManagement(data: {
   /**
@@ -121,19 +120,27 @@ export function PostCalculateMouldInventory(data: {
   })
 }
 
-// Ner 营销部录入初始值
-export function GetInitialSalesDepartment(Id: number): any {
+// Nre 资源部录入初始值
+export function GetInitialResourcesManagementSingle(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
+    method: "get",
+    data
+  })
+}
+// Nre 营销部录入初始值
+export function GetInitialSalesDepartment(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/GetInitialSalesDepartment",
     method: "get",
-    data: { Id }
+    data
   })
 }
 
-// Ner 营销部录入
-export function PostSalesDepartment(data: NreMarketingDepartmentModel[]): any {
+// Ner 资源部 模具费录入(单个方案)
+export function PostSalesDepartment(data: any): any {
   return request({
-    url: "/api/services/app/NrePricing/PostSalesDepartment",
+    url: "/api/services/app/NrePricing/PostResourcesManagementSingle",
     method: "post",
     data
   })
@@ -141,7 +148,7 @@ export function PostSalesDepartment(data: NreMarketingDepartmentModel[]): any {
 
 /**NRE 核价表 */
 
-export function GetPricingForm(data: { Id: number; solutionId: number }): any {
+export function GetPricingForm(data: { auditFlowId: number; solutionId: number }): any {
   return request({
     url: "/api/services/app/NrePricing/GetPricingForm",
     method: "get",
@@ -188,7 +195,7 @@ export function GetReturnQcGauge(auditFlowId: number, solutionId: number): any {
 // Ner 营销部 录入过的值
 export function GetReturnInitialSalesDepartment(Id: number): any {
   return request({
-    url: "/api/services/app/NrePricing/GetReturnInitialSalesDepartment",
+    url: "/api/services/app/NrePricing/GetInitialResourcesManagementSingle",
     method: "get",
     data: {
       Id
@@ -273,5 +280,105 @@ export function GetFoundationreliableList(data: any): any {
     url: "/api/services/app/Foundationreliable/GetListAll",
     method: "get",
     data
+  })
+}
+
+// 手板件费用修改项添加
+export function AdditionOfCostModificationItemsForHandBoards(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AdditionOfCostModificationItemsForHandBoards",
+    method: "post",
+    data
+  })
+}
+
+// 模具费用修改项添加
+export function AddMoldCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddMoldCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 工装费用修改项添加
+export function AddToolingCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddToolingCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 治具费用修改项添加
+export function AdditionOfFixtureCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AdditionOfFixtureCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 检具费用修改项添加
+export function AddInspectionToolCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddInspectionToolCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 生产设备费用修改项添加
+export function AddProductionEquipmentCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddProductionEquipmentCostModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 实验费用修改项添加
+export function AddExperimentalFeeModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddExperimentalFeeModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 测试软件费用修改项添加
+export function AddingModificationItemsForTestingSoftwareCosts(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddingModificationItemsForTestingSoftwareCosts",
+    method: "post",
+    data
+  })
+}
+
+// 差旅费用修改项添加
+export function AddTravelExpenseModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/AddTravelExpenseModificationItem",
+    method: "post",
+    data
+  })
+}
+
+// 其他费用修改项添加
+export function OtherExpenseModificationItemsAdded(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/OtherExpenseModificationItemsAdded",
+    method: "post",
+    data
+  })
+}
+
+// nre环境实验费excel下载
+export function PostExperimentItemsSingleDownloadExcel(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/PostExperimentItemsSingleDownloadExcel",
+    method: "post",
+    data,
+    responseType: "blob"
   })
 }

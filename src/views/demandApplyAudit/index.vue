@@ -1,12 +1,9 @@
 <template>
   <div class="demand-apply">
-    <div>
-      <el-row :gutter="12" class="demand-apply__card">
-        <el-button type="danger">退回</el-button>
-        <el-button type="warning">导出</el-button>
-        <el-button type="info">重置</el-button>
-      </el-row>
-    </div>
+    <el-row justify="end" style="margin-top: 20px">
+      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
+      <ProcessVertifyBox :onSubmit="submit" v-havedone />
+    </el-row>
     <demandApply :isDisabled="true" />
     <el-card>
       <el-card v-for="(item, index) in schemeTableMap" :key="index">
@@ -123,6 +120,11 @@
             <el-input v-model="row.mcu" placeholder="请录入MCU" />
           </template>
         </el-table-column>
+        <el-table-column prop="connector" label="连接器" width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.connector" placeholder="请录入连接器" />
+          </template>
+        </el-table-column>
         <el-table-column prop="harness" label="线束" width="150">
           <template #default="{ row }">
             <el-input v-model="row.harness" placeholder="请录入线束" />
@@ -182,20 +184,23 @@
         <el-form-item label="工程技术部-工序工时录入员">
           <SearchDepartMentPerson v-model="state.quoteForm.engineerId" roleName="工程技术部-工序工时录入员" />
         </el-form-item>
-        <el-form-item label="品质保证部-实验费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.qualityBenchId" roleName="品质保证部-实验费用录入员" />
+        <el-form-item label="品质保证部-环境实验费录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.qualityBenchId" roleName="品质保证部-环境实验费录入员" />
         </el-form-item>
-        <el-form-item label="产品开发部-EMC实验费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.emcId" roleName="产品开发部-EMC实验费用录入员" />
+        <el-form-item label="产品开发部-EMC+电性能实验费录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.emcId" roleName="产品开发部-EMC+电性能实验费录入员" />
         </el-form-item>
-        <el-form-item label="财务部-制造费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.productCostInputId" roleName="财务部-制造费用录入员" />
+        <el-form-item label="财务部-制造成本录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.productCostInputId" roleName="财务部-制造成本录入员" />
         </el-form-item>
-        <el-form-item label="生产管理部-物流费用录入员">
-          <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流费用录入员" />
+        <el-form-item label="生产管理部-物流成本录入员">
+          <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流成本录入员" />
         </el-form-item>
         <el-form-item label="项目核价审核员">
-          <SearchDepartMentPerson v-model="state.quoteForm.auditId" roleName="项目核价审核员" />
+          <SearchDepartMentPerson
+            v-model="state.quoteForm.auditId"
+            :roleName="['市场部-项目课长', '项目管理部-项目课长']"
+          />
         </el-form-item>
       </el-form>
     </el-card>
@@ -316,13 +321,6 @@
         </el-col>
       </el-row>
     </el-card>
-    <div class="demand-apply_row">
-      <el-row :gutter="12">
-        <el-button @click="submit(0)">保存</el-button>
-        <el-button type="success" @click="submit(1)">提交</el-button>
-      </el-row>
-    </div>
-    <h5 />
   </div>
 </template>
 <script lang="ts" setup>
@@ -342,6 +340,7 @@ import { downloadFileExcel } from "@/utils"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import { Response, DesignSolutionDto, FileUploadOutputDto, PricingTeamDto, SolutionTableDto, user } from "./data.type"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 let route = useRoute()
 let router = useRouter()
 let isEdit = false
@@ -350,6 +349,11 @@ const designSolution = ref<DesignSolutionDto[]>([])
 const elecEngineerId = ref<user[]>([])
 const structEngineerId = ref<user[]>([])
 const { closeSelectedTag } = useJump()
+const props = defineProps({
+  isVertify: Boolean,
+  isMergeVertify: Boolean
+})
+
 /**
  * 数据部分
  */
@@ -375,7 +379,8 @@ const state = reactive({
     engineerWorkHourTime: "", // 工程技术部-工序工时录入员期望完成时间
     productManageTime: "", // 生成管理部-物流成本录入员期望完成时间
     productCostInputTime: "", // 制造成本录入员期望完成时间
-    deadline: "" //营销要求核价完成时间
+    deadline: "", //营销要求核价完成时间
+    option: ""
   } as PricingTeamDto
 })
 const getList = async () => {
@@ -447,14 +452,20 @@ onMounted(async () => {
     isEdit = false
   }, 2000)
 })
-const submit = async (isSubmit: number) => {
+
+const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
-  let value = {} as Response
+  let value = {
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
+  } as Response
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
   value.designSolutionList = _.cloneDeep(designSolution.value)
   value.solutionTableList = _.cloneDeep(solutionTable.value)
+
   console.log(value, "value")
   value.solutionTableList.forEach((item: any) => {
     if (!isNumeric(item.id)) {
@@ -470,7 +481,9 @@ const submit = async (isSubmit: number) => {
       })
       closeSelectedTag(route.path)
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 }
 const isNumeric = (value: any) => {
   return /^\d+$/.test(value)

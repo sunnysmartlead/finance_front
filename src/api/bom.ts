@@ -82,8 +82,6 @@ export interface SaveBOM {
    */
   sorPath?: null | string
   structureBomDtos?: StructureBOMDto[] | null
-  boardDtos: any
-  solutionId: number
 }
 
 /**
@@ -205,7 +203,6 @@ export interface StructureBOMDto {
    * 重量g
    */
   weightNumber?: number
-  boardDtos: any[]
 }
 
 export function SaveElectronicBom(data: SaveBOM) {
@@ -287,15 +284,6 @@ export function getProductDevelopmentInput(data: any) {
   return request({
     url: "/api/services/app/ProductDevelopmentInput/PostProductDevelopmentInput",
     method: "post",
-    data
-  })
-}
-
-// 查询拼板列表数据
-export function getBoardInfomation(data: any): any {
-  return request({
-    url: "/api/services/app/ElectronicBom/GetBoardInfomation",
-    method: "get",
     data
   })
 }

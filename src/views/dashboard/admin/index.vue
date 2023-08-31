@@ -5,15 +5,34 @@
         <!-- <el-select class="m-2" v-model="data.product" placeholder="请选择产品" @change="fetchAllData">
           <el-option v-for="item in data.productOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select> -->
-        <el-select v-model="data.year" class="m-2" placeholder="请选择年份" @change="fetchAllData">
-          <el-option v-for="item in data.yearsOptions" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 产品核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
       </el-row>
       <el-row class="m-2">
-        <el-radio-group v-model="data.mode" @change="handleChangeMode">
+        <el-form inline :model="data.form" ref="refForm" :rules="data.rules">
+          <!-- <el-form-item label="项目代码:" prop="projectCode">
+            <el-input v-model="data.form.projectCode" />
+          </el-form-item>
+          <el-form-item label="项目名称:" prop="projectName">
+            <el-input v-model="data.form.projectCode" />
+          </el-form-item> -->
+          <el-form-item label="梯度:" prop="gradientId">
+            <el-select v-model="data.form.gradientId" placeholder="请选择梯度" @change="fetchAllData">
+              <el-option v-for="item in data.gradientList" :key="item.id" :label="`${item.gradientValue} (K/Y)`"
+                :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="年份:" prop="projectName">
+            <el-select v-model="data.form.year" placeholder="请选择年份" @change="fetchAllData">
+              <el-option v-for="item in data.yearsOptions" :key="item.id"
+                :label="`${item.name} ${upDownEnum[item.upDown]}`" :value="`${item.id}-${item.upDown}`" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row class="m-2">
+        <el-radio-group v-model="data.mode">
           <template v-for="item in dashboardPannel" :key="item.title">
             <el-radio :label="item.value" size="large" border>
               {{ item.title }}
@@ -26,135 +45,17 @@
     <el-card class="m-2">
       <el-card header="成本明细表">
         <!-- Bom成本  -->
-        <div v-if="data.mode === '1'">
-          <el-table :data="data.bomData" border height="675">
-            <el-table-column prop="superType" label="超级大种类" width="180" />
-            <el-table-column prop="materialName" label="材料名称" width="180" />
-            <el-table-column prop="typeName" label="物料种类" width="180" />
-            <el-table-column prop="categoryName" label="物料大类" width="150" />
-            <el-table-column prop="assemblyCount" label="装配数量" />
-            <el-table-column prop="materialPrice" label="材料单价（原币）" width="180" :formatter="toFixedThree" />
-            <el-table-column prop="currencyText" label="币别" width="150" />
-            <el-table-column prop="exchangeRate" label="汇率" width="150" :formatter="toFixedThree" />
-            <el-table-column prop="materialPriceCyn" label="材料单价（人民币）" width="180" :formatter="toFixedThree" />
-            <el-table-column prop="totalMoneyCyn" label="合计金额（人民币）" width="180" :formatter="toFixedThree" />
-            <el-table-column prop="loss" label="损耗" width="150" :formatter="toFixedThree" />
-            <el-table-column prop="materialCost" label="材料成本（含损耗）" width="180" :formatter="toFixedThree" />
-            <el-table-column prop="inputCount" label="投入量" width="150" />
-            <el-table-column prop="purchaseCount" label="采购量" width="150" />
-            <el-table-column prop="moqShareCount" label="MOQ分摊成本" width="150" :formatter="toFixedThree" />
-            <el-table-column prop="moq" label="MOQ" />
-            <el-table-column prop="availableInventory" label="可用库存" width="150" />
-            <el-table-column prop="remarks" label="备注" />
-          </el-table>
-          <el-descriptions title="" border :column="2">
-            <el-descriptions-item label="材料成本合计">{{
-              data.allTotalMoneyCyn?.toFixed(2) || "-"
-            }}</el-descriptions-item>
-            <el-descriptions-item label="电子料大类成本合计">{{
-              data.allPrice?.toFixed(2) || "-"
-            }}</el-descriptions-item>
-          </el-descriptions>
-        </div>
-
+        <bomTable v-if="data.mode === '1'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 损耗成本  -->
-        <el-table
-          v-if="data.mode === '2'"
-          :data="data.lossData"
-          height="675"
-          :summary-method="(val: any) => getSummaries(val, '损耗成本', 'wastageCost')"
-          show-summary
-        >
-          <el-table-column type="index" width="50" />
-          <el-table-column prop="name" label="成本项目" />
-          <el-table-column prop="wastageCost" label="损耗成本" :formatter="toFixedTwo" />
-          <el-table-column prop="moqShareCount" label="MOQ分摊成本" :formatter="toFixedTwo" />
-        </el-table>
+        <lossTable v-if="data.mode === '2'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 制造成本  -->
-        <el-table v-if="data.mode === '3'" :data="data.manufactureData" border height="675">
-          <!-- <el-table-column prop="sapItemNum" label="项目" width="180" /> -->
-          <el-table-column prop="costItem" label="成本项目" width="180" />
-          <!-- <el-table-column prop="typeName" label="年份" width="180" /> -->
-          <el-table-column prop="manufacturingCostDirect" label="直接制造成本" :formatter="toFixedTwo">
-            <el-table-column
-              prop="manufacturingCostDirect.directLabor"
-              label="直接人工"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostDirect.equipmentDepreciation"
-              label="设备折旧"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostDirect.lineChangeCost"
-              label="换线成本"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostDirect.manufacturingExpenses"
-              label="制造费用"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column prop="manufacturingCostDirect.subtotal" label="小计" width="150" :formatter="toFixedTwo" />
-          </el-table-column>
-          <el-table-column prop="manufacturingCostIndirect" label="间接制造成本">
-            <el-table-column
-              prop="manufacturingCostIndirect.directLabor"
-              label="直接人工"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostIndirect.equipmentDepreciation"
-              label="设备折旧"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <!-- <el-table-column prop="manufacturingCostIndirect.typeName" label="换线成本" width="180" /> -->
-            <el-table-column
-              prop="manufacturingCostIndirect.manufacturingExpenses"
-              label="制造费用"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-            <el-table-column
-              prop="manufacturingCostIndirect.subtotal"
-              label="小计"
-              width="150"
-              :formatter="toFixedTwo"
-            />
-          </el-table-column>
-          <el-table-column label="合计" prop="subtotal" :formatter="toFixedTwo" />
-        </el-table>
+        <manufactureTable v-if="data.mode === '3'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 物流成本  -->
-        <el-table :data="data.logisticsData" border v-if="data.mode === '4'" height="675">
-          <el-table-column prop="year" label="年份" width="80" />
-          <el-table-column prop="freight" label="运费/月" width="180" :formatter="toFixedTwo" />
-          <el-table-column prop="monthEndDemand" label="月底需求量" width="180" />
-          <el-table-column prop="storageExpenses" label="仓储费用/元" width="180" :formatter="toFixedTwo" />
-          <el-table-column prop="perPackagingPrice" label="单PCS包装价格/元" width="150" :formatter="toFixedTwo" />
-          <el-table-column prop="perFreight" label="单PCS运输费" width="150" :formatter="toFixedTwo" />
-          <el-table-column prop="perTotalLogisticsCost" label="单PCS总物流料成本" width="180" :formatter="toFixedTwo" />
-        </el-table>
+        <logisticsTable v-if="data.mode === '4'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 质量成本  -->
-        <el-table :data="data.qualityData" v-if="data.mode === '5'" border height="675">
-          <el-table-column prop="productCategory" label="产品类别" />
-          <el-table-column prop="costProportion" label="成本比例">
-            <template #default="{ row }">
-              {{ `${row.costProportion * 100} %` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="qualityCost" label="质量成本（MAX）">
-            <template #default="{ row }">
-              {{ `${row?.qualityCost.toFixed(2)}` }}
-            </template>
-          </el-table-column>
-        </el-table>
+        <qualityTable v-if="data.mode === '5'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <!-- 其他成本  -->
+        <otherCostTable v-if="data.mode === '6'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
       </el-card>
       <el-card>
         <el-row>
@@ -173,16 +74,10 @@
         </el-row>
       </el-card>
       <el-card style="margin-top: 10px">
-        <el-upload
-          v-model:file-list="fileList"
-          show-file-list
-          :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-          :on-success="handleSuccess"
-          :on-change="handleFileChange"
-          style="float: right"
-          :on-progress="handleGetUploadProgress"
-          :on-error="handleUploadError"
-        >
+        <el-upload v-model:file-list="fileList" show-file-list
+          :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
+          :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError">
           <el-button type="primary">TR方案上传</el-button>
         </el-upload>
         <!-- 产品总成本推移图 -->
@@ -206,18 +101,14 @@
         <el-checkbox label="ManHourImport">工程技术部-工序工时录入</el-checkbox>
         <el-checkbox label="LogisticsCostInput">生产管理部-物流成本录入</el-checkbox>
         <el-checkbox label="NreInputMould">资源管理课-模具单价录入</el-checkbox>
-        <el-checkbox :disabled="checkList.includes('StructBomPriceAudit')" label="StructPriceInput"
-          >资源管理课-结构单价录入</el-checkbox
-        >
-        <el-checkbox :disabled="checkList.includes('ElecBomPriceAudit')" label="ElectronicPriceInput"
-          >资源管理课-电子单价录入</el-checkbox
-        >
-        <el-checkbox :disabled="checkList.includes('StructPriceInput')" label="StructBomPriceAudit"
-          >资源管理课-结构单价审核界面</el-checkbox
-        >
-        <el-checkbox :disabled="checkList.includes('ElectronicPriceInput')" label="ElecBomPriceAudit"
-          >资源管理课-电子单价审核</el-checkbox
-        >
+        <el-checkbox :disabled="checkList.includes('StructBomPriceAudit')"
+          label="StructPriceInput">资源管理课-结构单价录入</el-checkbox>
+        <el-checkbox :disabled="checkList.includes('ElecBomPriceAudit')"
+          label="ElectronicPriceInput">资源管理课-电子单价录入</el-checkbox>
+        <el-checkbox :disabled="checkList.includes('StructPriceInput')"
+          label="StructBomPriceAudit">资源管理课-结构单价审核界面</el-checkbox>
+        <el-checkbox :disabled="checkList.includes('ElectronicPriceInput')"
+          label="ElecBomPriceAudit">资源管理课-电子单价审核</el-checkbox>
       </el-checkbox-group>
       <div>
         <div style="margin: 10px 0">拒绝理由：</div>
@@ -249,15 +140,10 @@
       <template #footer>
         <span>
           <el-button @click="data.createVisible = false">取消</el-button>
-          <el-button @click="handleSetPriceEvaluationTableInputCount" :disabled="isPricing" type="primary"
-            >设置投入量和年份</el-button
-          >
-          <el-button
-            @click="handleCreatePriceEvaluation"
-            type="primary"
-            :disabled="isPricing || isHandleCreatePriceEvaluation"
-            >生成核价表</el-button
-          >
+          <el-button @click="handleSetPriceEvaluationTableInputCount" :disabled="isPricing"
+            type="primary">设置投入量和年份</el-button>
+          <el-button @click="handleCreatePriceEvaluation" type="primary"
+            :disabled="isPricing || isHandleCreatePriceEvaluation">生成核价表</el-button>
         </span>
       </template>
     </el-dialog>
@@ -265,11 +151,12 @@
 </template>
 <script setup lang="ts">
 import { reactive, onMounted, onBeforeUnmount, onBeforeMount, ref, computed } from "vue"
-import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "./common/const"
+import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "../common/const"
 import {
   GetBomCost,
   GetLossCost,
   GetQualityCost,
+  GetGradient,
   // GetPricingPanelProductSelectList,
   GetPricingPanelTimeSelectList,
   GetPricingPanelProportionOfProductCost,
@@ -285,15 +172,26 @@ import {
   GetIsTradeCompliance
 } from "../service"
 import getQuery from "@/utils/getQuery"
-import type { UploadProps, UploadUserFile } from "element-plus"
+import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
 import { ElMessage, ElMessageBox } from "element-plus"
 import debounce from "lodash/debounce"
 import * as echarts from "echarts"
 import useJump from "@/hook/useJump"
 import router from "@/router"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-import { getSummaries } from "./common/getSummaries"
 import { useRoute } from "vue-router"
+import bomTable from "../components/bomTable/index.vue"
+import lossTable from "../components/lossTable/index.vue"
+import manufactureTable from "../components/manufactureTable/index.vue"
+import logisticsTable from "../components/logisticsTable/index.vue"
+import qualityTable from "../components/qualityTable/index.vue"
+import otherCostTable from "../components/otherCostTable/index.vue"
+
+enum upDownEnum {
+  "全年",
+  "上半年",
+  "下半年"
+}
 
 const route = useRoute()
 const { closeSelectedTag } = useJump()
@@ -306,28 +204,54 @@ let dialogVisible = ref(false)
 let checkList = ref([""])
 let opinionDescription = ref("")
 const fileList = ref<UploadUserFile[]>([])
-const data = reactive<Record<string, any>>({
+const refForm = ref<FormInstance>()
+const data = reactive<any>({
   year: "",
   mode: "1",
   yearsOptions: [],
-  bomData: [],
-  lossData: [],
-  manufactureData: [],
-  logisticsData: [],
-  qualityData: [],
   productInputs: 0,
   createVisible: false,
   compliance: false,
+  form: {
+    year: "",
+    projectCode: "",
+    projectName: "",
+    gradientId: ""
+  },
+  gradientList: [],
+  rules: {
+    projectName: [{ required: true, message: "请输入该值", trigger: "blur" }],
+    projectCode: [{ required: true, message: "请输入该值", trigger: "blur" }]
+  },
   priceEvaluationTableInputCount: [] //核价表投入量和年份
 })
 
+const filterYearData = computed(() => {
+  if (!data.form.year) return {}
+  const filterYearItem = data.form.year.split('-')
+  return {
+    year: Number(filterYearItem[0]),
+    upDown: Number(filterYearItem[1])
+  }
+})
+
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
-  console.log(res)
   let response: any = await addPricingPanelTrProgrammeId(auditFlowId, res.result.fileId)
   if (response.success) {
     console.log(response, "response")
     console.log("上传成功")
   }
+}
+
+const queryGradientList = async () => {
+  const res: any = await GetGradient({
+    auditFlowId
+  })
+  if (res.result?.items) {
+    data.gradientList = res.result?.items
+    data.form.gradientId = data.gradientList[0].id
+  }
+  console.log(res, "[获取梯度]")
 }
 const handleFileChange: UploadProps["onChange"] = (file, uploadFiles) => {
   console.log(uploadFiles)
@@ -345,7 +269,7 @@ const initCharts = (id: string, chartOption: any) => {
   }
 }
 
-onBeforeMount(() => {})
+onBeforeMount(() => { })
 
 onMounted(() => {
   if (!auditFlowId) return false
@@ -416,6 +340,7 @@ const getPriceEvaluationTableInputCount = async () => {
 // 初始化下拉项数据
 const fetchOptionsData = async () => {
   await getPricingPanelTimeSelectList()
+  await queryGradientList()
   // getPricingPanelProductSelectList()
 }
 
@@ -434,58 +359,13 @@ const getPricingPanelTimeSelectList = async () => {
   try {
     const PanelTimeSelectRes: any = await GetPricingPanelTimeSelectList({ AuditFlowId: auditFlowId })
     data.yearsOptions = PanelTimeSelectRes?.result?.items
-    data.year = data.yearsOptions[0].id
-    console.log(data.year, data.yearsOptions[0].id, "getPricingPanelTimeSelectList")
+    const firstItem = data.yearsOptions[0]
+    if (firstItem) {
+      data.form.year = `${firstItem.id}-${firstItem.upDown}`
+      console.log(data.form.year, data.yearsOptions[0], "getPricingPanelTimeSelectList")
+    }
   } catch (err: any) {
     console.log(err, "[ 获取时间选择下拉数据失败 ]")
-  }
-}
-
-// 获取 bom成本（含损耗）汇总表
-const getBomCost = async () => {
-  try {
-    console.log(data.year, "getBomCost")
-    const { result }: any = await GetBomCost({
-      Year: data.year,
-      AuditFlowId: auditFlowId,
-      ModelCountId: productId
-    })
-    const { material = [], totalMoneyCynCount, electronicCount } = result
-    data.bomData = material || []
-    data.allPrice = electronicCount
-    data.allTotalMoneyCyn = totalMoneyCynCount
-    console.log(result, "获取 bom成本（含损耗）汇总表")
-  } catch (err: any) {
-    console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
-  }
-}
-
-// 获取损耗成本
-const getLossCost = async () => {
-  try {
-    const { result }: any = await GetLossCost({
-      Year: data.year,
-      AuditFlowId: auditFlowId,
-      ModelCountId: productId
-    })
-    data.lossData = result || []
-    console.log(result, "获取损耗成本")
-  } catch (err: any) {
-    console.log(err, "[ 获取损耗成本数据失败 ]")
-  }
-}
-
-// 获取 质量成本
-const getQualityCost = async () => {
-  try {
-    const { result }: any = await GetQualityCost({
-      Year: data.year,
-      AuditFlowId: auditFlowId,
-      ModelCountId: productId
-    })
-    data.qualityData = [result] || []
-  } catch (err: any) {
-    console.log(err, "[ 获取 质量成本数据失败 ]")
   }
 }
 
@@ -496,7 +376,8 @@ const handleFetchPriceEvaluationTableDownload = async () => {
     query: {
       auditFlowId,
       productId,
-      year: data.year
+      year: filterYearData.value.year,
+      upDown: filterYearData.value.upDown
     }
   })
 }
@@ -506,50 +387,24 @@ const handleFethNreTableDownload = async () => {
   router.push({
     path: "/nre/nrePricelist",
     query: {
-      year: data.year,
+      year: filterYearData.value.year,
       auditFlowId,
-      productId
+      productId,
+      upDown: filterYearData.value.upDown
     }
   })
 }
 
-// 获取 物流成本汇总表
-const getLogisticsCost = async () => {
-  try {
-    const { result }: any = await GetLogisticsCost({
-      Year: data.year,
-      AuditFlowId: auditFlowId,
-      ModelCountId: productId
-    })
-    data.logisticsData = result
-    console.log(result, "物流成本汇总表")
-  } catch (err: any) {
-    console.log(err, "[ 获取 物流成本汇总表数据失败 ]")
-  }
-}
-
-// 获取 制造成本汇总表
-const getManufacturingCost = async () => {
-  try {
-    const { result }: any = await GetManufacturingCost({
-      Year: data.year,
-      AuditFlowId: auditFlowId,
-      ModelCountId: productId
-    })
-    data.manufactureData = result
-    console.log(result, "getPricingPanelProfit")
-  } catch (err: any) {
-    console.log(err, "[ 获取 制造成本汇总表据失败 ]")
-  }
-}
 
 // 核价看板-产品成本占比图
 const getPricingPanelProportionOfProductCost = async () => {
   try {
     const { result }: any = await GetPricingPanelProportionOfProductCost({
-      Year: data.year,
+      Year: filterYearData.value.year,
       AuditFlowId: auditFlowId,
-      ModelCountId: productId
+      SolutionId: productId,
+      UpDown: filterYearData.value.upDown,
+      GradientId: data.form.gradientId,
     })
     const value = result?.items.map((val: any) => ({ value: val.proportion?.toFixed(2) || 0, name: val.name }))
     percentageCostChart.setOption({
@@ -571,9 +426,11 @@ const getPricingPanelProportionOfProductCost = async () => {
 const getPricingPanelProfit = async () => {
   try {
     const { result }: any = await GetPricingPanelProfit({
-      Year: data.year,
+      Year: filterYearData.value.year,
       AuditFlowId: auditFlowId,
-      ModelCountId: productId
+      SolutionId: productId,
+      UpDown: filterYearData.value.upDown,
+      GradientId: data.form.gradientId,
     })
     const val = result?.items?.map((val: any) => val?.proportion?.toFixed(2) || 0)
     console.log(val, "getPricingPanelProfit")
@@ -596,7 +453,7 @@ const getPricingPanelProfit = async () => {
 const getGoTableChartData = async () => {
   const {
     result: { items = [] }
-  }: any = await GetGoTable({ AuditFlowId: auditFlowId, ModelCountId: productId, InputCount: data.productInputs })
+  }: any = await GetGoTable({ AuditFlowId: auditFlowId, SolutionId: productId, InputCount: data.productInputs })
   const value = items.map((item: any) => item?.value?.toFixed(2) || 0) || []
   const years = items.map((val: any) => val.year) || []
   selectCostChart = initCharts("selectCostChart", {
@@ -645,30 +502,8 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
 }
 
 const fetchAllData = async () => {
-  console.log(data.year, "data")
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
-  handleChangeMode()
-}
-
-const handleChangeMode = () => {
-  switch (data.mode) {
-    case "1":
-      getBomCost()
-      break
-    case "2":
-      getLossCost()
-      break
-    case "3":
-      getManufacturingCost()
-      break
-    case "4":
-      getLogisticsCost()
-      break
-    case "5":
-      getQualityCost()
-      break
-  }
 }
 
 // 生成核价表
@@ -698,10 +533,12 @@ const handleSetPriceEvaluationTableInputCount = debounce(async () => {
     margin: 10px 0;
     height: 400px;
   }
+
   #selectCostChart {
     margin: 10px 0;
     height: 400px;
   }
+
   #percentageCostChart {
     margin: 10px 0;
     height: 300px;

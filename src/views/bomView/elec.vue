@@ -1,8 +1,10 @@
 <template>
   <div class="bomView">
     <CustomerSpecificity />
-    <TrDownLoad />
-    <ProductInfo :auditFlowId="data.auditFlowId" />
+    <el-row>
+      <TrView />
+      <ProductInfo :auditFlowId="data.auditFlowId" m="2" />
+    </el-row>
     <div class="bomView__child">
       <h4>电子料</h4>
       <!-- <el-button type="primary" @click="jumpToImport(1)" style="float: right; margin: 10px 0">电子料导入</el-button> -->
@@ -16,8 +18,9 @@
         <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
       </el-table>
       <div style="margin: 10px 0; float: right">
-        <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
-        <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button>
+        <ProcessVertifyBox :onSubmit="handleSetBomState" />
+        <!-- <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
+        <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button> -->
       </div>
     </div>
   </div>
@@ -29,10 +32,11 @@ import { reactive, toRefs, onBeforeMount, onMounted, watchEffect } from "vue"
 import { GetElectronicBom, SetBomState } from "@/api/bom"
 import { ElMessage, ElMessageBox } from "element-plus"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
-import TrDownLoad from "@/components/TrDownLoad/index.vue"
+import TrView from "@/components/TrView/index.vue"
 import ProductInfo from "@/components/ProductInfo/index.vue"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const { jumpTodoCenter } = useJump()
 
@@ -66,33 +70,49 @@ const data = reactive({
 //     })
 //   }
 // }
-const agree = async (bomCheckType: number, isAgree: boolean) => {
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    let res: any = await SetBomState({
-      auditFlowId: auditFlowId,
-      productId: productId,
-      bomCheckType,
-      isAgree,
-      opinionDescription: !isAgree ? val?.value : ""
-    })
-    if (res.success) {
-      jumpTodoCenter()
-      ElMessage.success("操作成功")
-    }
+// const agree = async (bomCheckType: number, isAgree: boolean) => {
+//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
+//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     let res: any = await SetBomState({
+//       auditFlowId: auditFlowId,
+//       productId: productId,
+//       bomCheckType,
+//       isAgree,
+//       opinionDescription: !isAgree ? val?.value : ""
+//     })
+//     if (res.success) {
+//       jumpTodoCenter()
+//       ElMessage.success("操作成功")
+//     }
+//   })
+// }
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
+  let res: any = await SetBomState({
+    auditFlowId: auditFlowId,
+    productId: productId,
+    bomCheckType: 1,
+    isAgree: !opinion.includes("_No"),
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId
   })
+  if (res.success) {
+    jumpTodoCenter()
+    ElMessage.success("操作成功")
+  }
 }
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   // let resStruction: any = await GetStructionBom()
-  let resElectronic: any = await GetElectronicBom({ auditFlowId, productId })
+  let resElectronic: any = await GetElectronicBom({ auditFlowId,productId, solutionId:productId })
   data.electronicData = resElectronic.result
   // data.structuralData = resStruction.result
 })

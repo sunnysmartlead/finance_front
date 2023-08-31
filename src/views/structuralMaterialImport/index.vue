@@ -5,12 +5,20 @@
     <TrDownLoad />
     <customerTargetPrice />
     <el-row class="electronic-import__btn-container">
-      <el-upload :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'" :on-success="handleSuccess" show-file-list
-        :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
+      <el-upload
+        :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
+        :on-success="handleSuccess"
+        show-file-list
+        :on-progress="handleGetUploadProgress"
+        :on-error="handleUploadError"
+      >
         <el-button type="primary">结构料上传</el-button>
       </el-upload>
-      <el-upload  :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess3D"
-        show-file-list>
+      <el-upload
+        :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+        :on-success="handleSuccess3D"
+        show-file-list
+      >
         <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
       </el-upload>
       <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
@@ -42,14 +50,13 @@
       <el-form :model="data.logisticsForm" inline ref="refForm" :rules="rules">
         <!-- <h5>物流基础信息</h5> -->
         <h6>镜头参数</h6>
-        <el-form-item label="像素" prop="outerPackagingLength">
-          <el-input v-model="data.logisticsForm.outerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
+        <el-form-item label="像素" prop="pixel">
+          <el-input v-model="data.logisticsForm.pixel" oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>M</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="FOV" prop="outerPackagingLength">
-          <el-input v-model="data.logisticsForm.outerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
-          </el-input>
+        <el-form-item label="FOV" prop="fov">
+          <el-input v-model="data.logisticsForm.fov" oninput="value=value.replace(/[^0-9.]/g,'')" />
         </el-form-item>
         <h6>外包装体积</h6>
         <el-form-item label="外包装长" prop="outerPackagingLength">
@@ -112,11 +119,17 @@
           </el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="data.logisticsForm.remarks" type="textarea" placeholder="若无具体包装数据,填写参考的具体项目及产品" />
+          <el-input
+            v-model="data.logisticsForm.remarks"
+            type="textarea"
+            placeholder="若无具体包装数据,填写参考的具体项目及产品"
+          />
         </el-form-item>
       </el-form>
       <div style="float: right; margin: 20px 0">
-        <el-button type="primary" @click="submit(refForm)" v-havedone>提交</el-button>
+        <!-- <el-button type="primary" @click="submit(refForm)" v-havedone>提交</el-button> -->
+        <el-button type="primary" @click="submit(refForm)" v-havedone>校验</el-button>
+        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" v-havedone />
       </div>
     </el-card>
   </div>
@@ -140,7 +153,8 @@ import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
-let Host: string = "StructBomImport"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+let Host = "StructBomImport"
 const refForm = ref<FormInstance>()
 let auditFlowId: any = null
 let productId: any = null
@@ -161,7 +175,8 @@ const data = reactive<any>({
     quantityPerBox: "",
     remarks: "",
     picture3DFileId: ""
-  }
+  },
+  isShowBox: false
 })
 const rules = reactive<FormRules>({
   outerPackagingLength: [{ required: true, message: "请输入该值", trigger: "blur" }],
@@ -230,33 +245,46 @@ const downLoadTemplate = async () => {
     a.remove() //将a标签移除
   }
 }
+// const submit = async (formEl: FormInstance | undefined) => {
+//   if (!formEl) return
+//   await formEl.validate(async (valid, fields) => {
+//     if (valid) {
+//       const loading = ElLoading.service({
+//         lock: true,
+//         text: "加载中",
+//         background: "rgba(0, 0, 0, 0.7)"
+//       })
+//       try {
+//         let params: SaveBOM = Object.assign(
+//           { auditFlowId, solutionId: productId, structureBomDtos: data.tableData },
+//           data.logisticsForm
+//         )
+//         let res: any = await SaveStructionBom(params)
+//         let resO: any = await SaveProductDevelopmentInput(params)
+//         loading.close()
+//         if (res.success) {
+//           ElMessage({
+//             message: "保存成功",
+//             type: "success"
+//           })
+//         }
+//       } catch (error) {
+//         loading.close()
+//       }
+//     } else {
+//       ElMessage({
+//         message: "有必填项没有填写",
+//         type: "error"
+//       })
+//       console.log("error submit!", fields)
+//     }
+//   })
+// }
 const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-
-      const loading = ElLoading.service({
-        lock: true,
-        text: "加载中",
-        background: "rgba(0, 0, 0, 0.7)"
-      })
-      try {
-        let params: SaveBOM = Object.assign(
-          { auditFlowId, solutionId: productId, structureBomDtos: data.tableData },
-          data.logisticsForm
-        )
-        let res: any = await SaveStructionBom(params)
-        //let resO: any = await SaveProductDevelopmentInput(params)
-        loading.close()
-        if (res.success) {
-          ElMessage({
-            message: "保存成功",
-            type: "success"
-          })
-        }
-      } catch (error) {
-        loading.close()
-      }
+      data.isShowBox = true
     } else {
       ElMessage({
         message: "有必填项没有填写",
@@ -266,6 +294,30 @@ const submit = async (formEl: FormInstance | undefined) => {
     }
   })
 }
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: "加载中",
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    let params: SaveBOM = Object.assign(
+      { auditFlowId, solutionId: productId, structureBomDtos: data.tableData, comment, opinion, nodeInstanceId },
+      data.logisticsForm
+    )
+    let res: any = await SaveStructionBom(params)
+    await SaveProductDevelopmentInput(params)
+    loading.close()
+    if (res.success) {
+      ElMessage({
+        message: "保存成功",
+        type: "success"
+      })
+    }
+  } catch (error) {
+    loading.close()
+  }
+}
 </script>
 <style lang="scss" scoped>
 .electronic-import {
@@ -273,6 +325,7 @@ const submit = async (formEl: FormInstance | undefined) => {
     margin: 20px 0;
     position: relative;
   }
+
   .gap {
     margin: 0 5px;
   }

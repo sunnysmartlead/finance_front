@@ -1,5 +1,5 @@
 import { request } from "@/utils/service"
-import { ElectronicDto, ConstructionModel } from "../data.type"
+import { ElectronicDto, ConstructionModel } from "../../../components/ElectronicTable/data.type"
 
 // 资源部输入时,加载电子料结构件初始值
 export function GetElectronic(auditFlowId: number, solutionId: number): any {

@@ -1,5 +1,7 @@
 <template>
   <div style="padding: 0 10px">
+    <!-- <VertifyBox :onSubmit="handleVertify" /> -->
+    <ProcessVertifyBox :onSubmit="isVertify?NREToExamineFun:submit"  :processType="isVertify?'baseProcessType':'confirmProcessType'"/>
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -22,7 +24,8 @@
             <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
               >查看设计方案</el-button
             >
-            <el-button type="primary" @click="handleFethNreTableDownload" m="2">试验项目导出</el-button>
+            <el-button type="primary" @click="handleFethNreTableDownload" m="2">环境试验费模板下载</el-button>
+            <el-button type="primary" @click="handleDownLoadExcel" m="2">试验项目导出</el-button>
             <el-button v-if="!isVertify" type="primary" @click="addExperimentItemsData" m="2" v-havedone>
               新增
             </el-button>
@@ -97,11 +100,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <div style="float: right; margin: 20px 0" v-if="isVertify">
-      <el-button type="primary" v-havedone m="2">同意</el-button>
-      <el-button type="primary" v-havedone>退回</el-button>
-    </div>
-    <div style="float: right; margin: 20px 0" v-else>
+    <div style="float: right; margin: 20px 0" v-if="!isVertify">
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
     </div>
@@ -116,9 +115,11 @@ import { QADepartmentTestModel } from "../../data.type"
 import { getQaTestDepartmentsSummaries } from "../../common/nreQCDepartmentSummaries"
 import {
   PostExperimentItems,
+  NREToExamine,
   GetReturnExperimentItems,
   GetFoundationreliableList,
-  GetExportOfEnvironmentalExperimentFeeForm
+  GetExportOfEnvironmentalExperimentFeeForm,
+  PostExperimentItemsSingleDownloadExcel
 } from "../../common/request"
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile } from "element-plus"
@@ -129,12 +130,14 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import { designScheme } from "@/views/demandApplyAudit"
+// import VertifyBox from "@/components/VertifyBox/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
 
 const props = defineProps({
-  isVertify: Boolean
+  isVertify: Boolean,
 })
 
 console.log(props, "props")
@@ -188,16 +191,38 @@ const addExperimentItemsData = () => {
   })
 }
 
-const submit = async (isSubmit: boolean) => {
+const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   try {
+    const isSubmit: boolean=true
     const { success } = await PostExperimentItems({
       auditFlowId,
       solutionId: productId,
       isSubmit,
-      environmentalExperimentFeeModels: experimentItems.value
+      environmentalExperimentFeeModels: experimentItems.value,
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
     })
     if (!success) throw Error()
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+    // jumpTodoCenter()
+  } catch (err) {
+    console.log(err, "[PostExperimentItems err]")
+    // ElMessage.error("提交失败")
+  }
+}
+
+const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
+  try {
+    const { success } = await NREToExamine({
+      auditFlowId,
+      nreCheckType:2,
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
+    })
+    if (!success) throw Error()
+    ElMessage.success(`提交成功`)
     // jumpTodoCenter()
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
@@ -218,6 +243,21 @@ const handleFethNreTableDownload = async () => {
     console.log(err, "[ NRE实验费模板下载 失败 ]")
   }
 }
+
+// 环境实验费模板下载
+const handleDownLoadExcel = async () => {
+  try {
+    const res = await PostExperimentItemsSingleDownloadExcel({
+      auditFlowId,
+      solutionId: productId
+    })
+    downloadFileExcel(res, "NRE实验费")
+    console.log(res, "NreTableDownload")
+  } catch (err) {
+    console.log(err, "[ NRE实验费下载 失败 ]")
+  }
+}
+
 
 // NRE实验费模板上传
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
@@ -251,6 +291,9 @@ const handleChangeData = (row: any, i: number) => {
     }
   })
 }
+
+// 审核
+const handleVertify = () => {}
 
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')

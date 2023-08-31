@@ -40,7 +40,7 @@ export function GetQualityCost(data: GetLossCostProps) {
 // 核价看板-产品成本占比图
 export function GetPricingPanelProportionOfProductCost(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetPricingPanelProportionOfProductCost",
+    url: "/api/services/app/PriceEvaluationGet/GetPricingPanelProportionOfProductCost",
     method: "get",
     data
   })
@@ -49,16 +49,25 @@ export function GetPricingPanelProportionOfProductCost(data: GetLossCostProps) {
 // 核价看板-利润分布图
 export function GetPricingPanelProfit(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetPricingPanelProfit",
+    url: "/api/services/app/PriceEvaluationGet/GetPricingPanelProfit",
+    method: "get",
+    data
+  })
+}
+
+// 获取梯度
+export function GetGradient(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetGradient",
     method: "get",
     data
   })
 }
 
 // 获取 bom成本（含损耗）汇总表
-export function GetBomCost(data: GetLossCostProps) {
+export function GetBomCost(data: any) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetBomCostDto",
+    url: "/api/services/app/PriceEvaluationGet/GetBomCost",
     method: "get",
     data
   })
@@ -83,7 +92,7 @@ export function GetManufacturingCost(data: GetLossCostProps) {
 }
 
 // 获取推移图
-export function GetGoTable(data: { AuditFlowId: number; ModelCountId: number; InputCount: number }) {
+export function GetGoTable(data: { AuditFlowId: number; SolutionId: number; InputCount: number }) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetGoTable",
     method: "get",
@@ -144,6 +153,9 @@ export function SetFinancePriceState(
   auditFlowId: number,
   isAgree: boolean,
   opinionDescription: string,
+  comment: string,
+  opinion: string,
+  nodeInstanceId: number,
   backProcessIdentifiers?: any[]
 ) {
   return request({
@@ -153,7 +165,10 @@ export function SetFinancePriceState(
       auditFlowId,
       isAgree,
       backProcessIdentifiers,
-      opinionDescription
+      opinionDescription,
+      comment,
+      opinion,
+      nodeInstanceId
     }
   })
 }
@@ -197,5 +212,23 @@ export function GetIsTradeCompliance(auditFlowId: number) {
     data: {
       auditFlowId
     }
+  })
+}
+
+// 获取修改项信息
+export function GetUpdateItem(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItem",
+    method: "get",
+    data
+  })
+}
+
+// 获取其他成本项目
+export function GetOtherCostItem(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluationGet/GetOtherCostItem",
+    method: "get",
+    data
   })
 }

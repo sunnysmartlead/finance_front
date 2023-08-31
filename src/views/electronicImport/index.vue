@@ -2,7 +2,7 @@
   <div class="electronic-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
     <CustomerSpecificity />
-    <TrDownLoad />
+    <TrView btnText="查看主方案设计" />
     <customerTargetPrice />
     <div class="electronic-import__btn-container">
       <el-form :inline="true">
@@ -26,22 +26,22 @@
         </el-table-column>
         <el-table-column prop="typeName" label="板部件长(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件长" />
+            <el-input v-model="row.typeName" placeholder="请录入板部件长" />
           </template>
         </el-table-column>
         <el-table-column prop="isInvolveItem" label="板部件宽(mm)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件宽" />
+            <el-input v-model="row.isInvolveItem" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
         <el-table-column prop="sapItemNum" label="板部件面积(mm^2)">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件面积" />
+            <el-input v-model="row.sapItemNum" placeholder="请录入板部件面积" />
           </template>
         </el-table-column>
         <el-table-column prop="sapItemName" label="拼板数量">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入拼板数量" />
+            <el-input v-model="row.sapItemName" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -72,7 +72,8 @@
     </el-card>
 
     <div style="float: right; margin-top: 20px">
-      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
+      <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
     </div>
 
     <el-dialog v-model="data.setVisible">
@@ -95,14 +96,16 @@ import { ref, reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom, getBoardInfomation } from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 // import ProductInfo from "@/components/ProductInfo/index.vue"
-import TrDownLoad from "@/components/TrDownLoad/index.vue"
+import TrView from "@/components/TrView/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+
 const Host = "ElectronicBomImport"
 
 let auditFlowId: any = null
@@ -124,7 +127,7 @@ const data = reactive({
   downloadSetForm: {
     number: 0
   },
-  auditFlowId: null as any,
+  auditFlowId: null as any
 })
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
@@ -143,7 +146,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 const queryBoardInfomation = async () => {
   const { success, result } = await getBoardInfomation({
     auditFlowId: auditFlowId,
-    solutionId: productId,
+    solutionId: productId
   })
   if (success && result?.length) {
     platePart.value = result
@@ -176,7 +179,32 @@ const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
 
-const submit = async () => {
+// const submit = async () => {
+//   const loading = ElLoading.service({
+//     lock: true,
+//     text: "加载中",
+//     background: "rgba(0, 0, 0, 0.7)"
+//   })
+//   if (!productId) {
+//     loading.close()
+//     ElMessage.error("未选择零件！")
+//     return
+//   }
+//   try {
+//     let { success }: any = await SaveElectronicBom({
+//       auditFlowId,
+//       solutionId: productId,
+//       electronicBomDtos: data.tableData,
+//       boardDtos: platePart.value
+//     })
+//     loading.close()
+//     success && ElMessage.success("提交成功！")
+//   } catch (error) {
+//     loading.close()
+//   }
+// }
+
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -192,7 +220,10 @@ const submit = async () => {
       auditFlowId,
       solutionId: productId,
       electronicBomDtos: data.tableData,
-      boardDtos: platePart.value
+      boardDtos: platePart.value,
+      comment,
+      opinion,
+      nodeInstanceId
     })
     loading.close()
     success && ElMessage.success("提交成功！")
@@ -200,11 +231,9 @@ const submit = async () => {
     loading.close()
   }
 }
-
 const init = async () => {
   let resElectronic: any = await GetElectronicBom({ auditFlowId, solutionId: productId })
   data.tableData = resElectronic.result
-
 }
 
 onMounted(async () => {

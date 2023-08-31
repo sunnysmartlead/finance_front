@@ -1063,7 +1063,7 @@ const handleSaveData = () => {
     processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
   }
   console.log("保存参数", param)
-  handleSaveOption(param).then((response: any) => {
+  return handleSaveOption(param).then((response: any) => {
     console.log("保存响应", response)
     if (response.success) {
       ElMessage({
@@ -1103,7 +1103,7 @@ const handleSaveData = () => {
 // }
 
 const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
-  handleSaveData() // 保存
+  handleSaveData().then((p:any)=>{
   let param = {
     auditFlowId: auditFlowId,
     solutionId: productId,
@@ -1126,6 +1126,7 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
       })
     }
   })
+   }) // 保存
 }
 
 const upload = ref<UploadInstance>()

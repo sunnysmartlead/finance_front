@@ -32,9 +32,9 @@ export function PosToriginalCurrencyCalculate(data: ElectronicDto[]): any {
 export function PostElectronicMaterialEntering(data: {
   isSubmit: number
   electronicDtoList: ElectronicDto[]
-  auditFlowId: number,
-  opinion:string,
-  nodeInstanceId:any
+  auditFlowId: number
+  opinion: string
+  nodeInstanceId: any
 }): any {
   return request({
     url: "/api/services/app/ResourceEntering/PostElectronicMaterialEntering",
@@ -56,9 +56,9 @@ export function GetStructural(data: any): any {
 export function PostStructuralMemberEntering(data: {
   isSubmit: number
   structuralMaterialEntering: ConstructionModel[]
-  auditFlowId: number,
-  opinion:string,
-  nodeInstanceId:any
+  auditFlowId: number
+  opinion: string
+  nodeInstanceId: any
 }): any {
   return request({
     url: "/api/services/app/ResourceEntering/PostStructuralMemberEntering",
@@ -98,6 +98,15 @@ export function GetProjectGoQuantity(data: { Id: number }): any {
 export function SetBomState(data: any): any {
   return request({
     url: "/api/services/app/BomCheck/SetBomState",
+    method: "post",
+    data
+  })
+}
+
+// Bom审核 新
+export function BomReview(data: any): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/BOMUnitPriceReview",
     method: "post",
     data
   })

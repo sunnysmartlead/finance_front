@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="margin: 10px 0; float: right">
-      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="confirmProcessType"/>
+      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="confirmProcessType" v-havedone />
       <!-- <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
         <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button> -->
     </div>

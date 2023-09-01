@@ -41,7 +41,6 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     return
   }
-
   const { success } = await BomReview({
     auditFlowId,
     bomCheckType: 5, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"

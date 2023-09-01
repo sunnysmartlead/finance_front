@@ -509,7 +509,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     return
   }
-  console.log(multipleSelection.value, "multipleSelection")
+  console.log(multipleSelection.value, "[电子料审核ids]")
   const { success } = await BomReview({
     auditFlowId,
     bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"

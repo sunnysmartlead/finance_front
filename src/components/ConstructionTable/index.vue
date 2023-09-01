@@ -547,7 +547,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   map(multipleSelection.value, (val, index) => {
     idsData.push(...val)
   })
-  console.log(idsData, "ids123")
+  console.log(idsData, "[结构料审核ids]")
   if (!opinion.includes("_Yes") && !idsData.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",

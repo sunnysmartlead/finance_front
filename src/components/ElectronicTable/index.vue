@@ -501,91 +501,14 @@ const handleEdit = (row: any, isEdit: boolean) => {
   row.isEdit = isEdit
 }
 
-// const handleSetBomState = (isAgree: boolean) => {
-//   var construction = [[]]
-//   var people = [[]]
-//   var prop = window.sessionStorage.getItem("construction")
-//   if (!prop && !isAgree) {
-//     ElMessage({
-//       message: "请选择要退回那些条数据!",
-//       type: "warning"
-//     })
-//     return
-//   } else {
-//     if (prop) {
-//       var constructionProp = JSON.parse(prop)
-//       constructionProp.forEach((p: any) => {
-//         construction.push(p.constructionId)
-//         people.push(p.peopleId)
-//       })
-//     }
-//   }
-//   electronicId.value = [...new Set(construction.flat(Infinity))]
-//   peopleId.value = [...new Set(people.flat(Infinity))]
-
-//   if (!isAgree && (!electronicId.value.length || !peopleId.value.length)) {
-//     ElMessage({
-//       message: "请选择要退回那些条数据!",
-//       type: "warning"
-//     })
-//     return
-//   }
-//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-//     confirmButtonText: "确定",
-//     cancelButtonText: "取消",
-//     type: "warning"
-//   }).then(async (val) => {
-//     const { success } = await SetBomState({
-//       isAgree,
-//       auditFlowId,
-//       bomCheckType: 3,
-//       opinionDescription: !isAgree ? val?.value : "",
-//       unitPriceId: electronicId.value,
-//       peopleId: peopleId.value
-//     })
-//     if (success) jumpTodoCenter()
-//   })
-// }
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
-  var construction = [[]]
-  var people = [[]]
-  var prop = window.sessionStorage.getItem("construction")
-  if (!prop && !opinion.includes("_Yes")) {
-    ElMessage({
-      message: "请选择要退回那些条数据!",
-      type: "warning"
-    })
-    return
-  } else {
-    if (prop) {
-      var constructionProp = JSON.parse(prop)
-      constructionProp.forEach((p: any) => {
-        construction.push(p.constructionId)
-        people.push(p.peopleId)
-      })
-    }
-  }
-  electronicId.value = [...new Set(construction.flat(Infinity))]
-  peopleId.value = [...new Set(people.flat(Infinity))]
-
-  if (!opinion.includes("_Yes") && (!electronicId.value.length || !peopleId.value.length)) {
+  if (!opinion.includes("_Yes") && (!multipleSelection.value.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  // const { success } = await SetBomState({
-  //   isAgree: !opinion.includes("_No"),
-  //   auditFlowId,
-  //   bomCheckType: 3,
-  //   opinionDescription: comment,
-  //   unitPriceId: electronicId.value,
-  //   peopleId: peopleId.value,
-  //   opinion,
-  //   nodeInstanceId
-  // })
   console.log(multipleSelection.value, "multipleSelection")
   const { success } = await BomReview({
     auditFlowId,

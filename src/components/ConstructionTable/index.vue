@@ -350,6 +350,9 @@ const toggleSelection = () => {
     if (parseData) {
       const productIdData = parseData[productId]
       map(productIdData, (ids, index: number) => {
+        multipleSelection.value = {
+          [index]: ids
+        }
         ids.forEach((id: number) => {
           const findItem = constructionBomList.value[index]?.structureMaterial?.find(c => c.id === id)
           if (findItem) {
@@ -513,6 +516,7 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any, index: number) => {
+  console.log(selection, "selection123123")
   const ids = map(selection, v => v.id)
   multipleSelection.value = {
     [index]: ids
@@ -538,27 +542,13 @@ const fetchConstructionInitData = async () => {
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
-  var construction = [[]]
-  var people = [[]]
-  var prop = window.sessionStorage.getItem("construction")
-  if (!prop && !opinion.includes("_Yes")) {
-    ElMessage({
-      message: "请选择要退回那些条数据!",
-      type: "warning"
-    })
-    return
-  } else {
-    if (prop) {
-      var constructionProp = JSON.parse(prop)
-      constructionProp.forEach((p: any) => {
-        construction.push(p.constructionId)
-        people.push(p.peopleId)
-      })
-    }
-  }
-  data.constructionId = [...new Set(construction.flat(Infinity))]
-  data.peopleId = [...new Set(people.flat(Infinity))]
-  if (!opinion.includes("_Yes") && (!data.constructionId.length || !data.peopleId.length)) {
+  console.log(multipleSelection.value, "multipleSelection.value123")
+  let idsData: any = []
+  map(multipleSelection.value, (val, index) => {
+    idsData.push(...val)
+  })
+  console.log(idsData, "ids123")
+  if (!opinion.includes("_Yes") && !idsData.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -573,7 +563,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: multipleSelection.value.flat(2),
+    structureUnitPriceId: idsData,
     // peopleId: data.peopleId
   })
 

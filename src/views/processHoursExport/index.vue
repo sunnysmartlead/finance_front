@@ -1104,29 +1104,29 @@ const handleSaveData = () => {
 
 const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
   handleSaveData().then((p:any)=>{
-  let param = {
-    auditFlowId: auditFlowId,
-    solutionId: productId,
-    comment,
-    opinion,
-    nodeInstanceId
-  }
-  handleSubmitOption(param).then((response: any) => {
-    console.log("提交响应", response)
-    if (response.success) {
-      ElMessage({
-        type: "success",
-        message: response.result
-      })
-      initData()
-    } else {
-      ElMessage({
-        type: "error",
-        message: "失败"
-      })
+    let param = {
+      auditFlowId: auditFlowId,
+      solutionId: productId,
+      comment,
+      opinion,
+      nodeInstanceId
     }
-  })
-   }) // 保存
+    handleSubmitOption(param).then((response: any) => {
+      console.log("提交响应", response)
+      if (response.success) {
+        ElMessage({
+          type: "success",
+          message: response.result
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: "error",
+          message: "失败"
+        })
+      }
+    })
+  }) // 保存
 }
 
 const upload = ref<UploadInstance>()

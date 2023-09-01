@@ -5,7 +5,7 @@ import { get } from "lodash-es"
 import { getToken } from "@/utils/cookies"
 import { ElLoading } from "element-plus"
 //export const baseDomain=import.meta.env.VITE_BASE_API
-export const baseDomain="https://localhost:44311/"
+export const baseDomain=import.meta.env.VITE_BASE_API//"https://localhost:44311/"
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例

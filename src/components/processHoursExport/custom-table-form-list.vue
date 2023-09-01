@@ -181,7 +181,7 @@
                         </div>
                         <!-- 设备总价 -->
                         <div class="u-width-150  u-border  u-p-t-b-5">
-                            <span>{{ dataItem.deviceInfo.deviceTotalPrice.toFixed(2) }}</span>
+                            <span>{{ dataItem.deviceInfo.deviceTotalPrice?dataItem.deviceInfo.deviceTotalPrice.toFixed(2):0.00 }}</span>
                         </div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@
                         </div>
                         <!-- 硬件总价 -->
                         <div class="u-width-150  u-border  u-p-t-b-5">
-                            <span>{{dataItem.developCostInfo.totalHardwarePrice}}</span>
+                            <span>{{dataItem.developCostInfo.totalHardwarePrice?dataItem.developCostInfo.totalHardwarePrice:0.00}}</span>
                         </div>
                         <!-- 追溯软件 -->
                         <div class="u-width-150  u-border   u-p-t-b-5">
@@ -222,11 +222,11 @@
                         </div>
                         <!-- 开发费(开图) -->
                         <div class="u-width-150  u-border  u-p-t-b-5">
-                            <span>{{ dataItem.developCostInfo.pictureDevelopment.toFixed(2) }}</span>
+                            <span>{{dataItem.developCostInfo.pictureDevelopment?dataItem.developCostInfo.pictureDevelopment.toFixed(2):dataItem.developCostInfo.pictureDevelopment }}</span>
                         </div>
                         <!-- 软硬件总价 -->
                         <div class="u-width-150  u-border  u-p-t-b-5">
-                            <span>{{ dataItem.developCostInfo.softwareHardPrice }}</span>
+                            <span>{{ dataItem.developCostInfo.softwareHardPrice?dataItem.developCostInfo.softwareHardPrice:0.00 }}</span>
                         </div>
                     </div>
                 </div>
@@ -279,7 +279,7 @@
                         </div>
                         <!-- 工装治具总价 -->
                         <div class="u-width-150  u-border  u-p-t-b-5">
-                            <span>{{ dataItem.toolInfo.hardwareDeviceTotalPrice }}</span>
+                            <span>{{ dataItem.toolInfo.hardwareDeviceTotalPrice?dataItem.toolInfo.hardwareDeviceTotalPrice:'0.00'}}</span>
                             <!-- <span>{{ calToolTotalCost(dataIndex) }}</span> -->
                         </div>
                     </div>

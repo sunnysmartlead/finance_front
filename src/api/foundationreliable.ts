@@ -107,7 +107,15 @@ export function getFoundationReliableById(id: number) {
     }
   })
 }
-
+/** 导出 */
+export function exportFoundationreliableDownloadStream(data:any) {
+  return request({
+    url: "/api/services/app/Foundationreliable/FoundationreliableDownloadStream",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
 /** 修改用户 */
 export function updateFoundationReliable(data) {
   return request({

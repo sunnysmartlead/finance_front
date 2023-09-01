@@ -24,9 +24,13 @@
           </el-upload>
         </div>
         <div>
-          <el-button type="primary" @click="downLoadEmc">模版下载</el-button>
           <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
         </div>
+
+      </div>
+      <div>
+        <el-button type="primary" @click="exportList">导出</el-button>
+        <el-button type="primary" @click="downLoadEmc">模版下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
@@ -141,12 +145,13 @@ import {
   updateFoundationReliable,
   createFoundationReliable,
   deleteFoundationReliable,
-  baseDomain
+  baseDomain, exportFoundationreliableDownloadStream
 } from "@/api/foundationreliable"
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus'
 import { formatDateTime } from "@/utils"
+import {exportFoundationEmc} from "@/api/foundationEmc";
 const uploadAction = baseDomain + "api/services/app/Foundationreliable/UploadFoundationreliable";
 const data = reactive({
   queryParams: {
@@ -200,7 +205,27 @@ const title = ref("")
 const open = ref(false)
 const loading = ref(true)
 const tableData = ref([])
-
+const exportList = () => {
+  let param = {
+  }
+  exportFoundationreliableDownloadStream(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', "实验环境.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
+}
 const submitSearch = () => {
   initData()
 }

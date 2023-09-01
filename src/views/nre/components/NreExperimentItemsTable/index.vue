@@ -24,8 +24,8 @@
             <el-button m="2" type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true"
               >查看设计方案</el-button
             >
-            <el-button type="primary" @click="handleDownLoadExcel" m="2">环境试验费模板下载</el-button>
-            <el-button type="primary" @click="handleFethNreTableDownload" m="2">试验项目导出</el-button>
+            <el-button type="primary" @click="handleFethNreTableDownload" m="2">环境试验费模板下载</el-button>
+            <el-button type="primary" @click="handleDownLoadExcel" m="2">试验项目导出</el-button>
             <el-button v-if="!isVertify" type="primary" @click="addExperimentItemsData" m="2" v-havedone>
               新增
             </el-button>
@@ -243,6 +243,21 @@ const handleFethNreTableDownload = async () => {
     console.log(err, "[ NRE实验费模板下载 失败 ]")
   }
 }
+
+// 环境实验费模板下载
+const handleDownLoadExcel = async () => {
+  try {
+    const res = await PostExperimentItemsSingleDownloadExcel({
+      auditFlowId,
+      solutionId: productId
+    })
+    downloadFileExcel(res, "NRE实验费")
+    console.log(res, "NreTableDownload")
+  } catch (err) {
+    console.log(err, "[ NRE实验费下载 失败 ]")
+  }
+}
+
 
 // NRE实验费模板上传
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {

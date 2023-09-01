@@ -1,112 +1,80 @@
 <template>
   <div>
     <el-card class="card">
+      <el-row justify="end">
+        <el-button type="primary" @click="addYear" m="2">新增年</el-button>
+        <el-button type="primary" @click="handleSubmit" m="2">提交</el-button>
+      </el-row>
+      <el-row align="middle">
+        关键字：
+        <el-input v-model="data.tableParams.filter" @change="fetchTableData" style="width: 250px" />
+        <el-button m="2" @click="onReset" type="primary">重置</el-button>
+      </el-row>
       <el-table :data="data.tableData" style="width: 100%; margin-top: 25px" border>
         <el-table-column type="index" width="80" />
-        <el-table-column label="类别" prop="categoryName" width="180" />
+        <el-table-column label="类别" prop="categoryName" width="180">
+          <template #default="{ row }">
+            <el-input v-model="row.categoryName" />
+          </template>
+        </el-table-column>
         <el-table-column label="是否首款产品" width="180">
           <template #default="{ row }">
             {{ row.isFirst ? "是" : "否" }}
           </template>
         </el-table-column>
         <el-table-column label="质量成本比例">
-          <el-table-column :label="year + ''" v-for="(year, index) in data.years" :key="year" width="200">
+          <el-table-column :label="yearItem.yearAlias" v-for="(yearItem, index) in data.years" :key="year" width="200">
             <template #default="{ row }">
-              <el-input v-model="row.qualityCostYearList[index].rate" type="number">
+              <el-input v-model="row.qualityCostRatioYears[index].value" type="number">
                 <template #append>%</template>
               </el-input>
             </template>
           </el-table-column>
         </el-table-column>
       </el-table>
-      <div style="float: right; margin: 20px 0">
-        <el-button type="primary" @click="submit">提交</el-button>
-      </div>
+      <el-row justify="end" m="2">
+        <el-pagination :page-size="20" :pager-count="data.tableParams.skipCount" layout="prev, pager, next"
+          :total="data.selfTabletotal" background @current-change="(val) => changeCurrent(val, data.selfTableParams)" />
+      </el-row>
     </el-card>
+    <LogList ref="logListRef" :type="14" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, onBeforeMount, onMounted, watchEffect } from "vue"
-import { getDictionaryAndDetail } from "@/api/dictionary"
-
-// import { useRoute, useRouter } from "vue-router"
+import { reactive, toRefs, watch, onMounted, watchEffect, ref } from "vue"
+import LogList, { LogListAPI } from "@/components/LogList/index.vue"
 import { getQualityCost, saveQualityCost } from "./service"
-import { QualityCostProportionEntryInfo } from "./data.type"
-// import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 
 /**
- * 路由对象
- */
-// const route = useRoute()
-/**
- * 路由实例
- */
-// const router = useRouter()
-//console.log('1-开始创建组件-setup')
-/**
  * 数据部分
  */
-const data = reactive({
-  tableData: [
-    // {
-    //   category: "环境感知",
-    //   isFirst: true,
-    //   qualityCostYearList: []
-    // },
-    // {
-    //   category: "环境感知",
-    //   isFirst: false,
-    //   qualityCostYearList: []
-    // },
-    // {
-    //   category: "外摄显像",
-    //   isFirst: true,
-    //   qualityCostYearList: []
-    // },
-    // {
-    //   category: "外摄显像",
-    //   isFirst: false,
-    //   qualityCostYearList: []
-    // },
-    // {
-    //   category: "舱内检测",
-    //   isFirst: true,
-    //   qualityCostYearList: []
-    // },
-    // {
-    //   category: "舱内检测",
-    //   isFirst: false,
-    //   qualityCostYearList: []
-    // }
-  ] as any[],
+const data = reactive<any>({
+  tableData: [],
   years: [] as number[],
-  productTypeMap: {} as any
+  productTypeMap: {},
+  tableParams: {
+    filter: "",
+    skipCount: 1
+  },
+  total: 0.
 })
-const years = (index: number) => {
-  let sop = new Date().getFullYear()
-  let yearList: number[] = [sop]
-  for (let i = 1; i < index; i++) {
-    yearList.push(sop + i)
+
+const logListRef = ref<LogListAPI>()
+
+watch(
+  () => data.tableParams.skipCount,
+  () => {
+    init()
+  },
+  {
+    deep: true
   }
-  return yearList
-}
-const submit = async () => {
-  let formatData = data.tableData.map((item) => {
-    let { category, isFirst, qualityCostYearList } = item
-    return {
-      category,
-      isFirst,
-      qualityCostYearList: qualityCostYearList.map((item: any) => {
-        return {
-          year: item.year,
-          rate: (Number(item.rate) / 100).toFixed(4)
-        }
-      })
-    }
-  })
-  let res: any = await saveQualityCost(formatData as QualityCostProportionEntryInfo[])
+)
+
+const handleSubmit = async () => {
+  let res: any = await saveQualityCost(data.tableData)
   if (res.success) {
     ElMessage({
       type: "success",
@@ -114,51 +82,59 @@ const submit = async () => {
     })
   }
 }
-onBeforeMount(async () => {
-  let productType: any = await getDictionaryAndDetail("ProductType") //客户性质
-  let productTypeOptions: any = productType.result.financeDictionaryDetailList
-  productTypeOptions.forEach((item: any) => {
-    data.productTypeMap[item.id] = item.displayName
-    data.tableData.push({
-      categoryName: item.displayName,
-      category: item.id,
-      isFirst: true,
-      qualityCostYearList: []
-    })
-    data.tableData.push({
-      categoryName: item.displayName,
-      category: item.id,
-      isFirst: false,
-      qualityCostYearList: []
-    })
-  })
-  // 获取值，后端没返回name需要另外映射
-  let res: any = await getQualityCost()
-  if (res.result.length > 0) {
-    data.years = years(10)
-    data.tableData = res.result.map((item: any) => {
-      let { category, isFirst, qualityCostYearList } = item
-      return {
-        category,
-        categoryName: data.productTypeMap[category], // 映射name
-        isFirst,
-        qualityCostYearList: qualityCostYearList.map((item: any) => {
-          return {
-            year: item.year,
-            rate: (Number(item.rate) * 100).toFixed(2)
-          }
-        })
-      }
-    })
-  } else {
-    data.years = years(10)
-    data.tableData.forEach((item: any) => {
-      item.qualityCostYearList = data.years.map((year) => ({ year, rate: 0 }))
-    })
+
+const changeCurrent = (val: number, row: any) => {
+  row.skipCount = val
+}
+
+const addYear = () => {
+
+  if (!data.tableData.length) {
+    ElMessage.warning('当前没有数据，请先新增类～')
   }
+  const len = data.years.length
+  const lastOne = data.years[len]
+  data.years.push({
+    year: lastOne.year + 1,
+    yearAlias: `SOP+${lastOne.year + 1}`,
+
+  })
+}
+
+const addClass = () => {
+  data.tableData.push({
+    category: "",
+    isItTheFirstProduct: false,
+    qualityCostRatioYears: [
+      {
+        yearAlias: "SOP",
+        year: 0,
+        value: 0
+      },
+    ]
+  })
+}
+
+const init = async () => {
+  const { success, result }: any = (await getQualityCost({
+    ...data.tableParams
+  })) || {}
+  if (success) {
+    if (result.items.length) {
+      data.years = result.items[0].qualityCostRatioYears
+    }
+    data.table = result.items
+  }
+}
+
+const handleExport = () => {
+
+}
+
+onMounted(() => {
+  init()
 })
-onMounted(async () => {})
-watchEffect(() => {})
+watchEffect(() => { })
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

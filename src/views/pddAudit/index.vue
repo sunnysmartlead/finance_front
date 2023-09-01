@@ -9,19 +9,6 @@
         </div>
       </template>
       <el-button type="primary" class="pddAudit_but" @click="data.dialogTableVisible = true">查看设计方案</el-button>
-      <el-card class="box-card">
-        <template #header>
-          <div class="card-header">
-            <span>流程中心</span>
-          </div>
-        </template>
-        <!-- <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-          <el-tab-pane label="待办(0)" name="first">无</el-tab-pane>
-          <el-tab-pane label="转发(0)" name="second">无</el-tab-pane>
-          <el-tab-pane label="抄送(0)" name="third">无</el-tab-pane>
-          <el-tab-pane label="已办(0)" name="fourth">无</el-tab-pane>
-        </el-tabs> -->
-      </el-card>
     </el-card>
     <div>
       <designScheme v-model:dialogTableVisible="data.dialogTableVisible" @close="data.dialogTableVisible = false" />

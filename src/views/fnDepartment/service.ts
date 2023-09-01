@@ -73,10 +73,11 @@ export function getGrossMargin(data: GrossMarginPage) {
   })
 }
 /** 获取质量成本比例录入 */
-export function getQualityCost() {
+export function getQualityCost(data: any) {
   return request({
-    url: "/api/services/app/FinanceDepartmentInput/GetQualityCost",
-    method: "get"
+    url: "/api/services/app/UnitPriceLibrary/QualityCostRatioSubmission",
+    method: "get",
+    data,
   })
 }
 

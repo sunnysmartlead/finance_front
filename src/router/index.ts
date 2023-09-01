@@ -93,7 +93,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "产品开发部审核"
         }
-      },
+      }
       // {
       //   path: "/partEntry/managerOperate",
       //   component: () => import("@/views/partEntry/managerOperate.vue"),
@@ -205,7 +205,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/bomVerify/construction",
     component: Layout,
     meta: {
-      title: "BOM单价审核",
+      title: "BOM单价审核"
       //hidden: true
     },
     children: [
@@ -317,14 +317,13 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     ]
   },
 
-
   {
     path: "/processHoursExport",
     redirect: "/processHoursExport/index",
     component: Layout,
     meta: {
       //roles: ["admin"]
-      title: "工序工时",
+      title: "工序工时"
     },
     children: [
       {
@@ -436,7 +435,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/nre/nreProjectManageMent",
     component: Layout,
     meta: {
-      title: "NRE",
+      title: "NRE"
       // hidden: true
     },
     children: [
@@ -584,9 +583,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/tradeCompliance",
     redirect: "/tradeCompliance/index",
     component: Layout,
-    meta: {
-      hidden: true
-    },
+    // meta: {
+    //   hidden: true
+    // },
     children: [
       {
         path: "/tradeCompliance/index",
@@ -639,7 +638,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/bomView/index",
     component: Layout,
     meta: {
-      title: "BOM查看",
+      title: "BOM查看"
       // hidden: true
     },
     children: [
@@ -720,7 +719,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     redirect: "/timeliness/index",
     component: Layout,
     meta: {
-      roles: ["timeliness"],
+      roles: ["timeliness"]
     },
     children: [
       {
@@ -739,7 +738,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
           title: "时效性管理",
           hidden: true
         }
-      },
+      }
     ]
   },
   {
@@ -748,7 +747,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "关闭流程",
-      roles: ["closeFlow"],
+      roles: ["closeFlow"]
     },
     children: [
       {
@@ -756,9 +755,9 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/versionManagement/closeFlow.vue"),
         name: "closeFlowPage",
         meta: {
-          title: "关闭流程",
-        },
-      },
+          title: "关闭流程"
+        }
+      }
     ]
   },
   {
@@ -767,7 +766,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       //roles: ["admin"]
-      title: "工序工时",
+      title: "工序工时"
     },
     children: [
       {
@@ -1011,11 +1010,19 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     redirect: "/fnDepartment/index",
     component: Layout,
     meta: {
-      title: "财务参数管理",
+      title: "财务参数管理"
       // roles: ["finance"]
     },
     name: "fnDepartment",
     children: [
+      {
+        path: "/fnDepartment/countryLibrary",
+        component: () => import("@/views/countryLibrary/index.vue"),
+        name: "countryLibrary",
+        meta: {
+          title: "国家库"
+        }
+      },
       {
         path: "/fnDepartment/qualityCost",
         component: () => import("@/views/fnDepartment/qualityCost.vue"),

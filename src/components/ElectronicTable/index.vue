@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && !isMergeVertify">
-      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
       <ProcessVertifyBox :onSubmit="handleSetBomState" processType="electronicBomProcessType" />
     </el-row>
     <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
@@ -235,20 +234,24 @@ import {
   PostElectronicMaterialEntering,
   PosToriginalCurrencyCalculate,
   SetBomState,
+  BomReview,
   GetBOMElectronicSingle
 } from "./common/request"
+import { useRoute } from "vue-router"
 import { getExchangeRate } from "@/views/demandApply/service"
 import getQuery from "@/utils/getQuery"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
-import { cloneDeep, debounce } from "lodash"
+import { cloneDeep, debounce, forEach } from "lodash"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
-// import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-import { useRoute } from "vue-router"
+import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
+import { map } from "lodash"
+
 const router = useRouter()
 const Host = "ElectronicPriceInput"
 const { auditFlowId = 1, productId }: any = getQuery()
+
 const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
@@ -256,6 +259,9 @@ const props = defineProps({
 })
 
 const { jumpTodoCenter } = useJump()
+
+const STORAGE_KEY = "electronicVertify" // 浏览器缓存key
+const MERGE_STORAGE_KEY = "electronicMergeVertify"
 
 const tableLoading = ref(false)
 
@@ -275,7 +281,7 @@ const isAll = ref(false)
 const electronicId = ref<any>([])
 const peopleId = ref<any>([])
 const multipleTableRef = ref<InstanceType<any>>()
-
+const multipleSelection = ref<any>()
 const exchangeSelectOptions = ref<any>([])
 
 const fetchOptionsData = async () => {
@@ -286,14 +292,26 @@ const fetchOptionsData = async () => {
   exchangeSelectOptions.value = exchangeSelect.result.items || []
 }
 
-const toggleSelection = (Ids: any) => {
+const toggleSelection = () => {
   nextTick(() => {
-    Ids.forEach((id: any) => {
-      const row = electronicBomList.value.filter((p: any) => p.id == id)
-      if (row[0]) {
-        multipleTableRef.value!.toggleRowSelection(row[0], true)
-      }
-    })
+    const storageData = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
+    let parseData: any = null
+    console.log(storageData, 'storageData')
+    if (!storageData) return
+    try {
+      parseData = JSON.parse(storageData)
+    } catch(err) {
+      console.log(err, '[电子单价审核界面赋值浏览器缓存失败]')
+    }
+    if (parseData) {
+      const ids = parseData[productId]
+      ids.forEach((id: number) => {
+        const findItem = electronicBomList.value?.find(c => c.id === id)
+        if (findItem) {
+          multipleTableRef.value && multipleTableRef.value!.toggleRowSelection(findItem, true)
+        }
+      })
+    }
   })
 }
 
@@ -305,7 +323,7 @@ enum upDownEunm {
 
 const allStandardMoney = computed(() => {
   try {
-    const arr = props.electronicBomList
+    const arr = electronicBomList.value
     const rowOne = cloneDeep(arr?.[0]?.standardMoney) || []
     console.log(arr, "allStandardMoney")
     arr?.forEach?.((item: any, index: number) => {
@@ -339,19 +357,13 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
   return `${(cellValue * 100 || 0).toFixed(2)} %`
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (props.isVertify) {
     window.sessionStorage.setItem("placePath", router.currentRoute.value.path)
     fetchElectronicInitData().then(() => {
-      const construction = window.sessionStorage.getItem("construction")
-      if (construction) {
-        let porp = JSON.parse(construction)
-        if (!porp) return
-        let isExist = porp.filter((p: any) => p.key == productId)
-        if (!isExist.length) return
-        const value = isExist[0].constructionId
-        toggleSelection(value) //数据反填
-      }
+      setTimeout(() => {
+      toggleSelection()
+    }, 500)
     })
   } else {
     fetchInitData()
@@ -477,7 +489,7 @@ const submitFun = async (record: ElectronicDto, isSubmit: number, index: number)
     isSubmit,
     electronicDtoList: [electronicBomList.value[index]],
     auditFlowId,
-    opinion:"Done",
+    opinion: "Done",
     nodeInstanceId
   })
   if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
@@ -535,11 +547,11 @@ const handleEdit = (row: any, isEdit: boolean) => {
 //     if (success) jumpTodoCenter()
 //   })
 // }
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   var construction = [[]]
   var people = [[]]
   var prop = window.sessionStorage.getItem("construction")
-  if (!prop && opinion.includes("_No")) {
+  if (!prop && !opinion.includes("_Yes")) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -557,71 +569,47 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }) => {
   electronicId.value = [...new Set(construction.flat(Infinity))]
   peopleId.value = [...new Set(people.flat(Infinity))]
 
-  if (opinion.includes("_No") && (!electronicId.value.length || !peopleId.value.length)) {
+  if (!opinion.includes("_Yes") && (!electronicId.value.length || !peopleId.value.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  const { success } = await SetBomState({
-    isAgree: !opinion.includes("_No"),
+  // const { success } = await SetBomState({
+  //   isAgree: !opinion.includes("_No"),
+  //   auditFlowId,
+  //   bomCheckType: 3,
+  //   opinionDescription: comment,
+  //   unitPriceId: electronicId.value,
+  //   peopleId: peopleId.value,
+  //   opinion,
+  //   nodeInstanceId
+  // })
+  console.log(multipleSelection.value, "multipleSelection")
+  const { success } = await BomReview({
     auditFlowId,
-    bomCheckType: 3,
-    opinionDescription: comment,
-    unitPriceId: electronicId.value,
-    peopleId: peopleId.value,
+    bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
+    comment,
     opinion,
-    nodeInstanceId
+    nodeInstanceId,
+    electronicsUnitPriceId: multipleSelection.value
   })
   if (success) jumpTodoCenter()
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {
-  electronicId.value = selection.map((p: any) => p.id)
-  peopleId.value = [...new Set(selection.map((p: any) => p.peopleId))]
-  var prop = window.sessionStorage.getItem("construction")
-  var params = [
-    {
-      key: productId,
-      electronicId: electronicId.value,
-      peopleId: peopleId.value
-    }
-  ]
-  if (prop) {
-    params = JSON.parse(prop)
-    //判断有没有这个key
-    let isExist = params.filter((p: any) => p.key == productId)
-    if (isExist.length) {
-      params.forEach((item: any, index: number) => {
-        //console.log("修改", item, productId)
-        if (item.key == productId) {
-          params[index].electronicId = electronicId.value
-          params[index].peopleId = peopleId.value
-        }
-      })
-    } else {
-      let propConstructionId = {
-        key: productId,
-        electronicId: electronicId.value,
-        peopleId: peopleId.value
-      }
-      params.push(propConstructionId)
-      //console.log("添加")
-    }
-  } else {
-    const electronicIds = {
-      key: productId,
-      electronicId: electronicId.value,
-      peopleId: peopleId.value
-    }
-    params = []
-    params.push(electronicIds)
-    //console.log("直接添加")
+  const ids = map(selection, v => v.id)
+  multipleSelection.value = ids
+  const storageData = {
+    [productId]: ids
   }
-  //console.log("结果", params)
-  window.sessionStorage.setItem("electronicIds", JSON.stringify(params))
+  setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
 }
+
+defineExpose({
+  getSelection: () => multipleSelection.value
+})
 </script>
 
 <style lang="scss" scoped>

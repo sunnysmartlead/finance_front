@@ -23,7 +23,7 @@
                     </el-upload>
                 </div>
                 <div>
-                    <el-button type="primary" @click="addDevice">新增设备</el-button>
+                    <el-button type="primary" :disabled="addFlag == true" @click="addDevice">新增设备</el-button>
                 </div>
             </div>
 
@@ -78,12 +78,26 @@
                         <div class="u-flex u-row-left u-col-center  u-text-center">
                             <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                             <div class="u-width-150 u-border">
-                                <el-input v-model="dataItem.processNumber" style="border: none;"
-                                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                                <!-- <el-input v-model="dataItem.processNumber" style="border: none;"
+                                    :disabled="data.currentEditProcessIndex != dataIndex" /> -->
+                                <el-select :disabled="data.currentEditProcessIndex != dataIndex"
+                                    v-model="dataItem.processNumber" filterable remote reserve-keyword
+                                    :remote-method="remoteMethodForProcessNumber"
+                                    @change="processNumberChange($event, dataIndex)" :loading="optionLoading">
+                                    <el-option v-for="item in processNumberOptions" :key="item.id"
+                                        :label="item.processNumber" :value="item.processNumber" />
+                                </el-select>
                             </div>
                             <div class="u-width-150 u-border">
-                                <el-input v-model="dataItem.processName" style="border: none;"
-                                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                                <!-- <el-input v-model="dataItem.processName" style="border: none;"
+                                    :disabled="data.currentEditProcessIndex != dataIndex" /> -->
+                                <el-select v-model="dataItem.processName" filterable remote reserve-keyword
+                                    :disabled="data.currentEditProcessIndex != dataIndex"
+                                    :remote-method="remoteMethodForProcessName"
+                                    @change="processNameChange($event, dataIndex)" :loading="optionLoading">
+                                    <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
+                                        :value="item.processName" />
+                                </el-select>
                             </div>
                         </div>
 
@@ -159,14 +173,14 @@
 
 
         <div v-if="baseLibLogRecords.length > 0" class="u-m-t-20 u-p-10" style="background-color: #ffffff">
-          <div class="u-flex u-row-between u-col-center" style="width: 100%;">
-            <div>日志更新记录：</div>
-            <div>
-              <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
-              <el-button v-else @click="editLogFlag = false">取消</el-button>
-              <el-button type="primary" @click="saveLog">保存</el-button>
+            <div class="u-flex u-row-between u-col-center" style="width: 100%;">
+                <div>日志更新记录：</div>
+                <div>
+                    <el-button v-if="editLogFlag == false" type="primary" @click="editLogFlag = true">编辑</el-button>
+                    <el-button v-else @click="editLogFlag = false">取消</el-button>
+                    <el-button type="primary" @click="saveLog">保存</el-button>
+                </div>
             </div>
-          </div>
             <el-scrollbar :min-size="10" max-height="500px">
                 <div class="u-m-t-20">
                     <el-timeline>
@@ -218,6 +232,8 @@ import {
     deleteFoundationProcedure,
     updateFoundationProcedure
 } from "@/api/foundationProcedure";
+import { GetListAll as queryProcessList } from "@/api/process";
+import { forIn } from "lodash";
 interface selectOptionListItem {
     value: string
     label: string
@@ -244,6 +260,8 @@ const queryForm = reactive({
     deviceName: ''
 })
 const initData = async () => {
+    addFlag.value = false;
+    data.currentEditProcessIndex = -1;
     let listResult: any = await getListAll({ DeviceName: data.queryForm.deviceName })
     if (listResult.success) {
         data.tableData = listResult.result;
@@ -287,9 +305,16 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     })
 }
 
-
+const addFlag = ref(false);
 
 const addDevice = () => {
+    if (addFlag.value == true) {
+        ElMessage({
+            type: 'warning',
+            message: '您有新的记录尚未保存'
+        })
+        return;
+    }
     let item = {
         id: -1,
         processNumber: '',
@@ -317,6 +342,7 @@ const addDevice = () => {
     }
     data.tableData.push(item);
     currentEditProcessItem = item;
+    addFlag.value = true;
     data.currentEditProcessIndex = data.tableData.length - 1;
 }
 
@@ -348,65 +374,114 @@ const exportList = () => {
     })
 }
 
-//选择查询回调
-const remoteMethodForprocessIndex = (query: string) => {
+//下拉选项的数据类型定义
+interface selectOptionListItem {
+    id: Number,
+    processName: String,
+    processNumber: String
+}
+//异步请求loading
+const optionLoading = ref(false)
+const processNumberOptions = ref<selectOptionListItem[]>([])
+
+//填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForProcessNumber = async (query: string) => {
     if (query) {
-        data.optionLoading = true;
-        setTimeout(() => {
-            data.optionLoading = false;
-            data.processIndexOptions = getprocessIndex(query);
-        }, 200)
+        optionLoading.value = true;
+        await getProcessIndex(query);
+        optionLoading.value = false;
     } else {
-        data.processIndexOptions = []
+        processNumberOptions.value = []
     }
 }
-//模糊查询工装名称
-const getprocessIndex = (keyWord: String) => {
-    return [
-        { label: "工序编号1" + keyWord, value: '11111' },
-        { label: "工序编号2" + keyWord, value: '22222' },
-        { label: "工序编号3" + keyWord, value: '33333' },
-        { label: "工序编号4" + keyWord, value: '44444' }
-    ]
-}
-//监听工装名称变化
-const processIndexChange = (value: any, dataIndex: any) => {
-    console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);
+//查询工装名称的方法,用于渲染工装名称下拉框选项
+const getProcessIndex = async (keyWord: String) => {
+    let param = {
+        processNumber: keyWord
+    }
+    await queryProcessList(param).then((response: any) => {
+        if (response.success) {
+            let data = response.result;
+            processNumberOptions.value = data;
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '列表加载失败'
+            })
+            processNumberOptions.value = [];
+        }
+    })
 }
 
+//监听工装序号变化
+const processNumberChange = (value: any, dataIndex: any) => {
+    if (processNumberOptions.value.length > 0) {
+        let options = processNumberOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processNumber == value) {
+                data.tableData[dataIndex].processName = item.processName;
+                return;
+            }
+        }
+    }
+}
+
+const processNameOptions = ref<selectOptionListItem[]>([])
+
 //模糊查询工序名称
-const remoteMethodForProcessName = (query: string) => {
+//填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForProcessName = async (query: string) => {
     if (query) {
-        data.optionLoading = true;
-        setTimeout(() => {
-            data.optionLoading = false;
-            data.processNameOptions = getProcessName(query);
-        }, 200)
+        optionLoading.value = true;
+        await getProcessName(query);
+        optionLoading.value = false;
     } else {
-        data.processNameOptions = []
+        processNameOptions.value = []
     }
 }
 //模糊查询工序名称
-const getProcessName = (keyWord: String) => {
-    return [
-        { label: "工序名称1" + keyWord, value: 'aaaaa' },
-        { label: "工序名称2" + keyWord, value: 'bbbbb' },
-        { label: "工序名称3" + keyWord, value: 'ccccc' },
-        { label: "工序名称4" + keyWord, value: 'ddddd' }
-    ]
-}
-const downLoad= async () => {
-  const link = document.createElement('a')
-  link.href = import.meta.env.VITE_BASE_API + "/Excel/设备库导入.xlsx"
-  link.download = '设备库导入.xlsx'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+const getProcessName = async (keyWord: String) => {
+    let param = {
+        ProcessName: keyWord
+    }
+    await queryProcessList(param).then((response: any) => {
+        if (response.success) {
+            let data = response.result;
+            processNameOptions.value = data;
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '列表加载失败'
+            })
+            processNameOptions.value = [];
+        }
+    })
 }
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
     console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+    if (processNameOptions.value.length > 0) {
+        let options = processNameOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processName == value) {
+                data.tableData[dataIndex].processNumber = item.processNumber;
+                return;
+            }
+        }
+    }
 }
+
+const downLoad = async () => {
+    const link = document.createElement('a')
+    link.href = import.meta.env.VITE_BASE_API + "/Excel/设备库导入.xlsx"
+    link.download = '设备库导入.xlsx'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
+
 
 const disabledDate = (time: Date) => {
     return time.getTime() > Date.now()
@@ -425,13 +500,35 @@ const handleEdit = (index: number, row: any) => {
 
 const cancelEdit = (index: number, row: any) => {
     data.currentEditProcessIndex = -1;
-    data.tableData[index] = currentEditProcessItem;
+    if (addFlag.value == true) {
+        console.log("取消新增");
+        data.tableData.splice(index);
+        addFlag.value = false;
+    } else {
+        data.tableData[index] = currentEditProcessItem;
+    }
 }
 
 
 //新增或者修改
 const saveEdit = async (index: number, row: any) => {
     console.log("保存编辑内容", row);
+    let pname = row.processName;
+    let pNumber = row.processNumber;
+    if (pname == null || pname == undefined || pname.length < 1) {
+        ElMessage({
+            type: 'error',
+            message: '工序名称不能为空!'
+        })
+        return;
+    }
+    if (pNumber == null || pNumber == undefined || pNumber.length < 1) {
+        ElMessage({
+            type: 'error',
+            message: '工序序号不能为空!'
+        })
+        return;
+    };
     data.currentEditProcessIndex = -1;
     let tip: string = "";
     let result: any;
@@ -528,11 +625,4 @@ const saveLog = async () => {
     })
     editLogFlag.value = false
 }
-
-defineExpose({
-    data,
-    ...toRefs(data),
-    editLogFlag,
-    baseLibLogRecords
-})
 </script>

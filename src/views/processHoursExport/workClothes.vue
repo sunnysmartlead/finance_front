@@ -41,11 +41,11 @@
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index" 
+                <el-select :disabled="currentEditProcessIndex != scope.$index"
                   v-model="scope.row.processNumber"
                   filterable remote reserve-keyword :remote-method="remoteMethodForProcessNumber"
                   @change="processNumberChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in processNumberOptions" 
+                  <el-option v-for="item in processNumberOptions"
                         :key="item.id" :label="item.processNumber"
                         :value="item.processNumber" />
                 </el-select>
@@ -342,7 +342,7 @@ const addNewworkClothes = () => {
       message: '您有新的记录尚未保存'
     })
     return;
-  } 
+  }
   tableData.value.push({
     id: -1,
     processName: '',
@@ -388,7 +388,7 @@ const cancelEdit = (index: number, row: workClothesItem) => {
   }else{
     console.log("currentEditProcessItem", currentEditProcessItem);
     tableData.value[index] = currentEditProcessItem;
-  } 
+  }
 }
 //新增或者修改
 const saveEdit = async (index: number, row: any) => {
@@ -567,7 +567,6 @@ const getProcessIndex = async (keyWord: String) => {
     }
   })
 }
-
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);

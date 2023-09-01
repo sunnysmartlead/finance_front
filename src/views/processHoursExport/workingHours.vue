@@ -389,10 +389,7 @@ const getProcessIndex = async (keyWord: String) => {
     }
   })
 }
-
-
 const processNameOptions = ref<selectOptionListItem[]>([])
-
 //填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
 const remoteMethodForProcessName =async (query: string) => {
   if (query) {
@@ -421,7 +418,6 @@ const getProcessName =async (keyWord: String) => {
     }
   })
 }
-
 //保存
 const handleSave = (index: number, row: any) => {
   let pname= row.processName;

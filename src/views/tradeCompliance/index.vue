@@ -82,7 +82,7 @@ onMounted(() => {
 })
 
 const initFetch = async () => {
-  const { result } = await GetTradeComplianceCheckFromDateBase({ AuditFlowId: auditFlowId, ProductId: productId })
+  const { result } = await GetTradeComplianceCheckFromDateBase({ AuditFlowId: auditFlowId, SolutionId: productId })
   data.productMaterialInfos = result.productMaterialInfos || []
   data.tradeComplianceCheck = result.tradeComplianceCheck || {}
   console.log(result, "res")

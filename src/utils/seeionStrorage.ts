@@ -3,7 +3,7 @@ export const setSessionStorage = (key: string, data: string) => {
 }
 
 export const getSessionStorage = (key: string) => {
-  return window.sessionStorage.getItem(key)
+  return window.sessionStorage.getItem(key) || ''
 }
 
 export const removeSessionStorage = (key: string) => {

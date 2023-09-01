@@ -1,5 +1,5 @@
 <template>
-  <ProcessVertifyBox :onSubmit="submit" :processType="confirmProcessType" />
+  <ProcessVertifyBox :onSubmit="isVertify?NREToExamineFun:submit" v-havedone :processType="isVertify?'baseProcessType':'confirmProcessType'" />
   <InterfaceRequiredTime :ProcessIdentifier="Host" />
   <div style="padding: 0 10px">
     <el-card class="card-warp">
@@ -93,11 +93,11 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <div style="float: right; margin: 20px 0" v-if="isVertify">
+    <!-- <div style="float: right; margin: 20px 0" v-if="isVertify">
       <el-button type="primary" v-havedone m="2">同意</el-button>
       <el-button type="primary" v-havedone>退回</el-button>
     </div>
-    <!-- <div style="float: right; margin: 20px 0" v-else>
+    <div style="float: right; margin: 20px 0" v-else>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
     </div> -->
@@ -110,7 +110,8 @@ import {
   PostProductDepartment,
   GetProductDepartment,
   GetExportOfProductDepartmentFeeForm,
-  GetFoundationEmc
+  GetFoundationEmc,
+  NREToExamine,
 } from "../../common/request"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { getLaboratoryFeeSummaries } from "../../common/nrePilotprojectsSummaries"
@@ -184,6 +185,24 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {
     console.log(err, "[PostProductDepartment err]")
+  }
+}
+
+const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
+  try {
+    const { success } = await NREToExamine({
+      auditFlowId,
+      nreCheckType:3,
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
+    })
+    if (!success) throw Error()
+    ElMessage.success(`提交成功`)
+    // jumpTodoCenter()
+  } catch (err) {
+    console.log(err, "[PostExperimentItems err]")
+    // ElMessage.error("提交失败")
   }
 }
 

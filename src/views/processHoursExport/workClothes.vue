@@ -25,7 +25,7 @@
           </el-upload>
         </div>
         <div>
-            <el-button type="primary" @click="addNewworkClothes">新增工装</el-button>
+            <el-button :disabled="addFlag == true"  type="primary" @click="addNewworkClothes">新增工装</el-button>
         </div>
       </div>
       <div>
@@ -253,6 +253,8 @@ onMounted(() => {
 })
 //初始化查询数据
 const initData = async () => {
+  addFlag.value = false;
+  currentEditProcessIndex.value = -1;
   let listResult: any = await getListAll({ ProcessName: queryForm.InstallationName })
   if (listResult.success) {
     tableData.value = listResult.result;
@@ -331,9 +333,16 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
         message: '导入失败',
     })
 }
-
+const addFlag = ref(false);
 //新增工装
 const addNewworkClothes = () => {
+  if (addFlag.value == true) {
+    ElMessage({
+      type: 'warning',
+      message: '您有新的记录尚未保存'
+    })
+    return;
+  } 
   tableData.value.push({
     id: -1,
     processName: '',
@@ -346,6 +355,7 @@ const addNewworkClothes = () => {
     lastModifierUserName: '',
     lastModificationTime: '',
   })
+  addFlag.value = true;
   currentEditProcessIndex.value = tableData.value.length - 1;
 }
 
@@ -370,9 +380,15 @@ const handleEdit = (index: number, row: workClothesItem) => {
 }
 //取消编辑
 const cancelEdit = (index: number, row: workClothesItem) => {
-  console.log("currentEditProcessItem", currentEditProcessItem);
-  tableData.value[index] = currentEditProcessItem;
   currentEditProcessIndex.value = -1;
+  if (addFlag.value == true) {
+    console.log("取消新增");
+    tableData.value.splice(index);
+    addFlag.value = false;
+  }else{
+    console.log("currentEditProcessItem", currentEditProcessItem);
+    tableData.value[index] = currentEditProcessItem;
+  } 
 }
 //新增或者修改
 const saveEdit = async (index: number, row: any) => {

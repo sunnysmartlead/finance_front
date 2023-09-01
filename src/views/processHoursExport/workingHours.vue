@@ -98,15 +98,15 @@
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber" 
+                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber"
                             :loading="optionLoading">
                   <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
-                    :value="item.processNumber" />           
+                    :value="item.processNumber" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName" 
+                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName"
                            :loading="optionLoading">
                   <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
                              :value="item.processName"/>
@@ -424,6 +424,22 @@ const getProcessName =async (keyWord: String) => {
 
 //保存
 const handleSave = (index: number, row: any) => {
+  let pname= row.processName;
+  let pNumber= row.processNumber;
+  if(pname==null||pname==undefined||pname.length<1){
+    ElMessage({
+      type: 'error',
+      message: '工序名称不能为空!'
+    })
+    return;
+  }
+  if(pNumber==null||pNumber==undefined||pNumber.length<1){
+    ElMessage({
+      type: 'error',
+      message: '工序序号不能为空!'
+    })
+    return;
+  }
   let param = JSON.parse(JSON.stringify(row))
   let id = row.id;
   //保存

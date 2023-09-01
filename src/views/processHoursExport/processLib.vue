@@ -29,7 +29,7 @@
 
       <div>
         <el-button type="primary"  @click="submitExportProcess">工序库导出</el-button>
-        <el-button type="primary" @click="submitSearch">工序库模板下载</el-button>
+        <el-button type="primary" @click="submitDownloadTemplate">工序库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
@@ -262,6 +262,17 @@ const submitExportProcess=()=>{
     })
 }
 
+const submitDownloadTemplate=()=>{
+  const baseDomain=import.meta.env.VITE_BASE_API+"Excel/"
+  let href=baseDomain+"工序库导入.xlsx";
+  console.log("下载模板==="+href);
+  const a = document.createElement('a');
+  a.href = href;
+  a.setAttribute('download',"工序库模板.xlsx");
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
 const currentEditIndex = ref<number>()
 let currentEditProcess:any = null;

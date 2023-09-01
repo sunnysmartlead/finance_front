@@ -29,8 +29,8 @@
         </div>
       </div>
       <div>
-        <el-button type="primary">工时库导出</el-button>
-        <el-button type="primary">工时库模板下载</el-button>
+        <el-button @click="exportTemplate" type="primary">工时库导出</el-button>
+        <el-button @click="downloadTemplate" type="primary">工时库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
@@ -179,7 +179,7 @@ import { ElMessage, ElMessageBox,genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import optionLogRecord from '@/components/processHoursExport/option-log-records.vue';
 import { getLogRecord } from "@/api/logRecord";
-import { GetListAll, update, create, deleteItem, uploadAction } from "@/api/workHour";
+import { GetListAll, update, create, deleteItem, uploadAction,handelExport} from "@/api/workHour";
 import { GetListAll as queryProcessList } from "@/api/process";
 import { formatDateTime } from '@/utils';
 const queryForm = reactive({
@@ -287,6 +287,42 @@ const addworkingHours = () => {
     currentEditIndex.value = dataArr.value.length - 1;
   }
 
+}
+
+//工时导出
+const exportTemplate=()=>{
+  let param={
+    processName:queryForm.processName
+  }
+  handelExport(param).then((response: any) => {
+      if (response) {
+          const data = new Blob([response],{ type: 'application/octet-stream'});
+          const url = URL.createObjectURL(data);
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download',"工时.xlsx");
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '导出失败'
+        })
+      }
+    })
+}
+
+const downloadTemplate=()=>{
+  const baseDomain=import.meta.env.VITE_BASE_API+"Excel/"
+  let href=baseDomain+"工时库.xlsx";
+  console.log("下载模板==="+href);
+  const a = document.createElement('a');
+  a.href = href;
+  a.setAttribute('download',"工时.xlsx");
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 const upload = ref<UploadInstance>()

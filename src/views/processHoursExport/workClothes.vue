@@ -377,6 +377,22 @@ const cancelEdit = (index: number, row: workClothesItem) => {
 //新增或者修改
 const saveEdit = async (index: number, row: any) => {
   console.log("保存编辑内容", row);
+  let pname= row.processName;
+  let pNumber= row.processNumber;
+  if(pname==null||pname==undefined||pname.length<1){
+    ElMessage({
+      type: 'error',
+      message: '工序名称不能为空!'
+    })
+    return;
+  }
+  if(pNumber==null||pNumber==undefined||pNumber.length<1){
+    ElMessage({
+      type: 'error',
+      message: '工序序号不能为空!'
+    })
+    return;
+  }
   currentEditProcessIndex.value = -1;
   let tip: string = "";
   let result: any;

@@ -33,9 +33,9 @@
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-      <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
+      <el-scrollbar wrap-style="padding:10px 0px" :max-height="600" native>
         <div>
-          <el-table :data="tableData" style="width: 100%" border max-height="600">
+          <el-table :data="tableData" style="width: 100%" border max-height="600px">
             <el-table-column label="序号" type="index" width="180" align="center" />
             <el-table-column label="工序编号" align="center">
               <template #default="scope">

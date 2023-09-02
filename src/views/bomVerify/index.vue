@@ -35,7 +35,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: constructionSelection.flat(2),
+    structureUnitPriceId: constructionSelection?.flat(2),
     electronicsUnitPriceId: electronicSelection
   })
   if (success) jumpTodoCenter()

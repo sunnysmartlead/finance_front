@@ -7,10 +7,10 @@
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-button type="primary">新增</el-button>
+          <el-button type="primary" @click="addEditList">新增</el-button>
         </el-row>
       </template>
-      <bomTable isEdit :bomData="bomLogData" />
+      <bomTable isEdit v-model:bomData="bomLogData" />
     </el-card>
   </div>
 </template>
@@ -47,22 +47,22 @@ const getBomCost = async () => {
       Year: yearData.year
     })
     bomData.value = result || []
+    firstShow.value = false
     console.log(result, "获取 bom成本（含损耗）汇总表")
   } catch (err: any) {
     console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
+    firstShow.value = false
   }
 }
 
 const bomLogData = ref<any>([])
 const bomData = ref<any>([])
+const firstShow = ref(false)
 
 watch(
-  () => [props.gradientId, props.yearData],
-  (val) => {
-    const [gradientId, yearData] = val
-    if (gradientId && !isEmpty(yearData)) {
-      init()
-    }
+  () => [props.gradientId, props.yearData, firstShow.value],
+  () => {
+    init()
   },
   {
     deep: true
@@ -70,8 +70,10 @@ watch(
 )
 
 const init = () => {
-  getBomCost()
-  getBomLogData()
+  if (props.gradientId && !isEmpty(props.yearData)) {
+    getBomCost()
+    getBomLogData()
+  }
 }
 
 onMounted(() => {
@@ -87,10 +89,13 @@ const getBomLogData = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
-
 }
 
 const handleEdit = () => {
 
+}
+
+const addEditList = () => {
+  bomLogData.value.push({})
 }
 </script>

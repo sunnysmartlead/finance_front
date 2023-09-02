@@ -226,14 +226,12 @@
 
 <script lang="tsx" setup>
 import { ref, reactive, onMounted, computed, shallowRef, nextTick, watch } from "vue"
-// import { useUserStore } from "@/store/modules/user"
 import { ElectronicDto } from "./data.type"
 import { ElMessage, ElMessageBox } from "element-plus"
 import {
   GetElectronic,
   PostElectronicMaterialEntering,
   PosToriginalCurrencyCalculate,
-  SetBomState,
   BomReview,
   GetBOMElectronicSingle
 } from "./common/request"

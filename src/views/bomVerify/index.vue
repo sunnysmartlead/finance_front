@@ -30,7 +30,7 @@ const electronicRef = ref<any>()
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   const constructionSelection = constructionRef.value.getSelection()
   const electronicSelection = electronicRef.value.getSelection() || []
-  const constructionIds = []
+  const constructionIds: any = []
   map(constructionSelection, (val) => {
     constructionIds.push(...val)
   })
@@ -47,7 +47,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: constructionSelection.flat(2),
+    structureUnitPriceId: constructionIds,
     electronicsUnitPriceId: electronicSelection
   })
   if (success) jumpTodoCenter()

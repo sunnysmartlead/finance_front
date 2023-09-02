@@ -1,7 +1,6 @@
 <template>
   <div class="margin-top">
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
-      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
       <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
     </el-row>
     <el-card>

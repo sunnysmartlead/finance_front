@@ -22,7 +22,8 @@
       </template>
       <el-row align="middle">
         关键字：
-        <el-input v-model="data.selfTableParams.filter" @change="fetchTableData" style="width: 250px" />
+        <el-input v-model="data.selfTableParams.filter" style="width: 250px" />
+        <el-button m="2" @click="fetchTableData" type="primary">查询</el-button>
         <el-button m="2" @click="onReset" type="primary">重置</el-button>
       </el-row>
       <el-table :data="tableData" height="500">
@@ -227,7 +228,7 @@ watch(
 )
 
 watch(
-  () => data.selfTableParams.skipCount,
+  () => data.logFetchParams.skipCount,
   () => {
     fetchLogData()
   },

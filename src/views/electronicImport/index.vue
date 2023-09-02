@@ -258,6 +258,7 @@ onMounted(async () => {
 </script>
 <style lang="scss" scoped>
 .electronic-import {
+  padding:20px 0;
   &__btn-container {
     margin: 20px 0;
     position: relative;

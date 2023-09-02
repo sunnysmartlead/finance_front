@@ -56,8 +56,8 @@
         <el-table-column label="单价" prop="unitPrice" width="175" />
         <el-table-column label="调整系数" width="180">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
+            <span v-if="isVertify">{{ row.coefficient }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.coefficient" />
           </template>
         </el-table-column>
         <el-table-column label="单位" prop="unit" width="180" />
@@ -140,7 +140,7 @@ const deleteLaboratoryFeeModel = (i: number) => {
 
 const addLaboratoryFeeModel = () => {
   data.laboratoryFeeModels.push({
-    adjustmentCoefficient: 0,
+    coefficient: 0,
     unitPrice: 5,
     allCost: 0,
     countBottomingOut: 0,
@@ -253,7 +253,7 @@ watch(
     val.forEach((item: any) => {
       item.allCost =
         item.unitPrice *
-        (item.adjustmentCoefficient || 0) *
+        (item.coefficient || 0) *
         ((item.countBottomingOut || 0) + (item.countDV || 0) + (item.countPV || 0))
     })
   },

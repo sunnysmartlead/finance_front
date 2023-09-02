@@ -49,7 +49,7 @@ export function GetPricingPanelProportionOfProductCost(data: GetLossCostProps) {
 // 核价看板-利润分布图
 export function GetPricingPanelProfit(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluationGet/GetPricingPanelProfit",
+    url: "/api/services/app/PriceEvaluation/GetPricingPanelProfit",
     method: "get",
     data
   })

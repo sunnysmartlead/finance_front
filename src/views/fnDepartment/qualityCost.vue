@@ -3,6 +3,7 @@
     <el-card class="card">
       <el-row justify="end">
         <el-button type="primary" @click="addYear" m="2">新增年</el-button>
+        <el-button type="primary" @click="addClass" m="2">新增类</el-button>
         <el-button type="primary" @click="handleSubmit" m="2">提交</el-button>
       </el-row>
       <el-row align="middle">
@@ -12,14 +13,34 @@
       </el-row>
       <el-table :data="data.tableData" style="width: 100%; margin-top: 25px" border>
         <el-table-column type="index" width="80" />
-        <el-table-column label="类别" prop="categoryName" width="180">
+        <el-table-column label="类别" prop="category" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" />
+            <el-select
+                v-model="row.category"
+                placeholder="价格有效期"
+              >
+                <el-option
+                  v-for="item in data.qualityCostOptions"
+                  :key="item.id"
+                  :label="item.displayName"
+                  :value="item.id"
+                />
+              </el-select>
           </template>
         </el-table-column>
         <el-table-column label="是否首款产品" width="180">
           <template #default="{ row }">
-            {{ row.isFirst ? "是" : "否" }}
+            <el-select
+                v-model="row.isItTheFirstProduct"
+                placeholder="价格有效期"
+              >
+                <el-option
+                  v-for="item in data.isItTheFirstProductOptions"
+                  :key="item.id"
+                  :label="item.displayName"
+                  :value="item.id"
+                />
+              </el-select>
           </template>
         </el-table-column>
         <el-table-column label="质量成本比例">
@@ -46,6 +67,8 @@ import { reactive, toRefs, watch, onMounted, watchEffect, ref } from "vue"
 import LogList, { LogListAPI } from "@/components/LogList/index.vue"
 import { getQualityCost, saveQualityCost } from "./service"
 import { ElMessage } from "element-plus"
+import { getDictionaryAndDetail } from "@/api/dictionary"
+import { clone, cloneDeep } from "lodash"
 
 /**
  * 数据部分
@@ -58,7 +81,18 @@ const data = reactive<any>({
     filter: "",
     skipCount: 1
   },
-  total: 0.
+  total: 0,
+  qualityCostOptions: [],
+  isItTheFirstProductOptions: [
+    {
+      id: true,
+      displayName: '是'
+    },
+    {
+      id: false,
+      displayName: '否'
+    }
+  ]
 })
 
 const logListRef = ref<LogListAPI>()
@@ -88,30 +122,46 @@ const changeCurrent = (val: number, row: any) => {
 }
 
 const addYear = () => {
-
   if (!data.tableData.length) {
     ElMessage.warning('当前没有数据，请先新增类～')
   }
   const len = data.years.length
-  const lastOne = data.years[len]
-  data.years.push({
+  const lastOne = data.years[len - 1]
+
+  const filterData = cloneDeep({
     year: lastOne.year + 1,
     yearAlias: `SOP+${lastOne.year + 1}`,
-
+    value: 0
+  })
+  console.log(filterData, "filterData")
+  data.years.push(filterData)
+  data.tableData.forEach((item: any) => {
+    item.qualityCostRatioYears.push(filterData)
   })
 }
 
+const fetchOptionsData = async () => {
+  const { success, result }: any = await getDictionaryAndDetail('QualityCostType')
+  if (success) {
+    data.qualityCostOptions = result?.financeDictionaryDetailList
+  }
+}
+
 const addClass = () => {
+  let qualityCostRatioYears = [{
+    yearAlias: "SOP",
+    year: 0,
+    value: 0
+  }]
+  if (data.years.length) {
+    qualityCostRatioYears = data.years
+  } else {
+    data.years = qualityCostRatioYears
+  }
   data.tableData.push({
     category: "",
     isItTheFirstProduct: false,
-    qualityCostRatioYears: [
-      {
-        yearAlias: "SOP",
-        year: 0,
-        value: 0
-      },
-    ]
+    qualityCostRatioYears: cloneDeep(qualityCostRatioYears)
   })
 }
 
@@ -121,18 +171,18 @@ const init = async () => {
   })) || {}
   if (success) {
     if (result.items.length) {
-      data.years = result.items[0].qualityCostRatioYears
+      data.years = result.items[0]?.qualityCostRatioYears
     }
-    data.table = result.items
+    console.log(result.items, 'result.items')
+    setTimeout(() => {
+      data.tableData = result.items
+    }, 200)
   }
-}
-
-const handleExport = () => {
-
 }
 
 onMounted(() => {
   init()
+  fetchOptionsData()
 })
 watchEffect(() => { })
 // 使用toRefs解构

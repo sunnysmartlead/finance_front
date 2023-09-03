@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card m="2" header="bom成本">
+    <el-card m="2" header="损耗成本">
       <lossTable :lossData="lossData" />
     </el-card>
     <el-card m="2">
@@ -86,12 +86,29 @@ const addEditList = () => {
 }
 
 const handleSubmit = async () => {
+  const fileIds =  fileList.value.map((item: any) => item.response.result?.fileId) || []
+  if (!fileIds.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先上传佐证资料！'
+    })
+    return
+  }
+  if (!modifyData.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先添加修改项数据再操作！'
+    })
+    return
+  }
   const res = await SetUpdateItemLossCost({
     updateItem: modifyData.value,
     auditFlowId,
-    solutionId,
+    modifyData,
     gradientId: props.gradientId,
-    file: fileList
+    file: fileIds[0],
+    Year: props.yearData.year,
+    UpDown: props.yearData.upDown,
   })
 }
 
@@ -110,6 +127,10 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
       type: "success"
     })
   }
+}
+
+const handleDelete = (index: number) => {
+  modifyData.value.splice(index, 1)
 }
 
 watch(

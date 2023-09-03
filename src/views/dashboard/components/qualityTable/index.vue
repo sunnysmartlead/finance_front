@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card m="2" header="bom成本">
+    <el-card m="2" header="质量成本">
       <qualityTable :qualityData="qualityData" />
     </el-card>
     <el-card m="2">

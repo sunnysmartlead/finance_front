@@ -1,25 +1,21 @@
 <template>
   <div>
-    <el-card m="2" header="bom成本">
-      <manufactureTable :manufactureData="manufactureData" />
+    <el-card m="2" header="制造成本">
+      <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" />
     </el-card>
     <el-card m="2">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-button type="primary">新增</el-button>
-          <el-button type="primary">新增</el-button>
-          <el-button type="primary" @click="handleSubmit">提交</el-button>
-          <el-upload
-            :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-            :on-success="handleSuccess"
-            show-file-list
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError"
-            v-model:file-list="fileList"
-          >
-            <el-button type="primary">上传佐证资料</el-button>
-          </el-upload>
+          <el-row>
+            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
+            <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
+            <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
+              show-file-list :on-progress="handleGetUploadProgress" :on-error="handleUploadError"
+              v-model:file-list="fileList" :limit="1">
+              <el-button type="primary" m="2">上传佐证资料</el-button>
+            </el-upload>
+          </el-row>
         </el-row>
       </template>
       <manufactureTable isEdit :manufactureData="modifyData" />
@@ -50,7 +46,7 @@ const props = defineProps({
 })
 
 const modifyData = ref<any>([])
-const manufactureData =ref<any>([])
+const manufactureData = ref<any>([])
 const fileList = ref<UploadUserFile[]>([])
 
 // 获取 制造成本汇总表
@@ -65,7 +61,7 @@ const getManufacturingCost = async () => {
       GradientId: gradientId,
     })
     manufactureData.value = result
-    console.log(result, "getPricingPanelProfit")
+    console.log(result, "getManufacturingCost")
   } catch (err: any) {
     console.log(err, "[ 获取 制造成本汇总表据失败 ]")
   }
@@ -97,13 +93,58 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   }
 }
 
+
 const handleSubmit = async () => {
+  const fileIds = fileList.value.map((item: any) => item.response.result?.fileId) || []
+  if (!fileIds.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先上传佐证资料！'
+    })
+    return
+  }
+  if (!modifyData.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先添加修改项数据再操作！'
+    })
+    return
+  }
   const res = await SetUpdateItemManufacturingCost({
     updateItem: modifyData.value,
     auditFlowId,
-    solutionId,
+    modifyData,
     gradientId: props.gradientId,
-    file: fileList
+    file: fileIds[0],
+    Year: props.yearData.year,
+    UpDown: props.yearData.upDown,
+  })
+}
+
+const handleEdit = (row: any) => {
+  console.log(row, "row123")
+  modifyData.value.push(row)
+}
+
+const addEditList = () => {
+  modifyData.value.push({
+    costType: 0,
+    costItem: "",
+    gradientKy: 0,
+    manufacturingCostDirect: {
+      directLabor: 0,
+      equipmentDepreciation: 0,
+      lineChangeCost: 0,
+      manufacturingExpenses: 0,
+      subtotal: 0,
+    },
+    manufacturingCostIndirect: {
+      directLabor: 0,
+      equipmentDepreciation: 0,
+      manufacturingExpenses: 0,
+      subtotal: 0,
+    },
+    subtotal: 0,
   })
 }
 

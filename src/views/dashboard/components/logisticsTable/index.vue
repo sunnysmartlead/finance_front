@@ -1,27 +1,30 @@
 <template>
   <div>
-    <el-card m="2" header="bom成本">
+    <el-card m="2" header="物流成本">
       <logisticsTable :logisticsData="logisticsData" />
     </el-card>
     <el-card m="2">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-button type="primary">新增</el-button>
-          <el-button type="primary" @click="handleSubmit">提交</el-button>
-          <el-upload
-            :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-            :on-success="handleSuccess"
-            show-file-list
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError"
-            v-model:file-list="fileList"
-          >
-            <el-button type="primary">上传佐证资料</el-button>
-          </el-upload>
+          <el-row>
+            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
+            <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
+            <el-upload
+              :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+              :on-success="handleSuccess"
+              show-file-list
+              :on-progress="handleGetUploadProgress"
+              :on-error="handleUploadError"
+              v-model:file-list="fileList"
+              :limit="1"
+            >
+              <el-button type="primary" m="2">上传佐证资料</el-button>
+            </el-upload>
+          </el-row>
         </el-row>
       </template>
-      <logisticsTable isEdit :logisticsData="modifyData" />
+      <logisticsTable isEdit :logisticsData="modifyData" :onDelete="handleDelete" />
     </el-card>
   </div>
 </template>
@@ -106,12 +109,29 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 }
 
 const handleSubmit = async () => {
+  const fileIds =  fileList.value.map((item: any) => item.response.result?.fileId) || []
+  if (!fileIds.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先上传佐证资料！'
+    })
+    return
+  }
+  if (!modifyData.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先添加修改项数据再操作！'
+    })
+    return
+  }
   const res = await SetUpdateItemMaterial({
     updateItem: modifyData.value,
     auditFlowId,
-    solutionId,
+    modifyData,
     gradientId: props.gradientId,
-    file: fileList
+    file: fileIds[0],
+    Year: props.yearData.year,
+    UpDown: props.yearData.upDown,
   })
 }
 
@@ -137,8 +157,7 @@ onMounted(() => {
   init()
 })
 
-const toFixedThree = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(3)
-  return val
+const handleDelete = (index: number) => {
+  modifyData.value.splice(index, 1)
 }
 </script>

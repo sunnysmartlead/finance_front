@@ -274,7 +274,7 @@ export function SetUpdateItemManufacturingCost(data: any) {
 export function GetUpdateItemManufacturingCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetUpdateItemManufacturingCost",
-    method: "post",
+    method: "get",
     data
   })
 }
@@ -292,7 +292,7 @@ export function SetUpdateItemQualityCost(data: any) {
 export function GetUpdateItemQualityCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetUpdateItemQualityCost",
-    method: "post",
+    method: "get",
     data
   })
 }
@@ -310,7 +310,7 @@ export function SetUpdateItemOtherCost(data: any) {
 export function GetUpdateItemOtherCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetUpdateItemOtherCost",
-    method: "post",
+    method: "get",
     data
   })
 }

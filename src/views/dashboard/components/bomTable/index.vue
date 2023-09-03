@@ -24,7 +24,7 @@
           </el-row>
         </el-row>
       </template>
-      <bomTable isEdit v-model:bomData="bomModifyData" />
+      <bomTable isEdit v-model:bomData="bomModifyData" :onDelete="handleDelete" />
     </el-card>
   </div>
 </template>
@@ -151,7 +151,13 @@ const handleSubmit = async () => {
     auditFlowId,
     solutionId,
     gradientId: props.gradientId,
-    file: fileIds[0]
+    file: fileIds[0],
+    Year: props.yearData.year,
+    UpDown: props.yearData.upDown,
   })
+}
+
+const handleDelete = (index: number) => {
+  bomModifyData.value.splice(index, 1)
 }
 </script>

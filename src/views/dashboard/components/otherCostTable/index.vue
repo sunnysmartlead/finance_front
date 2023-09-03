@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card m="2" header="bom成本">
+    <el-card m="2" header="其他成本">
       <otherCostTable :manufactureData="manufactureData" />
     </el-card>
     <el-card m="2">

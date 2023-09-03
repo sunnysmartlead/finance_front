@@ -101,10 +101,11 @@
         <el-input v-model="row.remarks" />
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="120" v-if="!isEdit" fixed="right">
-      <template #default="{ row }">
+    <el-table-column label="操作" width="120" fixed="right">
+      <template #default="{ row, $index }">
         <el-row>
-          <el-button type="primary" @click="handleEdit(row)" link>修改</el-button>
+          <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
+          <el-button type="primary" v-if="isEdit" @click="onDelete($index)" link>删除</el-button>
         </el-row>
       </template>
     </el-table-column>
@@ -123,7 +124,7 @@ const props = defineProps({
   onEdit: {
     type: Function as PropType<any>
   },
-  onUpload: {
+  onDelete: {
     type: Function as PropType<any>
   }
 })
@@ -133,11 +134,4 @@ const toFixedThree = (_recoed: any, _row: any, val: any) => {
   return val
 }
 
-const handleEdit = (row: any) => {
-  props.onEdit(row)
-}
-
-const handleUpload = () => {
-  props.onUpload()
-}
 </script>

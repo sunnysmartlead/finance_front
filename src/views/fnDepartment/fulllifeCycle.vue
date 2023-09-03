@@ -68,10 +68,12 @@
             </el-input>
           </template>
         </el-table-column>
+        <el-table-column label="操作" fixed="right" width="100">
+          <template #default="{ $index }">
+            <el-button type="danger" @click="handleDelete($index)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
-      <div style="float: right; margin: 20px 0">
-        <el-button type="primary" @click="submit">提交</el-button>
-      </div>
     </el-card>
     <LogList :type="15" ref="logListRef" />
   </div>
@@ -96,7 +98,10 @@ const logListRef = ref<LogListAPI | null>(null)
 // 新增年
 const handleAddYear = () => {
   const len = data.tableData.length
-  const newYear = (data.tableData[len - 1].year || 0) + 1
+  let newYear = new Date().getFullYear()
+  if (len) {
+    newYear = (data.tableData[len - 1].year || 0) + 1
+  }
   data.tableData.push({
     monthlyWorkingDays: 0,
     averageWage: 0,
@@ -119,6 +124,10 @@ const submit = async () => {
       message: "提交成功"
     })
   }
+}
+
+const handleDelete = (index: any) => {
+  data.tableData.splice(index, 1)
 }
 
 onMounted(async () => {

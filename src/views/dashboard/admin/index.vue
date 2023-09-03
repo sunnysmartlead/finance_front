@@ -153,16 +153,11 @@
 import { reactive, onMounted, onBeforeUnmount, onBeforeMount, ref, computed } from "vue"
 import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "../common/const"
 import {
-  GetBomCost,
-  GetLossCost,
-  GetQualityCost,
   GetGradient,
   // GetPricingPanelProductSelectList,
   GetPricingPanelTimeSelectList,
   GetPricingPanelProportionOfProductCost,
   GetPricingPanelProfit,
-  GetLogisticsCost,
-  GetManufacturingCost,
   GetGoTable,
   addPricingPanelTrProgrammeId,
   SetPriceBoardState,
@@ -273,6 +268,7 @@ onBeforeMount(() => { })
 
 onMounted(() => {
   if (!auditFlowId) return false
+  console.log('渲染了')
   init()
   getPriceEvaluationTableInputCount()
   getIsTradeCompliance()

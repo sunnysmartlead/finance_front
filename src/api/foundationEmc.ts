@@ -15,6 +15,15 @@ export function createFoundationEmc(data) {
   })
 }
 
+/** 导出 */
+export function exportFoundationEmc(data:any) {
+  return request({
+    url: "/api/services/app/FoundationEmc/FoundationEmcDownloadStream",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
 // 查询岗位详细
 export function getFoundationEmcById(id: number) {
   return request({

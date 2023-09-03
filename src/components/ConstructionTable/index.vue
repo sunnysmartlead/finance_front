@@ -1,7 +1,6 @@
 <template>
   <div class="margin-top">
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
-      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
       <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
     </el-row>
     <el-card>
@@ -24,11 +23,11 @@
             </div>
           </template>
           <el-table
-            ref="multipleTableRef"
+            :ref="setTableRefs"
             :data="item.structureMaterial"
             style="width: 100%"
             height="75vh"
-            @selection-change="selectionChange($event, index)"
+            @selection-change="selectionChange($event, bomIndex)"
           >
             <el-table-column type="selection" width="55" v-if="isVertify" />
             <el-table-column type="index" label="序号" width="80" fixed="left" />
@@ -134,27 +133,6 @@
                 </el-table-column>
               </el-table-column>
             </el-table-column>
-            <!-- <el-table-column prop="materialsSystemPrice" label="系统单价" width="150">
-            <template #default="scope">
-              <el-input v-if="scope.row.isEdit" v-model="scope.row.materialsSystemPrice" />
-              <span v-if="!scope.row.isEdit">{{ scope.row.materialsSystemPrice }}</span>
-            </template>
-          </el-table-column> -->
-            <!-- <el-table-column prop="iginalCurrency" label="原币">
-            <el-table-column v-for="(c, i) in item.structureMaterial[0]?.iginalCurrency" align="center"
-              :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="175">
-              <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                :label="yearItem.year + upDownEnum[yearItem.upDown]" width="175" :formatter="formatDatas">
-                <template #default="scope">
-                  <el-input-number v-if="scope.row.isEdit"
-                    v-model="scope.row.iginalCurrency[i].yearOrValueModes[yIndex].value" controls-position="right"
-                    :min="0" />
-                  <span v-if="!scope.row.isEdit">{{
-                    scope.row.iginalCurrency[i]?.yearOrValueModes[yIndex]?.value.toFixed(5) }}</span>
-                </template>
-              </el-table-column>
-            </el-table-column>
-          </el-table-column> -->
             <el-table-column prop="standardMoney" label="本位币">
               <el-table-column
                 v-for="(c, i) in item.structureMaterial[0]?.standardMoney"
@@ -279,7 +257,6 @@ import { ConstructionModel } from "../ElectronicTable/data.type"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 // import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-
 import {
   GetStructural,
   PostStructuralMemberEntering,
@@ -298,6 +275,9 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
+import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
+import { map } from "lodash"
+const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
@@ -310,13 +290,15 @@ enum upDownEnum {
   "下半年"
 }
 
-const { auditFlowId, productId }: any = getQuery()
+const STORAGE_KEY = "constructionVertify" // 浏览器缓存key
+const MERGE_STORAGE_KEY = "constructionMergeVertify" // 合并审核浏览器缓存key
 
 const constructionBomList = shallowRef<any[]>([]) // 结构料 - table数据
 const exchangeSelectOptions = ref<any>([])
 const constructionId = ref<any[]>([])
 const construction = ref<any[]>([])
-const multipleTableRef = ref<any>()
+const multipleTableRef = ref<any>([])
+const multipleSelection = ref<any>()
 const peopleId = ref<any[]>([])
 const people = ref<any[]>([])
 const isAll = ref(false)
@@ -330,9 +312,6 @@ const data = reactive({
   peopleId
 })
 
-// 获取仓库的值
-// const store = useUserStore()
-
 const router = useRouter()
 
 const { jumpTodoCenter } = useJump()
@@ -342,35 +321,45 @@ onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 
-onMounted(() => {
+onMounted(async () => {
+
   if (props.isVertify) {
-    window.sessionStorage.setItem("placePath", router.currentRoute.value.path)
-    fetchConstructionInitData().then(() => {
-      const construction = window.sessionStorage.getItem("construction")
-      if (construction) {
-        let porp = JSON.parse(construction)
-        if (!porp) return
-        let isExist = porp.filter((p: any) => p.key == productId)
-        if (!isExist.length) return
-        const value = isExist[0].constructionId
-        toggleSelection(value) //数据反填
-      }
-    })
+    await fetchConstructionInitData()
+    toggleSelection() //数据反填
   } else {
     fetchInitData()
   }
 })
 
-const toggleSelection = (Ids: any) => {
+const setTableRefs = (el: any) => {
+  if (el) {
+    multipleTableRef.value.push(el)
+  }
+}
+
+const toggleSelection = () => {
   nextTick(() => {
-    Ids.forEach((id: any) => {
-      constructionBomList.value.forEach((item: any, index: number) => {
-        const row = item.structureMaterial.filter((p: any) => p.id == id)
-        if (row[0]) {
-          multipleTableRef.value[index]!.toggleRowSelection(row[0], true)
+    const storageData = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
+    let parseData: any = null
+    try {
+      parseData = JSON.parse(storageData)
+    } catch(err) {
+      console.log(err, '[结构bom单价审核界面赋值浏览器缓存失败]')
+    }
+    if (parseData) {
+      const productIdData = parseData[productId]
+      map(productIdData, (ids, index: number) => {
+        multipleSelection.value = {
+          [index]: ids
         }
+        ids.forEach((id: number) => {
+          const findItem = constructionBomList.value[index]?.structureMaterial?.find(c => c.id === id)
+          if (findItem) {
+            multipleTableRef.value[index]!.toggleRowSelection(findItem, true)
+          }
+        })
       })
-    })
+    }
   })
 }
 
@@ -526,52 +515,17 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any, index: number) => {
-  data.construction[index] = selection.map((p: any) => p.id)
-  data.people[index] = selection.map((p: any) => p.peopleId)
-  data.constructionId = data.construction.flat(Infinity) //上一个和下一个相加
-  data.peopleId = [...new Set(data.people.flat(Infinity))] //上一个和下一个相加
-  var prop = window.sessionStorage.getItem("construction")
-  var ConstructionId = [
-    {
-      key: productId,
-      constructionId: data.constructionId,
-      peopleId: data.peopleId
-    }
-  ]
-  if (prop) {
-    ConstructionId = JSON.parse(prop)
-    //判断有没有这个key
-    let isExist = ConstructionId.filter((p: any) => p.key == productId)
-    //console.log("ConstructionId", isExist)
-    if (isExist.length) {
-      ConstructionId.forEach((item: any, index: number) => {
-        //console.log("修改", item, productId)
-        if (item.key == productId) {
-          ConstructionId[index].constructionId = data.constructionId
-          ConstructionId[index].peopleId = data.peopleId
-        }
-      })
-    } else {
-      let propConstructionId = {
-        key: productId,
-        constructionId: data.constructionId,
-        peopleId: data.peopleId
-      }
-      ConstructionId.push(propConstructionId)
-      //console.log("添加")
-    }
-  } else {
-    let propConstructionId = {
-      key: productId,
-      constructionId: data.constructionId,
-      peopleId: data.peopleId
-    }
-    ConstructionId = []
-    ConstructionId.push(propConstructionId)
-    //console.log("直接添加")
+  console.log(selection, "selection123123")
+  const ids = map(selection, v => v.id)
+  multipleSelection.value = {
+    [index]: ids
   }
-  //console.log("结果", ConstructionId)
-  window.sessionStorage.setItem("construction", JSON.stringify(ConstructionId))
+  const storageData = {
+    [productId]: {
+      [index]: ids
+    }
+  }
+  setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
 }
 
 // 获取结构料初始化数据
@@ -586,91 +540,20 @@ const fetchConstructionInitData = async () => {
   }
 }
 
-// const handleSetBomState = (isAgree: boolean) => {
-//   var construction = [[]]
-//   var people = [[]]
-//   var prop = window.sessionStorage.getItem("construction")
-//   if (!prop && !isAgree) {
-//     ElMessage({
-//       message: "请选择要退回那些条数据!",
-//       type: "warning"
-//     })
-//     return
-//   } else {
-//     if (prop) {
-//       var constructionProp = JSON.parse(prop)
-//       constructionProp.forEach((p: any) => {
-//         construction.push(p.constructionId)
-//         people.push(p.peopleId)
-//       })
-//     }
-//   }
-//   data.constructionId = [...new Set(construction.flat(Infinity))]
-//   data.peopleId = [...new Set(people.flat(Infinity))]
-//   if (!isAgree && (!data.constructionId.length || !data.peopleId.length)) {
-//     ElMessage({
-//       message: "请选择要退回那些条数据!",
-//       type: "warning"
-//     })
-//     return
-//   }
-//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-//     confirmButtonText: "确定",
-//     cancelButtonText: "取消",
-//     type: "warning"
-//   }).then(async (val) => {
-//     const { success } = await SetBomState({
-//       isAgree,
-//       auditFlowId,
-//       bomCheckType: 4,
-//       opinionDescription: !isAgree ? val.value : "",
-//       unitPriceId: data.constructionId,
-//       peopleId: data.peopleId
-//     })
-//     if (success) jumpTodoCenter()
-//   })
-// }
-
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
-  var construction = [[]]
-  var people = [[]]
-  var prop = window.sessionStorage.getItem("construction")
-  if (!prop && !opinion.includes("_Yes")) {
-    ElMessage({
-      message: "请选择要退回那些条数据!",
-      type: "warning"
-    })
-    return
-  } else {
-    if (prop) {
-      var constructionProp = JSON.parse(prop)
-      constructionProp.forEach((p: any) => {
-        construction.push(p.constructionId)
-        people.push(p.peopleId)
-      })
-    }
-  }
-  data.constructionId = [...new Set(construction.flat(Infinity))]
-  data.peopleId = [...new Set(people.flat(Infinity))]
-  if (!opinion.includes("_Yes") && (!data.constructionId.length || !data.peopleId.length)) {
+  console.log(multipleSelection.value, "multipleSelection.value123")
+  let idsData: any = []
+  map(multipleSelection.value, (val, index) => {
+    idsData.push(...val)
+  })
+  console.log(idsData, "[结构料审核ids]")
+  if (!opinion.includes("_Yes") && !idsData.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  // const { success } = await SetBomState({
-  //   isAgree: !opinion.includes("_No"),
-  //   auditFlowId,
-  //   bomCheckType: 4,
-  //   opinionDescription: comment,
-  //   comment,
-  //   opinion,
-  //   nodeInstanceId,
-  //   unitPriceId: data.constructionId,
-  //   peopleId: data.peopleId
-  // })
   const { success } = await BomReview({
     // isAgree: !opinion.includes("_No"),
     auditFlowId,
@@ -679,27 +562,15 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: data.constructionId
+    structureUnitPriceId: idsData,
     // peopleId: data.peopleId
   })
 
   if (success) jumpTodoCenter()
 }
-
-watch(
-  () => router.currentRoute.value.path,
-  (newValue) => {
-    const path = window.sessionStorage.getItem("placePath")
-    if (path) {
-      //比较两个值是否一致
-      if (newValue != path) {
-        window.sessionStorage.removeItem("construction")
-      }
-    }
-  },
-  { immediate: true }
-)
-
+defineExpose({
+  getSelection: () => multipleSelection.value
+})
 watchEffect(() => {})
 </script>
 <style scoped lang="scss">

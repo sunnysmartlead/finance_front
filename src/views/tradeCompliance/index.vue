@@ -41,7 +41,7 @@
       <!-- <el-descriptions-item label="审核/日期"> {{ data.tradeComplianceCheck.deletionTime }} </el-descriptions-item> -->
     </el-descriptions>
     <div style="float: right; margin: 20px 0">
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" />
       <!-- <el-button @click="agree(true)" v-havedone>退回</el-button>
       <el-button type="primary" @click="agree(false)" v-havedone>归档</el-button> -->
     </div>
@@ -82,7 +82,7 @@ onMounted(() => {
 })
 
 const initFetch = async () => {
-  const { result } = await GetTradeComplianceCheckFromDateBase({ AuditFlowId: auditFlowId, ProductId: productId })
+  const { result } = await GetTradeComplianceCheckFromDateBase({ AuditFlowId: auditFlowId, SolutionId: productId })
   data.productMaterialInfos = result.productMaterialInfos || []
   data.tradeComplianceCheck = result.tradeComplianceCheck || {}
   console.log(result, "res")
@@ -107,7 +107,7 @@ const initFetch = async () => {
 //     }
 //   })
 // }
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await IsTradeComplianceCheck({
     AuditFlowId: auditFlowId,
     opinionDescription: comment,

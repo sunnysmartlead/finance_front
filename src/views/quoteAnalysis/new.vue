@@ -33,7 +33,8 @@
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：2 共线分摊率：2</p>
-      <el-table :data="nre.models" style="width: 100%" border height="500px">
+      <el-table :data="nre.models" style="width: 100%" border height="500px"  :summary-method="getSummaries"
+        show-summary>
         <el-table-column prop="index" label="序号" />
         <el-table-column prop="costName" label="费用名称" />
         <el-table-column prop="pricingMoney" label="核价金额" />
@@ -745,7 +746,33 @@ const openDialog = async (row: any) => {
   // data.dialogTable = result
   // dialogVisible.value = true
 }
+const getSummaries = (param) => {
+  const { columns, data } = param
+  const sums: string[] = []
+  columns.forEach((column, index) => {
+    if (index === 0) {
+      sums[index] = "合计"
+      return
+    }
+    if (index === 2 || index === 4) {
+      const values = data.map((item) => Number(item[column.property]))
+      if (!values.every((value) => Number.isNaN(value))) {
+        sums[index] = `${values.reduce((prev, curr) => {
+          const value = Number(curr)
+          if (!Number.isNaN(value)) {
+            return prev + curr
+          } else {
+            return prev
+          }
+        }, 0)}`
+      } else {
+        sums[index] = "N/A"
+      }
+    }
+  })
 
+  return sums
+}
 const addNewPlan = () => {
   data.tableData.push({
     projectsPlan: 1,
@@ -865,7 +892,7 @@ onBeforeMount(() => {
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
-watchEffect(() => { })
+watchEffect(() => {})
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

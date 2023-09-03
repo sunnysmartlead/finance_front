@@ -503,9 +503,7 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-card>
-        <h6 />
-        <el-card>
+          <h6 />
           <el-form-item label="是否分梯度核价：">
             <el-select v-model="state.quoteForm.isHasGradient" placeholder="是否分梯度核价" :disabled="isDisabled">
               <el-option :value="true" label="是" />

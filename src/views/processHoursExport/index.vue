@@ -1063,7 +1063,7 @@ const handleSaveData = () => {
     processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
   }
   console.log("保存参数", param)
-  handleSaveOption(param).then((response: any) => {
+  return handleSaveOption(param).then((response: any) => {
     console.log("保存响应", response)
     if (response.success) {
       ElMessage({
@@ -1103,29 +1103,30 @@ const handleSaveData = () => {
 // }
 
 const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
-  handleSaveData() // 保存
-  let param = {
-    auditFlowId: auditFlowId,
-    solutionId: productId,
-    comment,
-    opinion,
-    nodeInstanceId
-  }
-  handleSubmitOption(param).then((response: any) => {
-    console.log("提交响应", response)
-    if (response.success) {
-      ElMessage({
-        type: "success",
-        message: response.result
-      })
-      initData()
-    } else {
-      ElMessage({
-        type: "error",
-        message: "失败"
-      })
+  handleSaveData().then((p:any)=>{
+    let param = {
+      auditFlowId: auditFlowId,
+      solutionId: productId,
+      comment,
+      opinion,
+      nodeInstanceId
     }
-  })
+    handleSubmitOption(param).then((response: any) => {
+      console.log("提交响应", response)
+      if (response.success) {
+        ElMessage({
+          type: "success",
+          message: response.result
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: "error",
+          message: "失败"
+        })
+      }
+    })
+  }) // 保存
 }
 
 const upload = ref<UploadInstance>()

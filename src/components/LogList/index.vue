@@ -10,7 +10,7 @@
             <el-button type="primary" @click="saveLog">保存</el-button>
           </div>
         </div>
-        <div class="u-m-t-20">
+        <div class="u-m-t-20 content-wrap">
           <el-timeline>
             <el-timeline-item placement="top" v-for="(activity, index) in baseLibLogRecords" :key="index"
               :timestamp="formatDateTime(activity.lastModificationTime)">
@@ -103,3 +103,10 @@ defineExpose({
   onRefresh: () => getEnvOptionLog()
 })
 </script>
+
+<style lang="scss" scoped>
+.content-wrap {
+  max-height: 600px;
+  overflow-y: auto;
+}
+</style>

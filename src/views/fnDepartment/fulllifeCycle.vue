@@ -14,22 +14,22 @@
         <el-table-column label="年份Sop" prop="year" width="180" />
         <el-table-column label="月工作天数" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.monthlyWorkingDays" />
+            <el-input-number controls-position="right" v-model="row.monthlyWorkingDays" />
           </template>
         </el-table-column>
         <el-table-column label="人员平均工资" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.averageWage" />
+            <el-input-number controls-position="right" v-model="row.averageWage" />
           </template>
         </el-table-column>
         <el-table-column label="每班正常工作时间" width="180">
           <template #default="{ row }">
-            <el-input v-model="row.workingHours" />
+            <el-input-number controls-position="right" v-model="row.workingHours" />
           </template>
         </el-table-column>
         <el-table-column label="嫁动率" width="180">
           <template #default="{ row }">
-            <el-input  type="number" v-model="row.rateOfMobilization">
+            <el-input type="number" v-model="row.rateOfMobilization">
               <template #append>%</template>
             </el-input>
           </template>
@@ -51,7 +51,7 @@
             </el-input>
           </template>
         </el-table-column>
-        <el-table-column label="人均跟线数量">
+        <el-table-column label="人均跟线数量" width="180">
           <template #default="{ row }">
             <el-input-number controls-position="right" :min="0" v-model="row.traceLineOfPerson" />
           </template>

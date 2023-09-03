@@ -1,6 +1,12 @@
 <template>
   <div class="electronic-import">
-    <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
+    <el-row justify="end" m="2">
+      <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
+    </el-row>
+    <el-row justify="end">
+      <InterfaceRequiredTime :ProcessIdentifier="Host" />
+    </el-row>
     <CustomerSpecificity />
     <TrView btnText="查看主方案设计" />
     <customerTargetPrice />
@@ -66,11 +72,6 @@
         <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
       </el-table>
     </el-card>
-
-    <div style="float: right; margin-top: 20px">
-      <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
-    </div>
 
     <el-dialog v-model="data.setVisible">
       <el-form :model="data.downloadSetForm">
@@ -153,7 +154,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 }
 
 const queryBoardInfomation = async () => {
-  const { success, result } = (await GetBoardInfomation({
+  const { success, result }: any = (await GetBoardInfomation({
     auditFlowId: auditFlowId,
     solutionId: productId
   })) || {}
@@ -188,31 +189,6 @@ const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
 
-// const submit = async () => {
-//   const loading = ElLoading.service({
-//     lock: true,
-//     text: "加载中",
-//     background: "rgba(0, 0, 0, 0.7)"
-//   })
-//   if (!productId) {
-//     loading.close()
-//     ElMessage.error("未选择零件！")
-//     return
-//   }
-//   try {
-//     let { success }: any = await SaveElectronicBom({
-//       auditFlowId,
-//       solutionId: productId,
-//       electronicBomDtos: data.tableData,
-//       boardDtos: platePart.value
-//     })
-//     loading.close()
-//     success && ElMessage.success("提交成功！")
-//   } catch (error) {
-//     loading.close()
-//   }
-// }
-
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const loading = ElLoading.service({
     lock: true,
@@ -222,6 +198,14 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   if (!productId) {
     loading.close()
     ElMessage.error("未选择零件！")
+    return
+  }
+  const isPass = platePart.value.some(item => {
+    return !item.typeName || !item.isInvolveItem
+  })
+  if (!isPass) {
+    loading.close()
+    ElMessage.error("请填写完整表单信息！")
     return
   }
   try {

@@ -84,6 +84,7 @@ export interface ManufacturingCostsItem {
   vatRate?: number | null | string
   year?: number
   traceLineOfPerson?: number | null | string
+  sop?: number
 }
 
 export interface ManufacturingCostsInfo {

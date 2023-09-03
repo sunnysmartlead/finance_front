@@ -1,5 +1,7 @@
 <template>
-  <EngineeringDepartmentTable />
+  <div class="EngineeringDepartmentTable">
+    <EngineeringDepartmentTable />
+  </div>
 </template>
 
 <script lang="ts" setup>

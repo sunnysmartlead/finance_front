@@ -69,15 +69,8 @@
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index"
-                  v-model="scope.row.installationName"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
-                  @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in installationNameOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value" />
-                </el-select>
+                <el-input v-model="scope.row.installationName" :disabled="currentEditProcessIndex != scope.$index"
+                          placeholder="请输入工装名称" />
               </div>
             </template>
           </el-table-column>
@@ -395,6 +388,7 @@ const saveEdit = async (index: number, row: any) => {
   console.log("保存编辑内容", row);
   let pname= row.processName;
   let pNumber= row.processNumber;
+  let installationName= row.installationName;
   if(pname==null||pname==undefined||pname.length<1){
     ElMessage({
       type: 'error',
@@ -406,6 +400,13 @@ const saveEdit = async (index: number, row: any) => {
     ElMessage({
       type: 'error',
       message: '工序序号不能为空!'
+    })
+    return;
+  }
+  if(installationName==null||installationName==undefined||installationName.length<1){
+    ElMessage({
+      type: 'error',
+      message: '工装名称不能为空!'
     })
     return;
   }

@@ -286,13 +286,28 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       if (ruleForm.id == 0) {
         createFoundationEmc(ruleForm).then((response) => {
-          open.value = false
-          initData()
+          if (response.result.success){
+            open.value = false
+            initData()
+          }else {
+            ElMessage({
+              type:'error',
+              message:response.result.error
+            });
+          }
+
         })
       } else {
         updateFoundationEmc(ruleForm).then((response) => {
-          open.value = false
-          initData()
+          if (response.result.success){
+            open.value = false
+            initData()
+          }else {
+            ElMessage({
+              type:'error',
+              message:response.result.error
+            });
+          }
         })
       }
     } else {

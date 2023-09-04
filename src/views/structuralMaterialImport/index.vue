@@ -1,10 +1,10 @@
 <template>
-  <div class="electronic-import">
+  <div class="structuralMaterial-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
     <CustomerSpecificity />
-    <TrDownLoad />
+    <TrView btnText="查看主方案设计" />
     <customerTargetPrice />
-    <el-row class="electronic-import__btn-container">
+    <el-row class="structuralMaterial-import__btn-container">
       <el-upload
         :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
         :on-success="handleSuccess"
@@ -22,7 +22,6 @@
         <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
       </el-upload>
       <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
-      <ProductInfo :auditFlowId="data.auditFlowId" />
     </el-row>
 
     <h5>结构料导入</h5>
@@ -148,12 +147,13 @@ import {
 } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
-import ProductInfo from "@/components/ProductInfo/index.vue"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import TrView from "@/components/TrView/index.vue"
+
 let Host = "StructBomImport"
 const refForm = ref<FormInstance>()
 let auditFlowId: any = null
@@ -320,7 +320,8 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
 }
 </script>
 <style lang="scss" scoped>
-.electronic-import {
+.structuralMaterial-import {
+  padding:20px 0;
   &__btn-container {
     margin: 20px 0;
     position: relative;

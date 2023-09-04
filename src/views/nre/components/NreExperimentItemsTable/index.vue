@@ -233,7 +233,7 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
 // NRE实验费模板下载
 const handleFethNreTableDownload = async () => {
   try {
-    const res: any = await GetExportOfEnvironmentalExperimentFeeForm({
+    const res: any = await PostExperimentItemsSingleDownloadExcel({
       auditFlowId,
       solutionId: productId
     })
@@ -244,10 +244,10 @@ const handleFethNreTableDownload = async () => {
   }
 }
 
-// 环境实验费模板下载
+// 环境实验费模板导出
 const handleDownLoadExcel = async () => {
   try {
-    const res = await PostExperimentItemsSingleDownloadExcel({
+    const res = await GetExportOfEnvironmentalExperimentFeeForm({
       auditFlowId,
       solutionId: productId
     })

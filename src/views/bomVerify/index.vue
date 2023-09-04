@@ -19,6 +19,7 @@ import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { BomReview } from "@/components/ElectronicTable/common/request"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
+import { map } from "lodash"
 
 const { auditFlowId }: any = getQuery()
 const { jumpTodoCenter } = useJump()
@@ -28,14 +29,25 @@ const electronicRef = ref<any>()
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   const constructionSelection = constructionRef.value.getSelection()
-  const electronicSelection = electronicRef.value.getSelection()
+  const electronicSelection = electronicRef.value.getSelection() || []
+  const constructionIds: any = []
+  map(constructionSelection, (val) => {
+    constructionIds.push(...val)
+  })
+  if (!opinion.includes("_Yes") && !constructionIds.length && electronicSelection.length) {
+    ElMessage({
+      message: "请选择要退回那些条数据!",
+      type: "warning"
+    })
+    return
+  }
   const { success } = await BomReview({
     auditFlowId,
     bomCheckType: 5, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: constructionSelection.flat(2),
+    structureUnitPriceId: constructionIds,
     electronicsUnitPriceId: electronicSelection
   })
   if (success) jumpTodoCenter()

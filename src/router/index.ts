@@ -658,14 +658,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
           title: "结构料BOM查看"
         }
       },
-      {
-        path: "/bomView/index",
-        component: () => import("@/views/bomView/index.vue"),
-        name: "bomView",
-        meta: {
-          title: "BOM查看"
-        }
-      }
+      // {
+      //   path: "/bomView/index",
+      //   component: () => import("@/views/bomView/index.vue"),
+      //   name: "bomView",
+      //   meta: {
+      //     title: "BOM查看"
+      //   }
+      // }
     ]
   },
 

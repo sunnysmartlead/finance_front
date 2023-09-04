@@ -1,7 +1,6 @@
 <template>
   <div class="margin-top">
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
-      <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
       <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
     </el-row>
     <el-card>
@@ -50,7 +49,7 @@
                 :class-name="`column-class-${i}`"
                 v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount"
                 prop="materialsUseCount"
-                width="175"
+                width="150"
                 :key="`materialsUseCount${i}`"
               >
                 <el-table-column
@@ -81,14 +80,14 @@
                 align="center"
                 :class-name="`column-class-${i}`"
                 :label="`${c.kv} K/Y`"
-                width="175"
+                width="150"
                 :key="`systemiginalCurrency${i}`"
               >
                 <el-table-column
                   v-for="(yearItem, iIndex) in c?.yearOrValueModes"
                   :key="iIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="175"
+                  width="150"
                 >
                   <template #default="scope">
                     <el-input-number
@@ -96,7 +95,7 @@
                       v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value"
                       controls-position="right"
                       :min="0"
-                      @change="handleCalculation(scope.row, bomIndex, scope.$index)"
+                      @input="handleCalculation(scope.row, bomIndex, scope.$index)"
                     />
                     <span v-if="!scope.row.isEdit">{{
                       scope.row.systemiginalCurrency[i]?.yearOrValueModes[iIndex]?.value.toFixed(5)
@@ -111,7 +110,7 @@
                 align="center"
                 :class-name="`column-class-${i}`"
                 :label="`${c.kv} K/Y`"
-                width="175"
+                width="150"
                 :key="`inTheRate${i}`"
                 :formatter="filterinTheRate"
               >
@@ -119,7 +118,7 @@
                   v-for="(yearItem, yIndex) in c?.yearOrValueModes"
                   :key="yIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="175"
+                  width="150"
                 >
                   <template #default="scope">
                     <el-input
@@ -140,20 +139,20 @@
                 align="center"
                 :class-name="`column-class-${i}`"
                 :label="`${c.kv} K/Y`"
-                width="175"
+                width="150"
                 :key="`standardMoney${i}`"
               >
                 <el-table-column
                   v-for="(yearItem, yIndex) in c?.yearOrValueModes"
                   :key="yIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="175"
+                  width="150"
                   :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`"
                   :formatter="filterStandardMoney"
                 />
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="moq" label="MOQ" width="175">
+            <el-table-column prop="moq" label="MOQ" width="150">
               <template #default="{ row }">
                 <el-input-number v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
                 <span v-if="!row.isEdit">{{ row.moq }}</span>
@@ -164,7 +163,7 @@
                 v-for="(c, i) in item.structureMaterial[0]?.rebateMoney"
                 align="center"
                 :label="`${c.kv} K/Y`"
-                width="175"
+                width="150"
                 :key="`rebateMoney${i}`"
               >
                 <template #default="{ row }">
@@ -200,33 +199,35 @@
             </el-table-column>
             <el-table-column prop="peopleName" label="确认人" />
             <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
-              <template #default="scope">
+              <template #default="{ row, $index }">
                 <el-button
                   link
-                  :disabled="scope.row.isSubmit"
-                  @click="handleSubmit(scope.row, 0, bomIndex, scope.$index)"
+                  :disabled="row.isSubmit"
+                  @click="handleSubmit(row, 0, bomIndex, $index)"
                   type="danger"
+                  :loading="row.loading"
                   >确认</el-button
                 >
                 <el-button
-                  v-if="scope.row.isEntering"
-                  :disabled="scope.row.isSubmit"
+                  v-if="row.isEntering"
+                  :disabled="row.isSubmit"
                   link
-                  @click="handleSubmit(scope.row, 1, bomIndex, scope.$index)"
+                  @click="handleSubmit(row, 1, bomIndex, $index)"
                   type="warning"
+                  :loading="row.loading"
                 >
                   提交
                 </el-button>
                 <el-button
-                  v-if="!scope.row.isEdit"
-                  :disabled="scope.row.isSubmit"
+                  v-if="!row.isEdit"
+                  :disabled="row.isSubmit || row.loading"
                   link
-                  @click="handleEdit(scope.row, true)"
+                  @click="handleEdit(row, true)"
                   type="primary"
                 >
                   修改
                 </el-button>
-                <el-button v-if="scope.row.isEdit" link @click="handleEdit(scope.row, false)">取消</el-button>
+                <el-button v-if="row.isEdit" link @click="handleEdit(row, false)">取消</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -350,6 +351,9 @@ const toggleSelection = () => {
     if (parseData) {
       const productIdData = parseData[productId]
       map(productIdData, (ids, index: number) => {
+        multipleSelection.value = {
+          [index]: ids
+        }
         ids.forEach((id: number) => {
           const findItem = constructionBomList.value[index]?.structureMaterial?.find(c => c.id === id)
           if (findItem) {
@@ -404,35 +408,39 @@ const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, row
     await submitFun(record, isSubmit, bomIndex, rowIndex)
   } else {
     //确认
-
     await SubmitJudge(record, isSubmit, bomIndex, rowIndex)
   }
 }
 
-// 根据汇率计算
-const handleCalculation = debounce(async (row: any, bomIndex: number, index: number) => {
+const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, index: number) => {
   try {
-    constructionBomList.value[bomIndex].loading = true
+    row.loading = true
     const { success, result } = await PostStructuralMaterialCalculate(row)
     if (!success && !result.length) {
-      constructionBomList.value[bomIndex].loading = false
+      row.loading = false
       throw Error()
     }
     const res = { ...(result || {}), isEdit: true }
     constructionBomList.value[bomIndex].structureMaterial[index] = res
-    constructionBomList.value[bomIndex].loading = false
+    row.loading = false
   } catch (err) {
     ElMessage.error("计算失败~")
-    constructionBomList.value[bomIndex].loading = false
+    row.loading = false
   }
 }, 300)
+
+// 根据汇率计算
+const handleCalculation = (row: any, bomIndex: number, index: number) => {
+  row.loading = true
+  return debounceHandleCalculation(row, bomIndex, index)
+}
 
 const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   //判断本位币金额是否是否存在0
   const { systemiginalCurrency } = record
 
   let label = ""
-  const isPass = systemiginalCurrency.every((s: any) => {
+  const notPass = systemiginalCurrency.every((s: any) => {
     const isRight = s.yearOrValueModes.every((y: any, i: number) => {
       if (!y.value) label = `系统单价（原币）的 ${s.kv} K/Y 下第${i + 1}列的值为0`
       return !!y.value
@@ -440,10 +448,8 @@ const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowI
     return isRight
   })
 
-  if (!isPass) {
+  if (!notPass) {
     ElMessageBox.confirm(`${label},是否继续执行`, "确认提醒", {
-      // if you want to disable its autofocus
-      // autofocus: false,
       confirmButtonText: "确认",
       cancelButtonText: "取消",
       type: "warning"
@@ -513,6 +519,7 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any, index: number) => {
+  console.log(selection, "selection123123")
   const ids = map(selection, v => v.id)
   multipleSelection.value = {
     [index]: ids
@@ -538,27 +545,13 @@ const fetchConstructionInitData = async () => {
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
-  var construction = [[]]
-  var people = [[]]
-  var prop = window.sessionStorage.getItem("construction")
-  if (!prop && !opinion.includes("_Yes")) {
-    ElMessage({
-      message: "请选择要退回那些条数据!",
-      type: "warning"
-    })
-    return
-  } else {
-    if (prop) {
-      var constructionProp = JSON.parse(prop)
-      constructionProp.forEach((p: any) => {
-        construction.push(p.constructionId)
-        people.push(p.peopleId)
-      })
-    }
-  }
-  data.constructionId = [...new Set(construction.flat(Infinity))]
-  data.peopleId = [...new Set(people.flat(Infinity))]
-  if (!opinion.includes("_Yes") && (!data.constructionId.length || !data.peopleId.length)) {
+  console.log(multipleSelection.value, "multipleSelection.value123")
+  let idsData: any = []
+  map(multipleSelection.value, (val, index) => {
+    idsData.push(...val)
+  })
+  console.log(idsData, "[结构料审核ids]")
+  if (!opinion.includes("_Yes") && !idsData.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -573,7 +566,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: multipleSelection.value.flat(2),
+    structureUnitPriceId: idsData,
     // peopleId: data.peopleId
   })
 

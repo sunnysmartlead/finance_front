@@ -159,6 +159,19 @@
         </el-table-column>
       </el-table>
     </el-card>
+    <!-- 样品 -->
+    <p>样品报价</p>
+    <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
+      <span>{{ sample.solutionName }}</span>
+      <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
+        <el-table-column prop="sampleName" label="样品阶段" />
+        <el-table-column prop="pcs" label="需求量（pcs）" />
+        <el-table-column prop="cost" label="成本" />
+        <el-table-column prop="unitPrice" label="单价" />
+        <el-table-column prop="grossMargin" label="毛利率" />
+        <el-table-column prop="salesRevenue" label="销售收入" />
+      </el-table>
+    </el-card>
     <!-- <el-card header="费用表：" m="2">
       <el-table :data="data.resa.expensesStatement" border>
         <el-table-column type="index" width="100" />

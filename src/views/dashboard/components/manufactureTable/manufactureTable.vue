@@ -47,7 +47,7 @@
         :formatter="toFixedTwo">
         <template #default="{ row }">
           <el-input-number v-if="isEdit" controls-position="right" :min="0"
-            v-model="row.manufacturingCostIndirect.directLabor" />
+            v-model="row.manufacturingCostIndirect.equipmentDepreciation" />
         </template>
       </el-table-column>
       <el-table-column prop="manufacturingCostIndirect.manufacturingExpenses" label="制造费用" width="175"

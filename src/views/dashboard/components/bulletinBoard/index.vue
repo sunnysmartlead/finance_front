@@ -164,7 +164,7 @@ import {
   SetPriceEvaluationTableInputCount,
   CreatePriceEvaluationTable,
   GetIsTradeCompliance
-} from "../service"
+} from "../../service"
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
 import { ElMessage, ElMessageBox } from "element-plus"
@@ -174,15 +174,14 @@ import useJump from "@/hook/useJump"
 import router from "@/router"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { useRoute } from "vue-router"
-import bomTable from "../components/bomTable/index.vue"
-import lossTable from "../components/lossTable/index.vue"
-import manufactureTable from "../components/manufactureTable/index.vue"
-import logisticsTable from "../components/logisticsTable/index.vue"
-import qualityTable from "../components/qualityTable/index.vue"
-import otherCostTable from "../components/otherCostTable/index.vue"
+import bomTable from "../../components/bomTable/index.vue"
+import lossTable from "../../components/lossTable/index.vue"
+import manufactureTable from "../../components/manufactureTable/index.vue"
+import logisticsTable from "../../components/logisticsTable/index.vue"
+import qualityTable from "../../components/qualityTable/index.vue"
+import otherCostTable from "../../components/otherCostTable/index.vue"
 import { SetBomState } from "@/api/bom"
 import { isEmpty } from "lodash"
-import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 const { jumpTodoCenter } = useJump()
 
@@ -271,15 +270,17 @@ const initCharts = (id: string, chartOption: any) => {
 onBeforeMount(() => { })
 
 onMounted(() => {
-  if (!auditFlowId) return false
+  if (!auditFlowId && isEmpty(filterYearData.value)) return false
   init()
   getPriceEvaluationTableInputCount()
   getIsTradeCompliance()
 })
 
 const init = async () => {
+  if (!auditFlowId && isEmpty(filterYearData.value)) return false
   await initChart()
   await fetchOptionsData()
+  if (!productId) return false
   await fetchAllData()
   await getGoTableChartData()
 }
@@ -414,7 +415,6 @@ const getPricingPanelProportionOfProductCost = async () => {
 // 核价看板-利润分布图
 const getPricingPanelProfit = async () => {
   try {
-    if (isEmpty(filterYearData)) return
     const { result }: any = await GetPricingPanelProfit({
       Year: filterYearData.value.year,
       AuditFlowId: auditFlowId,

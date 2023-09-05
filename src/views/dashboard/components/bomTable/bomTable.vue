@@ -55,9 +55,9 @@
         <el-input-number controls-position="right" :min="0" v-model="row.totalMoneyCyn" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column prop="totalMoneyCyn" label="合计金额（人民币）- 不含客供" width="175" :formatter="toFixedThree">
+    <el-table-column prop="totalMoneyCynNoCustomerSupply" label="合计金额（人民币）- 不含客供" width="175" :formatter="toFixedThree">
       <template #default="{ row }">
-        <el-input-number controls-position="right" :min="0" v-model="row.totalMoneyCyn" v-if="isEdit" />
+        <el-input-number controls-position="right" :min="0" v-model="row.totalMoneyCynNoCustomerSupply" v-if="isEdit" />
       </template>
     </el-table-column>
     <el-table-column prop="loss" label="损耗" width="175" :formatter="toFixedThree">

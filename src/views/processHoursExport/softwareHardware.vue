@@ -53,8 +53,8 @@
           <div class="u-text-center">
             <div class="u-text-center u-border  u-p-t-5 u-p-b-5" style="background-color:#79bbff;">硬软件部分</div>
             <div class="u-flex u-row-left u-col-center  u-text-center">
-              <template v-if="data.tableData.length > 0">
-                <div v-for="index in data.tableData[0]?.listHardware.length" :key="index"
+              <template v-if="tableData.length > 0">
+                <div v-for="index in tableData[0]?.listHardware.length" :key="index"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
                     <span>硬件{{ index }}名称</span>
@@ -71,7 +71,7 @@
                 </div>
               </template>
               <template v-else>
-                <div  class="u-flex u-row-left u-col-center u-text-center">
+                <div class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
                     <span>硬件名称</span>
                   </div>
@@ -98,19 +98,32 @@
             <div class="u-width-300 u-border u-height-60"><span>操作</span></div>
           </div>
         </div>
-        <template v-if="data.tableData?.length > 0">
+        <template v-if="tableData?.length > 0">
           <div>
-            <div v-for="(dataItem, dataIndex) in data.tableData" :key="dataIndex"
+            <div v-for="(dataItem, dataIndex) in tableData" :key="dataIndex"
               class="u-flex u-row-left u-col-center u-text-center">
               <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                 <div class="u-width-150 u-border">
-                  <el-input v-model="dataItem.processNumber" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                  <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
+                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :remote-method="remoteMethodForProcessNumber"
+                    @change="processNumberChange($event, dataIndex)" :loading="optionLoading">
+                    <el-option v-for="item in processNumberOptions" 
+                          :key="item.id" :label="item.processNumber"
+                      :value="item.processNumber" />
+                  </el-select>
+
                 </div>
                 <div class="u-width-150 u-border">
-                  <el-input v-model="dataItem.processName" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                  <el-select v-model="dataItem.processName" filterable remote reserve-keyword
+                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :remote-method="remoteMethodForProcessName"
+                    @change="processNameChange($event, dataIndex)" :loading="optionLoading">
+                    <el-option v-for="item in processNameOptions" 
+                        :key="item.id" :label="item.processName"
+                      :value="item.processName" />
+                  </el-select>
                 </div>
               </div>
 
@@ -188,9 +201,9 @@
         </template>
         <template v-else>
           <div class="u-text-center u-p-t-20 u-p-b-20"
-                        style="background-color: #f8f8f8;color: #909399;min-width: 2500px;">
-                        <span>暂无数据</span>
-           </div>
+            style="background-color: #f8f8f8;color: #909399;min-width: 2500px;">
+            <span>暂无数据</span>
+          </div>
         </template>
       </el-scrollbar>
     </div>
@@ -250,10 +263,7 @@ import {
   updateFoundationFixture
 } from "@/api/foundationFixtureDto";
 import { getDeviceLog } from "@/api/foundationDeviceDto";
-interface selectOptionListItem {
-  value: string
-  label: string
-}
+import { GetListAll as queryProcessList } from "@/api/process";
 //查询关键字
 const queryForm = reactive({
   deviceName: '',
@@ -261,12 +271,11 @@ const queryForm = reactive({
 })
 const data = reactive<any>({
   tableColumnWidth: 200,
-  tableData: [],
   currentEditProcessIndex: -1,
-  optionLoading: false,
-  processIndexOptions: <Array<selectOptionListItem>>[],
-  processNameOptions: <Array<selectOptionListItem>>[],
 })
+
+//表格数据
+let tableData = ref<any>([])
 
 let currentEditProcessItem: any = null;
 onMounted(() => {
@@ -276,11 +285,110 @@ onMounted(() => {
 const initData = async () => {
   let listResult: any = await getListAll({ DeviceName: queryForm.deviceName, softwareName: queryForm.softwareName })
   if (listResult.success) {
-    data.tableData = listResult.result
+    tableData.value = listResult.result
   }
   getDeviceOptionLog()
-  console.log(data.tableData)
 }
+
+//下拉选项的数据类型定义
+interface selectOptionListItem {
+  id: Number,
+  processName: String,
+  processNumber: String
+}
+//异步请求loading
+const optionLoading = ref(false)
+const processNumberOptions = ref<selectOptionListItem[]>([])
+
+//填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForProcessNumber = async (query: string) => {
+  if (query) {
+    optionLoading.value = true;
+    await getProcessIndex(query);
+    optionLoading.value = false;
+  } else {
+    processNumberOptions.value = []
+  }
+}
+//查询工装名称的方法,用于渲染工装名称下拉框选项
+const getProcessIndex = async (keyWord: String) => {
+  let param = {
+    processNumber: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNumberOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNumberOptions.value = [];
+    }
+  })
+}
+
+//监听工装序号变化
+const processNumberChange = (value: any, dataIndex: any) => {
+  if (processNumberOptions.value.length > 0) {
+    let options = processNumberOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.processNumber == value) {
+        tableData.value[dataIndex].processName = item.processName;
+        return;
+      }
+    }
+  }
+}
+
+const processNameOptions = ref<selectOptionListItem[]>([])
+//填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForProcessName = async (query: string) => {
+  if (query) {
+    optionLoading.value = true;
+    await getProcessName(query);
+    optionLoading.value = false;
+  } else {
+    processNameOptions.value = []
+  }
+}
+//查询工装名称的方法,用于渲染工装名称下拉框选项
+const getProcessName = async (keyWord: String) => {
+  let param = {
+    ProcessName: keyWord
+  }
+  await queryProcessList(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      processNameOptions.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+      processNameOptions.value = [];
+    }
+  })
+}
+
+
+//监听工序名称变化
+const processNameChange = (value: any, dataIndex: any) => {
+  console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+  if (processNameOptions.value.length > 0) {
+    let options = processNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.processName == value) {
+        tableData.value[dataIndex].processNumber = item.processNumber;
+        return;
+      }
+    }
+  }
+}
+
 
 const addDevice = () => {
   let item = {
@@ -306,9 +414,9 @@ const addDevice = () => {
       },
     ]
   }
-  data.tableData.push(item);
+  tableData.value.push(item);
   currentEditProcessItem = item;
-  data.currentEditProcessIndex = data.tableData.length - 1;
+  data.currentEditProcessIndex = tableData.value.length - 1;
 }
 
 const submitSearch = () => {
@@ -316,31 +424,7 @@ const submitSearch = () => {
   initData()
 }
 
-//选择查询回调
-const remoteMethodForprocessIndex = (query: string) => {
-  if (query) {
-    data.optionLoading = true;
-    setTimeout(() => {
-      data.optionLoading = false;
-      data.processIndexOptions = getprocessIndex(query);
-    }, 200)
-  } else {
-    data.processIndexOptions = []
-  }
-}
-//模糊查询工装名称
-const getprocessIndex = (keyWord: String) => {
-  return [
-    { label: "工序编号1" + keyWord, value: '11111' },
-    { label: "工序编号2" + keyWord, value: '22222' },
-    { label: "工序编号3" + keyWord, value: '33333' },
-    { label: "工序编号4" + keyWord, value: '44444' }
-  ]
-}
-//监听工装名称变化
-const processIndexChange = (value: any, dataIndex: any) => {
-  console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);
-}
+
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -406,31 +490,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     message: '导入失败',
   })
 }
-//模糊查询工序名称
-const remoteMethodForProcessName = (query: string) => {
-  if (query) {
-    data.optionLoading = true;
-    setTimeout(() => {
-      data.optionLoading = false;
-      data.processNameOptions = getProcessName(query);
-    }, 200)
-  } else {
-    data.processNameOptions = []
-  }
-}
-//模糊查询工序名称
-const getProcessName = (keyWord: String) => {
-  return [
-    { label: "工序名称1" + keyWord, value: 'aaaaa' },
-    { label: "工序名称2" + keyWord, value: 'bbbbb' },
-    { label: "工序名称3" + keyWord, value: 'ccccc' },
-    { label: "工序名称4" + keyWord, value: 'ddddd' }
-  ]
-}
-//监听工序名称变化
-const processNameChange = (value: any, dataIndex: any) => {
-  console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
-}
+
 
 const disabledDate = (time: Date) => {
   return time.getTime() > Date.now()
@@ -449,7 +509,7 @@ const handleEdit = (index: number, row: any) => {
 
 const cancelEdit = (index: number, row: any) => {
   data.currentEditProcessIndex = -1;
-  data.tableData[index] = currentEditProcessItem;
+  tableData.value[index] = currentEditProcessItem;
 }
 
 
@@ -534,11 +594,4 @@ const getDeviceOptionLog = () => {
     }
   })
 }
-
-defineExpose({
-  data,
-  ...toRefs(data),
-  editLogFlag,
-  baseLibLogRecords
-})
 </script>

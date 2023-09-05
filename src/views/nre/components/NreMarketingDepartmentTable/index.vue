@@ -1,5 +1,8 @@
 <template>
-  <div style="padding: 0 10px">
+  <div class="NreMarketingDepartmentTable margin-top">
+    <el-row justify="end">
+      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
+    </el-row>
     <el-card class="margin-top">
       <template #header> 营销部 - 业务员 </template>
       <el-table :data="mouldInventoryData" style="width: 100%" border :summary-method="getMouldSummaries" show-summary>
@@ -23,10 +26,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
-    <div style="float: right; margin: 20px 0">
-      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
-    </div>
   </div>
 </template>
 

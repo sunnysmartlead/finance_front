@@ -33,6 +33,13 @@ export function createSubmit(data:any) {
   })
 }
 
+export function viewSOR(data:any) {
+  return request({
+    url: "/api/services/app/Logisticscost/GetSorByAuditFlowId",
+    method: "get",
+    data
+  })
+}
 
 
 /** 列表 */
@@ -51,3 +58,6 @@ export function GetGradientByAuditFlowId (data: QueryParams) {
     data
   })
 }
+
+
+

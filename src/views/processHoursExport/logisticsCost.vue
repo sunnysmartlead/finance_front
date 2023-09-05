@@ -43,7 +43,7 @@
 
       <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
         <div class="u-m-5">
-          <el-button type="primary">SOR查看</el-button>
+          <el-button type="primary" @click="showSor(0)">SOR查看</el-button>
         </div>
         <div class="u-m-5">
           <el-button type="primary">查看物流&包装基础数据</el-button>
@@ -158,28 +158,11 @@ import {
   createProcess,
   createSubmit,
   GetGradientllodelYearByProductId,
-  GetGradientByAuditFlowId
+  GetGradientByAuditFlowId,
+  viewSOR
 } from "@/api/logisticsCost"
 const data = reactive({
   editDisabled: true,
-  planOptions: [
-    {
-      value: "100",
-      label: "前视-方案一"
-    },
-    {
-      value: "200",
-      label: "前视-方案二"
-    },
-    {
-      value: "300",
-      label: "侧视-方案一"
-    },
-    {
-      value: "400",
-      label: "侧视-方案二"
-    }
-  ]
 })
 const productStore = useProductStore()
 //路径上的参数
@@ -209,6 +192,25 @@ const getListData = () => {
         ElMessage({
           type: "error",
           message: "列表加载失败"
+        })
+      }
+    })
+  }
+}
+
+const showSor=()=>{
+  if(auditFlowId != undefined){
+    let param={
+      auditFlowId:auditFlowId
+    }
+    viewSOR(param).then((response: any) => {
+      if (response.success) {
+        let data = response.result;
+        console.log("SOR请求响应",data);
+      } else {
+        ElMessage({
+          type: "error",
+          message: "数据加载失败!"
         })
       }
     })

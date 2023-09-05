@@ -75,7 +75,7 @@
                       v-model="scope.row.packagingPrice"
                       :precision="2"
                       :step="0.01"
-                      @change="pcsPriceChange($event, scope.$index, scope.row)"
+                      @change="pcsPriceChange($event, scope.$index, scope.row,cardIndex)"
                     />
                   </div>
                 </template>
@@ -88,7 +88,7 @@
                       v-model="scope.row.freightPrice"
                       :precision="2"
                       :step="0.01"
-                      @change="freightPriceChange($event, scope.$index, scope.row)"
+                      @change="freightPriceChange($event, scope.$index, scope.row,cardIndex)"
                     />
                   </div>
                 </template>
@@ -101,7 +101,7 @@
                       v-model="scope.row.storagePrice"
                       :precision="2"
                       :step="0.01"
-                      @change="storagePriceChange($event, scope.$index, scope.row)"
+                      @change="storagePriceChange($event, scope.$index, scope.row,cardIndex)"
                     />
                   </div>
                 </template>
@@ -109,7 +109,7 @@
               <el-table-column label="月需求量" align="center">
                 <template #default="scope">
                   <div>
-                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / 12).toFixed(2) }}</span>
+                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / 12*1000).toFixed(2) }}</span>
                     <span v-else>--</span>
                   </div>
                 </template>
@@ -117,14 +117,14 @@
               <el-table-column label="单PCS运输费" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.singlyDemandPrice }}</span>
+                    <span>{{ scope.row.singlyDemandPrice?Number(scope.row.singlyDemandPrice).toFixed(2):'0.00' }}</span>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column label="单PCS总物流成本" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.transportPrice }}</span>
+                    <span>{{ scope.row.transportPrice?Number(scope.row.transportPrice).toFixed(2):'0.00' }}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -226,15 +226,25 @@ const planChange = (value: any) => {
 }
 
 //单PCS包装价格/元发生变化
-const pcsPriceChange = (value: any, index: any, item: any) => {
-  console.log("单片价格变化", value)
-  console.log(`index===${index}`, item)
+const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
+  console.log("单片价格变化", value);
+  console.log("当前下表",cardIndex);
+  console.log(`index===${index}`,item)
   if (item.packagingPrice && item.singlyDemandPrice) {
     item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice
   }
+  if(cardIndex==0&&index==0){
+     cardData.value.map(function(cardItem:any){
+        if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
+          cardItem.logisticscostList.map(function(logItem:any){
+              logItem.packagingPrice=value;
+          })   
+        }  
+     })
+  }
 }
 //运费/月发生变化
-const freightPriceChange = (value: any, index: any, item: any) => {
+const freightPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("运费变化", value)
   console.log(`index===${index}`, item)
   let yearCount = item.yearMountCount ? item.yearMountCount : 1
@@ -248,9 +258,29 @@ const freightPriceChange = (value: any, index: any, item: any) => {
     item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice
     console.log("单PCS总物流成本", item.transportPrice)
   }
+  if(cardIndex==0&&index==0){
+     cardData.value.map(function(cardItem:any){
+        if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
+          cardItem.logisticscostList.map(function(logItem:any){
+              logItem.freightPrice=value;
+              let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
+              let monthlyDemandPrice = yearCount / 12
+              logItem.monthlyDemandPrice = monthlyDemandPrice
+              let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
+              logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
+              if (logItem.packagingPrice && logItem.singlyDemandPrice) {
+                logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
+              }
+
+          })   
+        }  
+     })
+  }
+
+
 }
 //仓储费用/月发生变化
-const storagePriceChange = (value: any, index: any, item: any) => {
+const storagePriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("仓储费用变化", value)
   console.log(`index===${index}`, item)
   let yearCount = item.yearMountCount ? item.yearMountCount : 1
@@ -264,6 +294,25 @@ const storagePriceChange = (value: any, index: any, item: any) => {
     item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice
     console.log("单PCS总物流成本", item.transportPrice)
   }
+
+  if(cardIndex==0&&index==0){
+     cardData.value.map(function(cardItem:any){
+        if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
+          cardItem.logisticscostList.map(function(logItem:any){
+              logItem.storagePrice=value;
+              let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
+              let monthlyDemandPrice = yearCount / 12
+              logItem.monthlyDemandPrice = monthlyDemandPrice
+              let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
+              logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
+              if (logItem.packagingPrice && logItem.singlyDemandPrice) {
+                logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
+              }
+          })   
+        }  
+     })
+  }
+
 }
 
 //保存

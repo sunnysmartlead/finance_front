@@ -98,7 +98,9 @@
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessNumber"
+                           :disabled="isDisable(dataIndex)" 
+                            :remote-method="remoteMethodForProcessNumber" 
+                            @change="processNumberChange($event, dataIndex)"
                             :loading="optionLoading">
                   <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
                     :value="item.processNumber" />
@@ -106,7 +108,9 @@
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForProcessName"
+                           :disabled="isDisable(dataIndex)" 
+                           :remote-method="remoteMethodForProcessName" 
+                           @change="processNameChange($event, dataIndex)"
                            :loading="optionLoading">
                   <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
                              :value="item.processName"/>
@@ -425,6 +429,21 @@ const getProcessIndex = async (keyWord: String) => {
     }
   })
 }
+
+//监听工装序号变化
+const processNumberChange = (value: any, dataIndex: any) => {
+    if (processNumberOptions.value.length > 0) {
+        let options = processNumberOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processNumber == value) {
+                dataArr.value[dataIndex].processName=item.processName;
+                return;
+            }
+        }
+    }
+}
+
 const processNameOptions = ref<selectOptionListItem[]>([])
 //填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
 const remoteMethodForProcessName =async (query: string) => {
@@ -454,6 +473,24 @@ const getProcessName =async (keyWord: String) => {
     }
   })
 }
+
+
+//监听工序名称变化
+const processNameChange = (value: any, dataIndex: any) => {
+    console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+    if (processNameOptions.value.length > 0) {
+        let options = processNameOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processName == value) {
+                dataArr.value[dataIndex].processNumber = item.processNumber;
+                return;
+            }
+        }
+    }
+}
+
+
 //保存
 const handleSave = (index: number, row: any) => {
   let pname= row.processName;

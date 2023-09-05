@@ -146,7 +146,7 @@ const handleSubmit = async () => {
     })
     return
   }
-  const res = await SetUpdateItemMaterial({
+  const { success } = await SetUpdateItemMaterial({
     updateItem: bomModifyData.value,
     auditFlowId,
     solutionId,
@@ -155,6 +155,12 @@ const handleSubmit = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
+  if (success) {
+    ElMessage({
+      type: 'success',
+      message: '提交成功！'
+    })
+  }
 }
 
 const handleDelete = (index: number) => {

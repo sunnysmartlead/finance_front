@@ -332,3 +332,12 @@ export function SetUpdateItemLogisticsCost(data: any) {
     data
   })
 }
+
+// 核价表下载
+export function PriceEvaluationTableDownload(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/PriceEvaluationTableDownload",
+    method: "post",
+    data
+  })
+}

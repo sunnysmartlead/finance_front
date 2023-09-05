@@ -1,12 +1,14 @@
 <template>
   <el-card m="2">
+    <el-row justify="end">
+      <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button>
+    </el-row>
     <el-descriptions m="2" border>
       <el-descriptions-item label="项目名称">{{ data.projectName }}</el-descriptions-item>
       <el-descriptions-item label="客户名称">{{ data.clientName }}</el-descriptions-item>
       <el-descriptions-item label="产能需求">{{ data.requiredCapacity }}</el-descriptions-item>
       <el-descriptions-item label="编制时间">{{ formatDateTime(data.compileDate) }}</el-descriptions-item>
     </el-descriptions>
-    <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button>
     <el-card class="margin-top" header="手板件费用">
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')">新增</el-button>

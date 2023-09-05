@@ -1,16 +1,19 @@
 <template>
   <div class="dashboard">
-    <el-row justify="end" style="margin-top: 20px">
-      <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
-    </el-row>
     <el-card class="m-2">
-      <el-row align="middle">
-        <!-- <el-select class="m-2" v-model="data.product" placeholder="请选择产品" @change="fetchAllData">
-          <el-option v-for="item in data.productOptions" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select> -->
+      <el-row justify="end" align="middle">
+        <el-upload v-model:file-list="fileList" show-file-list
+          :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
+          :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError">
+          <el-button type="primary" style="margin: 10px 10px 0 0;">TR方案上传</el-button>
+        </el-upload>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 产品核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
+        <el-button type="primary" class="m-2"> 下载核价表 </el-button>
+        <SchemeCompare />
+        <slot name="header" />
       </el-row>
       <el-row class="m-2">
         <el-form inline :model="data.form" ref="refForm" :rules="data.rules">
@@ -61,7 +64,7 @@
         <otherCostTable v-if="data.mode === '6'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
       </el-card>
       <el-card style="margin-top: 10px">
-        <el-row >
+        <el-row>
           <el-col :span="12">
             <div class="dashboard__footer">
               <!-- 饼图 -->
@@ -77,12 +80,6 @@
         </el-row>
       </el-card>
       <el-card style="margin-top: 10px">
-        <el-upload v-model:file-list="fileList" show-file-list
-          :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
-          :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
-          :on-error="handleUploadError">
-          <el-button type="primary">TR方案上传</el-button>
-        </el-upload>
         <!-- 产品总成本推移图 -->
         <div id="selectCostChart" />
       </el-card>
@@ -150,7 +147,7 @@
 </template>
 <script setup lang="ts">
 import { reactive, onMounted, onBeforeUnmount, onBeforeMount, ref, computed } from "vue"
-import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "../common/const"
+import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "../../common/const"
 import {
   GetGradient,
   // GetPricingPanelProductSelectList,
@@ -170,20 +167,18 @@ import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
 import { ElMessage, ElMessageBox } from "element-plus"
 import debounce from "lodash/debounce"
 import * as echarts from "echarts"
-import useJump from "@/hook/useJump"
 import router from "@/router"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { useRoute } from "vue-router"
-import bomTable from "../../components/bomTable/index.vue"
-import lossTable from "../../components/lossTable/index.vue"
-import manufactureTable from "../../components/manufactureTable/index.vue"
-import logisticsTable from "../../components/logisticsTable/index.vue"
-import qualityTable from "../../components/qualityTable/index.vue"
-import otherCostTable from "../../components/otherCostTable/index.vue"
-import { SetBomState } from "@/api/bom"
+import bomTable from "../bomTable/index.vue"
+import lossTable from "../lossTable/index.vue"
+import manufactureTable from "../manufactureTable/index.vue"
+import logisticsTable from "../logisticsTable/index.vue"
+import qualityTable from "../qualityTable/index.vue"
+import otherCostTable from "../otherCostTable/index.vue"
 import { isEmpty } from "lodash"
-
-const { jumpTodoCenter } = useJump()
+import useJump from "@/hook/useJump"
+import SchemeCompare from "@/components/SchemeCompare/index.vue"
 
 enum upDownEnum {
   "全年",
@@ -444,13 +439,13 @@ const getGoTableChartData = async () => {
   const {
     result: { items = [] }
   }: any = await GetGoTable({
-      InputCount: data.productInputs,
-      Year: filterYearData.value.year,
-      AuditFlowId: auditFlowId,
-      SolutionId: productId,
-      UpDown: filterYearData.value.upDown,
-      GradientId: data.form.gradientId,
-    })
+    InputCount: data.productInputs,
+    Year: filterYearData.value.year,
+    AuditFlowId: auditFlowId,
+    SolutionId: productId,
+    UpDown: filterYearData.value.upDown,
+    GradientId: data.form.gradientId,
+  })
   const value = items.map((item: any) => item?.value?.toFixed(2) || 0) || []
   const years = items.map((val: any) => val.year) || []
   selectCostChart = initCharts("selectCostChart", {
@@ -524,21 +519,7 @@ const handleSetPriceEvaluationTableInputCount = debounce(async () => {
   getPriceEvaluationTableInputCount()
 }, 500)
 
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
-  let res: any = await SetBomState({
-    auditFlowId: auditFlowId,
-    productId: productId,
-    bomCheckType: 2,
-    isAgree: !opinion.includes("_No"),
-    opinionDescription: comment,
-    opinion,
-    nodeInstanceId
-  })
-  if (res.success) {
-    jumpTodoCenter()
-    ElMessage.success("操作成功")
-  }
-}
+
 </script>
 
 <style lang="scss" scoped>

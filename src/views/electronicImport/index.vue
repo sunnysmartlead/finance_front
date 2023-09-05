@@ -25,25 +25,29 @@
       <el-button :style="{ margin: '10px' }" type="primary" @click="addPlatePart">新增</el-button>
       <el-table :data="platePart" border style="width: 100%">
         <el-table-column type="index" width="50" />
-        <el-table-column prop="categoryName" label="板部件名称">
+        <el-table-column prop="boardName" label="板部件名称">
           <template #default="{ row }">
-            <el-input v-model="row.categoryName" placeholder="请录入板部件名称" />
+            <el-input v-model="row.boardName" placeholder="请录入板部件名称" />
           </template>
         </el-table-column>
-        <el-table-column prop="typeName"  width="175" label="板部件长(mm)">
+        <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)">
           <template #default="{ row }">
-            <el-input-number v-model="row.typeName" controls-position="right" :min="0" placeholder="请录入板部件长" />
+            <el-input-number v-model="row.boardLenth" controls-position="right" :min="0" placeholder="请录入板部件长" />
           </template>
         </el-table-column>
-        <el-table-column prop="isInvolveItem" width="175" label="板部件宽(mm)">
+        <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)">
           <template #default="{ row }">
-            <el-input-number v-model="row.isInvolveItem" controls-position="right" :min="0" placeholder="请录入板部件宽" />
+            <el-input-number v-model="row.boardWidth" controls-position="right" :min="0" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
-        <el-table-column prop="sapItemNum" label="板部件面积(mm^2)" />
-        <el-table-column prop="sapItemName" label="拼板数量">
+        <el-table-column prop="boardSquare" label="板部件面积(mm^2)" >
           <template #default="{ row }">
-            <!-- <el-input-number v-model="row.sapItemName" placeholder="请录入拼板数量" /> -->
+            <!-- <el-input-number v-model="row.sapItemNum" placeholder="请录入板部件面积" /> -->
+          </template>
+        </el-table-column>
+        <el-table-column prop="stoneQuantity" label="拼板数量">
+          <template #default="{ row }">
+            <el-input-number v-model="row.stoneQuantity" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -109,19 +113,13 @@ const Host = "ElectronicBomImport"
 let auditFlowId: any = null
 let productId: any = null
 
-const platePart: any = ref([
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  }
-])
+const platePart: any = ref<any>([])
 
 watch(
   () => platePart.value,
   () => {
     platePart.value.forEach((item) => {
-      item.sapItemNum = (item.typeName || 0) * (item.isInvolveItem || 0)
+      item.boardSquare = (item.boardLenth || 0) * (item.boardWidth || 0)
     })
   },
   {
@@ -200,10 +198,10 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     ElMessage.error("未选择零件！")
     return
   }
-  const isPass = platePart.value.some(item => {
-    return !item.typeName || !item.isInvolveItem
+  const notPass = platePart.value.some(item => {
+    return !item.boardLenth || !item.boardWidth
   })
-  if (!isPass) {
+  if (notPass) {
     loading.close()
     ElMessage.error("请填写完整表单信息！")
     return
@@ -225,8 +223,10 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   }
 }
 const init = async () => {
-  let resElectronic: any = await GetElectronicBom({ auditFlowId, solutionId: productId })
-  data.tableData = resElectronic.result
+  let { success, result }: any = await GetElectronicBom({ auditFlowId, solutionId: productId }) || {}
+  if (success) {
+    data.tableData = result || []
+  }
 }
 
 onMounted(async () => {

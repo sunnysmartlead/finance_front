@@ -21,6 +21,7 @@
             <SORDonwload />
             <TrView />
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">NRE实验费模板下载</el-button>
+            <el-button type="primary" @click="handleFethNreExcelDownload" m="2">NRE实验费数据导出</el-button>
             <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
           </el-row>
         </el-row>
@@ -109,7 +110,8 @@ import {
   PostProductDepartment,
   GetProductDepartment,
   GetExportOfProductDepartmentFeeForm,
-  GetFoundationEmc
+  GetFoundationEmc,
+  PostProductDepartmentDownloadExcel
 } from "../../common/request"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { getLaboratoryFeeSummaries } from "../../common/nrePilotprojectsSummaries"
@@ -181,7 +183,7 @@ const submit = async (isSubmit: boolean) => {
   }
 }
 
-// NRE实验费模板下载
+// NRE实验费数据导出
 const handleFethNreTableDownload = async () => {
   try {
     const res: any = await GetExportOfProductDepartmentFeeForm({
@@ -194,6 +196,27 @@ const handleFethNreTableDownload = async () => {
     console.log(err, "[ NRE实验费模板下载 失败 ]")
   }
 }
+
+// NRE实验费模板下载
+const handleFethNreExcelDownload = async () => {
+  if (!data?.laboratoryFeeModels?.length) {
+    return ElMessage({
+      type: "warning",
+      message: "请填写数据后再进行数据导出！"
+    })
+  }
+  try {
+    const res: any = await GetExportOfProductDepartmentFeeForm({
+      auditFlowId,
+      solutionId: productId
+    })
+    downloadFileExcel(res, " NRE实验费数据文档")
+    console.log(res, "NreTableDownload")
+  } catch (err: any) {
+    console.log(err, "[ NRE实验费数据文档下载 失败 ]")
+  }
+}
+
 
 // NRE实验费模板上传
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {

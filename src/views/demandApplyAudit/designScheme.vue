@@ -68,21 +68,6 @@
             <el-input v-model="row.rests" :disabled="disabled" />
           </template>
         </el-table-column>
-        <el-table-column prop="rests" label="币别" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.rests" :disabled="disabled" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="rests" label="汇率" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.rests" :disabled="disabled" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="rests" label="合计" width="150">
-          <template #default="{ row }">
-            <el-input v-model="row.rests" :disabled="disabled" />
-          </template>
-        </el-table-column>
         <el-table-column prop="file.fileName" label="3D爆炸图截图下载" fixed="right" width="300">
           <template #default="{ row }">
             <el-button type="success" @click="downLoad(row.fileId, row.file?.fileName)">{{

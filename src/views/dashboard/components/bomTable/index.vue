@@ -3,7 +3,7 @@
     <el-card m="2" header="bom成本">
       <bomTable :bomData="bomData" :onEdit="handleEdit" />
     </el-card>
-    <el-card m="2">
+    <el-card m="2"  v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
@@ -47,7 +47,8 @@ const props = defineProps({
   yearData: {
     type: Object as PropType<any>
   },
-  gradientId:  String
+  gradientId: String,
+  hideEdit: Boolean
 })
 
 const fileList = ref<UploadUserFile[]>([])

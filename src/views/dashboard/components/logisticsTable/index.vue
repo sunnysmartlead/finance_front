@@ -3,7 +3,7 @@
     <el-card m="2" header="物流成本">
       <logisticsTable :logisticsData="logisticsData" />
     </el-card>
-    <el-card m="2">
+    <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
@@ -55,7 +55,8 @@ const props = defineProps({
   },
   onUpload: {
     type: Function as PropType<any>
-  }
+  },
+  hideEdit: Boolean
 })
 
 const modifyData = ref<any>([])

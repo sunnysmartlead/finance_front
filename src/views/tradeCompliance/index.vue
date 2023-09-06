@@ -107,7 +107,7 @@ const initFetch = async () => {
 //     }
 //   })
 // }
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await IsTradeComplianceCheck({
     AuditFlowId: auditFlowId,
     opinionDescription: comment,

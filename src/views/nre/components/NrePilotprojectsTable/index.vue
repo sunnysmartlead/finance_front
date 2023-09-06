@@ -1,4 +1,5 @@
 <template>
+  <ProcessVertifyBox :onSubmit="isVertify?NREToExamineFun:submit" v-havedone :processType="isVertify?'baseProcessType':'confirmProcessType'" />
   <InterfaceRequiredTime :ProcessIdentifier="Host" />
   <div style="padding: 0 10px">
     <el-card class="card-warp">
@@ -69,7 +70,7 @@
         </el-table-column>
         <el-table-column label="时间-DV" width="180">
           <template #default="{ row }">
-             <span v-if="isVertify">{{ row.countDV }}</span>
+            <span v-if="isVertify">{{ row.countDV }}</span>
             <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
           </template>
         </el-table-column>
@@ -93,14 +94,14 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <div style="float: right; margin: 20px 0" v-if="isVertify">
+    <!-- <div style="float: right; margin: 20px 0" v-if="isVertify">
       <el-button type="primary" v-havedone m="2">同意</el-button>
       <el-button type="primary" v-havedone>退回</el-button>
     </div>
     <div style="float: right; margin: 20px 0" v-else>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
       <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -111,7 +112,7 @@ import {
   GetProductDepartment,
   GetExportOfProductDepartmentFeeForm,
   GetFoundationEmc,
-  PostProductDepartmentDownloadExcel
+  NREToExamine
 } from "../../common/request"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { getLaboratoryFeeSummaries } from "../../common/nrePilotprojectsSummaries"
@@ -123,6 +124,7 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import TrView from "@/components/TrView/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 let { auditFlowId, productId } = getQuery()
 
@@ -168,18 +170,40 @@ const initFetch = async () => {
   data.isSubmit = isSubmit
 }
 
-const submit = async (isSubmit: boolean) => {
+const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   try {
+    const isSubmit = true
     const { success } = await PostProductDepartment({
       auditFlowId,
       solutionId: productId,
       isSubmit,
-      productDepartmentModels: data.laboratoryFeeModels
+      productDepartmentModels: data.laboratoryFeeModels,
+      comment,
+      opinion,
+      nodeInstanceId
     })
     if (success) ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {
     console.log(err, "[PostProductDepartment err]")
+  }
+}
+
+const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
+  try {
+    const { success } = await NREToExamine({
+      auditFlowId,
+      nreCheckType:3,
+      opinionDescription: comment,
+      opinion,
+      nodeInstanceId
+    })
+    if (!success) throw Error()
+    ElMessage.success(`提交成功`)
+    // jumpTodoCenter()
+  } catch (err) {
+    console.log(err, "[PostExperimentItems err]")
+    // ElMessage.error("提交失败")
   }
 }
 

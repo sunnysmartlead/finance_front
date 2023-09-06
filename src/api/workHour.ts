@@ -1,7 +1,6 @@
 import { request,baseDomain} from "@/utils/service"
 const prefix="api/services/app/FoundationWorkingHour"
 const uploadAction=baseDomain+prefix+"/UploadFoundationStandardTechnology"
-
 export {uploadAction}
 
 
@@ -59,5 +58,14 @@ export function update(data:any) {
  }
 
 
+/** 导出 */
+export function handelExport(data:any) {
+  return request({
+    url: prefix+"/FoundationWorkingHourDownloadStream",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
 
  

@@ -245,8 +245,9 @@
           <div class="u-text-center" style="background-color: rgb(223, 179, 122)">
             <div class="u-flex u-row-left u-col-center">
               <template v-if="dataArr.length > 0 && dataArr[0]?.sopInfo != null">
-                <div v-for="(scopItem, sopIndex) in dataArr[0].sopInfo" :key="sopIndex" class="u-text-center">
-                  <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}年</div>
+                <div v-for="(scopItem, sopIndex) in dataArr[0].sopInfo" 
+                :key="sopIndex" class="u-text-center">
+                  <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}</div>
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                       <span>标准人工工时</span>
@@ -636,7 +637,8 @@
 
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center">
-                <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
+                <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" 
+                      class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border">
                       <el-input-number
@@ -855,9 +857,8 @@ import {
   GetBoardInfomation
 } from "@/api/processHoursEnter"
 import { GetListAll as queryProcessList } from "@/api/process"
-import { getListAll as getStandardProcessList } from "@/api/standardProcess"
-import { random } from "lodash"
-import { number } from "echarts"
+import { getListAllForQuery as getStandardProcessList } from "@/api/standardProcess"
+import { concat, random } from "lodash"
 const tempData: any = {
   id: 0,
   processName: "名称",
@@ -1104,29 +1105,29 @@ const handleSaveData = () => {
 
 const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
   handleSaveData().then((p:any)=>{
-  let param = {
-    auditFlowId: auditFlowId,
-    solutionId: productId,
-    comment,
-    opinion,
-    nodeInstanceId
-  }
-  handleSubmitOption(param).then((response: any) => {
-    console.log("提交响应", response)
-    if (response.success) {
-      ElMessage({
-        type: "success",
-        message: response.result
-      })
-      initData()
-    } else {
-      ElMessage({
-        type: "error",
-        message: "失败"
-      })
+    let param = {
+      auditFlowId: auditFlowId,
+      solutionId: productId,
+      comment,
+      opinion,
+      nodeInstanceId
     }
-  })
-   }) // 保存
+    handleSubmitOption(param).then((response: any) => {
+      console.log("提交响应", response)
+      if (response.success) {
+        ElMessage({
+          type: "success",
+          message: response.result
+        })
+        initData()
+      } else {
+        ElMessage({
+          type: "error",
+          message: "失败"
+        })
+      }
+    })
+  }) // 保存
 }
 
 const upload = ref<UploadInstance>()
@@ -1858,12 +1859,12 @@ const dialogFormVisible = ref(false)
 const dialogForm = ref({
   name: "",
   id: 0,
-  list: []
+  processHoursEnterDtoList: []
 })
 const openStandardProcessDialogForm = () => {
   dialogForm.value.name = ""
   dialogForm.value.id = 0
-  dialogForm.value.list = []
+  dialogForm.value.processHoursEnterDtoList = []
   dialogFormVisible.value = true
 }
 interface standardProcessNameListItem {
@@ -1892,14 +1893,6 @@ const getStandardProcessName = async (keyWord: String) => {
     if (response.success) {
       let data = response.result
       if (data.length > 0) {
-        // for (let i = 0; i < data.length; i++) {
-        //   let item = data[i];
-        //   standardProcessNameOptions.value.push({
-        //     id: item.id,
-        //     name: item.name,
-        //     list: item.list
-        //   })
-        // }
         standardProcessNameOptions.value = data
       } else {
         ElMessage({
@@ -1927,7 +1920,7 @@ const cancelSelectStandardProcessName = () => {
   //   type: "warning",
   //   message: "取消选择标准工序"
   // })
-  dialogFormVisible.value = false
+  dialogFormVisible.value = false;
 }
 
 const confirmSelectStandardProcessName = () => {
@@ -1939,7 +1932,8 @@ const confirmSelectStandardProcessName = () => {
     })
     return
   }
-  let pList = dialogForm.value.list
+  let pList = dialogForm.value.processHoursEnterDtoList;
+  console.log("pList",pList);
   if (pList == null || pList.length < 1) {
     ElMessage({
       type: "error",
@@ -1947,7 +1941,31 @@ const confirmSelectStandardProcessName = () => {
     })
     return
   }
-  dataArr.value = pList.concat(dataArr.value)
+  if(dataArr.value.length>0){
+    let oldSop=JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+    let newSop=JSON.parse(JSON.stringify(pList[0].sopInfo?pList[0].sopInfo:[]));
+    oldSop.map(function(item:any,index:number){
+        item.issues=[{
+          id:0,
+          laborHour:0,
+          machineHour:0,
+          personnelNumber:0,
+        }];
+        let yearIndex= item.year;
+        newSop.map(function(newItem:any,newIndex:number){
+            let newYearIndex= newItem.year?newItem.year:'----';
+            if(newYearIndex.indexOf(yearIndex)!=-1||yearIndex.indexOf(newYearIndex)!=-1){
+               item.issues=newItem.issues;
+            }
+        })
+    })
+    pList[0].sopInfo=oldSop;
+    let newData:any=pList[0];
+    dataArr.value.push(newData);
+  }else{
+    dataArr.value = pList;
+  }
+  console.log("列表",dataArr.value);
   dialogFormVisible.value = false
   ElMessage({
     type: "success",

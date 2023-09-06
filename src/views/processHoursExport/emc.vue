@@ -26,10 +26,14 @@
             </el-upload>
           </div>
           <div>
-            <el-button type="primary" @click="downLoadEmc">模版下载</el-button>
+
             <el-button type="primary" @click="handleAdd(ruleFormRef)">创建实验项目</el-button>
           </div>
         </div>
+      </div>
+      <div>
+        <el-button type="primary" @click="exportList">导出</el-button>
+        <el-button type="primary" @click="downLoadEmc">模版下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff">
@@ -146,12 +150,13 @@ import {
   deleteFoundationEmc,
   getEmcLog,
   saveEmcLog,
-  baseDomain
+  baseDomain, exportFoundationEmc
 } from "@/api/foundationEmc"
 import { ElMessage, ElMessageBox,genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from "@/utils"
 import {CommonDownloadFile} from "@/api/bom";
+import {exportFoundationFixture} from "@/api/foundationHardware";
 const uploadAction = baseDomain + "api/services/app/FoundationEmc/UploadFoundationEmc";
 const data = reactive({
   queryParams: {
@@ -215,7 +220,27 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
     file.uid = genFileId()
     upload.value!.handleStart(file)
 }
-
+const exportList = () => {
+  let param = {
+  }
+  exportFoundationEmc(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', "EMC.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
+}
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     console.log("responese", response);
     console.log("uploadFile", uploadFile);
@@ -261,13 +286,28 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       if (ruleForm.id == 0) {
         createFoundationEmc(ruleForm).then((response) => {
-          open.value = false
-          initData()
+          if (response.result.success){
+            open.value = false
+            initData()
+          }else {
+            ElMessage({
+              type:'error',
+              message:response.result.error
+            });
+          }
+
         })
       } else {
         updateFoundationEmc(ruleForm).then((response) => {
-          open.value = false
-          initData()
+          if (response.result.success){
+            open.value = false
+            initData()
+          }else {
+            ElMessage({
+              type:'error',
+              message:response.result.error
+            });
+          }
         })
       }
     } else {

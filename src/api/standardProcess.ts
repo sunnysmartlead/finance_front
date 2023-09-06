@@ -19,6 +19,14 @@ export function getListAll(data: QueryParams) {
     })
 }
 
+export function getListAllForQuery(data: QueryParams) {
+  return request({
+    url: prefix+"/GetListAllOnly",
+    method: "get",
+    data
+  })
+}
+
 //查询工序详细
 export function getDetail(id: number) {
     return request({

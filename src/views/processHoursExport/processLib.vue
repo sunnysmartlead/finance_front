@@ -29,13 +29,13 @@
 
       <div>
         <el-button type="primary"  @click="submitExportProcess">工序库导出</el-button>
-        <el-button type="primary" @click="submitSearch">工序库模板下载</el-button>
+        <el-button type="primary" @click="submitDownloadTemplate">工序库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-      <el-scrollbar wrap-style="padding:10px 0px" :max-height="400" native>
+      <el-scrollbar wrap-style="padding:10px 0px" :max-height="600" native>
         <div>
-          <el-table :data="tableData" style="width: 100%" border max-height="600">
+          <el-table :data="tableData" style="width: 100%" border max-height="600px">
             <el-table-column label="序号" type="index" width="180" align="center" />
             <el-table-column label="工序编号" align="center">
               <template #default="scope">
@@ -262,6 +262,17 @@ const submitExportProcess=()=>{
     })
 }
 
+const submitDownloadTemplate=()=>{
+  const baseDomain=import.meta.env.VITE_BASE_API+"Excel/"
+  let href=baseDomain+"工序库导入.xlsx";
+  console.log("下载模板==="+href);
+  const a = document.createElement('a');
+  a.href = href;
+  a.setAttribute('download',"工序库模板.xlsx");
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
 const currentEditIndex = ref<number>()
 let currentEditProcess:any = null;

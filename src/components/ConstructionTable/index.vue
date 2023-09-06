@@ -436,34 +436,7 @@ const handleCalculation = (row: any, bomIndex: number, index: number) => {
 }
 
 const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
-  //判断本位币金额是否是否存在0
-  const { systemiginalCurrency } = record
-
-  let label = ""
-  const notPass = systemiginalCurrency.every((s: any) => {
-    const isRight = s.yearOrValueModes.every((y: any, i: number) => {
-      if (!y.value) label = `系统单价（原币）的 ${s.kv} K/Y 下第${i + 1}列的值为0`
-      return !!y.value
-    })
-    return isRight
-  })
-
-  if (!notPass) {
-    ElMessageBox.confirm(`${label},是否继续执行`, "确认提醒", {
-      confirmButtonText: "确认",
-      cancelButtonText: "取消",
-      type: "warning"
-    }).then(async () => {
-      await handleCalculation(record, bomIndex, rowIndex)?.then(async () => {
-        await submitFun(record, isSubmit, bomIndex, rowIndex)
-      })
-    })
-    // .catch(async () => {
-    //   fetchInitData()
-    // })
-  } else {
-    await submitFun(record, isSubmit, bomIndex, rowIndex)
-  }
+  await submitFun(record, isSubmit, bomIndex, rowIndex)
 }
 
 const submitFun = async (

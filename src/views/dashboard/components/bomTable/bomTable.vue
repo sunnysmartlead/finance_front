@@ -101,7 +101,7 @@
         <el-input v-model="row.remarks" />
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="120" fixed="right">
+    <el-table-column label="操作" width="120" fixed="right" v-if="!hideEdit">
       <template #default="{ row, $index }">
         <el-row>
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
@@ -126,7 +126,8 @@ const props = defineProps({
   },
   onDelete: {
     type: Function as PropType<any>
-  }
+  },
+  hideEdit: Boolean
 })
 
 const toFixedThree = (_recoed: any, _row: any, val: any) => {

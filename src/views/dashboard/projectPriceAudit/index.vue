@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
-    <bulletinBoard />
+    <ProcessVertifyBox  :onSubmit="handleSetBomState" processType="structBomProcessType" />
+    <bulletinBoard hideEdit />
   </div>
 </template>
 <script setup lang="ts">

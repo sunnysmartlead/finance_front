@@ -51,17 +51,17 @@
     <el-card class="m-2">
       <el-card header="成本明细表">
         <!-- Bom成本  -->
-        <bomTable v-if="data.mode === '1'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 损耗成本  -->
-        <lossTable v-if="data.mode === '2'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 制造成本  -->
-        <manufactureTable v-if="data.mode === '3'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <manufactureTable :hideEdit="hideEdit" v-if="data.mode === '3'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 物流成本  -->
-        <logisticsTable v-if="data.mode === '4'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <logisticsTable :hideEdit="hideEdit" v-if="data.mode === '4'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 质量成本  -->
-        <qualityTable v-if="data.mode === '5'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <qualityTable :hideEdit="hideEdit" v-if="data.mode === '5'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
         <!-- 其他成本  -->
-        <otherCostTable v-if="data.mode === '6'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
+        <otherCostTable :hideEdit="hideEdit" v-if="data.mode === '6'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
       </el-card>
       <el-card style="margin-top: 10px">
         <el-row>
@@ -185,6 +185,9 @@ enum upDownEnum {
   "上半年",
   "下半年"
 }
+const props = defineProps({
+  hideEdit: Boolean
+})
 
 const route = useRoute()
 const { closeSelectedTag } = useJump()

@@ -97,7 +97,7 @@ import { ref, reactive, onMounted, watch } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom } from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom, SaveBoard } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 // import ProductInfo from "@/components/ProductInfo/index.vue"
@@ -107,12 +107,10 @@ import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { GetBoardInfomation } from "@/api/processHoursEnter"
+import { map } from "lodash"
 
 const Host = "ElectronicBomImport"
-
-let auditFlowId: any = null
-let productId: any = null
-
+const { auditFlowId, productId: solutionId } = getQuery()
 const platePart: any = ref<any>([])
 
 watch(
@@ -153,8 +151,8 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 
 const queryBoardInfomation = async () => {
   const { success, result }: any = (await GetBoardInfomation({
-    auditFlowId: auditFlowId,
-    solutionId: productId
+    auditFlowId,
+    solutionId
   })) || {}
   if (success && result?.length) {
     platePart.value = result
@@ -193,7 +191,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     text: "加载中",
     background: "rgba(0, 0, 0, 0.7)"
   })
-  if (!productId) {
+  if (!solutionId) {
     loading.close()
     ElMessage.error("未选择零件！")
     return
@@ -207,15 +205,17 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     return
   }
   try {
-    let { success }: any = await SaveElectronicBom({
-      auditFlowId,
-      solutionId: productId,
+    const params = {
+      auditFlowId: Number(auditFlowId),
+      solutionId,
       electronicBomDtos: data.tableData,
-      boardDtos: platePart.value,
+      boardDtos: map(platePart.value, item => ({...item, auditFlowId, solutionId })),
       comment,
       opinion,
       nodeInstanceId
-    })
+    }
+    let { success }: any = await SaveElectronicBom(params)
+    await SaveBoard(params)
     loading.close()
     success && ElMessage.success("提交成功！")
   } catch (error) {
@@ -223,18 +223,14 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   }
 }
 const init = async () => {
-  let { success, result }: any = await GetElectronicBom({ auditFlowId, solutionId: productId }) || {}
+  let { success, result }: any = await GetElectronicBom({ auditFlowId, solutionId }) || {}
   if (success) {
     data.tableData = result || []
   }
 }
 
 onMounted(async () => {
-  let query = getQuery()
-  auditFlowId = Number(query.auditFlowId) || null
-  productId = Number(query.productId) || null
-  data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
-  if (auditFlowId && productId) {
+  if (auditFlowId && solutionId) {
     init()
     queryBoardInfomation()
   }

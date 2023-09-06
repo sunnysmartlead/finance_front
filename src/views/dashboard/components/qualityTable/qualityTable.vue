@@ -17,7 +17,7 @@
         <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.qualityCost" />
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="200">
+    <el-table-column label="操作" width="200" v-if="!hideEdit">
       <template #default="{ row, $index }">
         <el-row>
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
@@ -42,7 +42,8 @@ const props = defineProps({
   },
   onDelete: {
     type: Function as PropType<any>
-  },
+  },,
+  hideEdit: Boolean
 })
 
 const formatter = (_recoed: any, _row: any, val: any) => {

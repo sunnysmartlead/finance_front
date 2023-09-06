@@ -153,6 +153,7 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import { customerTargetPrice } from "@/views/demandApply"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import TrView from "@/components/TrView/index.vue"
+import { isEmpty, map } from "lodash"
 
 let Host = "StructBomImport"
 const refForm = ref<FormInstance>()
@@ -192,21 +193,31 @@ const rules = reactive<FormRules>({
   remarks: [{ required: true, message: "请输入该值", trigger: "blur" }],
   picture3DFileId: [{ required: true, message: "请输入该值", trigger: "blur" }]
 })
+
 onMounted(async () => {
   let query = getQuery()
   auditFlowId = Number(query.auditFlowId) || 0
   productId = Number(query.productId) || 0
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
-
+  console.log(query, '结构料倒入')
   if (auditFlowId && productId) {
-    let resStruction: any = await GetStructionBom({ auditFlowId, solutionId: productId })
-    data.tableData = resStruction.result
-    let resForm: any = await getProductDevelopmentInput({ auditFlowId, solutionId: productId })
-    Object.keys(data.logisticsForm).forEach((key: string) => {
-      data.logisticsForm[key] = resForm.result[key]
-    })
+    let { success, result }: any = await GetStructionBom({ auditFlowId, solutionId: productId })
+    if (success) {
+      data.tableData = result
+    }
+    initFetchProductDevelopmentInput(query)
   }
 })
+
+const initFetchProductDevelopmentInput = async (query: any) => {
+  let { success, result }: any = await getProductDevelopmentInput({ auditFlowId: query.auditFlowId, solutionId: productId  })
+  if (success && !isEmpty(result)) {
+    map(result, (val, key) => {
+      data.logisticsForm[key] = val
+    })
+  }
+}
+
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   console.log(res)
   if (res.success) {

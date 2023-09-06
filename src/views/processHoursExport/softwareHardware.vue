@@ -3,13 +3,10 @@
     <div>
       <el-form :inline="true" :model="queryForm" class="demo-form-inline">
         <el-form-item label="硬件名称">
-          <el-input v-model="queryForm.deviceName" placeholder="输入设备名称" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitSearch">查询</el-button>
+          <el-input v-model="queryForm.hardwareName" placeholder="输入硬件名称" clearable />
         </el-form-item>
         <el-form-item label="软件名称">
-          <el-input v-model="queryForm.softwareName" placeholder="输入设备名称" clearable />
+          <el-input v-model="queryForm.softwareName" placeholder="输入软件名称" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitSearch">查询</el-button>
@@ -37,7 +34,7 @@
         </div>
       </div>
       <div>
-        <el-button type="primary" @click="exportList">软硬件导出</el-button>
+        <el-button :disabled="tableData.length<1" type="primary" @click="exportList">软硬件导出</el-button>
         <el-button @click="downLoad" type="primary">软硬件库模板下载</el-button>
       </div>
     </div>
@@ -266,7 +263,7 @@ import { getDeviceLog } from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
 //查询关键字
 const queryForm = reactive({
-  deviceName: '',
+  hardwareName: '',
   softwareName: ''
 })
 const data = reactive<any>({
@@ -283,7 +280,7 @@ onMounted(() => {
 })
 
 const initData = async () => {
-  let listResult: any = await getListAll({ DeviceName: queryForm.deviceName, softwareName: queryForm.softwareName })
+  let listResult: any = await getListAll(queryForm)
   if (listResult.success) {
     tableData.value = listResult.result
   }
@@ -450,6 +447,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     })
   }
 }
+//模板下载
 const downLoad = async () => {
   const link = document.createElement('a')
   link.href = import.meta.env.VITE_BASE_API + "/Excel/软硬件.xlsx"
@@ -458,11 +456,9 @@ const downLoad = async () => {
   link.click()
   document.body.removeChild(link)
 }
+//导出
 const exportList = () => {
-  let param = {
-    processName: queryForm.deviceName
-  }
-  exportFoundationFixture(param).then((response: any) => {
+  exportFoundationFixture(queryForm).then((response: any) => {
     if (response) {
       const data = new Blob([response], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(data);

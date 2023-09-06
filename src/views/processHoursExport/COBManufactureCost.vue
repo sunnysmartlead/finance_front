@@ -1,37 +1,8 @@
 <template>
   <div class="u-p-20">
     <div>
-      <!-- <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button> -->
       <ProcessVertifyBox :onSubmit="submitData" processType="confirmProcessType" v-havedone />
     </div>
-    <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
-      <div class="u-flex u-row-left u-col-center">
-        <!-- <div style="font-size: 14px;font-weight: bold;">
-                    <span>零件列表</span>
-                </div>
-                <div class="u-m-l-10">
-                    <el-select v-model="currentPlan" placeholder="请选择方案" size="large">
-                        <el-option v-for="item in planOptions" :key="item.value" :label="item.label" :value="item.value" />
-                    </el-select>
-                </div> -->
-      </div>
-      <!-- <div>
-        <el-button
-          type="primary"
-          :disabled="tableData.length < 1 || tableData[0].logisticscostList?.length < 1"
-          @click="submitData()"
-          >提交</el-button
-        >
-        <el-button
-          type="primary"
-          :disabled="tableData.length < 1 || tableData[0].logisticscostList?.length < 1"
-          @click="saveTableData()"
-          >保存</el-button
-        >
-      </div> -->
-    </div>
-
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
       <div class="u-m-5">
         <el-button type="primary">查看BOM单价</el-button>
@@ -243,27 +214,6 @@ import getQuery from "@/utils/getQuery"
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import { GetListAll, getCOBUPH, update, create, handleSubmit, deleteItem, uploadAction } from "@/api/COB"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-//方案下拉选项
-const planOptions = ref([
-  {
-    value: "1",
-    label: "前视-方案一"
-  },
-  {
-    value: "2",
-    label: "前视-方案二"
-  },
-  {
-    value: "3",
-    label: "侧视-方案一"
-  },
-  {
-    value: "4",
-    label: "侧视-方案二"
-  }
-])
-//选中的方案
-const currentPlan = ref("")
 //路径上的参数
 const queryParam = ref({
   AuditFlowId: undefined,

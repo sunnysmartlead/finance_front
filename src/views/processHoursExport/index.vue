@@ -1689,8 +1689,8 @@ const downLoad3D = () => {
 
 const viewBOM = (type: Number) => {
   let param = {
-    AuditFlowId: 11, //auditFlowId,
-    SolutionId: 11 //productId
+    AuditFlowId:auditFlowId,
+    SolutionId: productId
   }
   //结构
   if (type == 1) {
@@ -1741,7 +1741,7 @@ const viewBOM = (type: Number) => {
     })
   }
 }
-
+//模组数据
 const showProjectDialog = () => {
   dialogTableVisible.value = true
 }

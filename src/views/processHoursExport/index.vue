@@ -532,7 +532,7 @@
 
     <div class="u-p-10 u-m-t-10 u-border uph-box" v-if="lineData.length > 0">
       <div style="color: #000000; font-weight: bold">
-        <span>线体数量、共线分辨率</span>
+        <span>线体数量、共线分摊率</span>
       </div>
       <el-scrollbar wrap-style="padding:10px 0px" always>
         <div class="u-flex u-row-left u-col-center">

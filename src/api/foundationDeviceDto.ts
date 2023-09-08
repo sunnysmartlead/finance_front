@@ -18,6 +18,15 @@ export function createFoundationDevice(data:any) {
   })
 }
 
+//
+/** 获取设备状态枚举列表 */
+export function getDeviceStatus() {
+  return request({
+    url: "api/services/app/FoundationDevice/GetDeviceStatus",
+    method: "get",
+  })
+}
+
 export function getFoundationDeviceById(id: number) {
   return request({
     url: "api/services/app/FoundationDevice/GetAsyncById",

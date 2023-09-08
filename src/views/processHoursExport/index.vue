@@ -285,16 +285,24 @@
                 <span>{{ dataIndex }}</span>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
-                  reserve-keyword :remote-method="remoteMethod" :loading="processNumberloading">
-                  <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
+                <el-select v-model="dataItem.processNumber" 
+                        :disabled="isDisable(dataIndex)" 
+                        filterable remote reserve-keyword 
+                        :remote-method="remoteMethod" 
+                        @change="processNumberChange($event, dataIndex)"
+                        :loading="processNumberloading">
+                  <el-option v-for="item in processNumberOptions" 
+                        :key="item.id" :label="item.processNumber"
                     :value="item.processNumber" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
-                  reserve-keyword :remote-method="remoteMethodForProcessName" :loading="processNameLoading">
-                  <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
+                  reserve-keyword :remote-method="remoteMethodForProcessName" 
+                  @change="processNameChange($event, dataIndex)"
+                  :loading="processNameLoading">
+                  <el-option v-for="item in processNameOptions" 
+                        :key="item.id" :label="item.processName"
                     :value="item.processName" />
                 </el-select>
               </div>
@@ -505,7 +513,7 @@
             <div class="u-border u-height-34 u-width-150">
               <span>SMT-UPH值</span>
             </div>
-            <div class="u-border u-height-34 u-width-150">
+            <div class="u-border u-height-34 u-width-150" v-show="isCOB">
               <span>COB-UPH值</span>
             </div>
             <div class="u-border u-height-34 u-width-150">
@@ -519,7 +527,7 @@
             <div class="u-border u-width-150 u-text-center">
               <el-input v-model="uphItem.smtuph" />
             </div>
-            <div class="u-border u-width-150 u-text-center">
+            <div class="u-border u-width-150 u-text-center" v-show="isCOB">
               <el-input v-model="uphItem.cobuph" class="u-text-center" />
             </div>
             <div class="u-border u-width-150 u-text-center">
@@ -532,7 +540,7 @@
 
     <div class="u-p-10 u-m-t-10 u-border uph-box" v-if="lineData.length > 0">
       <div style="color: #000000; font-weight: bold">
-        <span>线体数量、共线分辨率</span>
+        <span>线体数量、共线分摊率</span>
       </div>
       <el-scrollbar wrap-style="padding:10px 0px" always>
         <div class="u-flex u-row-left u-col-center">
@@ -544,7 +552,7 @@
               <span>线体数量</span>
             </div>
             <div class="u-border u-height-34 u-width-150">
-              <span>共线分辨率</span>
+              <span>共线分摊率</span>
             </div>
           </div>
           <div v-for="(lineItem, lineIndex) in lineData" :key="lineIndex">
@@ -604,21 +612,30 @@
         </el-card>
       </div>
     </el-dialog>
-
-    <el-dialog v-model="dialogFormVisible" :close-on-click-modal="false">
+    <!-- 选择工艺标准 -->
+    <el-dialog v-model="dialogFormVisible" :close-on-click-modal="false" v-loading="standardProcessLoading">
       <el-form :model="dialogForm">
-        <el-form-item label="标准工艺名称" label-width="150px">
+        <!-- <el-form-item label="标准工艺名称" label-width="150px">
           <el-select v-model="dialogForm" value-key="id" filterable remote reserve-keyword clearable
-            @change="standardProcessSelectChange" :remote-method="remoteMethodForStandardProcessName"
-            placeholder="输入关键字查询" :loading="standardProcessNameLoading">
+            :remote-method="remoteMethodForStandardProcessName"
+            placeholder="输入关键字查询" :loading="standardProcessLoading">
             <el-option v-for="item in standardProcessNameOptions" :key="item.id" :label="item.name" :value="item" />
           </el-select>
+        </el-form-item> -->
+
+        <el-form-item label="标准工艺" label-width="150px">
+          <el-select v-model="dialogForm" value-key="id"  clearable
+            placeholder="选择标准工艺">
+            <el-option v-for="item in standardProcessNameOptions" 
+                  :key="item.id" :label="item.name" :value="item" />
+          </el-select>
         </el-form-item>
+
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="cancelSelectStandardProcessName">取消</el-button>
-          <el-button type="primary" @click="confirmSelectStandardProcessName">确认</el-button>
+          <el-button @click="cancelSelectStandardProcess">取消</el-button>
+          <el-button type="primary" @click="confirmSelectStandardProcess">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -660,7 +677,8 @@ import {
 } from "@/api/processHoursEnter"
 import { GetListAll as queryProcessList } from "@/api/process"
 import { getListAllForQuery as getStandardProcessList } from "@/api/standardProcess"
-import { concat, random } from "lodash"
+import {random } from "lodash"
+import router from "@/router"
 const tempData: any = {
   id: 0,
   processName: "名称",
@@ -805,6 +823,7 @@ const addFlag = ref(false)
 const { auditFlowId, productId }: any = getQuery()
 const UPHData = ref<any>([])
 const lineData = ref<any>([])
+const isCOB=ref(true)
 onMounted(() => {
   initData()
 })
@@ -845,9 +864,10 @@ const getUPHAndLineData = () => {
   getListUphOrLine(param).then((response: any) => {
     if (response.success) {
       let data = response.result
-      console.log("UPHLine列表", data)
-      UPHData.value = data.processHoursEnterUphList
-      lineData.value = data.processHoursEnterLineList
+      console.log("getListUphOrLine接口响应", data)
+      UPHData.value = data.processHoursEnterUphList;
+      lineData.value = data.processHoursEnterLineList;
+      isCOB.value=data.isCOB;
     } else {
       ElMessage({
         type: "error",
@@ -1165,6 +1185,20 @@ const getProcessIndex = async (keyWord: String) => {
     }
   })
 }
+
+//监听工装序号变化
+const processNumberChange = (value: any, dataIndex: any) => {
+    if (processNumberOptions.value.length > 0) {
+        let options = processNumberOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processNumber == value) {
+              dataArr.value[dataIndex].processName = item.processName;
+              return;
+            }
+        }
+    }
+}
 //-----------------------------------end------------------------------------
 
 //-----------------------------工序名称代码块---------------------------------
@@ -1202,6 +1236,21 @@ const getProcessName = async (keyWord: String) => {
       processNameOptions.value = []
     }
   })
+}
+
+//监听工序名称变化
+const processNameChange = (value: any, dataIndex: any) => {
+    console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+    if (processNameOptions.value.length > 0) {
+        let options = processNameOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processName == value) {
+                dataArr.value[dataIndex].processNumber = item.processNumber;
+                return;
+            }
+        }
+    }
 }
 
 //------------------------------end------------------------------------------
@@ -1507,6 +1556,11 @@ const calToolTotalCost = (dataIndex: number) => {
 
 //3D爆炸图下载
 const downLoad3D = () => {
+  ElMessage({
+        type: "error",
+        message: "接口尚未提供,无法实现!!!"
+      })
+  return;    
   let param = {
     AuditFlowId: auditFlowId,
     productId: productId
@@ -1534,6 +1588,11 @@ const downLoad3D = () => {
 }
 
 const viewBOM = (type: Number) => {
+  ElMessage({
+        type: "error",
+        message: "接口尚未提供,无法实现!!!"
+      })
+  return;    
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
@@ -1589,7 +1648,14 @@ const viewBOM = (type: Number) => {
 }
 //模组数据
 const showProjectDialog = () => {
-  dialogTableVisible.value = true
+  router.push({
+    path: "/resourcesDepartment/moduleNumber",
+    query: {
+      auditFlowId
+    }
+  })
+  return;    
+  dialogTableVisible.value = true;
 }
 const dialogTableVisible = ref(false)
 const dialogProData = reactive([
@@ -1707,29 +1773,52 @@ const dialogForm = ref({
   id: 0,
   processHoursEnterDtoList: []
 })
-const openStandardProcessDialogForm = () => {
-  dialogForm.value.name = ""
-  dialogForm.value.id = 0
-  dialogForm.value.processHoursEnterDtoList = []
-  dialogFormVisible.value = true
-}
 interface standardProcessNameListItem {
   id: number
   name: string
   list: Array<any>
 }
 const standardProcessNameOptions = ref<standardProcessNameListItem[]>([])
-const standardProcessNameLoading = ref(false)
-//模糊查询标准工艺名称
+const standardProcessLoading = ref(false)
+//打开选择标准工艺的弹窗
+const openStandardProcessDialogForm =async () => {
+  dialogFormVisible.value = false;
+  dialogForm.value.name = "";
+  dialogForm.value.id = 0;
+  dialogForm.value.processHoursEnterDtoList = [];
+  await getStandardProcessList({name:""}).then((response: any) => {
+    if (response.success) {
+      let data = response.result
+      if (data.length > 0) {
+        standardProcessNameOptions.value = data;
+        dialogFormVisible.value = true
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "标准工艺数据不存在!"
+        })
+        standardProcessNameOptions.value = []
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "标准工艺数据不存在!"
+      })
+      standardProcessNameOptions.value = []
+    }
+  })
+}
+//模糊查询标准工艺名称(废弃)
 const remoteMethodForStandardProcessName = async (query: string) => {
   if (query) {
-    standardProcessNameLoading.value = true
+    standardProcessLoading.value = true
     await getStandardProcessName(query)
-    standardProcessNameLoading.value = false
+    standardProcessLoading.value = false
   } else {
     standardProcessNameOptions.value = []
   }
 }
+//模糊查询工艺标准(废弃)
 const getStandardProcessName = async (keyWord: String) => {
   let param = {
     name: keyWord
@@ -1757,19 +1846,16 @@ const getStandardProcessName = async (keyWord: String) => {
   })
 }
 
-const standardProcessSelectChange = (value: any) => {
-  // console.log("value", value);
-}
-
-const cancelSelectStandardProcessName = () => {
+//取消选择工艺标准
+const cancelSelectStandardProcess = () => {
   // ElMessage({
   //   type: "warning",
   //   message: "取消选择标准工序"
   // })
   dialogFormVisible.value = false;
 }
-
-const confirmSelectStandardProcessName = () => {
+//确认选择工艺标准
+const confirmSelectStandardProcess = () => {
   console.log("选择的标准工艺", dialogForm.value)
   if (dialogForm.value.name.length < 1 || dialogForm.value.id == 0) {
     ElMessage({
@@ -1787,6 +1873,7 @@ const confirmSelectStandardProcessName = () => {
     })
     return
   }
+  standardProcessLoading.value = true;
   if (dataArr.value.length > 0) {
     let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
     let newSop = JSON.parse(JSON.stringify(pList[0].sopInfo ? pList[0].sopInfo : []));
@@ -1812,6 +1899,7 @@ const confirmSelectStandardProcessName = () => {
     dataArr.value = pList;
   }
   console.log("列表", dataArr.value);
+  standardProcessLoading.value = false;
   dialogFormVisible.value = false
   ElMessage({
     type: "success",

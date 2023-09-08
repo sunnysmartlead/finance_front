@@ -313,25 +313,23 @@
                 <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150 u-border">
-                    <el-select v-model="deviceItem.deviceName" :disabled="isDisable(dataIndex)" filterable remote
-                      reserve-keyword :remote-method="remoteMethodForDeviceName" :loading="deviceNameLoading">
-                      <el-option v-for="item in deviceNameOptions" :key="item.value" :label="item.label"
-                        :value="item.value" />
+                    <el-select v-model="deviceItem.deviceName" 
+                          :disabled="isDisable(dataIndex)" 
+                          filterable remote  reserve-keyword
+                          :remote-method="remoteMethodForDeviceName"
+                          @change="deviceNameChange($event,deviceIndex,dataIndex)"
+                          :loading="deviceNameLoading">
+                      <el-option v-for="item in deviceListOptions" 
+                            :key="item.id" :label="item.deviceName" :value="item.deviceName"/>
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input v-model="deviceItem.deviceStatus" :disabled="isDisable(dataIndex)"
-                      class="input-with-select">
-                      <template #append>
-                        <el-select v-model="deviceItem.deviceStatus" placeholder="选择" style="width: 75px">
-                          <el-option label="专用" value="1" />
-                          <el-option label="共用" value="2" />
-                          <el-option label="现有" value="3" />
-                          <el-option label="新购" value="4" />
-                          <el-option label="改造" value="5" />
-                        </el-select>
-                      </template>
-                    </el-input>
+                    <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"  :disabled="isDisable(dataIndex)">
+                      <el-option v-for="item in deviceStatusEnmus" 
+                                        :key="item.code" 
+                                        :label="item.value"
+                                        :value="item.value"/>
+                    </el-select> 
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input-number v-model="deviceItem.deviceNumber" :min="1" :disabled="isDisable(dataIndex)"
@@ -347,7 +345,7 @@
                 </div>
               </div>
             </div>
-
+              <!--追溯  -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <div v-for="(hardInfo, hardIndex) in dataItem.developCostInfo.hardwareInfo" :key="hardIndex"
@@ -395,7 +393,7 @@
                 </div>
               </div>
             </div>
-
+             <!-- 治具 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
@@ -470,7 +468,7 @@
                 </div>
               </div>
             </div>
-
+              <!-- 工时 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center">
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
@@ -673,10 +671,14 @@ import {
   downLoad3DImg,
   FindStructureBomByProcess,
   FindElectronicBomByProcess,
-  GetBoardInfomation
+  GetBoardInfomation,
+  getDeviceStatus
 } from "@/api/processHoursEnter"
 import { GetListAll as queryProcessList } from "@/api/process"
 import { getListAllForQuery as getStandardProcessList } from "@/api/standardProcess"
+import {
+  getListAllForSelect as  getDeviceListForSelect
+} from '@/api/foundationDeviceDto';
 import {random } from "lodash"
 import router from "@/router"
 const tempData: any = {
@@ -816,6 +818,7 @@ const tempData: any = {
     }
   ]
 }
+const deviceStatusEnmus=ref<any>([]);
 const dataArr = ref<any>([])
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null
@@ -834,6 +837,7 @@ const initData = () => {
   if (auditFlowId != undefined && productId != undefined) {
     getTableData()
     getUPHAndLineData()
+    getDeviceStatuEnmu();
   }
 }
 
@@ -876,6 +880,17 @@ const getUPHAndLineData = () => {
     }
   })
 }
+
+const getDeviceStatuEnmu = () => {
+    getDeviceStatus().then((response:any) => {
+        console.log("======设备状态列表=======", response);
+        if (response.success) {
+            deviceStatusEnmus.value=response.result;
+        }
+    })
+}
+
+
 //整个页面保存
 const handleSaveData = () => {
   let param = {
@@ -1256,37 +1271,81 @@ const processNameChange = (value: any, dataIndex: any) => {
 //------------------------------end------------------------------------------
 
 //---------------------------------硬件设备代码块-----------------------------
-interface deviceNameListItem {
-  value: string
-  label: string
+interface deviceListItem {
+  deviceName:string,
+  deviceNumber: string,
+  devicePrice: number,
+  deviceStatus: string,
+  deviceProvider: string,
+  processHoursEnterId: number,
+  id:number
 }
-const deviceNameOptions = ref<deviceNameListItem[]>([])
+const deviceListOptions = ref<deviceListItem[]>([])
 const deviceNameLoading = ref(false)
 //模糊查询设备名称
-const remoteMethodForDeviceName = (query: string) => {
+const remoteMethodForDeviceName =async (query: string) => {
   if (query) {
     deviceNameLoading.value = true
-    setTimeout(() => {
-      deviceNameLoading.value = false
-      deviceNameOptions.value = getDeviceName(query)
-    }, 200)
+    await getDeviceList(query)
+    deviceNameLoading.value = false
   } else {
-    deviceNameOptions.value = []
+    deviceListOptions.value = []
   }
 }
-const getDeviceName = (keyWord: String) => {
-  return [
-    { label: "设备名称1" + keyWord, value: "aaaaa" },
-    { label: "设备名称2" + keyWord, value: "bbbbb" },
-    { label: "设备名称3" + keyWord, value: "ccccc" },
-    { label: "设备名称4" + keyWord, value: "ddddd" }
-  ]
+const getDeviceList = async (keyWord:string) => {
+  let param={
+    DeviceName : keyWord
+  };
+  await getDeviceListForSelect(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        deviceListOptions.value=data;
+        console.log("===查询设备列表===",deviceListOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询设备不存在!"
+        })
+        deviceListOptions.value=[];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询设备不存在!"
+      })
+      deviceListOptions.value=[];
+    }
+  })
+  return []
 }
+
+const deviceNameChange=(value: any, deviceIndex : any,dataIndex : any)=>{
+ 
+  if (deviceListOptions.value.length > 0) {
+    let options = deviceListOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.deviceName == value) {
+                console.log("当前的设备",item);
+                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].id=item.id;
+                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice=item.devicePrice;
+                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceStatus=item.deviceStatus;
+                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceNumber=item.deviceNumber?item.deviceNumber:1;
+                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice=item.devicePrice;
+                handleDeviceChange(item.devicePrice,dataIndex,deviceIndex); 
+                return;
+            }
+        }
+  } 
+ 
+}
+
 //设备价格或数量变化
 const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
   console.log("第" + dataIndex + "工序的第" + deviceIndex + "个的数量是" + value + "个")
   let deviceCost = 0.0
-  dataArr.value[dataIndex].deviceInfo.deviceArr.forEach((item) => {
+  dataArr.value[dataIndex].deviceInfo.deviceArr.forEach((item:any) => {
     deviceCost = deviceCost + item.deviceNumber * item.devicePrice
   })
   console.log("设备总价", deviceCost)
@@ -1295,11 +1354,11 @@ const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
 //-------------------------------------end----------------------------------
 
 //--------------------------------软件代码块------------------------------
-interface hardwareDeviceNameListItem {
+interface hardwareDeviceListItem {
   value: string
   label: string
 }
-const hardwareDeviceNameOptions = ref<hardwareDeviceNameListItem[]>([])
+const hardwareDeviceNameOptions = ref<hardwareDeviceListItem[]>([])
 const hardwareDeviceNameLoading = ref(false)
 //模糊查询软件名称
 const remoteMethodForHardwareDeviceName = (query: string) => {

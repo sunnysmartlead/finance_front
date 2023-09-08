@@ -18,14 +18,6 @@ export function createFoundationDevice(data:any) {
   })
 }
 
-//
-/** 获取设备状态枚举列表 */
-export function getDeviceStatus() {
-  return request({
-    url: "api/services/app/FoundationDevice/GetDeviceStatus",
-    method: "get",
-  })
-}
 
 export function getFoundationDeviceById(id: number) {
   return request({
@@ -54,6 +46,23 @@ export function getListAll(data: QueryParams) {
     data
   })
 }
+
+
+export function getListAllForSelect(data: QueryParams) {
+  return request({
+    url: "api/services/app/FoundationDeviceItem/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+export function getDeviceStatus() {
+  return request({
+    url: "api/services/app/ProcessHoursEnter/GetDeviceStatus",
+    method: "get",
+  })
+}
+
 export function deleteFoundationPFoundationDevice(id: number | undefined) {
   return request({
     url: "/api/services/app/FoundationDevice/Delete",

@@ -17,6 +17,16 @@ export function GetListAll(data: QueryParams) {
     })
 }
 
+//
+/** 获取设备状态枚举列表 */
+export function getDeviceStatus() {
+  return request({
+    url: "api/services/app/ProcessHoursEnter/GetDeviceStatus",
+    method: "get",
+  })
+}
+
+
 
 export function getListUphOrLine(data: QueryParams) {
   return request({

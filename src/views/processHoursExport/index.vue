@@ -13,7 +13,7 @@
         <el-button type="primary" @click="showProjectDialog">项目走量查看</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">SOR下载</el-button>
+        <el-button type="primary" @click="sorDownloadFile">SOR下载</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="openStandardProcessDialogForm">选择工艺标准</el-button>
@@ -683,7 +683,8 @@ import {
 import {random } from "lodash"
 import router from "@/router"
 import {GetPicture3DByAuditFlowId} from "@/components/ThreeDImage/service";
-import {CommonDownloadFile} from "@/api/bom";
+import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
+import { CommonDownloadFile } from "@/api/bom"
 const tempData: any = {
   id: 0,
   processName: "名称",
@@ -1615,27 +1616,30 @@ const calToolTotalCost = (dataIndex: number) => {
   developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost
   return developTotalPrice
 }
-
-//3D爆炸图下载
-const downLoad3D = async () => {
-  let downRes: any = await GetPicture3DByAuditFlowId({auditFlowId, productId: productId})
-  if (!downRes.result.threeDFileId) return false
-  let res: any = await CommonDownloadFile(downRes.result.threeDFileId)
-  const blob = res
-  const reader = new FileReader()
-  reader.readAsDataURL(blob)
-  reader.onload = function () {
-    let url = URL.createObjectURL(new Blob([blob]))
-    let a = document.createElement("a")
-    document.body.appendChild(a) //此处增加了将创建的添加到body当中
-    a.href = url
-    a.download = downRes.result.threeDFileName
-    a.target = "_blank"
-    a.click()
-    a.remove() //将a标签移除
+const sorDownloadFile =async () => {
+  if (auditFlowId) {
+    try {
+      const {result}: any = (await getSorByAuditFlowId(auditFlowId)) || {}
+      let res: any = await CommonDownloadFile(result.sorFileId)
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = result.sorFileName
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } catch (err: any) {
+      console.log(err)
+    }
   }
-  // data.setVisible = false
 }
+//3D爆炸图下载
 const viewBOM = (type: Number) => {
   ElMessage({
         type: "error",

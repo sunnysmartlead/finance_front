@@ -13,7 +13,7 @@
         <el-button type="primary" @click="showProjectDialog">项目走量查看</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">SOR下载</el-button>
+        <el-button type="primary"  @click="sorDownloadFile">SOR下载</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="openStandardProcessDialogForm">选择工艺标准</el-button>
@@ -22,13 +22,13 @@
         <el-button type="primary" @click="addPH()">新增工序</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary" @click="downLoad3D()">3D爆炸图下载</el-button>
+        <ThreeDImage m="2" />
       </div>
       <div class="u-m-5">
-        <el-button type="primary" @click="viewBOM(1)">结构BOM查看</el-button>
+        <el-button type="primary" @click="viewBOM">结构BOM查看</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary" @click="viewBOM(2)">电子BOM查看</el-button>
+        <el-button type="primary" @click="viewElectronicBOM">电子BOM查看</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="openPanelPartDialog">板部件以及拼版数量</el-button>
@@ -649,6 +649,35 @@
         <el-table-column property="stoneQuantity" label="拼板数量" align="center" />
       </el-table>
     </el-dialog>
+    <el-dialog v-model="structuralDataDialogTableVisible" title="结构bom查看" width="60%" :close-on-click-modal="false">
+      <el-table :data="structuralData" border style="width: 100%" height="500">
+        <el-table-column prop="categoryName" label="物料大类" width="180" />
+        <el-table-column prop="typeName" label="物料种类" width="180" />
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="180" />
+        <el-table-column prop="drawingNumName" label="图号名称" width="180" />
+        <el-table-column prop="sapItemNum" label="物料编号" width="180" />
+        <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="180" />
+        <el-table-column prop="materialName" label="材料名称" width="180" />
+        <el-table-column prop="weightNumber" label="重量" width="180" />
+        <el-table-column prop="moldingProcess" label="成型工艺" width="180" />
+        <el-table-column prop="isNewMouldProduct" label="是否新开模" width="180" />
+        <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="180" />
+        <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="180" />
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
+        <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200" />
+      </el-table>
+    </el-dialog>
+    <el-dialog v-model="FindElectronicBomByProcessOMDataDialogTableVisible" title="电子结构bom查看" width="60%" :close-on-click-modal="false">
+      <el-table :data="electronicBomData" border style="width: 100%" height="500">
+        <el-table-column prop="categoryName" label="物料大类" width="180" />
+        <el-table-column prop="typeName" label="物料种类" width="180" />
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="180" />
+        <el-table-column prop="sapItemNum" label="物料编号" width="180" />
+        <el-table-column prop="sapItemName" label="材料名称" width="180" />
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
+        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -657,6 +686,7 @@ import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { onMounted, reactive, ref, toRefs } from "vue"
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import getQuery from "@/utils/getQuery"
+import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
 import {
   GetListAll,
@@ -688,6 +718,8 @@ import {
 } from '@/api/foundationDeviceDto';
 import { random } from "lodash"
 import router from "@/router"
+import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
+import { CommonDownloadFile ,GetStructionBom,GetElectronicBom} from "@/api/bom"
 const tempData: any = {
   id: 0,
   processName: "名称",
@@ -830,9 +862,13 @@ const dataArr = ref<any>([])
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null
 const addFlag = ref(false)
+const structuralDataDialogTableVisible = ref(false)
+const FindElectronicBomByProcessOMDataDialogTableVisible = ref(false)
 const { auditFlowId, productId }: any = getQuery()
 const UPHData = ref<any>([])
 const lineData = ref<any>([])
+const structuralData = ref<any>([])
+const electronicBomData = ref<any>([])
 const isCOB = ref(true)
 onMounted(() => {
   initData()
@@ -1862,63 +1898,49 @@ const downLoad3D = () => {
   })
 }
 
-const viewBOM = (type: Number) => {
-  ElMessage({
-    type: "error",
-    message: "接口尚未提供,无法实现!!!"
-  })
-  return;
+const viewBOM = async () => {
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
   }
-  //结构
-  if (type == 1) {
-    FindStructureBomByProcess(param).then((response: any) => {
-      console.log("结构BOM", response)
-      return
-      if (response.success) {
-        let data = response.result
-        let fileId = data.threeDFileId
-        let fileName = data.threeDFileName
-        let url = "" + fileName
-        const a = document.createElement("a")
-        a.href = url
-        a.setAttribute("download", fileName)
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-      } else {
-        ElMessage({
-          type: "error",
-          message: "失败"
-        })
-      }
-    })
+  let resStruction: any = await GetStructionBom(param)
+  structuralDataDialogTableVisible.value = true
+  structuralData.value = resStruction.result
+
+}
+
+const viewElectronicBOM = async () => {
+  let param = {
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
   }
-  //电子
-  else {
-    FindElectronicBomByProcess(param).then((response: any) => {
-      console.log("电子BOM", response)
-      return
-      if (response.success) {
-        let data = response.result
-        let fileId = data.threeDFileId
-        let fileName = data.threeDFileName
-        let url = "" + fileName
-        const a = document.createElement("a")
+  let resStruction: any = await GetElectronicBom(param)
+  FindElectronicBomByProcessOMDataDialogTableVisible.value = true
+  electronicBomData.value = resStruction.result
+
+}
+
+const sorDownloadFile =async () => {
+  if (auditFlowId) {
+    try {
+      const {result}: any = (await getSorByAuditFlowId(auditFlowId)) || {}
+      let res: any = await CommonDownloadFile(result.sorFileId)
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
         a.href = url
-        a.setAttribute("download", fileName)
-        document.body.appendChild(a)
+        a.download = result.sorFileName
+        a.target = "_blank"
         a.click()
-        document.body.removeChild(a)
-      } else {
-        ElMessage({
-          type: "error",
-          message: "失败"
-        })
+        a.remove() //将a标签移除
       }
-    })
+    } catch (err: any) {
+      console.log(err)
+    }
   }
 }
 //模组数据

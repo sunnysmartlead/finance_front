@@ -285,24 +285,18 @@
                 <span>{{ dataIndex }}</span>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processNumber" 
-                        :disabled="isDisable(dataIndex)" 
-                        filterable remote reserve-keyword 
-                        :remote-method="remoteMethod" 
-                        @change="processNumberChange($event, dataIndex)"
-                        :loading="processNumberloading">
-                  <el-option v-for="item in processNumberOptions" 
-                        :key="item.id" :label="item.processNumber"
+                <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
+                  reserve-keyword :remote-method="remoteMethod" @change="processNumberChange($event, dataIndex)"
+                  :loading="processNumberloading">
+                  <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
                     :value="item.processNumber" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
-                  reserve-keyword :remote-method="remoteMethodForProcessName" 
-                  @change="processNameChange($event, dataIndex)"
-                  :loading="processNameLoading">
-                  <el-option v-for="item in processNameOptions" 
-                        :key="item.id" :label="item.processName"
+                  reserve-keyword :remote-method="remoteMethodForProcessName"
+                  @change="processNameChange($event, dataIndex)" :loading="processNameLoading">
+                  <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
                     :value="item.processName" />
                 </el-select>
               </div>
@@ -313,23 +307,18 @@
                 <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150 u-border">
-                    <el-select v-model="deviceItem.deviceName" 
-                          :disabled="isDisable(dataIndex)" 
-                          filterable remote  reserve-keyword
-                          :remote-method="remoteMethodForDeviceName"
-                          @change="deviceNameChange($event,deviceIndex,dataIndex)"
-                          :loading="deviceNameLoading">
-                      <el-option v-for="item in deviceListOptions" 
-                            :key="item.id" :label="item.deviceName" :value="item.deviceName"/>
+                    <el-select v-model="deviceItem.deviceName" :disabled="isDisable(dataIndex)" filterable remote
+                      reserve-keyword :remote-method="remoteMethodForDeviceName"
+                      @change="deviceNameChange($event, deviceIndex, dataIndex)" :loading="deviceNameLoading">
+                      <el-option v-for="item in deviceListOptions" :key="item.id" :label="item.deviceName"
+                        :value="item.deviceName" />
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"  :disabled="isDisable(dataIndex)">
-                      <el-option v-for="item in deviceStatusEnmus" 
-                                        :key="item.code" 
-                                        :label="item.value"
-                                        :value="item.value"/>
-                    </el-select> 
+                    <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态" :disabled="isDisable(dataIndex)">
+                      <el-option v-for="item in deviceStatusEnmus" :key="item.code" :label="item.value"
+                        :value="item.value" />
+                    </el-select>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input-number v-model="deviceItem.deviceNumber" :min="1" :disabled="isDisable(dataIndex)"
@@ -345,7 +334,7 @@
                 </div>
               </div>
             </div>
-              <!--追溯  -->
+            <!--追溯  -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <div v-for="(hardInfo, hardIndex) in dataItem.developCostInfo.hardwareInfo" :key="hardIndex"
@@ -353,9 +342,9 @@
                   <div class="u-width-150 u-border">
                     <el-select v-model="hardInfo.hardwareDeviceName" :disabled="isDisable(dataIndex)" filterable remote
                       reserve-keyword :remote-method="remoteMethodForHardwareDeviceName"
-                      :loading="hardwareDeviceNameLoading">
-                      <el-option v-for="item in hardwareDeviceNameOptions" :key="item.value" :label="item.label"
-                        :value="item.value" />
+                      @change="hardWareNameChange($event, hardIndex, dataIndex)" :loading="hardwareDeviceNameLoading">
+                      <el-option v-for="item in hardwareDeviceNameOptions" :key="item.id" :label="item.hardwareName"
+                        :value="item.hardwareName" />
                     </el-select>
                   </div>
                   <div class="u-border u-width-150">
@@ -393,7 +382,7 @@
                 </div>
               </div>
             </div>
-             <!-- 治具 -->
+            <!-- 治具 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
@@ -402,25 +391,25 @@
                     <el-select v-model="zhiju.fixtureName" filterable remote reserve-keyword
                       :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhiJuName"
                       @change="fixtureNameChange($event, dataIndex, zhijuindex)" :loading="fixtureNameLoading">
-                      <el-option v-for="item in fixtureNameOptions" :key="item.value" :label="item.label"
-                        :value="item.value" />
+                      <el-option v-for="item in fixtureNameOptions" :key="item.id" :label="item.fixtureName"
+                        :value="item.fixtureName" />
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
-                      @change="handleZhiJuCountChange($event, dataIndex, zhijuindex)" />
+                      @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input-number v-model="zhiju.fixturePrice" :precision="2" :step="0.01" disabled
-                      @change="handleZhiJuCountChange($event, dataIndex, zhijuindex)" />
+                      @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                   </div>
                 </div>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.toolInfo.fixtureName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForJianJuName"
                     @change="jianJuNameChange($event, dataIndex)" :loading="jianJuNameLoading">
-                    <el-option v-for="item in jianJuNameOptions" :key="item.value" :label="item.label"
-                      :value="item.value" />
+                    <el-option v-for="item in jianJuNameOptions" :key="item.id" :label="item.fixtureGaugeName"
+                      :value="item.fixtureGaugeName" />
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
@@ -435,8 +424,8 @@
                   <el-select v-model="dataItem.toolInfo.frockName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForGongZhuangName"
                     @change="gongZhuangNameChange($event, dataIndex)" :loading="gongZhuangNameLoading">
-                    <el-option v-for="item in gongZhuangNameOptions" :key="item.value" :label="item.label"
-                      :value="item.value" />
+                    <el-option v-for="item in gongZhuangNameOptions" 
+                            :key="item.id" :label="item.installationName"  :value="item.installationName" />
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
@@ -451,8 +440,8 @@
                   <el-select v-model="dataItem.toolInfo.testLineName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForTestLineName"
                     @change="testLineNameChange($event, dataIndex)" :loading="testLineNameLoading">
-                    <el-option v-for="item in testLineNameOptions" :key="item.value" :label="item.label"
-                      :value="item.value" />
+                    <el-option v-for="item in testLineNameOptions" 
+                        :key="item.id" :label="item.testName" :value="item.testName" />
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
@@ -468,7 +457,7 @@
                 </div>
               </div>
             </div>
-              <!-- 工时 -->
+            <!-- 工时 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center">
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
@@ -622,10 +611,8 @@
         </el-form-item> -->
 
         <el-form-item label="标准工艺" label-width="150px">
-          <el-select v-model="dialogForm" value-key="id"  clearable
-            placeholder="选择标准工艺">
-            <el-option v-for="item in standardProcessNameOptions" 
-                  :key="item.id" :label="item.name" :value="item" />
+          <el-select v-model="dialogForm" value-key="id" clearable placeholder="选择标准工艺">
+            <el-option v-for="item in standardProcessNameOptions" :key="item.id" :label="item.name" :value="item" />
           </el-select>
         </el-form-item>
 
@@ -672,14 +659,19 @@ import {
   FindStructureBomByProcess,
   FindElectronicBomByProcess,
   GetBoardInfomation,
-  getDeviceStatus
+  getDeviceStatus,
+  getWorkClothsListForSelect,
+  getJianJuListForSelect,
+  getZhiJuListForSelect,
+  getHardWareListForSelect,
+  GetEditorByProcessNumber
 } from "@/api/processHoursEnter"
 import { GetListAll as queryProcessList } from "@/api/process"
 import { getListAllForQuery as getStandardProcessList } from "@/api/standardProcess"
 import {
-  getListAllForSelect as  getDeviceListForSelect
+  getListAllForSelect as getDeviceListForSelect
 } from '@/api/foundationDeviceDto';
-import {random } from "lodash"
+import { random } from "lodash"
 import router from "@/router"
 const tempData: any = {
   id: 0,
@@ -818,7 +810,7 @@ const tempData: any = {
     }
   ]
 }
-const deviceStatusEnmus=ref<any>([]);
+const deviceStatusEnmus = ref<any>([]);
 const dataArr = ref<any>([])
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null
@@ -826,7 +818,7 @@ const addFlag = ref(false)
 const { auditFlowId, productId }: any = getQuery()
 const UPHData = ref<any>([])
 const lineData = ref<any>([])
-const isCOB=ref(true)
+const isCOB = ref(true)
 onMounted(() => {
   initData()
 })
@@ -871,7 +863,7 @@ const getUPHAndLineData = () => {
       console.log("getListUphOrLine接口响应", data)
       UPHData.value = data.processHoursEnterUphList;
       lineData.value = data.processHoursEnterLineList;
-      isCOB.value=data.isCOB;
+      isCOB.value = data.isCOB;
     } else {
       ElMessage({
         type: "error",
@@ -882,12 +874,12 @@ const getUPHAndLineData = () => {
 }
 
 const getDeviceStatuEnmu = () => {
-    getDeviceStatus().then((response:any) => {
-        console.log("======设备状态列表=======", response);
-        if (response.success) {
-            deviceStatusEnmus.value=response.result;
-        }
-    })
+  getDeviceStatus().then((response: any) => {
+    console.log("======设备状态列表=======", response);
+    if (response.success) {
+      deviceStatusEnmus.value = response.result;
+    }
+  })
 }
 
 
@@ -978,7 +970,7 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   if (response.success) {
     let exportListData = response.result ? response.result : []
-    console.log("导入工时工序",exportListData.length);
+    console.log("导入工时工序", exportListData.length);
     //dataArr.value = exportData.concat(dataArr.value)
     if (exportListData == null || exportListData.length < 1) {
       ElMessage({
@@ -1032,13 +1024,13 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
   })
 }
 //下载模板
-const downloadTemplate=()=>{
-  const baseDomain=import.meta.env.VITE_BASE_API+"Excel/"
-  let href=baseDomain+"工时工序导入.xlsx";
-  console.log("下载模板==="+href);
+const downloadTemplate = () => {
+  const baseDomain = import.meta.env.VITE_BASE_API + "Excel/"
+  let href = baseDomain + "工时工序导入.xlsx";
+  console.log("下载模板===" + href);
   const a = document.createElement('a');
   a.href = href;
-  a.setAttribute('download',"工时工序导入模板.xlsx");
+  a.setAttribute('download', "工时工序导入模板.xlsx");
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1165,6 +1157,7 @@ const handleDel = (index: number, row: any) => {
 }
 
 //-------------------------工序序号代码块代码块------------------------------
+//#region 
 interface processNumberListItem {
   id: Number
   processName: String
@@ -1203,20 +1196,22 @@ const getProcessIndex = async (keyWord: String) => {
 
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
-    if (processNumberOptions.value.length > 0) {
-        let options = processNumberOptions.value;
-        for (let i = 0; i < options.length; i++) {
-            let item = options[i];
-            if (item.processNumber == value) {
-              dataArr.value[dataIndex].processName = item.processName;
-              return;
-            }
-        }
+  if (processNumberOptions.value.length > 0) {
+    let options = processNumberOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.processNumber == value) {
+        dataArr.value[dataIndex].processName = item.processName;
+        return;
+      }
     }
+  }
 }
+//#endregion
 //-----------------------------------end------------------------------------
 
 //-----------------------------工序名称代码块---------------------------------
+//#region 
 interface processNameListItem {
   id: Number
   processName: String
@@ -1234,7 +1229,6 @@ const remoteMethodForProcessName = async (query: string) => {
     processNameOptions.value = []
   }
 }
-
 const getProcessName = async (keyWord: String) => {
   let param = {
     ProcessName: keyWord
@@ -1252,38 +1246,38 @@ const getProcessName = async (keyWord: String) => {
     }
   })
 }
-
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
-    console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
-    if (processNameOptions.value.length > 0) {
-        let options = processNameOptions.value;
-        for (let i = 0; i < options.length; i++) {
-            let item = options[i];
-            if (item.processName == value) {
-                dataArr.value[dataIndex].processNumber = item.processNumber;
-                return;
-            }
-        }
+  console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+  if (processNameOptions.value.length > 0) {
+    let options = processNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.processName == value) {
+        dataArr.value[dataIndex].processNumber = item.processNumber;
+        return;
+      }
     }
+  }
 }
-
+//#endregion
 //------------------------------end------------------------------------------
 
 //---------------------------------硬件设备代码块-----------------------------
+//#region 
 interface deviceListItem {
-  deviceName:string,
+  deviceName: string,
   deviceNumber: string,
   devicePrice: number,
   deviceStatus: string,
   deviceProvider: string,
   processHoursEnterId: number,
-  id:number
+  id: number
 }
 const deviceListOptions = ref<deviceListItem[]>([])
 const deviceNameLoading = ref(false)
 //模糊查询设备名称
-const remoteMethodForDeviceName =async (query: string) => {
+const remoteMethodForDeviceName = async (query: string) => {
   if (query) {
     deviceNameLoading.value = true
     await getDeviceList(query)
@@ -1292,99 +1286,140 @@ const remoteMethodForDeviceName =async (query: string) => {
     deviceListOptions.value = []
   }
 }
-const getDeviceList = async (keyWord:string) => {
-  let param={
-    DeviceName : keyWord
+const getDeviceList = async (keyWord: string) => {
+  let param = {
+    DeviceName: keyWord
   };
   await getDeviceListForSelect(param).then((response: any) => {
     if (response.success) {
       let data = response.result;
       if (data.length > 0) {
-        deviceListOptions.value=data;
-        console.log("===查询设备列表===",deviceListOptions.value);
+        deviceListOptions.value = data;
+        console.log("===查询设备列表===", deviceListOptions.value);
       } else {
         ElMessage({
           type: "warning",
           message: "查询设备不存在!"
         })
-        deviceListOptions.value=[];
+        deviceListOptions.value = [];
       }
     } else {
       ElMessage({
         type: "error",
         message: "查询设备不存在!"
       })
-      deviceListOptions.value=[];
+      deviceListOptions.value = [];
     }
   })
   return []
 }
 
-const deviceNameChange=(value: any, deviceIndex : any,dataIndex : any)=>{
- 
+const deviceNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
+
   if (deviceListOptions.value.length > 0) {
     let options = deviceListOptions.value;
-        for (let i = 0; i < options.length; i++) {
-            let item = options[i];
-            if (item.deviceName == value) {
-                console.log("当前的设备",item);
-                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].id=item.id;
-                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice=item.devicePrice;
-                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceStatus=item.deviceStatus;
-                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceNumber=item.deviceNumber?item.deviceNumber:1;
-                dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice=item.devicePrice;
-                handleDeviceChange(item.devicePrice,dataIndex,deviceIndex); 
-                return;
-            }
-        }
-  } 
- 
-}
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.deviceName == value) {
+        console.log("当前的设备", item);
+        dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].id = item.id;
+        dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice = item.devicePrice;
+        dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceStatus = item.deviceStatus;
+        dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceNumber = item.deviceNumber ? item.deviceNumber : 1;
+        dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice = item.devicePrice;
+        handleDeviceChange(item.devicePrice, dataIndex, deviceIndex);
+        return;
+      }
+    }
+  }
 
+}
 //设备价格或数量变化
 const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
   console.log("第" + dataIndex + "工序的第" + deviceIndex + "个的数量是" + value + "个")
   let deviceCost = 0.0
-  dataArr.value[dataIndex].deviceInfo.deviceArr.forEach((item:any) => {
+  dataArr.value[dataIndex].deviceInfo.deviceArr.forEach((item: any) => {
     deviceCost = deviceCost + item.deviceNumber * item.devicePrice
   })
   console.log("设备总价", deviceCost)
   dataArr.value[dataIndex].deviceInfo.deviceTotalCost = Number(Number(deviceCost).toFixed(2))
 }
+//#endregion
 //-------------------------------------end----------------------------------
 
 //--------------------------------软件代码块------------------------------
+//#region 
 interface hardwareDeviceListItem {
-  value: string
-  label: string
+  foundationHardwareId: number,
+  hardwareBusiness: string,
+  hardwareName: string,
+  hardwareDeviceNumber: number,
+  hardwarePrice: number,
+  hardwareState: string,
+  id: number
 }
 const hardwareDeviceNameOptions = ref<hardwareDeviceListItem[]>([])
 const hardwareDeviceNameLoading = ref(false)
 //模糊查询软件名称
-const remoteMethodForHardwareDeviceName = (query: string) => {
+const remoteMethodForHardwareDeviceName = async (query: string) => {
   if (query) {
     hardwareDeviceNameLoading.value = true
-    setTimeout(() => {
-      hardwareDeviceNameLoading.value = false
-      hardwareDeviceNameOptions.value = getHardwareDeviceName(query)
-    }, 200)
+    await getHardwareDeviceName(query);
+    hardwareDeviceNameLoading.value = false
   } else {
     hardwareDeviceNameOptions.value = []
   }
 }
-const getHardwareDeviceName = (keyWord: String) => {
-  return [
-    { label: "硬件设备名称1" + keyWord, value: "aaaaa" },
-    { label: "硬件设备名称2" + keyWord, value: "bbbbb" },
-    { label: "硬件设备名称3" + keyWord, value: "ccccc" },
-    { label: "硬件设备名称4" + keyWord, value: "ddddd" }
-  ]
+const getHardwareDeviceName = async (keyWord: String) => {
+  let param = {
+    HardwareName: keyWord
+  };
+  await getHardWareListForSelect(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        hardwareDeviceNameOptions.value = data;
+        console.log("===查询硬件列表===", hardwareDeviceNameOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询硬件不存在!"
+        })
+        hardwareDeviceNameOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询设备不存在!"
+      })
+      hardwareDeviceNameOptions.value = [];
+    }
+  })
+  return []
+}
+//硬件设备名称变化
+const hardWareNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
+  if (hardwareDeviceNameOptions.value.length > 0) {
+    let options = hardwareDeviceNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.hardwareName == value) {
+        console.log("当前的硬件", item);
+        dataArr.value[dataIndex].developCostInfo.hardwareInfo[deviceIndex].id = item.id;
+        dataArr.value[dataIndex].developCostInfo.hardwareInfo[deviceIndex].hardwareDeviceName = item.hardwareName;
+        dataArr.value[dataIndex].developCostInfo.hardwareInfo[deviceIndex].hardwareDeviceNumber = item.hardwareDeviceNumber ? item.hardwareDeviceNumber : 1;
+        dataArr.value[dataIndex].developCostInfo.hardwareInfo[deviceIndex].hardwareDevicePrice = item.hardwarePrice;
+        handleHardwareDeviceChange(item.hardwarePrice, dataIndex, deviceIndex);
+        return;
+      }
+    }
+  }
 }
 //软件设备数量和价格变化
 const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIndex: any) => {
   console.log("第" + dataIndex + "工序的第" + hardwareDeviceIndex + "个的数量是" + value + "个")
   let handleHardwareDeviceCost = 0.0
-  dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item) => {
+  dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceNumber * item.hardwareDevicePrice
   })
   console.log("软件设备总价", handleHardwareDeviceCost)
@@ -1392,9 +1427,11 @@ const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIn
   dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice =
     Number(handleHardwareDeviceCost) + Number(dataArr.value[dataIndex].developCostInfo.softwarePrice)
 }
+//#endregion
 //-------------------------------------end-------------------------------
 
 //------------------------------开图软件名称代码块-------------------------
+//#region 
 interface kaiTuNameListItem {
   value: string
   label: string
@@ -1430,168 +1467,309 @@ const kaiTuChange = (kaitu: any, dataIndex: number) => {
     Number(dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice) +
     Number(dataArr.value[dataIndex].developCostInfo.softwarePrice)
 }
+//#endregion
 //-------------------------------end---------------------------------------
 
 //--------------------------治具代码块--------------------------------------
+//#region 
 interface fixtureNameListItem {
-  value: string
-  label: string
+  fixtureBusiness: string,
+  fixtureName: string,
+  fixturePrice: number,
+  fixtureProvider: string,
+  fixtureState: string,
+  foundationFixtureId: number,
+  fixtureNumber: number,
+  id: number
 }
 const fixtureNameOptions = ref<fixtureNameListItem[]>([])
 const fixtureNameLoading = ref(false)
 //模糊查询治具名称
-const remoteMethodForZhiJuName = (query: string) => {
+const remoteMethodForZhiJuName = async (query: string) => {
   if (query) {
-    fixtureNameLoading.value = true
-    setTimeout(() => {
-      fixtureNameLoading.value = false
-      fixtureNameOptions.value = getZhiJuName(query)
-    }, 200)
+    fixtureNameLoading.value = true;
+    await getZhiJuName(query);
+    fixtureNameLoading.value = false;
   } else {
     fixtureNameOptions.value = []
   }
 }
-const getZhiJuName = (keyWord: String) => {
-  return [
-    { label: "治具名称" + keyWord, value: "aaaaa" },
-    { label: "治具名称" + keyWord, value: "bbbbb" },
-    { label: "治具名称" + keyWord, value: "ccccc" },
-    { label: "治具名称" + keyWord, value: "ddddd" }
-  ]
+const getZhiJuName = async (keyWord: String) => {
+  let param = {
+    FixtureName: keyWord
+  };
+  await getZhiJuListForSelect(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        fixtureNameOptions.value = data;
+        console.log("===查询治具列表===", fixtureNameOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询治具不存在!"
+        })
+        fixtureNameOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询治具不存在!"
+      })
+      fixtureNameOptions.value = [];
+    }
+  })
+  return []
 }
 //治具名称发生变化,从而获取治具的价格,并计算总价
-const fixtureNameChange = (zhiju: any, dataIndex: number, zhiJuIndex: number) => {
-  console.log("第" + dataIndex + "工序的第" + zhiJuIndex + "个的治具名称发生了变化" + zhiju)
-  //模拟后台查询此治具的单价
-  dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].fixturePrice = Number(random(1000))
-  //这里还要计算总价
+const fixtureNameChange = (value: any, dataIndex: number, zhiJuIndex: number) => {
+  if (fixtureNameOptions.value.length > 0) {
+    let options = fixtureNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.fixtureName == value) {
+        console.log("当前的治具", item);
+        dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].id = item.id;
+        dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].fixtureName = item.fixtureName;
+        dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].fixtureNumber = item.fixtureNumber ? item.fixtureNumber : 1;
+        dataArr.value[dataIndex].toolInfo.zhiJuArr[zhiJuIndex].fixturePrice = item.fixturePrice;
+        handleZhiJuCountChange(dataIndex, zhiJuIndex);
+        return;
+      }
+    }
+  }
 }
 //治具数量变化监听
-const handleZhiJuCountChange = (value: any, dataIndex: any, zhijuIndex: any) => {
-  console.log("第" + dataIndex + "工序的第" + zhijuIndex + "个的治具数量是" + value + "个")
+const handleZhiJuCountChange = (dataIndex: number, zhiJuIndex: number) => {
+  calToolTotalCost(dataIndex)
 }
+//#endregion
 //---------------------------------end-------------------------------------
 
 //---------------------------检具代码块-------------------------------------
+//#region 
 interface jianJuNameListItem {
-  value: string
-  label: string
+  fixtureGaugeBusiness: string
+  fixtureGaugeName: string,
+  fixtureGaugePrice: number,
+  fixtureGaugestate: string,
+  fixtureGaugeNumber: number,
+  id: number,
 }
 const jianJuNameOptions = ref<jianJuNameListItem[]>([])
 const jianJuNameLoading = ref(false)
 //模糊查询检具名称
-const remoteMethodForJianJuName = (query: string) => {
+const remoteMethodForJianJuName = async (query: string) => {
   if (query) {
-    jianJuNameLoading.value = true
-    setTimeout(() => {
-      jianJuNameLoading.value = false
-      jianJuNameOptions.value = getJianJuName(query)
-    }, 200)
+    jianJuNameLoading.value = true;
+    await getJianJuName(query);
+    jianJuNameLoading.value = false
   } else {
     jianJuNameOptions.value = []
   }
 }
-const getJianJuName = (keyWord: String) => {
-  return [
-    { label: "检具名称1" + keyWord, value: "aaaaa" },
-    { label: "检具名称2" + keyWord, value: "bbbbb" },
-    { label: "检具名称3" + keyWord, value: "ccccc" },
-    { label: "检具名称4" + keyWord, value: "ddddd" }
-  ]
+const getJianJuName = async (keyWord: String) => {
+  let param = {
+    FixtureName: keyWord
+  };
+  await getJianJuListForSelect(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        jianJuNameOptions.value = data;
+        console.log("===查询检具列表===", jianJuNameOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询检具不存在!"
+        })
+        jianJuNameOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询检具不存在!"
+      })
+      jianJuNameOptions.value = [];
+    }
+  })
+  return []
 }
 //选择检具名称,查询出检具的单价
-const jianJuNameChange = (jianJu: any, dataIndex: number) => {
-  console.log("第" + dataIndex + "工序的检具名称发生了变化" + jianJu)
-  //模拟后台查询此检具的单价
-  dataArr.value[dataIndex].toolInfo.fixturePrice = Number(random(1000))
-  //这里还要计算总价
+const jianJuNameChange = (value: string, dataIndex: number) => {
+  
+  if (jianJuNameOptions.value.length > 0) {
+    let options = jianJuNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.fixtureGaugeName == value) {
+        console.log("当前的检具", item);
+        dataArr.value[dataIndex].toolInfo.id = item.id;
+        dataArr.value[dataIndex].toolInfo.fixtureName = item.fixtureGaugeName;
+        dataArr.value[dataIndex].toolInfo.fixtureNumber = item.fixtureGaugeNumber ? item.fixtureGaugeNumber : 1;
+        dataArr.value[dataIndex].toolInfo.fixturePrice = item.fixtureGaugePrice;
+        handleJianJuCountChange(value, dataIndex);
+        return;
+      }
+    }
+  }
 }
 //检具数量变化监听
 const handleJianJuCountChange = (value: any, dataIndex: number) => {
-  console.log("第" + dataIndex + "工序的检举数量变化" + value + "个")
+  calToolTotalCost(dataIndex)
 }
+//#endregion
 //------------------------------end----------------------------------------
 
 //------------------------------------工装代码块--------------------------
+//#region 
 interface gongZhuangNameListItem {
-  value: string
-  label: string
+  id: number,
+  installationName: string,
+  installationNumer:number,
+  installationPrice: number,
+  installationSupplier: string,
+  testName: string,
+  testPrice: number,
 }
 const gongZhuangNameOptions = ref<gongZhuangNameListItem[]>([])
 const gongZhuangNameLoading = ref(false)
 //模糊查询工装的名称
-const remoteMethodForGongZhuangName = (query: string) => {
+const remoteMethodForGongZhuangName = async (query: string) => {
   if (query) {
     gongZhuangNameLoading.value = true
-    setTimeout(() => {
-      gongZhuangNameLoading.value = false
-      gongZhuangNameOptions.value = getGongZhuangName(query)
-    }, 200)
+    await getGongZhuangName(query)
+    gongZhuangNameLoading.value = false
   } else {
     gongZhuangNameOptions.value = []
   }
 }
-const getGongZhuangName = (keyWord: String) => {
-  return [
-    { label: "工装名称1" + keyWord, value: "aaaaa" },
-    { label: "工装名称2" + keyWord, value: "bbbbb" },
-    { label: "工装名称3" + keyWord, value: "ccccc" },
-    { label: "工装名称4" + keyWord, value: "ddddd" }
-  ]
+const getGongZhuangName = async (keyWord: String) => {
+  let param={
+    InstallationName:keyWord
+  }
+  await getWorkClothsListForSelect(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        gongZhuangNameOptions.value = data;
+        console.log("===查询工装列表===", gongZhuangNameOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询工装不存在!"
+        })
+        gongZhuangNameOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询工装不存在!"
+      })
+      gongZhuangNameOptions.value = [];
+    }
+  })
+  return []
 }
 //工装名称变化,查询工装的价格
-const gongZhuangNameChange = (gongZhuang: any, dataIndex: number) => {
-  console.log("第" + dataIndex + "工序的工装名称发生了变化" + gongZhuang)
+const gongZhuangNameChange = (value: string, dataIndex: number) => {
   //模拟后台查询此工装的单价
-  dataArr.value[dataIndex].toolInfo.frockPrice = Number(random(1000))
-  //这里还要计算总价
+  //dataArr.value[dataIndex].toolInfo.frockPrice = Number(random(1000))
+  if (gongZhuangNameOptions.value.length > 0) {
+    let options = gongZhuangNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.installationName == value) {
+        console.log("当前的工装", item);
+        dataArr.value[dataIndex].toolInfo.frockName = item.installationName;
+        dataArr.value[dataIndex].toolInfo.frockNumber = item.installationNumer ? item.installationNumer : 1;
+        dataArr.value[dataIndex].toolInfo.frockPrice = item.installationPrice;
+        handleGongZhuangCountChange(value, dataIndex);
+        return;
+      }
+    }
+  }
 }
 //工装数量变化
 const handleGongZhuangCountChange = (value: any, dataIndex: number) => {
-  console.log("第" + dataIndex + "工序的工装数量变化" + value + "个")
+  calToolTotalCost(dataIndex)
 }
+//#endregion
 //----------------------------------end----------------------------------
 
 //---------------------------测试线代码块------------------------------------
+//#region 
 interface testLineNameListItem {
-  value: string
-  label: string
+  id: number,
+  installationName: string,
+  installationNumer:number,
+  installationPrice: number,
+  installationSupplier: string,
+  testName: string,
+  testPrice: number,
+  testNumber:number,
 }
 const testLineNameOptions = ref<testLineNameListItem[]>([])
 const testLineNameLoading = ref(false)
 //模糊查询测试线的名称
-const remoteMethodForTestLineName = (query: string) => {
+const remoteMethodForTestLineName =async (query: string) => {
   if (query) {
     testLineNameLoading.value = true
-    setTimeout(() => {
-      testLineNameLoading.value = false
-      testLineNameOptions.value = getTestLineName(query)
-    }, 200)
+    await getTestLineName(query)
+    testLineNameLoading.value = false
   } else {
     testLineNameOptions.value = []
   }
 }
-const getTestLineName = (keyWord: String) => {
-  return [
-    { label: "线束名称1" + keyWord, value: "aaaaa" },
-    { label: "线束名称2" + keyWord, value: "bbbbb" },
-    { label: "线束名称3" + keyWord, value: "ccccc" },
-    { label: "线束名称4" + keyWord, value: "ddddd" }
-  ]
+const getTestLineName =async (keyWord: String) => {
+  let param={
+    TestName:keyWord
+  }
+  await getWorkClothsListForSelect(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        testLineNameOptions.value = data;
+        console.log("===查询测试线列表===", testLineNameOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询测试线不存在!"
+        })
+        testLineNameOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询工装不存在!"
+      })
+      testLineNameOptions.value = [];
+    }
+  })
+  return []
 }
 //测试先名称变化,查询对应的单价
-const testLineNameChange = (testLine: any, dataIndex: number) => {
-  console.log("第" + dataIndex + "工序的线束名称发生了变化" + testLine)
-  //模拟后台查询此线束的单价
-  dataArr.value[dataIndex].toolInfo.testLinePrice = Number(random(1000))
-  //这里还要计算总价
+const testLineNameChange = (value: any, dataIndex: number) => {
+  if (testLineNameOptions.value.length > 0) {
+    let options = testLineNameOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.testName == value) {
+        console.log("当前的测试线", item);
+        dataArr.value[dataIndex].toolInfo.testLineName = item.testName;
+        dataArr.value[dataIndex].toolInfo.testLinePrice = item.testPrice;
+        handleTestLineCountChange(value, dataIndex);
+        return;
+      }
+    }
+  }
 }
 //测试线数量变化
 const handleTestLineCountChange = (value: any, dataIndex: number) => {
-  console.log("第" + dataIndex + "工序的线束数量变化" + value + "个")
+  calToolTotalCost(dataIndex)
 }
+//#endregion
 //-----------------------------------end---------------------------------------
-
 //每条工序工具部分的总费用
 const calToolTotalCost = (dataIndex: number) => {
   let developTotalPrice = 0.0
@@ -1606,7 +1784,7 @@ const calToolTotalCost = (dataIndex: number) => {
   let jzPrice = toolInfo.fixturePrice
   let jzCost = Number(jzCount) * Number(jzPrice)
   let zhiJuCost = 0.0
-  toolInfo.zhiJuArr.forEach((item) => {
+  toolInfo.zhiJuArr.forEach((item: any) => {
     zhiJuCost = zhiJuCost + Number(item.fixtureNumber) * Number(item.fixturePrice)
   })
   developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost
@@ -1616,10 +1794,10 @@ const calToolTotalCost = (dataIndex: number) => {
 //3D爆炸图下载
 const downLoad3D = () => {
   ElMessage({
-        type: "error",
-        message: "接口尚未提供,无法实现!!!"
-      })
-  return;    
+    type: "error",
+    message: "接口尚未提供,无法实现!!!"
+  })
+  return;
   let param = {
     AuditFlowId: auditFlowId,
     productId: productId
@@ -1648,10 +1826,10 @@ const downLoad3D = () => {
 
 const viewBOM = (type: Number) => {
   ElMessage({
-        type: "error",
-        message: "接口尚未提供,无法实现!!!"
-      })
-  return;    
+    type: "error",
+    message: "接口尚未提供,无法实现!!!"
+  })
+  return;
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
@@ -1713,7 +1891,7 @@ const showProjectDialog = () => {
       auditFlowId
     }
   })
-  return;    
+  return;
   dialogTableVisible.value = true;
 }
 const dialogTableVisible = ref(false)
@@ -1840,12 +2018,12 @@ interface standardProcessNameListItem {
 const standardProcessNameOptions = ref<standardProcessNameListItem[]>([])
 const standardProcessLoading = ref(false)
 //打开选择标准工艺的弹窗
-const openStandardProcessDialogForm =async () => {
+const openStandardProcessDialogForm = async () => {
   dialogFormVisible.value = false;
   dialogForm.value.name = "";
   dialogForm.value.id = 0;
   dialogForm.value.processHoursEnterDtoList = [];
-  await getStandardProcessList({name:""}).then((response: any) => {
+  await getStandardProcessList({ name: "" }).then((response: any) => {
     if (response.success) {
       let data = response.result
       if (data.length > 0) {

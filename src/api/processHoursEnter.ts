@@ -158,3 +158,47 @@ export function GetBoardInfomation(data: any) {
     data
   })
 }
+
+
+//获取硬件设备下拉列表
+export function getHardWareListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationHardwareItem/GetListAll",
+    method: "get",
+    data
+  })
+}
+//获取下拉治具列表
+export function getZhiJuListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationFixtureItem/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//获取下拉检具列表
+export function getJianJuListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationFixture/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//获取下拉工装列表
+export function getWorkClothsListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationProcedure/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+export function GetEditorByProcessNumber(data: any) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetEditorByProcessNumber",
+    method: "get",
+    data
+  })
+}

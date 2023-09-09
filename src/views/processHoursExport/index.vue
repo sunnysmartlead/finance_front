@@ -22,7 +22,7 @@
         <el-button type="primary" @click="addPH()">新增工序</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary" @click="downLoad3D()">3D爆炸图下载</el-button>
+        <ThreeDImage m="2" />
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="viewBOM(1)">结构BOM查看</el-button>
@@ -285,23 +285,23 @@
                 <span>{{ dataIndex }}</span>
               </div>
               <div class="u-width-150 u-border">
-                <el-select v-model="dataItem.processNumber" 
-                        :disabled="isDisable(dataIndex)" 
-                        filterable remote reserve-keyword 
-                        :remote-method="remoteMethod" 
+                <el-select v-model="dataItem.processNumber"
+                        :disabled="isDisable(dataIndex)"
+                        filterable remote reserve-keyword
+                        :remote-method="remoteMethod"
                         @change="processNumberChange($event, dataIndex)"
                         :loading="processNumberloading">
-                  <el-option v-for="item in processNumberOptions" 
+                  <el-option v-for="item in processNumberOptions"
                         :key="item.id" :label="item.processNumber"
                     :value="item.processNumber" />
                 </el-select>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
-                  reserve-keyword :remote-method="remoteMethodForProcessName" 
+                  reserve-keyword :remote-method="remoteMethodForProcessName"
                   @change="processNameChange($event, dataIndex)"
                   :loading="processNameLoading">
-                  <el-option v-for="item in processNameOptions" 
+                  <el-option v-for="item in processNameOptions"
                         :key="item.id" :label="item.processName"
                     :value="item.processName" />
                 </el-select>
@@ -313,23 +313,23 @@
                 <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
                   class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150 u-border">
-                    <el-select v-model="deviceItem.deviceName" 
-                          :disabled="isDisable(dataIndex)" 
+                    <el-select v-model="deviceItem.deviceName"
+                          :disabled="isDisable(dataIndex)"
                           filterable remote  reserve-keyword
                           :remote-method="remoteMethodForDeviceName"
                           @change="deviceNameChange($event,deviceIndex,dataIndex)"
                           :loading="deviceNameLoading">
-                      <el-option v-for="item in deviceListOptions" 
+                      <el-option v-for="item in deviceListOptions"
                             :key="item.id" :label="item.deviceName" :value="item.deviceName"/>
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"  :disabled="isDisable(dataIndex)">
-                      <el-option v-for="item in deviceStatusEnmus" 
-                                        :key="item.code" 
+                      <el-option v-for="item in deviceStatusEnmus"
+                                        :key="item.code"
                                         :label="item.value"
                                         :value="item.value"/>
-                    </el-select> 
+                    </el-select>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input-number v-model="deviceItem.deviceNumber" :min="1" :disabled="isDisable(dataIndex)"
@@ -624,7 +624,7 @@
         <el-form-item label="标准工艺" label-width="150px">
           <el-select v-model="dialogForm" value-key="id"  clearable
             placeholder="选择标准工艺">
-            <el-option v-for="item in standardProcessNameOptions" 
+            <el-option v-for="item in standardProcessNameOptions"
                   :key="item.id" :label="item.name" :value="item" />
           </el-select>
         </el-form-item>
@@ -656,6 +656,7 @@ import { onMounted, reactive, ref, toRefs } from "vue"
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
+import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import {
   GetListAll,
   getProcessHourDetail,
@@ -681,6 +682,8 @@ import {
 } from '@/api/foundationDeviceDto';
 import {random } from "lodash"
 import router from "@/router"
+import {GetPicture3DByAuditFlowId} from "@/components/ThreeDImage/service";
+import {CommonDownloadFile} from "@/api/bom";
 const tempData: any = {
   id: 0,
   processName: "名称",
@@ -1321,7 +1324,7 @@ const getDeviceList = async (keyWord:string) => {
 }
 
 const deviceNameChange=(value: any, deviceIndex : any,dataIndex : any)=>{
- 
+
   if (deviceListOptions.value.length > 0) {
     let options = deviceListOptions.value;
         for (let i = 0; i < options.length; i++) {
@@ -1333,12 +1336,12 @@ const deviceNameChange=(value: any, deviceIndex : any,dataIndex : any)=>{
                 dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceStatus=item.deviceStatus;
                 dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].deviceNumber=item.deviceNumber?item.deviceNumber:1;
                 dataArr.value[dataIndex].deviceInfo.deviceArr[deviceIndex].devicePrice=item.devicePrice;
-                handleDeviceChange(item.devicePrice,dataIndex,deviceIndex); 
+                handleDeviceChange(item.devicePrice,dataIndex,deviceIndex);
                 return;
             }
         }
-  } 
- 
+  }
+
 }
 
 //设备价格或数量变化
@@ -1614,44 +1617,31 @@ const calToolTotalCost = (dataIndex: number) => {
 }
 
 //3D爆炸图下载
-const downLoad3D = () => {
-  ElMessage({
-        type: "error",
-        message: "接口尚未提供,无法实现!!!"
-      })
-  return;    
-  let param = {
-    AuditFlowId: auditFlowId,
-    productId: productId
+const downLoad3D = async () => {
+  let downRes: any = await GetPicture3DByAuditFlowId({auditFlowId, productId: productId})
+  if (!downRes.result.threeDFileId) return false
+  let res: any = await CommonDownloadFile(downRes.result.threeDFileId)
+  const blob = res
+  const reader = new FileReader()
+  reader.readAsDataURL(blob)
+  reader.onload = function () {
+    let url = URL.createObjectURL(new Blob([blob]))
+    let a = document.createElement("a")
+    document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    a.href = url
+    a.download = downRes.result.threeDFileName
+    a.target = "_blank"
+    a.click()
+    a.remove() //将a标签移除
   }
-  downLoad3DImg(param).then((response: any) => {
-    console.log("3D爆炸图下载结果", response)
-    if (response.success) {
-      let data = response.result
-      let fileId = data.threeDFileId
-      let fileName = data.threeDFileName
-      let url = "" + fileName
-      const a = document.createElement("a")
-      a.href = url
-      a.setAttribute("download", fileName)
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-    } else {
-      ElMessage({
-        type: "error",
-        message: "失败"
-      })
-    }
-  })
+  // data.setVisible = false
 }
-
 const viewBOM = (type: Number) => {
   ElMessage({
         type: "error",
         message: "接口尚未提供,无法实现!!!"
       })
-  return;    
+  return;
   let param = {
     AuditFlowId: auditFlowId,
     SolutionId: productId
@@ -1713,7 +1703,7 @@ const showProjectDialog = () => {
       auditFlowId
     }
   })
-  return;    
+  return;
   dialogTableVisible.value = true;
 }
 const dialogTableVisible = ref(false)

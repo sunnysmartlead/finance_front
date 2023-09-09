@@ -30,6 +30,11 @@
             <el-input-number controls-position="right" :min="0" v-model="row.indirectManufacturingRate" />
           </template>
         </el-table-column>
+        <el-table-column label="操作" fixed="right" width="100">
+          <template #default="{ $index }">
+            <el-button type="danger" @click="handleDelete($index)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-card>
     <LogList m="2" :type="16" ref="logListRef" />
@@ -70,6 +75,10 @@ onBeforeMount(() => {
 onMounted(() => {
   initFetch()
 })
+
+const handleDelete = (index: number) => {
+  tableData.value.splice(index, 1)
+}
 
 watchEffect(() => { })
 

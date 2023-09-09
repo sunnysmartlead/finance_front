@@ -550,8 +550,11 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      hidden: true
+      title: "核价看板"
     },
+    // meta: {
+    //   hidden: true
+    // },
     children: [
       {
         path: "/dashboard/index",

@@ -371,35 +371,8 @@ const handleCalculation = (row: any, index: number) => {
   return debounceHandleCalculation(row, index)
 }
 
-
 const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
-  const { systemiginalCurrency } = record
-  let label = ""
-  const isPass = systemiginalCurrency.every((s: any) => {
-    const isRight = s.yearOrValueModes.every((y: any, i: number) => {
-      if (!y.value) label = `系统单价（原币）的 ${s.kv} K/Y 下第${i + 1}列的值为0`
-      return y.value
-    })
-    return isRight
-  })
-  if (!isPass) {
-    ElMessageBox.confirm(`${label},是否继续执行`, "确认提醒", {
-      // if you want to disable its autofocus
-      // autofocus: false,
-      confirmButtonText: "确认",
-      cancelButtonText: "取消",
-      type: "warning"
-    }).then(async () => {
-      await handleCalculation(record, index)?.then(async () => {
-        await submitFun(record, isSubmit, index)
-      })
-    })
-    // .catch(async () => {
-    //   fetchInitData()
-    // })
-  } else {
-    await submitFun(record, isSubmit, index)
-  }
+  await submitFun(record, isSubmit, index)
 }
 
 const submitFun = async (record: ElectronicDto, isSubmit: number, index: number) => {

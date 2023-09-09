@@ -22,6 +22,7 @@
             <SORDonwload />
             <TrView />
             <el-button type="primary" @click="handleFethNreTableDownload" m="2">NRE实验费模板下载</el-button>
+            <el-button type="primary" @click="handleFethNreExcelDownload" m="2">NRE实验费数据导出</el-button>
             <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
           </el-row>
         </el-row>
@@ -56,8 +57,8 @@
         <el-table-column label="单价" prop="unitPrice" width="175" />
         <el-table-column label="调整系数" width="180">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.coefficient }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.coefficient" />
+            <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
+            <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
           </template>
         </el-table-column>
         <el-table-column label="单位" prop="unit" width="180" />
@@ -111,7 +112,7 @@ import {
   GetProductDepartment,
   GetExportOfProductDepartmentFeeForm,
   GetFoundationEmc,
-  NREToExamine,
+  NREToExamine
 } from "../../common/request"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { getLaboratoryFeeSummaries } from "../../common/nrePilotprojectsSummaries"
@@ -140,7 +141,7 @@ const deleteLaboratoryFeeModel = (i: number) => {
 
 const addLaboratoryFeeModel = () => {
   data.laboratoryFeeModels.push({
-    coefficient: 0,
+    adjustmentCoefficient: 1,
     unitPrice: 5,
     allCost: 0,
     countBottomingOut: 0,
@@ -206,7 +207,7 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
   }
 }
 
-// NRE实验费模板下载
+// NRE实验费数据导出
 const handleFethNreTableDownload = async () => {
   try {
     const res: any = await GetExportOfProductDepartmentFeeForm({
@@ -219,6 +220,27 @@ const handleFethNreTableDownload = async () => {
     console.log(err, "[ NRE实验费模板下载 失败 ]")
   }
 }
+
+// NRE实验费模板下载
+const handleFethNreExcelDownload = async () => {
+  if (!data?.laboratoryFeeModels?.length) {
+    return ElMessage({
+      type: "warning",
+      message: "请填写数据后再进行数据导出！"
+    })
+  }
+  try {
+    const res: any = await GetExportOfProductDepartmentFeeForm({
+      auditFlowId,
+      solutionId: productId
+    })
+    downloadFileExcel(res, " NRE实验费数据文档")
+    console.log(res, "NreTableDownload")
+  } catch (err: any) {
+    console.log(err, "[ NRE实验费数据文档下载 失败 ]")
+  }
+}
+
 
 // NRE实验费模板上传
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
@@ -253,7 +275,7 @@ watch(
     val.forEach((item: any) => {
       item.allCost =
         item.unitPrice *
-        (item.coefficient || 0) *
+        (item.adjustmentCoefficient || 0) *
         ((item.countBottomingOut || 0) + (item.countDV || 0) + (item.countPV || 0))
     })
   },

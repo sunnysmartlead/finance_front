@@ -3,7 +3,7 @@
     <el-card m="2" header="制造成本">
       <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" />
     </el-card>
-    <el-card m="2">
+    <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
@@ -42,7 +42,8 @@ const props = defineProps({
   yearData: {
     type: Object as PropType<any>
   },
-  gradientId: Number
+  gradientId: Number,
+  hideEdit: Boolean
 })
 
 const modifyData = ref<any>([])

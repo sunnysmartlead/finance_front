@@ -8,7 +8,7 @@
         <el-button type="primary">查看BOM单价</el-button>
       </div>
       <div class="u-m-5">
-        <el-button type="primary">查看项目走量</el-button>
+        <el-button type="primary" @click="showProjectDialog" >查看项目走量</el-button>
       </div>
     </div>
     <!-- COB-UPH表格区 -->
@@ -214,6 +214,7 @@ import getQuery from "@/utils/getQuery"
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import { GetListAll, getCOBUPH, update, create, handleSubmit, deleteItem, uploadAction } from "@/api/COB"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import router from "@/router";
 //路径上的参数
 const queryParam = ref({
   AuditFlowId: undefined,
@@ -372,6 +373,17 @@ const saveTableData = () => {
       })
     }
   })
+}
+
+//模组数据
+const showProjectDialog = () => {
+  router.push({
+    path: "/resourcesDepartment/moduleNumber",
+    query: {
+      auditFlowId
+    }
+  })
+  return;
 }
 //提交
 const submitData = ({ comment, opinion, nodeInstanceId }: any) => {

@@ -46,7 +46,7 @@
           <el-button type="primary" @click="sorDownloadFile" >SOR查看</el-button>
         </div>
         <div class="u-m-5">
-          <el-button type="primary">查看物流&包装基础数据</el-button>
+          <el-button type="primary" @click="initFetchProductDevelopmentInput">查看物流&包装基础数据</el-button>
         </div>
       </div>
 
@@ -145,6 +145,92 @@
         </el-card>
       </div>
     </div>
+    <el-dialog v-model="dialogFormVisible" :close-on-click-modal="false" >
+      <template #header>
+        <div>物流基础信息</div>
+      </template>
+      <el-form :model="data.logisticsForm" inline ref="refForm" :rules="rules">
+        <!-- <h5>物流基础信息</h5> -->
+        <h6>镜头参数</h6>
+        <el-form-item label="像素" prop="pixel">
+          <el-input v-model="data.logisticsForm.pixel" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>M</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="FOV" prop="fov">
+          <el-input v-model="data.logisticsForm.fov" oninput="value=value.replace(/[^0-9.]/g,'')" />
+        </el-form-item>
+        <h6>外包装体积</h6>
+        <el-form-item label="外包装长" prop="outerPackagingLength">
+          <el-input v-model="data.logisticsForm.outerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>cm</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="外包装宽" prop="outerPackagingWidth">
+          <el-input v-model="data.logisticsForm.outerPackagingWidth" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>cm</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="外包装高" prop="outerPackagingHeight" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.outerPackagingHeight">
+            <template #append>cm</template>
+          </el-input>
+        </el-form-item>
+        <h6>重量</h6>
+        <el-form-item label="单个产品重量" prop="singleProductWeight">
+          <el-input v-model="data.logisticsForm.singleProductWeight" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>kg</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="单箱数量" prop="singleBoxQuantity">
+          <el-input v-model="data.logisticsForm.singleBoxQuantity" oninput="value=value.replace(/[^\d]/g,'')">
+            <template #append>pcs</template>
+          </el-input>
+        </el-form-item>
+        <h5>包装基础信息</h5>
+        <h6>内包装体积</h6>
+        <el-form-item label="内包装长" prop="innerPackagingLength">
+          <el-input v-model="data.logisticsForm.innerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>mm</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="内包装宽" prop="innerPackagingWidth">
+          <el-input v-model="data.logisticsForm.innerPackagingWidth" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>mm</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="内包装高" prop="innerPackagingHeight">
+          <el-input v-model="data.logisticsForm.innerPackagingHeight" oninput="value=value.replace(/[^0-9.]/g,'')">
+            <template #append>mm</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="是否打托">
+          <el-select v-model="data.logisticsForm.isHit" placeholder="Select">
+            <el-option label="是" value="1" />
+            <el-option label="否" value="0" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="每托盘箱数" prop="boxesPerPallet">
+          <el-input v-model="data.logisticsForm.boxesPerPallet" oninput="value=value.replace(/[^\d]/g,'')">
+            <template #append> 箱/托</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="单箱包装数量" prop="quantityPerBox">
+          <el-input v-model="data.logisticsForm.quantityPerBox" oninput="value=value.replace(/[^\d]/g,'')">
+            <template #append> PCS/箱</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
+          <el-input
+            v-model="data.logisticsForm.remarks"
+            type="textarea"
+            placeholder="若无具体包装数据,填写参考的具体项目及产品"
+          />
+        </el-form-item>
+      </el-form>
+
+    </el-dialog>
+
   </div>
 </template>
 <script setup lang="ts">
@@ -163,9 +249,26 @@ import {
   viewSOR
 } from "@/api/logisticsCost"
 import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service";
-import {CommonDownloadFile} from "@/api/bom";
+import {CommonDownloadFile,getProductDevelopmentInput} from "@/api/bom";
+import {isEmpty, map} from "lodash";
+
 const data = reactive({
   editDisabled: true,
+  logisticsForm: {
+    outerPackagingLength: "",
+    outerPackagingWidth: "",
+    outerPackagingHeight: "",
+    singleProductWeight: "",
+    singleBoxQuantity: "",
+    innerPackagingLength: "",
+    innerPackagingWidth: "",
+    innerPackagingHeight: "",
+    isHit: "",
+    boxesPerPallet: "",
+    quantityPerBox: "",
+    remarks: "",
+    picture3DFileId: ""
+  },
 })
 const productStore = useProductStore()
 //路径上的参数
@@ -176,7 +279,20 @@ const queryParam = ref({
 const { auditFlowId, productId }: any = getQuery()
 const cardData = ref([])
 let tempCardData: any = []
-
+const dialogFormVisible = ref(false)
+const initFetchProductDevelopmentInput = async () => {
+  let { success, result }: any = await getProductDevelopmentInput({ auditFlowId: auditFlowId, solutionId: productId })
+  if (success && !isEmpty(result)) {
+    dialogFormVisible.value = true
+    data.logisticsForm = result;
+  }else {
+    dialogFormVisible.value = false
+    ElMessage({
+      type: "error",
+      message: "无数据"
+    })
+  }
+}
 onMounted(() => {
   queryParam.value.AuditFlowId = auditFlowId
   queryParam.value.SolutionId = productId

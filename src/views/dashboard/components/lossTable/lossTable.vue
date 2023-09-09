@@ -21,7 +21,7 @@
         <el-input-number controls-position="right" :min="0" v-model="row.moqShareCount" />
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="200">
+    <el-table-column label="操作" width="200" v-if="!hideEdit">
       <template #default="{ row, $index }">
         <el-row>
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
@@ -47,11 +47,12 @@ const props = defineProps({
   },
   onDelete: {
     type: Function as PropType<any>
-  }
+  },
+  hideEdit: Boolean
 })
 
 const toFixedTwo = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(2)
+  if (typeof val === "number" && val > 0) return val?.toFixed(2)
   return val
 }
 

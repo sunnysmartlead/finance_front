@@ -205,7 +205,7 @@ export interface StructureBOMDto {
   weightNumber?: number
 }
 
-export function SaveElectronicBom(data: SaveBOM) {
+export function SaveElectronicBom(data: any) {
   return request({
     url: "/api/services/app/ElectronicBom/SaveElectronicBom",
     method: "post",
@@ -264,6 +264,15 @@ export function GetElectronicBom(data: any) {
     data
   })
 }
+
+export function SaveBoard(data: any) {
+  return request({
+    url: "/api/services/app/ElectronicBom/SaveBoard",
+    method: "post",
+    data
+  })
+}
+
 
 export function getBomTemplate() {
   return request({

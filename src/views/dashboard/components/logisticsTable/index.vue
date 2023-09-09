@@ -3,7 +3,7 @@
     <el-card m="2" header="物流成本">
       <logisticsTable :logisticsData="logisticsData" />
     </el-card>
-    <el-card m="2">
+    <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
@@ -30,7 +30,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType, ref, onMounted, watch } from "vue"
-import { GetLogisticsCost, SetUpdateItemMaterial, GetUpdateItemMaterial } from "../../service"
+import { GetLogisticsCost, SetUpdateItemMaterial, GetUpdateItemLogisticsCost } from "../../service"
 import logisticsTable from "./logisticsTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
@@ -38,7 +38,9 @@ import type { UploadProps, UploadUserFile } from "element-plus"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
 
+
 const { auditFlowId, productId: solutionId } = getQuery()
+
 
 const props = defineProps({
   yearData: {
@@ -53,7 +55,8 @@ const props = defineProps({
   },
   onUpload: {
     type: Function as PropType<any>
-  }
+  },
+  hideEdit: Boolean
 })
 
 const modifyData = ref<any>([])
@@ -79,7 +82,7 @@ const getLogisticsCost = async () => {
 }
 
 const getModifyData = async () => {
-  const { success, result }: any = (await GetUpdateItemMaterial({
+  const { success, result }: any = (await GetUpdateItemLogisticsCost({
     AuditFlowId: auditFlowId,
     GradientId: props.gradientId,
     solutionId,
@@ -124,7 +127,7 @@ const handleSubmit = async () => {
     })
     return
   }
-  const res = await SetUpdateItemMaterial({
+  const { success } = await SetUpdateItemMaterial({
     updateItem: modifyData.value,
     auditFlowId,
     modifyData,
@@ -133,6 +136,12 @@ const handleSubmit = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
+  if (success) {
+    ElMessage({
+      type: 'success',
+      message: '提交成功！'
+    })
+  }
 }
 
 watch(

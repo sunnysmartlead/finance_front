@@ -424,7 +424,7 @@
                   <el-select v-model="dataItem.toolInfo.frockName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForGongZhuangName"
                     @change="gongZhuangNameChange($event, dataIndex)" :loading="gongZhuangNameLoading">
-                    <el-option v-for="item in gongZhuangNameOptions" 
+                    <el-option v-for="item in gongZhuangNameOptions"
                             :key="item.id" :label="item.installationName"  :value="item.installationName" />
                   </el-select>
                 </div>
@@ -440,7 +440,7 @@
                   <el-select v-model="dataItem.toolInfo.testLineName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForTestLineName"
                     @change="testLineNameChange($event, dataIndex)" :loading="testLineNameLoading">
-                    <el-option v-for="item in testLineNameOptions" 
+                    <el-option v-for="item in testLineNameOptions"
                         :key="item.id" :label="item.testName" :value="item.testName" />
                   </el-select>
                 </div>
@@ -1157,7 +1157,7 @@ const handleDel = (index: number, row: any) => {
 }
 
 //-------------------------工序序号代码块代码块------------------------------
-//#region 
+//#region
 interface processNumberListItem {
   id: Number
   processName: String
@@ -1211,7 +1211,7 @@ const processNumberChange = (value: any, dataIndex: any) => {
 //-----------------------------------end------------------------------------
 
 //-----------------------------工序名称代码块---------------------------------
-//#region 
+//#region
 interface processNameListItem {
   id: Number
   processName: String
@@ -1264,7 +1264,7 @@ const processNameChange = (value: any, dataIndex: any) => {
 //------------------------------end------------------------------------------
 
 //---------------------------------硬件设备代码块-----------------------------
-//#region 
+//#region
 interface deviceListItem {
   deviceName: string,
   deviceNumber: string,
@@ -1348,7 +1348,7 @@ const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
 //-------------------------------------end----------------------------------
 
 //--------------------------------软件代码块------------------------------
-//#region 
+//#region
 interface hardwareDeviceListItem {
   foundationHardwareId: number,
   hardwareBusiness: string,
@@ -1431,7 +1431,7 @@ const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIn
 //-------------------------------------end-------------------------------
 
 //------------------------------开图软件名称代码块-------------------------
-//#region 
+//#region
 interface kaiTuNameListItem {
   value: string
   label: string
@@ -1471,7 +1471,7 @@ const kaiTuChange = (kaitu: any, dataIndex: number) => {
 //-------------------------------end---------------------------------------
 
 //--------------------------治具代码块--------------------------------------
-//#region 
+//#region
 interface fixtureNameListItem {
   fixtureBusiness: string,
   fixtureName: string,
@@ -1547,7 +1547,7 @@ const handleZhiJuCountChange = (dataIndex: number, zhiJuIndex: number) => {
 //---------------------------------end-------------------------------------
 
 //---------------------------检具代码块-------------------------------------
-//#region 
+//#region
 interface jianJuNameListItem {
   fixtureGaugeBusiness: string
   fixtureGaugeName: string,
@@ -1597,7 +1597,7 @@ const getJianJuName = async (keyWord: String) => {
 }
 //选择检具名称,查询出检具的单价
 const jianJuNameChange = (value: string, dataIndex: number) => {
-  
+
   if (jianJuNameOptions.value.length > 0) {
     let options = jianJuNameOptions.value;
     for (let i = 0; i < options.length; i++) {
@@ -1622,7 +1622,7 @@ const handleJianJuCountChange = (value: any, dataIndex: number) => {
 //------------------------------end----------------------------------------
 
 //------------------------------------工装代码块--------------------------
-//#region 
+//#region
 interface gongZhuangNameListItem {
   id: number,
   installationName: string,
@@ -1698,7 +1698,7 @@ const handleGongZhuangCountChange = (value: any, dataIndex: number) => {
 //----------------------------------end----------------------------------
 
 //---------------------------测试线代码块------------------------------------
-//#region 
+//#region
 interface testLineNameListItem {
   id: number,
   installationName: string,

@@ -38,7 +38,7 @@ export function GetQualityCost(data: GetLossCostProps) {
 }
 
 // 核价看板-产品成本占比图
-export function GetPricingPanelProportionOfProductCost(data: GetLossCostProps) {
+export function GetPricingPanelProportionOfProductCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluationGet/GetPricingPanelProportionOfProductCost",
     method: "get",
@@ -92,9 +92,9 @@ export function GetManufacturingCost(data: GetLossCostProps) {
 }
 
 // 获取推移图
-export function GetGoTable(data: { AuditFlowId: number; SolutionId: number; InputCount: number }) {
+export function GetGoTable(data: any) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetGoTable",
+    url: "/api/services/app/PriceEvaluationGet/GetGoTable",
     method: "get",
     data
   })
@@ -246,7 +246,7 @@ export function SetUpdateItemMaterial(data: any) {
 export function GetUpdateItemLossCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetUpdateItemLossCost",
-    method: "post",
+    method: "get",
     data
   })
 }
@@ -306,11 +306,38 @@ export function SetUpdateItemOtherCost(data: any) {
   })
 }
 
-// 创建修改项（其他成本）
+// 查询修改项（其他成本）
 export function GetUpdateItemOtherCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetUpdateItemOtherCost",
     method: "get",
+    data
+  })
+}
+
+// 查询修改项（其他成本）
+export function GetUpdateItemLogisticsCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemLogisticsCost",
+    method: "get",
+    data
+  })
+}
+
+// 创建修改项（其他成本）
+export function SetUpdateItemLogisticsCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemLogisticsCost",
+    method: "post",
+    data
+  })
+}
+
+// 核价表下载
+export function PriceEvaluationTableDownload(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/PriceEvaluationTableDownload",
+    method: "post",
     data
   })
 }

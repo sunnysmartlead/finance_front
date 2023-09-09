@@ -1,27 +1,30 @@
 <template>
   <div>
     <el-card m="2" header="损耗成本">
-      <lossTable :lossData="lossData" />
+      <lossTable :lossData="lossData" :onEdit="handleEdit" />
     </el-card>
-    <el-card m="2">
+    <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-button type="primary">新增</el-button>
-          <el-button type="primary" @click="handleSubmit">提交</el-button>
-          <el-upload
-            :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-            :on-success="handleSuccess"
-            show-file-list
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError"
-            v-model:file-list="fileList"
-          >
-            <el-button type="primary">上传佐证资料</el-button>
-          </el-upload>
+          <el-row>
+            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
+            <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
+            <el-upload
+              :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+              :on-success="handleSuccess"
+              show-file-list
+              :on-progress="handleGetUploadProgress"
+              :on-error="handleUploadError"
+              v-model:file-list="fileList"
+              :limit="1"
+            >
+              <el-button type="primary" m="2">上传佐证资料</el-button>
+            </el-upload>
+          </el-row>
         </el-row>
       </template>
-      <lossTable isEdit :lossData="modifyData" />
+      <lossTable isEdit :lossData="modifyData" :on-delete="handleDelete" />
     </el-card>
   </div>
 </template>
@@ -30,7 +33,7 @@ import { PropType, ref, onMounted, watch } from "vue"
 import { GetUpdateItemLossCost, SetUpdateItemLossCost, GetLossCost } from "../../service"
 import lossTable from "./lossTable.vue"
 import getQuery from "@/utils/getQuery"
-import { isEmpty } from "lodash"
+import { isEmpty, cloneDeep } from "lodash"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
@@ -41,7 +44,8 @@ const props = defineProps({
   yearData: {
     type: Object as PropType<any>
   },
-  gradientId: Number
+  gradientId: Number,
+  hideEdit: Boolean
 })
 
 const lossData = ref<any>([])
@@ -66,19 +70,21 @@ const getLossCost = async () => {
   }
 }
 
-const getLogData = async () => {
-  const res = (await GetUpdateItemLossCost({
+const getModifyData = async () => {
+  const { success, result }: any = (await GetUpdateItemLossCost({
     AuditFlowId: auditFlowId,
-    ProductId: 532,
     GradientId: props.gradientId,
     solutionId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
+  if (success) {
+    modifyData.value = result || []
+  }
 }
 
 const handleEdit = (row: any) => {
-  modifyData.value.push(row)
+  modifyData.value.push(cloneDeep(row))
 }
 
 const addEditList = () => {
@@ -101,7 +107,7 @@ const handleSubmit = async () => {
     })
     return
   }
-  const res = await SetUpdateItemLossCost({
+  const { success } = await SetUpdateItemLossCost({
     updateItem: modifyData.value,
     auditFlowId,
     modifyData,
@@ -110,13 +116,19 @@ const handleSubmit = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
+  if (success) {
+    ElMessage({
+      type: 'success',
+      message: '提交成功！'
+    })
+  }
 }
 
 const init = () => {
   console.log(props, "props")
   if (props.gradientId && !isEmpty(props.yearData)) {
     getLossCost()
-    getLogData()
+    getModifyData()
   }
 }
 

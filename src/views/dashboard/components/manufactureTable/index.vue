@@ -3,7 +3,7 @@
     <el-card m="2" header="制造成本">
       <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" />
     </el-card>
-    <el-card m="2">
+    <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
@@ -18,7 +18,7 @@
           </el-row>
         </el-row>
       </template>
-      <manufactureTable isEdit :manufactureData="modifyData" />
+      <manufactureTable isEdit :manufactureData="modifyData" :on-delete="handleDelete" />
     </el-card>
   </div>
 </template>
@@ -27,7 +27,7 @@ import { PropType, ref, onMounted, watch } from "vue"
 import { GetUpdateItemManufacturingCost, SetUpdateItemManufacturingCost, GetManufacturingCost } from "../../service"
 import manufactureTable from "./manufactureTable.vue"
 import getQuery from "@/utils/getQuery"
-import { isEmpty } from "lodash"
+import { cloneDeep, isEmpty } from "lodash"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
@@ -42,7 +42,8 @@ const props = defineProps({
   yearData: {
     type: Object as PropType<any>
   },
-  gradientId: Number
+  gradientId: Number,
+  hideEdit: Boolean
 })
 
 const modifyData = ref<any>([])
@@ -110,7 +111,7 @@ const handleSubmit = async () => {
     })
     return
   }
-  const res = await SetUpdateItemManufacturingCost({
+  const { success } = await SetUpdateItemManufacturingCost({
     updateItem: modifyData.value,
     auditFlowId,
     modifyData,
@@ -119,11 +120,17 @@ const handleSubmit = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
+  if (success) {
+    ElMessage({
+      type: 'success',
+      message: '提交成功！'
+    })
+  }
 }
 
 const handleEdit = (row: any) => {
   console.log(row, "row123")
-  modifyData.value.push(row)
+  modifyData.value.push(cloneDeep(row))
 }
 
 const addEditList = () => {
@@ -152,6 +159,30 @@ watch(
   () => [props.gradientId, props.yearData],
   (val) => {
     init()
+  },
+  {
+    deep: true
+  }
+)
+
+const handleDelete = (index: number) => {
+  modifyData.value.splice(index, 1)
+}
+
+watch(
+  () => modifyData.value,
+  (val) => {
+    modifyData.value.forEach((item: any) => {
+      item.manufacturingCostDirect.subtotal = (item.manufacturingCostDirect.directLabor || 0) +
+        (item.manufacturingCostDirect.equipmentDepreciation || 0) +
+        (item.manufacturingCostDirect.lineChangeCost || 0) +
+        (item.manufacturingCostDirect.manufacturingExpenses || 0)
+      item.manufacturingCostIndirect.subtotal = (item.manufacturingCostIndirect.directLabor || 0) +
+        (item.manufacturingCostIndirect.equipmentDepreciation || 0) +
+        (item.manufacturingCostIndirect.lineChangeCost || 0) +
+        (item.manufacturingCostIndirect.manufacturingExpenses || 0)
+      item.subtotal = item.manufacturingCostIndirect.subtotal + item.manufacturingCostDirect.subtotal
+    })
   },
   {
     deep: true

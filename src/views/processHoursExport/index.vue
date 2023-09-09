@@ -224,7 +224,7 @@
 
           <div class="u-text-center" style="background-color: rgb(223, 179, 122)">
             <div class="u-flex u-row-left u-col-center">
-              <template v-if="dataArr.length > 0 && dataArr[0]?.sopInfo != null">
+              <template v-if="dataArr.length > 0 && dataArr[0]?.sopInfo != null && dataArr[0]?.sopInfo.length > 0">
                 <div v-for="(scopItem, sopIndex) in dataArr[0].sopInfo" :key="sopIndex" class="u-text-center">
                   <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}</div>
                   <div class="u-flex u-row-left u-col-center">
@@ -385,25 +385,40 @@
             <!-- 治具 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center u-text-center">
-                <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
-                  class="u-flex u-row-left u-col-center u-text-center">
-                  <div class="u-width-150 u-border">
-                    <el-select v-model="zhiju.fixtureName" filterable remote reserve-keyword
-                      :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhiJuName"
-                      @change="fixtureNameChange($event, dataIndex, zhijuindex)" :loading="fixtureNameLoading">
-                      <el-option v-for="item in fixtureNameOptions" :key="item.id" :label="item.fixtureName"
-                        :value="item.fixtureName" />
-                    </el-select>
+                <tempData v-if="dataItem.toolInfo.zhiJuArr && dataItem.toolInfo.zhiJuArr.length > 0">
+                  <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
+                    class="u-flex u-row-left u-col-center u-text-center">
+                    <div class="u-width-150 u-border">
+                      <el-select v-model="zhiju.fixtureName" filterable remote reserve-keyword
+                        :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhiJuName"
+                        @change="fixtureNameChange($event, dataIndex, zhijuindex)" :loading="fixtureNameLoading">
+                        <el-option v-for="item in fixtureNameOptions" :key="item.id" :label="item.fixtureName"
+                          :value="item.fixtureName" />
+                      </el-select>
+                    </div>
+                    <div class="u-width-150 u-border">
+                      <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
+                        @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
+                    </div>
+                    <div class="u-width-150 u-border">
+                      <el-input-number v-model="zhiju.fixturePrice" :precision="2" :step="0.01" disabled
+                        @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
+                    </div>
                   </div>
-                  <div class="u-width-150 u-border">
-                    <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
-                      @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
+                </tempData>
+                <tempData v-else>
+                  <div class="u-flex u-row-left u-col-center u-text-center">
+                    <div class="u-width-150 u-border">
+                      <span>---</span>
+                    </div>
+                    <div class="u-width-150 u-border">
+                      <span>---</span>
+                    </div>
+                    <div class="u-width-150 u-border">
+                      <span>---</span>
+                    </div>
                   </div>
-                  <div class="u-width-150 u-border">
-                    <el-input-number v-model="zhiju.fixturePrice" :precision="2" :step="0.01" disabled
-                      @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
-                  </div>
-                </div>
+                </tempData>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.toolInfo.fixtureName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForJianJuName"
@@ -424,8 +439,8 @@
                   <el-select v-model="dataItem.toolInfo.frockName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForGongZhuangName"
                     @change="gongZhuangNameChange($event, dataIndex)" :loading="gongZhuangNameLoading">
-                    <el-option v-for="item in gongZhuangNameOptions"
-                            :key="item.id" :label="item.installationName"  :value="item.installationName" />
+                    <el-option v-for="item in gongZhuangNameOptions" :key="item.id" :label="item.installationName"
+                      :value="item.installationName" />
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
@@ -440,8 +455,8 @@
                   <el-select v-model="dataItem.toolInfo.testLineName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForTestLineName"
                     @change="testLineNameChange($event, dataIndex)" :loading="testLineNameLoading">
-                    <el-option v-for="item in testLineNameOptions"
-                        :key="item.id" :label="item.testName" :value="item.testName" />
+                    <el-option v-for="item in testLineNameOptions" :key="item.id" :label="item.testName"
+                      :value="item.testName" />
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
@@ -1196,6 +1211,8 @@ const getProcessIndex = async (keyWord: String) => {
 
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
+  getProcessInfoByID(value, dataIndex);
+  return;
   if (processNumberOptions.value.length > 0) {
     let options = processNumberOptions.value;
     for (let i = 0; i < options.length; i++) {
@@ -1207,6 +1224,25 @@ const processNumberChange = (value: any, dataIndex: any) => {
     }
   }
 }
+
+const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
+  let param = {
+    ProcessNumber: ProcessNumber
+  }
+  GetEditorByProcessNumber(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result
+      console.log("根据工序序号查询信息结果", data)
+      dataArr.value[dataIndex] = data
+    } else {
+      ElMessage({
+        type: "error",
+        message: "信息加载失败"
+      })
+    }
+  })
+}
+
 //#endregion
 //-----------------------------------end------------------------------------
 
@@ -1626,7 +1662,7 @@ const handleJianJuCountChange = (value: any, dataIndex: number) => {
 interface gongZhuangNameListItem {
   id: number,
   installationName: string,
-  installationNumer:number,
+  installationNumer: number,
   installationPrice: number,
   installationSupplier: string,
   testName: string,
@@ -1645,8 +1681,8 @@ const remoteMethodForGongZhuangName = async (query: string) => {
   }
 }
 const getGongZhuangName = async (keyWord: String) => {
-  let param={
-    InstallationName:keyWord
+  let param = {
+    InstallationName: keyWord
   }
   await getWorkClothsListForSelect(param).then((response: any) => {
     if (response.success) {
@@ -1702,17 +1738,17 @@ const handleGongZhuangCountChange = (value: any, dataIndex: number) => {
 interface testLineNameListItem {
   id: number,
   installationName: string,
-  installationNumer:number,
+  installationNumer: number,
   installationPrice: number,
   installationSupplier: string,
   testName: string,
   testPrice: number,
-  testNumber:number,
+  testNumber: number,
 }
 const testLineNameOptions = ref<testLineNameListItem[]>([])
 const testLineNameLoading = ref(false)
 //模糊查询测试线的名称
-const remoteMethodForTestLineName =async (query: string) => {
+const remoteMethodForTestLineName = async (query: string) => {
   if (query) {
     testLineNameLoading.value = true
     await getTestLineName(query)
@@ -1721,9 +1757,9 @@ const remoteMethodForTestLineName =async (query: string) => {
     testLineNameOptions.value = []
   }
 }
-const getTestLineName =async (keyWord: String) => {
-  let param={
-    TestName:keyWord
+const getTestLineName = async (keyWord: String) => {
+  let param = {
+    TestName: keyWord
   }
   await getWorkClothsListForSelect(param).then((response: any) => {
     if (response.success) {
@@ -1783,10 +1819,12 @@ const calToolTotalCost = (dataIndex: number) => {
   let jzCount = toolInfo.fixtureNumber
   let jzPrice = toolInfo.fixturePrice
   let jzCost = Number(jzCount) * Number(jzPrice)
-  let zhiJuCost = 0.0
-  toolInfo.zhiJuArr.forEach((item: any) => {
-    zhiJuCost = zhiJuCost + Number(item.fixtureNumber) * Number(item.fixturePrice)
-  })
+  let zhiJuCost = 0.0;
+  if (toolInfo.zhiJuArr && toolInfo.zhiJuArr.length > 0) {
+    toolInfo.zhiJuArr.forEach((item: any) => {
+      zhiJuCost = zhiJuCost + Number(item.fixtureNumber) * Number(item.fixturePrice)
+    })
+  }
   developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost
   return developTotalPrice
 }

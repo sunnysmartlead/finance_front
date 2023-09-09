@@ -43,7 +43,7 @@
 
       <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
         <div class="u-m-5">
-          <el-button type="primary" @click="showSor(0)">SOR查看</el-button>
+          <el-button type="primary" @click="sorDownloadFile" >SOR查看</el-button>
         </div>
         <div class="u-m-5">
           <el-button type="primary">查看物流&包装基础数据</el-button>
@@ -153,6 +153,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+
 import {
   GetListAll,
   createProcess,
@@ -161,6 +162,8 @@ import {
   GetGradientByAuditFlowId,
   viewSOR
 } from "@/api/logisticsCost"
+import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service";
+import {CommonDownloadFile} from "@/api/bom";
 const data = reactive({
   editDisabled: true,
 })
@@ -179,7 +182,29 @@ onMounted(() => {
   queryParam.value.SolutionId = productId
   getListData()
 })
-
+const sorDownloadFile =async () => {
+  if (auditFlowId) {
+    try {
+      const {result}: any = (await getSorByAuditFlowId(auditFlowId)) || {}
+      let res: any = await CommonDownloadFile(result.sorFileId)
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = result.sorFileName
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
+}
 const getListData = () => {
   let param = queryParam.value
   if (param.SolutionId != undefined && param.AuditFlowId != undefined) {
@@ -240,8 +265,8 @@ const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
         if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
           cardItem.logisticscostList.map(function(logItem:any){
               logItem.packagingPrice=value;
-          })   
-        }  
+          })
+        }
      })
   }
 }
@@ -274,8 +299,8 @@ const freightPriceChange = (value: any, index: any, item: any,cardIndex:number) 
                 logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
               }
 
-          })   
-        }  
+          })
+        }
      })
   }
 
@@ -310,8 +335,8 @@ const storagePriceChange = (value: any, index: any, item: any,cardIndex:number) 
               if (logItem.packagingPrice && logItem.singlyDemandPrice) {
                 logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
               }
-          })   
-        }  
+          })
+        }
      })
   }
 

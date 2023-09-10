@@ -11,7 +11,7 @@
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
-        <SchemeCompare />
+        <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
       </el-row>
       <el-row class="m-2">

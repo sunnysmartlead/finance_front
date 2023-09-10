@@ -130,7 +130,13 @@
                       <el-input v-model="deviceItem.fixtureName" :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input v-model="deviceItem.fixtureState" :disabled="data.currentEditProcessIndex != dataIndex" />
+                      <el-select  v-model="deviceItem.fixtureState"
+                                  :disabled="data.currentEditProcessIndex != dataIndex">
+                        <el-option v-for="item in deviceStatusEnmus"
+                                   :key="item.code"
+                                   :label="item.value"
+                                   :value="item.value"/>
+                      </el-select>
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input-number v-model="deviceItem.fixturePrice" :min="1" :precision="2"
@@ -151,8 +157,13 @@
                     :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input v-model="dataItem.fixtureGaugeState" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                  <el-select  v-model="dataItem.fixtureGaugeState"
+                              :disabled="data.currentEditProcessIndex != dataIndex">
+                    <el-option v-for="item in deviceStatusEnmus"
+                               :key="item.code"
+                               :label="item.value"
+                               :value="item.value"/>
+                  </el-select>
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input-number v-model="dataItem.fixtureGaugePrice" style="border: none;"
@@ -162,7 +173,7 @@
                   <el-input v-model="dataItem.fixtureGaugeBusiness" style="border: none;"
                     :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
-                </div> 
+                </div>
               </div>
 
               <div class="u-flex u-row-left u-col-center  u-text-center">
@@ -250,7 +261,7 @@ import { reactive, toRefs, onMounted, ref } from 'vue';
 import { formatDateTime } from "@/utils"
 import { ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus"
 import { getListAll, updateFoundationFixture, createFoundationFixture, deleteFoundationPFoundationFixture, exportFoundationFixture, uploadAction } from "@/api/foundationFixtureDto";
-import { exportDevice, getDeviceLog, saveDeviceLog } from "@/api/foundationDeviceDto";
+import {exportDevice, getDeviceLog, getDeviceStatus, saveDeviceLog} from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
 const data = reactive<any>({
   tableColumnWidth: 200,
@@ -258,6 +269,7 @@ const data = reactive<any>({
   currentEditProcessIndex: -1,
 })
 const baseLibLogRecords = ref([])
+const deviceStatusEnmus=ref<any>([]);
 const addFlag = ref(false);
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -293,6 +305,14 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
   })
 }
 
+const getDeviceStatuEnmu = () => {
+  getDeviceStatus().then((response:any) => {
+    console.log("======设备状态列表=======", response);
+    if (response.success) {
+      deviceStatusEnmus.value=response.result;
+    }
+  })
+}
 
 //获取日志记录
 const getDeviceOptionLog = () => {
@@ -331,6 +351,7 @@ const initData = async () => {
     data.tableData = listResult.result
   }
   getDeviceOptionLog()
+  getDeviceStatuEnmu();
 }
 
 const addDevice = () => {

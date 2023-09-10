@@ -103,10 +103,10 @@
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :disabled="data.currentEditProcessIndex != dataIndex"
                     :remote-method="remoteMethodForProcessNumber"
                     @change="processNumberChange($event, dataIndex)" :loading="optionLoading">
-                    <el-option v-for="item in processNumberOptions" 
+                    <el-option v-for="item in processNumberOptions"
                           :key="item.id" :label="item.processNumber"
                       :value="item.processNumber" />
                   </el-select>
@@ -114,10 +114,10 @@
                 </div>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :disabled="data.currentEditProcessIndex != dataIndex"
                     :remote-method="remoteMethodForProcessName"
                     @change="processNameChange($event, dataIndex)" :loading="optionLoading">
-                    <el-option v-for="item in processNameOptions" 
+                    <el-option v-for="item in processNameOptions"
                         :key="item.id" :label="item.processName"
                       :value="item.processName" />
                   </el-select>
@@ -132,8 +132,13 @@
                       <el-input v-model="deviceItem.hardwareName" :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input v-model="deviceItem.hardwareState"
-                        :disabled="data.currentEditProcessIndex != dataIndex" />
+                      <el-select  v-model="deviceItem.hardwareState"
+                                  :disabled="data.currentEditProcessIndex != dataIndex">
+                        <el-option v-for="item in deviceStatusEnmus"
+                                   :key="item.code"
+                                   :label="item.value"
+                                   :value="item.value"/>
+                      </el-select>
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input-number v-model="deviceItem.hardwarePrice" :min="1" :precision="2"
@@ -259,7 +264,7 @@ import {
   deleteFoundationPFoundationFixture,
   updateFoundationFixture
 } from "@/api/foundationFixtureDto";
-import { getDeviceLog } from "@/api/foundationDeviceDto";
+import {getDeviceLog, getDeviceStatus} from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
 //查询关键字
 const queryForm = reactive({
@@ -273,18 +278,26 @@ const data = reactive<any>({
 
 //表格数据
 let tableData = ref<any>([])
-
+const deviceStatusEnmus=ref<any>([]);
 let currentEditProcessItem: any = null;
 onMounted(() => {
   initData();
 })
-
+const getDeviceStatuEnmu = () => {
+  getDeviceStatus().then((response:any) => {
+    console.log("======设备状态列表=======", response);
+    if (response.success) {
+      deviceStatusEnmus.value=response.result;
+    }
+  })
+}
 const initData = async () => {
   let listResult: any = await getListAll(queryForm)
   if (listResult.success) {
     tableData.value = listResult.result
   }
-  getDeviceOptionLog()
+  getDeviceOptionLog();
+  getDeviceStatuEnmu();
 }
 
 //下拉选项的数据类型定义

@@ -5,12 +5,12 @@
       <el-form inline>
         <el-form-item label="方案一：">
           <el-select v-model="data.solutionId1" placeholder="选择方案一">
-            <el-option v-for="item in solutionIdOptionsOne" :disabled="item.id === data.solutionId2" :key="item.id" :label="item.product" :value="item.id" />
+            <el-option v-for="item in solutionIdOptions" :disabled="item.id === data.solutionId2" :key="item.id" :label="item.product" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="方案二：">
           <el-select v-model="data.solutionId2" placeholder="选择方案二">
-            <el-option v-for="item in solutionIdOptionsOne" :disabled="item.id === data.solutionId1" :key="item.id" :label="item.product" :value="item.id" />
+            <el-option v-for="item in solutionIdOptions" :disabled="item.id === data.solutionId1" :key="item.id" :label="item.product" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -47,7 +47,7 @@ import { Warning } from '@element-plus/icons-vue'
 const { auditFlowId, productId: solutionId } = getQuery()
 
 const productStore = useProductStore()
-console.log(productStore?.productList, 'productStore')
+
 const props = defineProps({
   /**
    * 梯度Id
@@ -69,14 +69,11 @@ const props = defineProps({
   }
 })
 
-const solutionIdOptionsOne = computed(() => {
+const solutionIdOptions = computed(() => {
   console.log(productStore.productList)
-  return productStore?.productList
+  return productStore?.productList || []
 })
 
-const solutionIdOptionsTwo = computed(() => {
-  return productStore?.productList
-})
 
 const visiable = ref(false)
 

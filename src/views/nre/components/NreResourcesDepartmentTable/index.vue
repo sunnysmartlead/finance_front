@@ -1,8 +1,10 @@
 <template>
   <div style="padding: 0 10px">
     <!-- <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" /> -->
-    <ProcessVertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
-    <ThreeDImage m="3" />
+    <el-row justify="end">
+      <ProcessVertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
+      <ThreeDImage m="2" />
+    </el-row>
     <el-card class="margin-top">
       <template #header> 资源部 - 业务员 </template>
       <el-table ref="multipleTableRef" :data="mouldInventoryData" style="width: 100%" border
@@ -38,8 +40,7 @@
         <el-table-column label="费用" prop="cost" width="180" />
         <el-table-column label="备注" width="180">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.remark }}</span>
-            <el-input v-model="row.remark" :disabled="row.isSubmit" />
+            <el-input v-if="!isVertify" v-model="row.remark" :disabled="row.isSubmit" />
           </template>
         </el-table-column>
         <el-table-column label="提交人" prop="peopleName" width="180" />
@@ -84,6 +85,7 @@ const multipleTableRef = ref<InstanceType<typeof ElTable>>()
 const multipleSelection = ref<any[]>([])
 
 const initFetch = async () => {
+  if (!auditFlowId || !productId) return
   const { result } = await GetInitialResourcesManagementSingle({ auditFlowId, solutionId: productId })
   console.log(result, "result")
   mouldInventoryData.value = result?.mouldInventoryModels

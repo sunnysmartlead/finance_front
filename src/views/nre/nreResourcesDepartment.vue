@@ -1,5 +1,7 @@
 <template>
-  <NreResourcesDepartmentTable />
+  <div>
+    <NreResourcesDepartmentTable />
+  </div>
 </template>
 
 <script lang="ts" setup>

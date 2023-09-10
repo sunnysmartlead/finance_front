@@ -61,7 +61,7 @@ export interface RateEntryInfo {
   indirectDepreciationRate?: number
   indirectLaborRate?: number
   indirectManufacturingRate?: number
-  year?: null | string | number
+  year?: number
 }
 /*
  * QualityCostProportionEntryInfo
@@ -82,8 +82,9 @@ export interface ManufacturingCostsItem {
   usefulLifeOfFixedAssets?: number | null | string
   dailyShift?: number | null | string
   vatRate?: number | null | string
-  year?: number | null | string
+  year?: number
   traceLineOfPerson?: number | null | string
+  sop?: number
 }
 
 export interface ManufacturingCostsInfo {

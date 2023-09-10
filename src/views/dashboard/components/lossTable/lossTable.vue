@@ -21,12 +21,11 @@
         <el-input-number controls-position="right" :min="0" v-model="row.moqShareCount" />
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="200">
-      <template #default="{ row }">
-        <el-row >
-          <el-button type="primary" v-if="!isEdit" @click="handleEdit" link>修改</el-button>
-          <el-button type="primary" v-if="isEdit" link>确认</el-button>
-          <el-button link type="primary" v-if="isEdit" @click="handleUpload">上传佐证资料</el-button>
+    <el-table-column label="操作" width="200" v-if="!hideEdit">
+      <template #default="{ row, $index }">
+        <el-row>
+          <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
+          <el-button type="primary" v-if="isEdit" @click="onDelete($index)" link>删除</el-button>
         </el-row>
       </template>
     </el-table-column>
@@ -46,20 +45,19 @@ const props = defineProps({
   onEdit: {
     type: Function as PropType<any>
   },
-  onUpload: {
+  onDelete: {
     type: Function as PropType<any>
-  }
+  },
+  hideEdit: Boolean
 })
 
 const toFixedTwo = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(2)
+  if (typeof val === "number" && val > 0) return val?.toFixed(2)
   return val
 }
+
 const handleEdit = () => {
   props.onEdit()
 }
 
-const handleUpload = () => {
-  props.onUpload()
-}
 </script>

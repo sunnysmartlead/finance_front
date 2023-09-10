@@ -14,10 +14,12 @@ export const wahiteRotes: any[] = [
   "bomLossStruct", // bom 损耗率表单 - 结构bom
   "pmDepartment", // 生管部录入
   "nreProjectManageMent", // nre - 项目管理部nre
-  "nrePilotprojects", // nre - 产品部
+  "nrePilotprojects", // nre - 产品部EMC环境实验费
+  "nrePilotprojectsVertify", // nre - 产品部EMC环境实验费审核
   "nreResourcesDepartment", // nre - 模具费
   "nreResourcesDepartmentVertify", // nre - 资源部审核
   "nreExperimentItems", // nre - 品保部
+  "nreExperimentItemsVertify", // nre - 品保部审核
   "nreQCDepartment", // nre - 品保部-检具nre
   "nreMarketingDepartment", // nre - 营销部nre
   "nrePricelist", // nre - 核价表nre

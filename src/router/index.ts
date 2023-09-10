@@ -550,8 +550,11 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
+    // meta: {
+    //   hidden: true
+    // },
     children: [
       {
         path: "/dashboard/index",

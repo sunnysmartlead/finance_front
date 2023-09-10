@@ -10,7 +10,7 @@
 
 <template>
   <el-row justify="end">
-    <el-button type="primary" v-havedone m="2" @click="data.dialogVisible = true">流程确认</el-button>
+    <el-button type="primary" m="2" @click="data.dialogVisible = true">流程确认</el-button>
     <el-dialog v-model="data.dialogVisible" title="流程确认" width="30%">
       <el-form>
         <el-form-item label="选择类型">

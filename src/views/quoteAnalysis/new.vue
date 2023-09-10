@@ -290,6 +290,7 @@ import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed 
 import { useRoute, useRouter } from "vue-router"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
+import { useProductStore } from "@/store/modules/productList"
 
 /**
  * 路由对象
@@ -304,6 +305,8 @@ const router = useRouter()
  * 数据部分
  */
 let { auditFlowId, productId } = getQuery()
+const productStore = useProductStore()
+
 const data = reactive({
   tableData: [
     // {

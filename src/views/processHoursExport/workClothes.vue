@@ -35,8 +35,8 @@
     </div>
     <!-- 数据表格区域 -->
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
-      <div class="table-box">
-        <el-table :data="tableData" style="width: 100%;" :scrollbar-always-on="false" max-height="600px" border>
+      <div class="table-box" v-if="tableData.length>0">
+        <el-table :data="tableData" max-height="600px" border>
           <el-table-column label="序号" type="index" width="80" align="center" />
           <el-table-column label="工序编号" :width="tableColumnWidth" align="center">
             <template #default="scope">
@@ -69,15 +69,8 @@
           <el-table-column label="工装名称" :width="tableColumnWidth" align="center">
             <template #default="scope">
               <div>
-                <el-select :disabled="currentEditProcessIndex != scope.$index"
-                  v-model="scope.row.installationName"
-                  filterable remote reserve-keyword :remote-method="remoteMethodForinstallationName"
-                  @change="installationNameChange($event, scope.$index)" :loading="optionLoading">
-                  <el-option v-for="item in installationNameOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value" />
-                </el-select>
+                <el-input v-model="scope.row.installationName" :disabled="currentEditProcessIndex != scope.$index"
+                          placeholder="请输入工装名称" />
               </div>
             </template>
           </el-table-column>
@@ -159,12 +152,6 @@
           </el-table-column>
         </el-table>
       </div>
-      <div v-show="tableData.length >= 10" class="u-flex u-row-center u-col-center u-m-t-20">
-        <div>
-          <el-pagination :page-size="10" :pager-count="5" layout="prev, pager, next" :total="tableData.length" />
-        </div>
-      </div>
-
     </div>
     <!-- 日志记录 -->
     <div v-if="baseLibLogRecords.length>0"
@@ -255,14 +242,29 @@ onMounted(() => {
 const initData = async () => {
   addFlag.value = false;
   currentEditProcessIndex.value = -1;
-  let listResult: any = await getListAll({ ProcessName: queryForm.InstallationName })
-  if (listResult.success) {
-    tableData.value = listResult.result;
-    console.log("工装数据数量", tableData.value.length);
-  }
+  await getListData();
   //获取日志
-  getLogRecords();
+  await getLogRecords();
 }
+
+const getListData = async () => {
+  let param = {
+    InstallationName: queryForm.InstallationName
+  }
+  await getListAll(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      tableData.value = data;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '列表加载失败'
+      })
+    }
+  })
+}
+
+
 //提交搜索
 const submitSearch = () => {
   console.log('submitSearch!');
@@ -395,6 +397,7 @@ const saveEdit = async (index: number, row: any) => {
   console.log("保存编辑内容", row);
   let pname= row.processName;
   let pNumber= row.processNumber;
+  let installationName= row.installationName;
   if(pname==null||pname==undefined||pname.length<1){
     ElMessage({
       type: 'error',
@@ -406,6 +409,13 @@ const saveEdit = async (index: number, row: any) => {
     ElMessage({
       type: 'error',
       message: '工序序号不能为空!'
+    })
+    return;
+  }
+  if(installationName==null||installationName==undefined||installationName.length<1){
+    ElMessage({
+      type: 'error',
+      message: '工装名称不能为空!'
     })
     return;
   }
@@ -535,6 +545,16 @@ const getProcessName =async (keyWord: String) => {
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+    if (processNameOptions.value.length > 0) {
+        let options = processNameOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processName == value) {
+                tableData.value[dataIndex].processNumber = item.processNumber;
+                return;
+            }
+        }
+    }
 }
 //工序序号下拉数据列表
 const processNumberOptions = ref<processOptionListItem[]>([])
@@ -570,6 +590,16 @@ const getProcessIndex = async (keyWord: String) => {
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工装编号变化了${value}`);
+  if (processNumberOptions.value.length > 0) {
+        let options = processNumberOptions.value;
+        for (let i = 0; i < options.length; i++) {
+            let item = options[i];
+            if (item.processNumber == value) {
+                tableData.value[dataIndex].processName = item.processName;
+                return;
+            }
+        }
+    }
 }
 
 const disabledDate = (time: Date) => {
@@ -587,11 +617,11 @@ const editLogFlag = ref(false);
 const baseLibLogRecords = ref<any>([])
 
 //获取日志
-const getLogRecords = () => {
+const getLogRecords =async () => {
   let data={
     Type: 1
   };
-  getLog(data).then((response:any) => {
+  await getLog(data).then((response:any) => {
     if(response.success){
       baseLibLogRecords.value = response.result
       console.log("======baseLibLogRecords=======", baseLibLogRecords.value);

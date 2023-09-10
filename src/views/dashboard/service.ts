@@ -38,7 +38,7 @@ export function GetQualityCost(data: GetLossCostProps) {
 }
 
 // 核价看板-产品成本占比图
-export function GetPricingPanelProportionOfProductCost(data: GetLossCostProps) {
+export function GetPricingPanelProportionOfProductCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluationGet/GetPricingPanelProportionOfProductCost",
     method: "get",
@@ -74,7 +74,7 @@ export function GetBomCost(data: any) {
 }
 
 // 获取 物流成本汇总表
-export function GetLogisticsCost(data: GetLossCostProps) {
+export function GetLogisticsCost(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetLogisticsCost",
     method: "get",
@@ -92,9 +92,9 @@ export function GetManufacturingCost(data: GetLossCostProps) {
 }
 
 // 获取推移图
-export function GetGoTable(data: { AuditFlowId: number; SolutionId: number; InputCount: number }) {
+export function GetGoTable(data: any) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetGoTable",
+    url: "/api/services/app/PriceEvaluationGet/GetGoTable",
     method: "get",
     data
   })
@@ -215,20 +215,129 @@ export function GetIsTradeCompliance(auditFlowId: number) {
   })
 }
 
-// 获取修改项信息
-export function GetUpdateItem(data: any) {
-  return request({
-    url: "/api/services/app/PriceEvaluation/GetUpdateItem",
-    method: "get",
-    data
-  })
-}
-
 // 获取其他成本项目
 export function GetOtherCostItem(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluationGet/GetOtherCostItem",
     method: "get",
+    data
+  })
+}
+
+// 获取修改项（物料成本）
+export function GetUpdateItemMaterial(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemMaterial",
+    method: "get",
+    data
+  })
+}
+
+// 创建修改项（物料成本）
+export function SetUpdateItemMaterial(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemMaterial",
+    method: "post",
+    data
+  })
+}
+
+// 获取修改项（损耗成本）
+export function GetUpdateItemLossCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemLossCost",
+    method: "get",
+    data
+  })
+}
+
+// 创建修改项（损耗成本）
+export function SetUpdateItemLossCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemLossCost",
+    method: "post",
+    data
+  })
+}
+
+
+// 获取修改项（制造成本）
+export function SetUpdateItemManufacturingCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemManufacturingCost",
+    method: "post",
+    data
+  })
+}
+
+// 创建修改项（制造成本）
+export function GetUpdateItemManufacturingCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemManufacturingCost",
+    method: "get",
+    data
+  })
+}
+
+// 创建修改项（质量成本）
+export function SetUpdateItemQualityCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemQualityCost",
+    method: "post",
+    data
+  })
+}
+
+// 获取修改项（质量成本）
+export function GetUpdateItemQualityCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemQualityCost",
+    method: "get",
+    data
+  })
+}
+
+// 创建修改项（其他成本）
+export function SetUpdateItemOtherCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemOtherCost",
+    method: "post",
+    data
+  })
+}
+
+// 查询修改项（其他成本）
+export function GetUpdateItemOtherCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemOtherCost",
+    method: "get",
+    data
+  })
+}
+
+// 查询修改项（其他成本）
+export function GetUpdateItemLogisticsCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetUpdateItemLogisticsCost",
+    method: "get",
+    data
+  })
+}
+
+// 创建修改项（其他成本）
+export function SetUpdateItemLogisticsCost(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetUpdateItemLogisticsCost",
+    method: "post",
+    data
+  })
+}
+
+// 核价表下载
+export function PriceEvaluationTableDownload(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/PriceEvaluationTableDownload",
+    method: "post",
     data
   })
 }

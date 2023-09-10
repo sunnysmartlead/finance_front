@@ -141,7 +141,7 @@ export function FindElectronicBomByProcess(data:any) {
 }
 
 
-export function GetBoardInfomation(data: QueryParams) {
+export function GetBoardInfomation(data: any) {
   return request({
     url: "/api/services/app/ElectronicBom/GetBoardInfomation",
     method: "get",

@@ -254,6 +254,16 @@ export function GetFoundationEmc(data: any) {
   })
 }
 
+// Nre 产品部EMC+电性能实验费 下载 Excel 解析数据模板
+export function PostProductDepartmentDownloadExcel(data: any) {
+  return request({
+    url: "/api/services/app/NrePricing/PostProductDepartmentDownloadExcel",
+    method: "get",
+    data,
+    responseType: "blob"
+  })
+}
+
 //  Nre 产品部-电子工程师 导入数据
 export function PostProductDepartmentSingleExcel(data: any) {
   return request({

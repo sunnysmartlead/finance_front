@@ -385,7 +385,7 @@
             <!-- 治具 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center u-text-center">
-                <tempData v-if="dataItem.toolInfo.zhiJuArr && dataItem.toolInfo.zhiJuArr.length > 0">
+                <template v-if="dataItem.toolInfo.zhiJuArr.length > 0">
                   <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
                     class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-150 u-border">
@@ -405,8 +405,8 @@
                         @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                     </div>
                   </div>
-                </tempData>
-                <tempData v-else>
+                </template>
+                <template v-else>
                   <div class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-150 u-border">
                       <span>---</span>
@@ -418,7 +418,7 @@
                       <span>---</span>
                     </div>
                   </div>
-                </tempData>
+                </template>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.toolInfo.fixtureName" filterable remote reserve-keyword
                     :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForJianJuName"
@@ -478,7 +478,8 @@
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" :disabled="isDisable(dataIndex)" />
+                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" 
+                      :disabled="isDisable(dataIndex)"/>
                     </div>
                     <div class="u-width-150 u-border">
                       <el-input-number v-model="scopItem.issues[0].machineHour" :min="1"

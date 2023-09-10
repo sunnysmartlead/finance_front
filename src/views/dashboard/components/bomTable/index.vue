@@ -112,7 +112,6 @@ onMounted(() => {
 const getBomLogData = async () => {
   const { success, result }: any = (await GetUpdateItemMaterial({
     AuditFlowId: auditFlowId,
-    ProductId: 532,
     GradientId: props.gradientId,
     solutionId,
     Year: props.yearData.year,

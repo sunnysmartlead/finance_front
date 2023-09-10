@@ -110,7 +110,6 @@ const handleSubmit = async () => {
   const { success } = await SetUpdateItemLossCost({
     updateItem: modifyData.value,
     auditFlowId,
-    modifyData,
     gradientId: props.gradientId,
     file: fileIds[0],
     Year: props.yearData.year,

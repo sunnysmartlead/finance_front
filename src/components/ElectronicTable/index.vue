@@ -258,7 +258,7 @@ const allStandardMoney = computed(() => {
 })
 
 const formatDatas = (record: any, _row: any, cellValue: any) => {
-  return cellValue || ""
+  return cellValue.toFixed() || ""
 }
 
 const filterStandardMoney = (record: any, _row: any, cellValue: any) => {

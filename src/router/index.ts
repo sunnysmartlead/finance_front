@@ -565,19 +565,27 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/projectPriceAudit/index",
-        component: () => import("@/views/dashboard/projectPriceAudit/index.vue"),
-        name: "ProjectPriceAudit",
+        path: "/projectChiefAudit",
+        component: () => import("@/views/dashboard/projectChiefAudit/index.vue"),
+        name: "ProjectChiefAudit",
         meta: {
-          title: "项目部核价审核界面"
+          title: "项目部科长审核"
         }
       },
       {
-        path: "/financePriceAudit/index",
-        component: () => import("@/views/dashboard/financePriceAudit/index.vue"),
-        name: "FinancePriceAudit",
+        path: "/financeDirectorAudit",
+        component: () => import("@/views/dashboard/financeDirectorAudit/index.vue"),
+        name: "FinanceDirectorAudit",
         meta: {
-          title: "财务部核价审核界面"
+          title: "财务审核"
+        }
+      },
+      {
+        path: "/projectDirectorLook",
+        component: () => import("@/views/dashboard/projectDirectorLook/index.vue"),
+        name: "ProjectDirectorLook",
+        meta: {
+          title: "项目部长查看"
         }
       }
     ]

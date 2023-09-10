@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
+    <ProcessVertifyBox :onSubmit="handleSetBomState" processType="PriceEvaluationBoard" />
     <bulletinBoard />
   </div>
 </template>

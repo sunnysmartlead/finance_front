@@ -361,29 +361,30 @@
                   {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(2) }}
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" 
-                     filterable remote reserve-keyword 
+                  <el-select v-model="dataItem.developCostInfo.traceabilitySoftware"
+                     filterable remote reserve-keyword
                      :disabled="isDisable(dataIndex)"
                     :remote-method="remoteMethodForZhuiSuSoft"
                     @change="zhuiSuSoftChange($event, dataIndex)" :loading="optionLoading">
-                    <el-option v-for="item in zhuiSuSoftOptions" 
+                    <el-option v-for="item in zhuiSuSoftOptions"
                           :key="item.id" :label="item.traceabilitySoftware"
                           :value="item.traceabilitySoftware" />
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input v-model="dataItem.developCostInfo.development" :disabled="isDisable(dataIndex)" />
+                  <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost" :precision="2" :step="0.01"
+                                   :disabled="isDisable(dataIndex)"
+                                    />
                 </div>
                 <div class="u-width-150 u-border">
-                  <el-select v-model="dataItem.developCostInfo.openDrawingSoftware" :disabled="isDisable(dataIndex)"
-                    filterable remote reserve-keyword @change="kaiTuChange($event, dataIndex)"
-                    :remote-method="remoteMethodForKaiTuName" :loading="kaiTuNameLoading">
-                    <el-option v-for="item in kaiTuNameOptions" :key="item.value" :label="item.label"
-                      :value="item.value" />
-                  </el-select>
+                  <el-input @change="kaiTuChange($event, dataIndex)" v-model="dataItem.developCostInfo.openDrawingSoftware" :precision="2" :step="0.01"
+                                   :disabled="isDisable(dataIndex)"
+                  />
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.developCostInfo.softwarePrice.toFixed(2) }}</span>
+                  <el-input-number @change="kaiTuChange($event, dataIndex)" v-model="dataItem.developCostInfo.softwarePrice" :precision="2" :step="0.01"
+                                   :disabled="isDisable(dataIndex)"
+                  />
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span>{{ dataItem.developCostInfo.hardwareDeviceTotalPrice }}</span>
@@ -486,7 +487,7 @@
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" 
+                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1"
                       :disabled="isDisable(dataIndex)"/>
                     </div>
                     <div class="u-width-150 u-border">
@@ -725,6 +726,9 @@ import { getListAllForQuery as getStandardProcessList } from "@/api/standardProc
 import {
   getListAllForSelect as getDeviceListForSelect
 } from '@/api/foundationDeviceDto';
+import {
+  getListAll as getDataFoundationHardwares
+} from '@/api/foundationHardware';
 import { random } from "lodash"
 import router from "@/router"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
@@ -774,7 +778,7 @@ const tempData: any = {
       }
     ],
     traceabilitySoftware:'',//追溯软件名称
-    development:0,          //追溯软件费用
+    traceabilitySoftwareCost:0,          //追溯软件费用
     hardwareTotalPrice: 0,
     softwarePrice: 0
   },
@@ -1056,7 +1060,9 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
               personnelNumber: 0,
             }];
             let yearIndex = oldItem.year;
+            console.log(yearIndex)
             newSop.map(function (newItem: any, newIndex: number) {
+              console.log(newItem)
               let newYearIndex = newItem.year ? newItem.year : '----';
               if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
                   oldItem.issues = newItem.issues;
@@ -1088,6 +1094,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     } else {
       dataArr.value = exportListData;
     }
+    console.log(exportListData)
     ElMessage({
       type: "success",
       message: "请确认无误后保存"
@@ -1531,7 +1538,7 @@ const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIn
   console.log("软件设备总价", handleHardwareDeviceCost)
   dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2));
   let kaituCost=dataArr.value[dataIndex].developCostInfo.softwarePrice?dataArr.value[dataIndex].developCostInfo.softwarePrice:0;
-  let zhuiSuCost=dataArr.value[dataIndex].developCostInfo.development?dataArr.value[dataIndex].developCostInfo.development:0;
+  let zhuiSuCost=dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost?dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost:0;
   dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice =Number(handleHardwareDeviceCost) + Number(kaituCost)+Number(zhuiSuCost);
 }
 //#endregion
@@ -1539,12 +1546,12 @@ const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIn
 
 
 //---------------------------追溯软件名称查询代码块------------------------------------
-//#region  
+//#region
 //追溯软件下拉选项的数据类型定义
 interface zhuiSuOptionListItem {
   id: number,
   traceabilitySoftware: String,
-  development: number
+  traceabilitySoftwareCost: number
 }
 const optionLoading=ref(false)
 //异步请求loading
@@ -1561,18 +1568,32 @@ const remoteMethodForZhuiSuSoft = async (query: string) => {
 }
 //查询追溯软件名称的方法,用于渲染追溯软件名称下拉框选项
 const getZhuiSuSofts = async (keyWord: String) => {
-  zhuiSuSoftOptions.value=[
-    {
-      id: 0,
-      traceabilitySoftware: '测试追溯软件1',
-      development: 1000.00
-    },
-    {
-      id: 1,
-      traceabilitySoftware: '测试追溯软件2',
-      development: 2000.00
+  let param = {
+    TraceabilitySoftware: keyWord
+  };
+  await getDataFoundationHardwares(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result;
+      if (data.length > 0) {
+        zhuiSuSoftOptions.value = data;
+        console.log("===查询追溯软件列表===", fixtureNameOptions.value);
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "查询追溯软件不存在!"
+        })
+        zhuiSuSoftOptions.value = [];
+      }
+    } else {
+      ElMessage({
+        type: "error",
+        message: "查询追溯软件不存在!"
+      })
+      zhuiSuSoftOptions.value = [];
     }
-  ]
+  })
+  return [];
+
   // let param = {
   //   processNumber: keyWord
   // }
@@ -1596,12 +1617,12 @@ const zhuiSuSoftChange = (value: any, dataIndex: any) => {
     for (let i = 0; i < options.length; i++) {
       let item = options[i];
       if (item.traceabilitySoftware == value) {
-        dataArr.value[dataIndex].developCostInfo.development = item.development;
+        dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost = item.traceabilitySoftwareCost;
         dataArr.value[dataIndex].developCostInfo.traceabilitySoftware = item.traceabilitySoftware;
          //这里计算总价
         let hardwareTotalPrice= dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;
         let softwarePrice=dataArr.value[dataIndex].developCostInfo.softwarePrice;
-        dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(hardwareTotalPrice) + Number(softwarePrice)+Number(item.development);
+        dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(hardwareTotalPrice) + Number(softwarePrice)+Number(item.traceabilitySoftwareCost);
         return;
       }
     }
@@ -1647,7 +1668,7 @@ const kaiTuChange = (kaitu: any, dataIndex: number) => {
   //这里计算总价
   let hardwareTotalPrice= dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;
   let softwarePrice=dataArr.value[dataIndex].developCostInfo.softwarePrice;
-  let zhuiSuCost=dataArr.value[dataIndex].developCostInfo.development;
+  let zhuiSuCost=dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost;
   dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(hardwareTotalPrice) + Number(softwarePrice)+Number(zhuiSuCost);
 }
 //#endregion
@@ -1685,7 +1706,7 @@ const getZhiJuName = async (keyWord: String) => {
     if (response.success) {
       let data = response.result;
       if (data.length > 0) {
-        fixtureNameOptions.value = data;
+        zhuiSuSoftOptions.value = data;
         console.log("===查询治具列表===", fixtureNameOptions.value);
       } else {
         ElMessage({
@@ -1979,37 +2000,6 @@ const calToolTotalCost = (dataIndex: number) => {
 }
 
 //3D爆炸图下载
-const downLoad3D = () => {
-  ElMessage({
-    type: "error",
-    message: "接口尚未提供,无法实现!!!"
-  })
-  return;
-  let param = {
-    AuditFlowId: auditFlowId,
-    productId: productId
-  }
-  downLoad3DImg(param).then((response: any) => {
-    console.log("3D爆炸图下载结果", response)
-    if (response.success) {
-      let data = response.result
-      let fileId = data.threeDFileId
-      let fileName = data.threeDFileName
-      let url = "" + fileName
-      const a = document.createElement("a")
-      a.href = url
-      a.setAttribute("download", fileName)
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-    } else {
-      ElMessage({
-        type: "error",
-        message: "失败"
-      })
-    }
-  })
-}
 
 const viewBOM = async () => {
   let param = {
@@ -2177,7 +2167,7 @@ const dialogProData = reactive([
 ])
 
 //-----------------------------选择标准工艺名称代码块---------------------------------
-//#region 
+//#region
 const dialogFormVisible = ref(false)
 const dialogForm = ref({
   name: "",

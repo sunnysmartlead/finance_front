@@ -156,19 +156,12 @@
 
               <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border">
-                    <el-select v-model="dataItem.traceabilitySoftware" 
-                     filterable remote reserve-keyword 
-                    :disabled="data.currentEditProcessIndex != dataIndex" 
-                    :remote-method="remoteMethodForZhuiSuSoft"
-                    @change="zhuiSuSoftChange($event, dataIndex)" :loading="optionLoading">
-                    <el-option v-for="item in zhuiSuSoftOptions" 
-                          :key="item.id" :label="item.traceabilitySoftware"
-                          :value="item.traceabilitySoftware" />
-                  </el-select>
+                  <el-input v-model="dataItem.traceabilitySoftware" style="border: none;"
+                            :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input v-model="dataItem.development" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                  <el-input-number v-model="dataItem.traceabilitySoftwareCost" :min="1" :precision="2"
+                                   :disabled="data.currentEditProcessIndex != dataIndex" :step="0.01" />
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwareName" style="border: none;"
@@ -417,7 +410,7 @@ const processNameChange = (value: any, dataIndex: any) => {
 interface zhuiSuOptionListItem {
   id: number,
   traceabilitySoftware: String,
-  development: number
+  traceabilitySoftwareCost: number
 }
 //异步请求loading
 const zhuiSuSoftOptions = ref<zhuiSuOptionListItem[]>([])
@@ -461,19 +454,7 @@ const getZhuiSuSofts = async (keyWord: String) => {
   //   }
   // })
 }
-//监听工装序号变化
-const zhuiSuSoftChange = (value: any, dataIndex: any) => {
-  if (zhuiSuSoftOptions.value.length > 0) {
-    let options = zhuiSuSoftOptions.value;
-    for (let i = 0; i < options.length; i++) {
-      let item = options[i];
-      if (item.traceabilitySoftware == value) {
-        tableData.value[dataIndex].development = item.development;
-        return;
-      }
-    }
-  }
-}
+
 //#endregion
 
 
@@ -487,7 +468,7 @@ const addDevice = () => {
     softwareName: '',
     softwareBusiness: '',
     traceabilitySoftware:'',
-    development:0,
+    traceabilitySoftwareCost:0,
     listHardware: [
       {
         hardwareName: '',

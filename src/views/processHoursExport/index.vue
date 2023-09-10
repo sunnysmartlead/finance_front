@@ -138,12 +138,12 @@
               <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                 <span>硬件总价</span>
               </div>
-              <!-- <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
+              <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                 <span>追溯软件</span>
               </div>
               <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
                 <span>开发费(追溯)</span>
-              </div> -->
+              </div>
               <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                 <span>开图软件</span>
               </div>
@@ -360,12 +360,20 @@
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(2) }}
                 </div>
-                <!-- <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.developCostInfo.zhuiSuSoft }}</span>
+                <div class="u-width-150  u-border">
+                  <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" 
+                     filterable remote reserve-keyword 
+                     :disabled="isDisable(dataIndex)"
+                    :remote-method="remoteMethodForZhuiSuSoft"
+                    @change="zhuiSuSoftChange($event, dataIndex)" :loading="optionLoading">
+                    <el-option v-for="item in zhuiSuSoftOptions" 
+                          :key="item.id" :label="item.traceabilitySoftware"
+                          :value="item.traceabilitySoftware" />
+                  </el-select>
                 </div>
-                <div class="u-width-150  u-border  u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.developCostInfo.developCost_zhuisu }}</span>
-                </div> -->
+                <div class="u-width-150  u-border">
+                  <el-input v-model="dataItem.developCostInfo.development" :disabled="isDisable(dataIndex)" />
+                </div>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.developCostInfo.openDrawingSoftware" :disabled="isDisable(dataIndex)"
                     filterable remote reserve-keyword @change="kaiTuChange($event, dataIndex)"
@@ -765,6 +773,8 @@ const tempData: any = {
         hardwareDevicePrice: 0
       }
     ],
+    traceabilitySoftware:'',//追溯软件名称
+    development:0,          //追溯软件费用
     hardwareTotalPrice: 0,
     softwarePrice: 0
   },
@@ -1519,12 +1529,87 @@ const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIn
     handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceNumber * item.hardwareDevicePrice
   })
   console.log("软件设备总价", handleHardwareDeviceCost)
-  dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2))
-  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice =
-    Number(handleHardwareDeviceCost) + Number(dataArr.value[dataIndex].developCostInfo.softwarePrice)
+  dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2));
+  let kaituCost=dataArr.value[dataIndex].developCostInfo.softwarePrice?dataArr.value[dataIndex].developCostInfo.softwarePrice:0;
+  let zhuiSuCost=dataArr.value[dataIndex].developCostInfo.development?dataArr.value[dataIndex].developCostInfo.development:0;
+  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice =Number(handleHardwareDeviceCost) + Number(kaituCost)+Number(zhuiSuCost);
 }
 //#endregion
 //-------------------------------------end-------------------------------
+
+
+//---------------------------追溯软件名称查询代码块------------------------------------
+//#region  
+//追溯软件下拉选项的数据类型定义
+interface zhuiSuOptionListItem {
+  id: number,
+  traceabilitySoftware: String,
+  development: number
+}
+const optionLoading=ref(false)
+//异步请求loading
+const zhuiSuSoftOptions = ref<zhuiSuOptionListItem[]>([])
+//填写追溯软件名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForZhuiSuSoft = async (query: string) => {
+  if (query) {
+    optionLoading.value = true;
+    await getZhuiSuSofts(query);
+    optionLoading.value = false;
+  } else {
+    zhuiSuSoftOptions.value = []
+  }
+}
+//查询追溯软件名称的方法,用于渲染追溯软件名称下拉框选项
+const getZhuiSuSofts = async (keyWord: String) => {
+  zhuiSuSoftOptions.value=[
+    {
+      id: 0,
+      traceabilitySoftware: '测试追溯软件1',
+      development: 1000.00
+    },
+    {
+      id: 1,
+      traceabilitySoftware: '测试追溯软件2',
+      development: 2000.00
+    }
+  ]
+  // let param = {
+  //   processNumber: keyWord
+  // }
+  // await queryProcessList(param).then((response: any) => {
+  //   if (response.success) {
+  //     let data = response.result;
+  //     processNumberOptions.value = data;
+  //   } else {
+  //     ElMessage({
+  //       type: 'error',
+  //       message: '列表加载失败'
+  //     })
+  //     processNumberOptions.value = [];
+  //   }
+  // })
+}
+//监听追溯变化
+const zhuiSuSoftChange = (value: any, dataIndex: any) => {
+  if (zhuiSuSoftOptions.value.length > 0) {
+    let options = zhuiSuSoftOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.traceabilitySoftware == value) {
+        dataArr.value[dataIndex].developCostInfo.development = item.development;
+        dataArr.value[dataIndex].developCostInfo.traceabilitySoftware = item.traceabilitySoftware;
+         //这里计算总价
+        let hardwareTotalPrice= dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;
+        let softwarePrice=dataArr.value[dataIndex].developCostInfo.softwarePrice;
+        dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(hardwareTotalPrice) + Number(softwarePrice)+Number(item.development);
+        return;
+      }
+    }
+  }
+}
+//#endregion
+//-----------------------------------end---------------------------------------
+
 
 //------------------------------开图软件名称代码块-------------------------
 //#region
@@ -1559,9 +1644,11 @@ const getKaiTuName = (keyWord: String) => {
 const kaiTuChange = (kaitu: any, dataIndex: number) => {
   console.log("第" + dataIndex + "工序的开图软件名称变化了" + kaitu)
   dataArr.value[dataIndex].developCostInfo.softwarePrice = Number(random(50000))
-  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice =
-    Number(dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice) +
-    Number(dataArr.value[dataIndex].developCostInfo.softwarePrice)
+  //这里计算总价
+  let hardwareTotalPrice= dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;
+  let softwarePrice=dataArr.value[dataIndex].developCostInfo.softwarePrice;
+  let zhuiSuCost=dataArr.value[dataIndex].developCostInfo.development;
+  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(hardwareTotalPrice) + Number(softwarePrice)+Number(zhuiSuCost);
 }
 //#endregion
 //-------------------------------end---------------------------------------
@@ -1866,10 +1953,12 @@ const handleTestLineCountChange = (value: any, dataIndex: number) => {
 }
 //#endregion
 //-----------------------------------end---------------------------------------
+
+
 //每条工序工具部分的总费用
 const calToolTotalCost = (dataIndex: number) => {
   let developTotalPrice = 0.0
-  let toolInfo = dataArr.value[dataIndex].toolInfo
+  let toolInfo = dataArr.value[dataIndex].toolInfo;
   let gzCount = toolInfo.frockNumber
   let gzPrice = toolInfo.frockPrice
   let gzCost = Number(gzCount) * Number(gzPrice)
@@ -1885,7 +1974,7 @@ const calToolTotalCost = (dataIndex: number) => {
       zhiJuCost = zhiJuCost + Number(item.fixtureNumber) * Number(item.fixturePrice)
     })
   }
-  developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost
+  developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost;
   return developTotalPrice
 }
 

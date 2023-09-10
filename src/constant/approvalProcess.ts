@@ -181,12 +181,67 @@ const bomCostProcessType = [
   }
 ]
 
-export {
+// 报价看板审核
+const priceEvaluationBoard = [
+  {
+    val: "EvalReason_Yp",
+    label: "样品"
+  },
+  {
+    val: "EvalReason_Ffabg",
+    label: "非方案变更"
+  },
+  {
+    val: "EvalReason_Nj",
+    label: "年降"
+  },
+  {
+    val: "EvalReason_Shj",
+    label: "售后件"
+  },
+  {
+    val: "EvalReason_Bb1",
+    label: "版本1"
+  },
+  {
+    val: "EvalReason_Fabg",
+    label: "方案变更"
+  },
+  {
+    val: "EvalReason_Qt",
+    label: "其他"
+  },
+  {
+    val: "EvalReason_Jdcbpg",
+    label: "节点成本预估"
+  },
+  {
+    val: "EvalReason_Xmbg",
+    label: "项目变更"
+  },
+]
+
+// 通用审核
+const normalProcessType = [
+  {
+    label: "不同意",
+    val: "YesOrNo_No"
+  },
+  {
+    label: "同意",
+    val: "YesOrNo_Yes"
+  },
+]
+
+const PROGRESSTYPE: any = {
   baseProcessType,
   confirmProcessType,
   quoteFeedbackProcessType,
   complianceProcessType,
   electronicBomProcessType,
   structBomProcessType,
-  bomCostProcessType
+  bomCostProcessType,
+  priceEvaluationBoard,
+  normalProcessType,
 }
+export default PROGRESSTYPE

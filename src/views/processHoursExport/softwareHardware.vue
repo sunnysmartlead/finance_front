@@ -3,13 +3,10 @@
     <div>
       <el-form :inline="true" :model="queryForm" class="demo-form-inline">
         <el-form-item label="硬件名称">
-          <el-input v-model="queryForm.deviceName" placeholder="输入设备名称" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitSearch">查询</el-button>
+          <el-input v-model="queryForm.hardwareName" placeholder="输入硬件名称" clearable />
         </el-form-item>
         <el-form-item label="软件名称">
-          <el-input v-model="queryForm.softwareName" placeholder="输入设备名称" clearable />
+          <el-input v-model="queryForm.softwareName" placeholder="输入软件名称" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitSearch">查询</el-button>
@@ -37,14 +34,14 @@
         </div>
       </div>
       <div>
-        <el-button type="primary" @click="exportList">软硬件导出</el-button>
+        <el-button :disabled="tableData.length<1" type="primary" @click="exportList">软硬件导出</el-button>
         <el-button @click="downLoad" type="primary">软硬件库模板下载</el-button>
       </div>
     </div>
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <el-scrollbar wrap-style="padding:0px 0px 10px 0px" always :max-height="600">
         <!-- 表头 -->
-        <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
+        <div class="u-flex u-row-left u-col-center u-text-center u-head-stop" style="width: 3600px;">
           <div class="u-flex u-row-left u-col-center  u-text-center">
             <div class="u-width-150  u-border u-height-60"><span>序号</span></div>
             <div class="u-width-150 u-border u-height-60"><span>工序编号</span></div>
@@ -89,6 +86,8 @@
             </div>
           </div>
           <div class="u-flex u-row-left u-col-center  u-text-center">
+            <div class="u-width-150 u-border u-height-60"><span>追溯软件</span></div>
+            <div class="u-width-150 u-border u-height-60"><span>追溯软件费用</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件名称</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件状态</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件单价</span></div>
@@ -106,10 +105,10 @@
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :disabled="data.currentEditProcessIndex != dataIndex"
                     :remote-method="remoteMethodForProcessNumber"
                     @change="processNumberChange($event, dataIndex)" :loading="optionLoading">
-                    <el-option v-for="item in processNumberOptions" 
+                    <el-option v-for="item in processNumberOptions"
                           :key="item.id" :label="item.processNumber"
                       :value="item.processNumber" />
                   </el-select>
@@ -117,10 +116,10 @@
                 </div>
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :disabled="data.currentEditProcessIndex != dataIndex"
                     :remote-method="remoteMethodForProcessName"
                     @change="processNameChange($event, dataIndex)" :loading="optionLoading">
-                    <el-option v-for="item in processNameOptions" 
+                    <el-option v-for="item in processNameOptions"
                         :key="item.id" :label="item.processName"
                       :value="item.processName" />
                   </el-select>
@@ -135,8 +134,13 @@
                       <el-input v-model="deviceItem.hardwareName" :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input v-model="deviceItem.hardwareState"
-                        :disabled="data.currentEditProcessIndex != dataIndex" />
+                      <el-select  v-model="deviceItem.hardwareState"
+                                  :disabled="data.currentEditProcessIndex != dataIndex">
+                        <el-option v-for="item in deviceStatusEnmus"
+                                   :key="item.code"
+                                   :label="item.value"
+                                   :value="item.value"/>
+                      </el-select>
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input-number v-model="deviceItem.hardwarePrice" :min="1" :precision="2"
@@ -151,6 +155,14 @@
               </div>
 
               <div class="u-flex u-row-left u-col-center  u-text-center">
+                <div class="u-width-150  u-border">
+                  <el-input v-model="dataItem.traceabilitySoftware" style="border: none;"
+                            :disabled="data.currentEditProcessIndex != dataIndex" />
+                </div>
+                <div class="u-width-150  u-border">
+                  <el-input-number v-model="dataItem.traceabilitySoftwareCost" :min="1" :precision="2"
+                                   :disabled="data.currentEditProcessIndex != dataIndex" :step="0.01" />
+                </div>
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwareName" style="border: none;"
                     :disabled="data.currentEditProcessIndex != dataIndex" />
@@ -171,10 +183,8 @@
                   <el-input v-model="dataItem.lastModifierUserName" style="border: none;" disabled />
                 </div>
                 <div class="u-width-200 u-border">
-                  <!-- <el-input v-model="dataItem.deviceManageTime"  style="border: none;" /> -->
                   <el-date-picker v-model="dataItem.lastModificationTime" style="width: 200px;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" type="datetime"
-                    value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" disabled placeholder="请输入工序维护时间" />
+                    type="datetime"  value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" disabled placeholder="请输入工序维护时间" />
                 </div>
                 <div class="u-width-300 u-border  u-flex u-row-around u-col-center  u-text-center">
                   <template v-if="data.currentEditProcessIndex == dataIndex">
@@ -262,11 +272,11 @@ import {
   deleteFoundationPFoundationFixture,
   updateFoundationFixture
 } from "@/api/foundationFixtureDto";
-import { getDeviceLog } from "@/api/foundationDeviceDto";
+import {getDeviceLog, getDeviceStatus} from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
 //查询关键字
 const queryForm = reactive({
-  deviceName: '',
+  hardwareName: '',
   softwareName: ''
 })
 const data = reactive<any>({
@@ -276,18 +286,26 @@ const data = reactive<any>({
 
 //表格数据
 let tableData = ref<any>([])
-
+const deviceStatusEnmus=ref<any>([]);
 let currentEditProcessItem: any = null;
 onMounted(() => {
   initData();
 })
-
+const getDeviceStatuEnmu = () => {
+  getDeviceStatus().then((response:any) => {
+    console.log("======设备状态列表=======", response);
+    if (response.success) {
+      deviceStatusEnmus.value=response.result;
+    }
+  })
+}
 const initData = async () => {
-  let listResult: any = await getListAll({ DeviceName: queryForm.deviceName, softwareName: queryForm.softwareName })
+  let listResult: any = await getListAll(queryForm)
   if (listResult.success) {
     tableData.value = listResult.result
   }
-  getDeviceOptionLog()
+  getDeviceOptionLog();
+  getDeviceStatuEnmu();
 }
 
 //下拉选项的数据类型定义
@@ -299,7 +317,6 @@ interface selectOptionListItem {
 //异步请求loading
 const optionLoading = ref(false)
 const processNumberOptions = ref<selectOptionListItem[]>([])
-
 //填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
 const remoteMethodForProcessNumber = async (query: string) => {
   if (query) {
@@ -328,7 +345,6 @@ const getProcessIndex = async (keyWord: String) => {
     }
   })
 }
-
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
   if (processNumberOptions.value.length > 0) {
@@ -373,7 +389,6 @@ const getProcessName = async (keyWord: String) => {
   })
 }
 
-
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
@@ -390,6 +405,59 @@ const processNameChange = (value: any, dataIndex: any) => {
 }
 
 
+//#region  追溯软件
+//下拉选项的数据类型定义
+interface zhuiSuOptionListItem {
+  id: number,
+  traceabilitySoftware: String,
+  traceabilitySoftwareCost: number
+}
+//异步请求loading
+const zhuiSuSoftOptions = ref<zhuiSuOptionListItem[]>([])
+//填写追溯软件名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForZhuiSuSoft = async (query: string) => {
+  if (query) {
+    optionLoading.value = true;
+    await getZhuiSuSofts(query);
+    optionLoading.value = false;
+  } else {
+    zhuiSuSoftOptions.value = []
+  }
+}
+//查询追溯软件名称的方法,用于渲染追溯软件名称下拉框选项
+const getZhuiSuSofts = async (keyWord: String) => {
+  zhuiSuSoftOptions.value=[
+    {
+      id: 0,
+      traceabilitySoftware: '测试追溯软件1',
+      development: 1000.00
+    },
+    {
+      id: 1,
+      traceabilitySoftware: '测试追溯软件2',
+      development: 2000.00
+    }
+  ]
+  // let param = {
+  //   processNumber: keyWord
+  // }
+  // await queryProcessList(param).then((response: any) => {
+  //   if (response.success) {
+  //     let data = response.result;
+  //     processNumberOptions.value = data;
+  //   } else {
+  //     ElMessage({
+  //       type: 'error',
+  //       message: '列表加载失败'
+  //     })
+  //     processNumberOptions.value = [];
+  //   }
+  // })
+}
+
+//#endregion
+
+
 const addDevice = () => {
   let item = {
     id: -1,
@@ -399,6 +467,8 @@ const addDevice = () => {
     softwarePrice: '',
     softwareName: '',
     softwareBusiness: '',
+    traceabilitySoftware:'',
+    traceabilitySoftwareCost:0,
     listHardware: [
       {
         hardwareName: '',
@@ -450,6 +520,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     })
   }
 }
+//模板下载
 const downLoad = async () => {
   const link = document.createElement('a')
   link.href = import.meta.env.VITE_BASE_API + "/Excel/软硬件.xlsx"
@@ -458,11 +529,9 @@ const downLoad = async () => {
   link.click()
   document.body.removeChild(link)
 }
+//导出
 const exportList = () => {
-  let param = {
-    processName: queryForm.deviceName
-  }
-  exportFoundationFixture(param).then((response: any) => {
+  exportFoundationFixture(queryForm).then((response: any) => {
     if (response) {
       const data = new Blob([response], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(data);

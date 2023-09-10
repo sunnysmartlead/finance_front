@@ -7,7 +7,8 @@ export {uploadAction}
  */
 
 export interface QueryParams {
-  DeviceName?: string
+  fixtureName?: string,
+  fixtureGaugeName?:string
 }
 /** 新增 */
 export function createFoundationFixture(data:any) {

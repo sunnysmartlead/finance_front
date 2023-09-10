@@ -1,0 +1,174 @@
+
+AnalyseBoardSecond/GetQuotationFeedback?auditFlowId=67
+{
+  "auditFlowId": 0,
+  "nres": [
+    {
+      "solutionName": "string",//方案
+      "solutionId": 0,
+      "auditFlowId": 0,
+      "models": [//nre
+        {
+          "id": 0,
+          "creationTime": "2023-09-06T17:34:43.342Z",
+          "creatorUserId": 0,
+          "lastModificationTime": "2023-09-06T17:34:43.342Z",
+          "lastModifierUserId": 0,
+          "isDeleted": true,
+          "deleterUserId": 0,
+          "deletionTime": "2023-09-06T17:34:43.342Z",
+          "auditFlowId": 0,
+          "solutionId": 0,
+          "formName": "string",//手办
+          "pricingMoney": 0,// 核价金额
+          "offerCoefficient": 0,//报价系数
+          "offerMoney": 0,//报价金额
+          "remark": "string"
+        }
+      ],
+      "devices": [
+        {
+          "id": 0,
+          "creationTime": "2023-09-06T17:34:43.342Z",
+          "creatorUserId": 0,
+          "lastModificationTime": "2023-09-06T17:34:43.342Z",
+          "lastModifierUserId": 0,
+          "isDeleted": true,
+          "deleterUserId": 0,
+          "deletionTime": "2023-09-06T17:34:43.342Z",
+          "auditFlowId": 0,
+          "solutionId": 0,
+          "deviceName": "string",//设备名
+          "devicePrice": 0,//价格
+          "number": 0,//数量
+          "equipmentMoney": 0//总价
+        }
+      ],
+      "numberLine": 0,//线体
+      "collinearAllocationRate": 0//分摊
+    }
+  ],
+  "sampleOffer": [//`样品
+    {
+      "solutionName": "string",
+      "auditFlowId": 0,
+      "solutionId": 0,
+      "onlySampleModels": [
+        {
+          "id": 0,
+          "creationTime": "2023-09-06T17:34:43.342Z",
+          "creatorUserId": 0,
+          "lastModificationTime": "2023-09-06T17:34:43.342Z",
+          "lastModifierUserId": 0,
+          "isDeleted": true,
+          "deleterUserId": 0,
+          "deletionTime": "2023-09-06T17:34:43.342Z",
+          "auditFlowId": 0,
+          "solutionId": 0,
+          "name": "string",//阶段名
+          "pcs": 0,//走量
+          "cost": 0,//成本
+          "unitPrice": 0,//单价
+          "grossMargin": 0,//毛利率
+          "salesRevenue": 0//销售收入
+        }
+      ]
+    }
+  ],
+  "sops": [//SOP单价
+    {
+      "gradientValue": "string",//梯度
+      "product": "string",//产
+      "grossValues": [
+        {
+          "gross": "string",
+          "grossvalue": 0
+        }
+      ]
+    }
+  ],
+  "quotedGrossMargins": [//阶梯数量
+    {
+      "project": "string",
+      "grossMargins": [
+        {
+          "proudct": "string",//产品
+          "productNumber": 0,
+          "quotedGrossMarginSimple": {//
+            "interior": {
+              "price": 0,
+              "grossMargin": 0,
+              "clientGrossMargin": 0,
+              "nreGrossMargin": 0
+            },
+            "client": {
+              "price": 0,
+              "grossMargin": 0,
+              "clientGrossMargin": 0,
+              "nreGrossMargin": 0
+            },
+            "thisQuotation": {
+              "price": 0,
+              "grossMargin": 0,
+              "clientGrossMargin": 0,
+              "nreGrossMargin": 0
+            },
+            "lastRound": {
+              "price": 0,
+              "grossMargin": 0,
+              "clientGrossMargin": 0,
+              "nreGrossMargin": 0
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "gradientQuotedGrossMargins": [//实际数量
+    {
+      "proudct": "string",//产品
+      "quotedGrossMarginSimple": {
+        "interior": {//内部
+          "price": 0,
+          "grossMargin": 0,
+          "clientGrossMargin": 0,
+          "nreGrossMargin": 0
+        },
+        "client": {//客户
+          "price": 0,
+          "grossMargin": 0,
+          "clientGrossMargin": 0,
+          "nreGrossMargin": 0
+        },
+        "thisQuotation": {//本轮
+          "price": 0,
+          "grossMargin": 0,
+          "clientGrossMargin": 0,
+          "nreGrossMargin": 0
+        },
+        "lastRound": {//上轮
+          "price": 0,
+          "grossMargin": 0,
+          "clientGrossMargin": 0,
+          "nreGrossMargin": 0
+        }
+      },
+      "gradient": "string"//梯度
+    }
+  ],
+
+  "gradientGrossMarginModels": [
+    {
+      "title": "string",
+      "_itemGrossMarginModels": [
+        {
+          "item": "string",
+          "interior": 0,//内部
+          "client": 0,//客户
+          "thisQuotation": 0,//本轮
+          "lastRound": 0
+        }
+      ]
+    }
+  ]
+}

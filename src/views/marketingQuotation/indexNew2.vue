@@ -13,21 +13,39 @@
       </div>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="直接客户名称">
-          {{ data.marketingQuotationData.directCustomerName }}
+          {{ data.resa.directCustomerName }}
         </el-descriptions-item>
-        <el-descriptions-item label="客户性质"> {{ data.marketingQuotationData.clientNature }} </el-descriptions-item>
+        <el-descriptions-item label="客户性质"> {{ data.resa.clientNature }} </el-descriptions-item>
         <el-descriptions-item label="终端客户名称">
-          {{ data.marketingQuotationData.terminalCustomerName }}
+          {{ data.resa.terminalCustomerName }}
         </el-descriptions-item>
         <el-descriptions-item label="终端客户性质">
-          {{ data.marketingQuotationData.terminalClientNature }}
+          {{ data.resa.terminalClientNature }}
         </el-descriptions-item>
         <el-descriptions-item label="开发计划">
-          {{ data.marketingQuotationData.developmentPlan }}
+          <el-input v-model="data.resa.developmentPlan" />
         </el-descriptions-item>
-        <el-descriptions-item label="汇率"> {{ data.marketingQuotationData.exchangeRate }} </el-descriptions-item>
+        <el-descriptions-item label="SOP时间">
+          <el-input v-model="data.resa.sopTime" />
+        </el-descriptions-item>
+        <el-descriptions-item label="项目生命周期">
+          <el-input v-model="data.resa.projectCycle" />
+        </el-descriptions-item>
+        <el-descriptions-item label="销售类型">
+          <el-input v-model="data.resa.forSale" />
+        </el-descriptions-item>
+        <el-descriptions-item label="贸易方式">
+          <el-input v-model="data.resa.modeOfTrade" />
+        </el-descriptions-item>
+        <el-descriptions-item label="付款方式">
+          <el-input v-model="data.resa.paymentMethod" />
+        </el-descriptions-item>
+        <el-descriptions-item label="报价币种">
+          <el-input v-model="data.resa.quoteCurrency" />
+        </el-descriptions-item>
+        <el-descriptions-item label="汇率"> {{ data.resa.exchangeRate }} </el-descriptions-item>
       </el-descriptions>
-      <el-card header="走量信息" m="2">
+      <!-- <el-card header="走量信息" m="2">
         <el-table :data="data.marketingQuotationData?.motionMessage" border>
           <el-table-column type="index" width="100" />
           <el-table-column label="名称" prop="messageName" />
@@ -39,38 +57,95 @@
             :formatter="formatMarketingQuotationDatas"
           />
         </el-table>
+      </el-card> -->
+      <!-- sop走量信息 -->
+      <el-card header="sop走量信息" m="2">
+        <el-table :data="data.resa.motionMessage" border>
+          <el-table-column type="index" width="100" />
+          <el-table-column label="名称" prop="messageName" />
+          <el-table-column
+            v-for="(item, index) in data.motionMessageSop"
+            :key="item.year"
+            :label="item.year"
+            :prop="`sop[${index}].value`"
+            :formatter="formatMarketingQuotationDatas"
+          />
+        </el-table>
       </el-card>
+      <!-- 核心部件 -->
       <el-card header="核心部件：" m="2">
-        <!-- <div>
-        产品名称：{{ data.marketingQuotationData. }}
-      </div> -->
-        <template v-for="item in data.marketingQuotationData.coreComponent" :key="item.messageName">
+        <template v-for="item in data.resa.componenSocondModels" :key="item.coreComponent">
           <el-card :header="item.componentName" class="m-2">
             <el-table :data="item.productSubclass" border>
-              <!-- <el-table-column type="index" width="100" /> -->
+              <el-table-column type="expand">
+                <template #default="props">
+                  <el-table :data="props.row.specifications" border>
+                    <el-table-column label="方案名" prop="solutionname" />
+                    <el-table-column label="specification" prop="specification" />
+                  </el-table>
+                </template>
+              </el-table-column>
               <el-table-column label="核心部件" prop="coreComponent" />
-              <el-table-column label="型号" prop="model" />
+              <!-- <el-table-column label="型号" prop="model" /> -->
               <el-table-column label="类型" prop="type" />
               <el-table-column label="备注" prop="remark" />
             </el-table>
           </el-card>
         </template>
       </el-card>
-      <el-card header="NRE费用：" m="2">
-        <template v-for="item in data.marketingQuotationData.nreCost" :key="item.messageName">
-          <el-card :header="item.nreCostModuleName" class="m-2">
-            <el-table :data="item.nreCostModels" border>
-              <el-table-column type="index" width="100" />
-              <el-table-column label="费用类别" prop="name" />
-              <el-table-column label="成本" prop="cost" :formatter="formatThousandths" />
-            </el-table>
-          </el-card>
-        </template>
+      <!-- nre汇总 -->
+      <el-card>
+        <p>{{ item.analyseBoardNreDto.solutionName }}</p>
+        <p>
+          线体数量：{{ item.analyseBoardNreDto.numberLine }} 共线分摊率：{{
+            item.analyseBoardNreDto.collinearAllocationRate
+          }}
+        </p>
+        <el-table
+          :data="item.analyseBoardNreDto.models"
+          style="width: 100%"
+          border
+          height="500px"
+          :summary-method="getSummaries"
+          show-summary
+        >
+          <el-table-column prop="index" label="序号" />
+          <el-table-column prop="costName" label="费用名称" />
+          <el-table-column prop="pricingMoney" label="核价金额" />
+          <el-table-column label="报价系数">
+            <template #default="scope">
+              <el-input v-model="scope.row.offerCoefficient" type="number" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="offerMoney" label="报价金额" />
+          <el-table-column label="备注">
+            <template #default="scope">
+              <el-input v-model="scope.row.remark" type="textarea" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <p>专用设备</p>
+        <el-table :data="item.analyseBoardNreDto.devices" style="width: 100%" border height="500px">
+          <el-table-column prop="deviceName" label="设备名称" />
+          <el-table-column prop="devicePrice" label="设备单价" />
+          <el-table-column prop="number" label="设备数量" />
+          <el-table-column prop="equipmentMoney" label="设备金额" />
+        </el-table>
       </el-card>
+
       <el-card header="内部核价信息：" m="2">
-        <template v-for="item in data.marketingQuotationData.pricingMessage" :key="item.messageName">
+        <template v-for="item in data.resa.pricingMessage" :key="item.messageName">
           <el-card :header="item.pricingMessageName" class="m-2">
             <el-table :data="item.pricingMessageModels" border>
+              <el-table-column type="expand">
+                <template #default="props">
+                  <el-table :data="props.row.sops" border>
+                    <el-table-column label="sop" prop="sop" />
+                    <el-table-column label="梯度" prop="gradientValue" />
+                    <el-table-column label="全周期" prop="all" />
+                  </el-table>
+                </template>
+              </el-table-column>
               <el-table-column label="序号" type="index" width="100" />
               <el-table-column label="费用类别" prop="name" />
               <el-table-column label="成本值" prop="costValue" :formatter="formatThousandths" />
@@ -79,34 +154,53 @@
         </template>
       </el-card>
       <el-card header="报价策略：" m="2">
-        <el-table :data="data.marketingQuotationData.biddingStrategy" border>
+        <el-table :data="data.resa.biddingStrategySecondModels" border>
           <el-table-column type="index" width="100" />
           <el-table-column label="产品" prop="product" />
-          <el-table-column label="成本" prop="cost" :formatter="formatThousandths" />
-          <el-table-column label="毛利率" prop="grossMargin" :formatter="formatterP" />
-          <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
-          <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" />
-          <el-table-column label="含佣金的毛利率" prop="grossMarginCommission" :formatter="formatterP" />
+          <el-table-column label="Sop年成本" prop="sopCost" />
+          <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" />
+          <el-table-column label="毛利率" prop="grossMargin">
+            <template #default="{ row }">
+              {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="价格" prop="price" />
+          <el-table-column label="佣金" prop="commission" width="180">
+            <template #default="scope">
+              <el-input-number
+                controls-position="right"
+                v-model="scope.row.commission"
+                placeholder="请输入佣金"
+                @change="(val: any) => changeCommission(scope.row, scope.$index)"
+                :min="0"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="含佣金的毛利率" prop="grossMarginCommission">
+            <template #default="{ row }">
+              {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
-      <el-card header="NRE报价策略：" m="2">
-        <el-table :data="data.marketingQuotationData.expensesStatement" border>
-          <el-table-column type="index" width="100" />
-          <el-table-column label="费用类别" prop="formName" />
-          <el-table-column label="核价金额" prop="pricingMoney" :formatter="formatThousandths" />
-          <el-table-column label="报价系数" prop="offerCoefficient" :formatter="formatter" />
-          <el-table-column label="报价金额" prop="offerMoney" :formatter="formatThousandths" />
-          <el-table-column label="备注" prop="remark" />
+      <!-- 样品 -->
+      <p>样品报价</p>
+      <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
+        <span>{{ sample.solutionName }}</span>
+        <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
+          <el-table-column prop="sampleName" label="样品阶段" />
+          <el-table-column prop="pcs" label="需求量（pcs）" />
+          <el-table-column prop="cost" label="成本" />
+          <el-table-column prop="unitPrice" label="单价" />
+          <el-table-column prop="grossMargin" label="毛利率" />
+          <el-table-column prop="salesRevenue" label="销售收入" />
         </el-table>
       </el-card>
-      <el-descriptions title="" border :column="2">
-        <el-descriptions-item label="核价金额合计">
-          {{ calculationNre("pricingMoney") }}
-        </el-descriptions-item>
-        <el-descriptions-item label="报价金额合计">
-          {{ calculationNre("offerMoney") }}
-        </el-descriptions-item>
-      </el-descriptions>
       <el-row justify="end" style="margin-top: 20px">
         <div v-if="data.userInfo.userJobs === '总经理'">
           <!-- <el-button type="primary" @click="handleGeneralManagerQuoteCheck(true)" v-havedone>同意</el-button>
@@ -257,7 +351,7 @@ const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) =
 //     }
 //   })
 // }
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const { success } = await PostAuditQuotationList({
     ...data.marketingQuotationData,
     isPass: !opinion.includes("_No"),

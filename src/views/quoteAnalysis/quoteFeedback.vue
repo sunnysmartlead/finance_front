@@ -1,40 +1,22 @@
 <!-- eslint-disable prettier/prettier -->
+<!-- 报价反馈 -->
 <template>
   <div>
-    <el-card>
-      <p>请选择报价方案组合：</p>
-      <el-button type="primary" @click="addNewPlan" mb-20px>新增</el-button>
-      <el-table :data="data.tableData" style="width: 100%" border height="500px">
-        <el-table-column prop="name" label="报价序号" />
-        <el-table-column label="前视">
-          <template #default="scope">
-            <el-select clearable v-model="scope.row.projectsPlan">
-              <el-option label="方案一" :value="1" />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="侧视">
-          <template #default="scope">
-            <el-select clearable v-model="scope.row.projectsPlan">
-              <el-option label="方案二" :value="1" />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="后视">
-          <template #default="scope">
-            <el-select clearable v-model="scope.row.projectsPlan">
-              <el-option label="方案三" :value="1" />
-            </el-select>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+    <div>
+      <el-button type="primary" @click="downLoad" style="margin-left: 10px">成本信息表下载</el-button>
+    </div>
     <!-- nre -->
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：2 共线分摊率：2</p>
-      <el-table :data="nre.models" style="width: 100%" border height="500px"  :summary-method="getSummaries"
-        show-summary>
+      <el-table
+        :data="nre.models"
+        style="width: 100%"
+        border
+        height="500px"
+        :summary-method="getSummaries"
+        show-summary
+      >
         <el-table-column prop="index" label="序号" />
         <el-table-column prop="costName" label="费用名称" />
         <el-table-column prop="pricingMoney" label="核价金额" />
@@ -85,8 +67,11 @@
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border height="500px">
       <el-table-column prop="itemName" label="项目名称" />
-      <el-table-column :label="item.grossMargin" v-for="(item, index) in data.allRes.fullLifeCycle[0].grosss"
-        :key="item.grossMargin">
+      <el-table-column
+        :label="item.grossMargin"
+        v-for="(item, index) in data.allRes.fullLifeCycle[0].grosss"
+        :key="item.grossMargin"
+      >
         <template #default="scope">
           <el-input v-model="scope.row.grosss[index].grossMarginNumber" type="number" />
         </template>
@@ -117,14 +102,17 @@
             <template #default="scope">
               <el-input v-model="scope.row.client.price">
                 <template #append>
-                  <el-button @click="
-                    calculateFullGrossMargin(
-                      scope.row,
-                      scope.$index,
-                      'clientTargetUnitPrice',
-                      'clientTargetGrossMargin'
-                    )
-                    ">计算</el-button>
+                  <el-button
+                    @click="
+                      calculateFullGrossMargin(
+                        scope.row,
+                        scope.$index,
+                        'clientTargetUnitPrice',
+                        'clientTargetGrossMargin'
+                      )
+                    "
+                    >计算</el-button
+                  >
                 </template>
               </el-input>
             </template>
@@ -151,7 +139,9 @@
               <el-input v-model="scope.row.thisQuotation.price">
                 <template #append>
                   <el-button
-                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')">计算</el-button>
+                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')"
+                    >计算</el-button
+                  >
                 </template>
               </el-input>
             </template>
@@ -198,7 +188,7 @@
       <el-row justify="end" m="2">
         <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
       </el-row>
-      <el-table :data="table.quotedGrossMarginSimples" border>
+      <el-table :data="table.quotedGrossMarginSimple" border>
         <el-table-column label="产品" prop="product" />
         <el-table-column label="单车产品数量" prop="amount" />
         <el-table-column label="目标价（内部）" width="300">
@@ -214,14 +204,17 @@
             <template #default="scope">
               <el-input v-model="scope.row.client.price">
                 <template #append>
-                  <el-button @click="
-                    calculateFullGrossMargin(
-                      scope.row,
-                      scope.$index,
-                      'clientTargetUnitPrice',
-                      'clientTargetGrossMargin'
-                    )
-                    ">计算</el-button>
+                  <el-button
+                    @click="
+                      calculateFullGrossMargin(
+                        scope.row,
+                        scope.$index,
+                        'clientTargetUnitPrice',
+                        'clientTargetGrossMargin'
+                      )
+                    "
+                    >计算</el-button
+                  >
                 </template>
               </el-input>
             </template>
@@ -238,7 +231,9 @@
               <el-input v-model="scope.row.thisQuotation.price">
                 <template #append>
                   <el-button
-                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')">计算</el-button>
+                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')"
+                    >计算</el-button
+                  >
                 </template>
               </el-input>
             </template>
@@ -290,7 +285,7 @@ import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed 
 import { useRoute, useRouter } from "vue-router"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
-
+import { postCalculateFullGrossMargin, getDownloadMessage } from "./service"
 /**
  * 路由对象
  */
@@ -305,205 +300,6 @@ const router = useRouter()
  */
 let { auditFlowId, productId } = getQuery()
 const data = reactive({
-  tableData: [
-    // {
-    //   projectsPlan: 1,
-    //   name: "1/JAN"
-    // }
-  ] as any[],
-  //被选中的当前方案
-  currentPlan: [
-    {
-      auditFlowId: 1,
-      productld: 5,
-      moduleName: "1",
-      solutionName: "方案二",
-      product: "1-方案二",
-      isCOB: false,
-      elecEngineerId: 92,
-      structEngineerId: 51,
-      isFirst: false,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 5
-    },
-    {
-      auditFlowId: 1,
-      productld: 2,
-      moduleName: "侧视",
-      solutionName: "方案一",
-      product: "侧视-方案一",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: false,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 2
-    },
-    {
-      auditFlowId: 1,
-      productld: 2,
-      moduleName: "侧视",
-      solutionName: "方案二",
-      product: "侧视-方案二",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: true,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 8
-    },
-    {
-      auditFlowId: 1,
-      productld: 2,
-      moduleName: "侧视",
-      solutionName: "方案三",
-      product: "侧视-方案三",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: true,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 9
-    },
-    {
-      auditFlowId: 1,
-      productld: 1,
-      moduleName: "前视",
-      solutionName: "方案一",
-      product: "前视-方案一",
-      isCOB: false,
-      elecEngineerId: 59,
-      structEngineerId: 39,
-      isFirst: false,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 1
-    },
-    {
-      auditFlowId: 1,
-      productld: 1,
-      moduleName: "前视",
-      solutionName: "方案二",
-      product: "前视-方案二",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: true,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 6
-    },
-    {
-      auditFlowId: 1,
-      productld: 1,
-      moduleName: "前视",
-      solutionName: "方案三",
-      product: "前视-方案三",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: true,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 7
-    },
-    {
-      auditFlowId: 1,
-      productld: 3,
-      moduleName: "后视",
-      solutionName: "方案一",
-      product: "后视-方案一",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: false,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 3
-    },
-    {
-      auditFlowId: 1,
-      productld: 3,
-      moduleName: "后视",
-      solutionName: "方案二",
-      product: "后视-方案二",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: true,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 10
-    },
-    {
-      auditFlowId: 1,
-      productld: 4,
-      moduleName: "环视",
-      solutionName: "方案一",
-      product: "环视-方案一",
-      isCOB: false,
-      elecEngineerId: 36,
-      structEngineerId: 39,
-      isFirst: false,
-      isDeleted: false,
-      deleterUserId: null,
-      deletionTime: null,
-      lastModificationTime: null,
-      lastModifierUserId: null,
-      creationTime: "2023-06-26T16:29:42.006",
-      creatorUserId: 2,
-      id: 4
-    }
-  ],
   //仅含样品
   sampleOnlyRes: {
     nre: null,
@@ -527,168 +323,182 @@ const data = reactive({
     message: "调用成功"
   },
   allRes: {
-    isSuccess: true,
-    message: "string",
-    grossMarginList: [0],
+    auditFlowId: 0,
     nres: [
       {
-        solutionName: "string", //方案名
+        solutionName: "string", //方案
+        solutionId: 0,
+        auditFlowId: 0,
         models: [
+          //nre
           {
-            index: 0, //序号
-            costName: "string", //费用名称
-            pricingMoney: "string", //核价金额
+            id: 0,
+            creationTime: "2023-09-06T17:34:43.342Z",
+            creatorUserId: 0,
+            lastModificationTime: "2023-09-06T17:34:43.342Z",
+            lastModifierUserId: 0,
+            isDeleted: true,
+            deleterUserId: 0,
+            deletionTime: "2023-09-06T17:34:43.342Z",
+            auditFlowId: 0,
+            solutionId: 0,
+            formName: "string", //手办
+            pricingMoney: 0, // 核价金额
             offerCoefficient: 0, //报价系数
             offerMoney: 0, //报价金额
-            remark: 0 //备注
+            remark: "string"
           }
         ],
         devices: [
-          //专用设备
           {
-            deviceName: "string", //设备名称
-            devicePrice: 0, //单价
+            id: 0,
+            creationTime: "2023-09-06T17:34:43.342Z",
+            creatorUserId: 0,
+            lastModificationTime: "2023-09-06T17:34:43.342Z",
+            lastModifierUserId: 0,
+            isDeleted: true,
+            deleterUserId: 0,
+            deletionTime: "2023-09-06T17:34:43.342Z",
+            auditFlowId: 0,
+            solutionId: 0,
+            deviceName: "string", //设备名
+            devicePrice: 0, //价格
             number: 0, //数量
-            equipmentMoney: 0 //金额
+            equipmentMoney: 0 //总价
+          }
+        ],
+        numberLine: 0, //线体
+        collinearAllocationRate: 0 //分摊
+      }
+    ],
+    sampleOffer: [
+      //`样品
+      {
+        solutionName: "string",
+        auditFlowId: 0,
+        solutionId: 0,
+        onlySampleModels: [
+          {
+            id: 0,
+            creationTime: "2023-09-06T17:34:43.342Z",
+            creatorUserId: 0,
+            lastModificationTime: "2023-09-06T17:34:43.342Z",
+            lastModifierUserId: 0,
+            isDeleted: true,
+            deleterUserId: 0,
+            deletionTime: "2023-09-06T17:34:43.342Z",
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "string", //阶段名
+            pcs: 0, //走量
+            cost: 0, //成本
+            unitPrice: 0, //单价
+            grossMargin: 0, //毛利率
+            salesRevenue: 0 //销售收入
           }
         ]
       }
     ],
-
     sops: [
-      //SOP单价表（SOP年）
+      //SOP单价
       {
-        gradientValue: 0, //梯度
-        product: "string", //产品
+        gradientValue: "string", //梯度
+        product: "string", //产
         grossValues: [
           {
-            gross: "10", //毛利
-            grossvalue: 0 //值
-          },
-          {
-            gross: "20", //毛利
-            grossvalue: 1 //值
-          }
-        ]
-      },
-      {
-        gradientValue: 100, //梯度
-        product: "string", //产品
-        grossValues: [
-          {
-            gross: "10", //毛利
-            grossvalue: 3 //值
-          },
-          {
-            gross: "20", //毛利
-            grossvalue: 5 //值
+            gross: "string",
+            grossvalue: 0
           }
         ]
       }
     ],
     quotedGrossMargins: [
-      //报价毛利率测算
+      //阶梯数量
       {
-        project: "string", //方案名
-        quotedGrossMarginSimples: [
+        project: "string",
+        grossMargins: [
           {
-            product: "string", //产品
-            amount: 0, //单车产品数量
-            interior: {
-              //目标价（内部）
-              price: 0, // 单价
-              grossMargin: 0, // 毛利率
-              clientGrossMargin: 0, // 增加客供料毛利率
-              nreGrossMargin: 0 // 剔除NRE分摊费用毛利率
-            },
-            client: {
-              // 目标价（客户）
-              price: 0,
-              grossMargin: 0,
-              clientGrossMargin: 0,
-              nreGrossMargin: 0
-            },
-            thisQuotation: {
-              // 本次报价
-              price: 0,
-              grossMargin: 0,
-              clientGrossMargin: 0,
-              nreGrossMargin: 0
-            },
-            lastRound: {
-              // 上轮报价
-              price: 0,
-              grossMargin: 0,
-              clientGrossMargin: 0,
-              nreGrossMargin: 0
+            proudct: "string", //产品
+            productNumber: 0,
+            quotedGrossMarginSimple: {
+              //
+              interior: {
+                price: 0,
+                grossMargin: 0,
+                clientGrossMargin: 0,
+                nreGrossMargin: 0
+              },
+              client: {
+                price: 0,
+                grossMargin: 0,
+                clientGrossMargin: 0,
+                nreGrossMargin: 0
+              },
+              thisQuotation: {
+                price: 0,
+                grossMargin: 0,
+                clientGrossMargin: 0,
+                nreGrossMargin: 0
+              },
+              lastRound: {
+                price: 0,
+                grossMargin: 0,
+                clientGrossMargin: 0,
+                nreGrossMargin: 0
+              }
             }
           }
         ]
       }
     ],
     gradientQuotedGrossMargins: [
-      // 报价毛利率测算-阶梯数量
+      //实际数量
       {
-        project: "string", //方案名
-        quotedGrossMarginSimples: [
-          {
-            product: "string", //产品
-            amount: 0, //单车产品数量
-            interior: {
-              //目标价（内部）
-              price: 0, // 单价
-              grossMargin: 0, // 毛利率
-              clientGrossMargin: 0, // 增加客供料毛利率
-              nreGrossMargin: 0 // 剔除NRE分摊费用毛利率
-            },
-            client: {
-              // 目标价（客户）
-              price: 0,
-              grossMargin: 0,
-              clientGrossMargin: 0,
-              nreGrossMargin: 0
-            },
-            thisQuotation: {
-              // 本次报价
-              price: 0,
-              grossMargin: 0,
-              clientGrossMargin: 0,
-              nreGrossMargin: 0
-            },
-            lastRound: {
-              // 上轮报价
-              price: 0,
-              grossMargin: 0,
-              clientGrossMargin: 0,
-              nreGrossMargin: 0
-            }
+        proudct: "string", //产品
+        quotedGrossMarginSimple: {
+          interior: {
+            //内部
+            price: 0,
+            grossMargin: 0,
+            clientGrossMargin: 0,
+            nreGrossMargin: 0
+          },
+          client: {
+            //客户
+            price: 0,
+            grossMargin: 0,
+            clientGrossMargin: 0,
+            nreGrossMargin: 0
+          },
+          thisQuotation: {
+            //本轮
+            price: 0,
+            grossMargin: 0,
+            clientGrossMargin: 0,
+            nreGrossMargin: 0
+          },
+          lastRound: {
+            //上轮
+            price: 0,
+            grossMargin: 0,
+            clientGrossMargin: 0,
+            nreGrossMargin: 0
           }
-        ],
+        },
         gradient: "string" //梯度
       }
     ],
-    fullLifeCycle: [
-      // 项目全生命周期汇总分析表-实际数量
-      {
-        itemName: "string", //项目名
-        grosss: [
-          {
-            grossMargin: "0", // 毛利率
-            grossMarginNumber: 0 //毛利率值
-          }
-        ]
-      }
-    ],
+
     gradientGrossMarginModels: [
       {
-        gradient: "string", //梯度
+        title: "string",
         _itemGrossMarginModels: [
           {
-            item: "string", // 项目
-            interior: 0, // 目标价（内部）
-            client: 0, // 目标价（客户）
-            thisQuotation: 0, // 本次报价
-            lastRound: 0 // 上轮报价
+            item: "string",
+            interior: 0, //内部
+            client: 0, //客户
+            thisQuotation: 0, //本轮
+            lastRound: 0
           }
         ]
       }
@@ -793,13 +603,22 @@ const getSummaries = (param) => {
 
   return sums
 }
-const addNewPlan = () => {
-  data.tableData.push({
-    projectsPlan: 1,
-    name: "1/JAN"
-  })
+const downLoad = async () => {
+  let res: any = await getDownloadMessage(auditFlowId, "成本信息表")
+  const blob = res
+  const reader = new FileReader()
+  reader.readAsDataURL(blob)
+  reader.onload = function () {
+    let url = URL.createObjectURL(new Blob([blob]))
+    let a = document.createElement("a")
+    document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    a.href = url
+    a.download = "成本信息表.xlsx"
+    a.target = "_blank"
+    a.click()
+    a.remove() //将a标签移除
+  }
 }
-
 let ProjectUnitPrice: any = {
   title: {
     text: "项目单价对比"

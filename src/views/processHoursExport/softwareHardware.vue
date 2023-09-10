@@ -41,7 +41,7 @@
     <div class="u-m-t-20 u-p-10" style="background-color: #ffffff;">
       <el-scrollbar wrap-style="padding:0px 0px 10px 0px" always :max-height="600">
         <!-- 表头 -->
-        <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
+        <div class="u-flex u-row-left u-col-center u-text-center u-head-stop" style="width: 3600px;">
           <div class="u-flex u-row-left u-col-center  u-text-center">
             <div class="u-width-150  u-border u-height-60"><span>序号</span></div>
             <div class="u-width-150 u-border u-height-60"><span>工序编号</span></div>
@@ -86,6 +86,8 @@
             </div>
           </div>
           <div class="u-flex u-row-left u-col-center  u-text-center">
+            <div class="u-width-150 u-border u-height-60"><span>追溯软件</span></div>
+            <div class="u-width-150 u-border u-height-60"><span>追溯软件费用</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件名称</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件状态</span></div>
             <div class="u-width-150 u-border u-height-60"><span>软件单价</span></div>
@@ -149,6 +151,21 @@
 
               <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border">
+                    <el-select v-model="dataItem.traceabilitySoftware" 
+                     filterable remote reserve-keyword 
+                    :disabled="data.currentEditProcessIndex != dataIndex" 
+                    :remote-method="remoteMethodForZhuiSuSoft"
+                    @change="zhuiSuSoftChange($event, dataIndex)" :loading="optionLoading">
+                    <el-option v-for="item in zhuiSuSoftOptions" 
+                          :key="item.id" :label="item.traceabilitySoftware"
+                          :value="item.traceabilitySoftware" />
+                  </el-select>
+                </div>
+                <div class="u-width-150  u-border">
+                  <el-input v-model="dataItem.development" style="border: none;"
+                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                </div>
+                <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.softwareName" style="border: none;"
                     :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
@@ -168,10 +185,8 @@
                   <el-input v-model="dataItem.lastModifierUserName" style="border: none;" disabled />
                 </div>
                 <div class="u-width-200 u-border">
-                  <!-- <el-input v-model="dataItem.deviceManageTime"  style="border: none;" /> -->
                   <el-date-picker v-model="dataItem.lastModificationTime" style="width: 200px;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" type="datetime"
-                    value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" disabled placeholder="请输入工序维护时间" />
+                    type="datetime"  value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" disabled placeholder="请输入工序维护时间" />
                 </div>
                 <div class="u-width-300 u-border  u-flex u-row-around u-col-center  u-text-center">
                   <template v-if="data.currentEditProcessIndex == dataIndex">
@@ -296,7 +311,6 @@ interface selectOptionListItem {
 //异步请求loading
 const optionLoading = ref(false)
 const processNumberOptions = ref<selectOptionListItem[]>([])
-
 //填写工装名称的时候需要从后台模糊查询工装名称,然后下拉选择
 const remoteMethodForProcessNumber = async (query: string) => {
   if (query) {
@@ -325,7 +339,6 @@ const getProcessIndex = async (keyWord: String) => {
     }
   })
 }
-
 //监听工装序号变化
 const processNumberChange = (value: any, dataIndex: any) => {
   if (processNumberOptions.value.length > 0) {
@@ -370,7 +383,6 @@ const getProcessName = async (keyWord: String) => {
   })
 }
 
-
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
@@ -387,6 +399,71 @@ const processNameChange = (value: any, dataIndex: any) => {
 }
 
 
+//#region  追溯软件
+//下拉选项的数据类型定义
+interface zhuiSuOptionListItem {
+  id: number,
+  traceabilitySoftware: String,
+  development: number
+}
+//异步请求loading
+const zhuiSuSoftOptions = ref<zhuiSuOptionListItem[]>([])
+//填写追溯软件名称的时候需要从后台模糊查询工装名称,然后下拉选择
+const remoteMethodForZhuiSuSoft = async (query: string) => {
+  if (query) {
+    optionLoading.value = true;
+    await getZhuiSuSofts(query);
+    optionLoading.value = false;
+  } else {
+    zhuiSuSoftOptions.value = []
+  }
+}
+//查询追溯软件名称的方法,用于渲染追溯软件名称下拉框选项
+const getZhuiSuSofts = async (keyWord: String) => {
+  zhuiSuSoftOptions.value=[
+    {
+      id: 0,
+      traceabilitySoftware: '测试追溯软件1',
+      development: 1000.00
+    },
+    {
+      id: 1,
+      traceabilitySoftware: '测试追溯软件2',
+      development: 2000.00
+    }
+  ]
+  // let param = {
+  //   processNumber: keyWord
+  // }
+  // await queryProcessList(param).then((response: any) => {
+  //   if (response.success) {
+  //     let data = response.result;
+  //     processNumberOptions.value = data;
+  //   } else {
+  //     ElMessage({
+  //       type: 'error',
+  //       message: '列表加载失败'
+  //     })
+  //     processNumberOptions.value = [];
+  //   }
+  // })
+}
+//监听工装序号变化
+const zhuiSuSoftChange = (value: any, dataIndex: any) => {
+  if (zhuiSuSoftOptions.value.length > 0) {
+    let options = zhuiSuSoftOptions.value;
+    for (let i = 0; i < options.length; i++) {
+      let item = options[i];
+      if (item.traceabilitySoftware == value) {
+        tableData.value[dataIndex].development = item.development;
+        return;
+      }
+    }
+  }
+}
+//#endregion
+
+
 const addDevice = () => {
   let item = {
     id: -1,
@@ -396,6 +473,8 @@ const addDevice = () => {
     softwarePrice: '',
     softwareName: '',
     softwareBusiness: '',
+    traceabilitySoftware:'',
+    development:0,
     listHardware: [
       {
         hardwareName: '',

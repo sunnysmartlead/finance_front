@@ -210,11 +210,11 @@
                         </div>
                         <!-- 追溯软件 -->
                         <div class="u-width-150  u-border   u-p-t-b-5">
-                            <span>{{ dataItem.developCostInfo.traceabilitySoftware }}</span>
+                            <span>{{ dataItem.developCostInfo.traceabilitySoftware?dataItem.developCostInfo.traceabilitySoftware:'--'}}</span>
                         </div>
                         <!-- 开发费(追溯) -->
                         <div class="u-width-150  u-border   u-p-t-b-5">
-                            <span>{{ dataItem.developCostInfo.development }}</span>
+                            <span>{{ dataItem.developCostInfo.development?dataItem.developCostInfo.development:'--' }}</span>
                         </div>
                         <!-- 开图软件 -->
                         <div class="u-width-150  u-border  u-p-t-b-5">

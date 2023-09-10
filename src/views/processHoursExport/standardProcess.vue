@@ -13,7 +13,9 @@
         <div class="u-flex u-row-between u-col-center">
             <div>
                 <el-button type="primary" @click="addStandardProcess">新增标准工艺</el-button>
+              <el-button type="primary" @click="downLoadStandardProcess">模版下载</el-button>
             </div>
+
         </div>
         <div class="u-m-t-10">
             <el-table :data="standardProcessList" :border="true">
@@ -366,6 +368,14 @@ const handleDelete = (index: number, row: any) => {
         .catch(() => { })
 }
 
+const downLoadStandardProcess= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/标准工艺库导入.xlsx"
+  link.download = '标准工艺库导入.xls'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 
 //#region
 const editLogFlag = ref(false);

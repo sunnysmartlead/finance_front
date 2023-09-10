@@ -34,5 +34,8 @@ export const wahiteRotes: any[] = [
   "processHoursExport",
   //"processLib",
   "logisticsCost",
-  "COBManufactureCost"
+  "COBManufactureCost",
+  "ProjectChiefAudit",
+  "FinanceDirectorAudit",
+  "ProjectDirectorLook"
 ]

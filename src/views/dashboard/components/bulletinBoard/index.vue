@@ -162,10 +162,9 @@ import {
   GetIsTradeCompliance,
   PriceEvaluationTableDownload
 } from "../../service"
-import { CommonDownloadFile } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus"
 import debounce from "lodash/debounce"
 import * as echarts from "echarts"
 import router from "@/router"
@@ -360,23 +359,33 @@ const getPricingPanelTimeSelectList = async () => {
 
 // 产品核价表下载
 const handleFetchPriceEvaluationTableDownload = async () => {
-  const result: any = await PriceEvaluationTableDownload({
-    auditFlowId,
-    SolutionId: productId,
-    GradientId: data.form.gradientId,
+  const loading = ElLoading.service({
+    lock: true,
+    text: '下载中',
+    background: 'rgba(0, 0, 0, 0.7)',
   })
-  const blob = result
-  const reader = new FileReader()
-  reader.readAsDataURL(blob)
-  reader.onload = function () {
-    let url = URL.createObjectURL(new Blob([blob]))
-    let a = document.createElement("a")
-    document.body.appendChild(a) //此处增加了将创建的添加到body当中
-    a.href = url
-    a.download = '产品核价表.xlsx'
-    a.target = "_blank"
-    a.click()
-    a.remove() //将a标签移除
+  try {
+      const result: any = await PriceEvaluationTableDownload({
+      auditFlowId,
+      SolutionId: productId,
+      GradientId: data.form.gradientId,
+    })
+    const blob = result
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = '产品核价表.xlsx'
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+    loading.close()
+  } catch {
+    loading.close()
   }
 }
 

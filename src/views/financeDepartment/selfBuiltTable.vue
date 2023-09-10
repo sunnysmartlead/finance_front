@@ -11,7 +11,7 @@
               show-file-list
               :action="$baseUrl + 'api/services/app/ProjectSelf/ExcelImport'"
               :on-success="handleSuccess"
-              name="fileName"
+              name="excle"
               :on-error="handleUploadTemplateError"
             >
               <el-button style="margin-top: 8px">自建表导入</el-button>

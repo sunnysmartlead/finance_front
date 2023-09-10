@@ -565,23 +565,23 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/projectChiefLook/index",
-        component: () => import("@/views/dashboard/projectChiefLook/index.vue"),
-        name: "ProjectChiefLook",
+        path: "/projectChiefAudit",
+        component: () => import("@/views/dashboard/projectChiefAudit/index.vue"),
+        name: "ProjectChiefAudit",
         meta: {
           title: "项目部科长审核"
         }
       },
       {
-        path: "/financeDirectorAudit/index",
+        path: "/financeDirectorAudit",
         component: () => import("@/views/dashboard/financeDirectorAudit/index.vue"),
         name: "FinanceDirectorAudit",
         meta: {
-          title: "财务部部长审核"
+          title: "财务审核"
         }
       },
       {
-        path: "/projectDirectorLook/index",
+        path: "/projectDirectorLook",
         component: () => import("@/views/dashboard/projectDirectorLook/index.vue"),
         name: "ProjectDirectorLook",
         meta: {

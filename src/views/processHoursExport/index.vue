@@ -34,7 +34,7 @@
         <el-button type="primary" @click="openPanelPartDialog">板部件以及拼版数量</el-button>
       </div>
       <div class="u-m-5">
-        <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false" :on-error="uploadErrror"
+        <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="showUploadFile" :on-error="uploadErrror"
           :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction" :limit="1">
           <template #trigger>
             <el-button type="primary">工序工时导入</el-button>
@@ -1012,6 +1012,7 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
 }
 
 const upload = ref<UploadInstance>()
+const showUploadFile=ref(false)
 const handleExceed: UploadProps["onExceed"] = (files) => {
   upload.value!.clearFiles()
   const file = files[0] as UploadRawFile
@@ -1031,27 +1032,49 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
       })
       return
     }
+    //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
       let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
-      let newSop = JSON.parse(JSON.stringify(exportListData[0].sopInfo ? exportListData[0].sopInfo : []));
-      oldSop.map(function (item: any, index: number) {
-        item.issues = [{
-          id: 0,
-          laborHour: 0,
-          machineHour: 0,
-          personnelNumber: 0,
-        }];
-        let yearIndex = item.year;
-        newSop.map(function (newItem: any, newIndex: number) {
-          let newYearIndex = newItem.year ? newItem.year : '----';
-          if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-            item.issues = newItem.issues;
-          }
-        })
-      })
-      exportListData[0].sopInfo = oldSop;
-      let newData: any = exportListData[0];
-      dataArr.value.push(newData);
+      for(let k=0;k<exportListData.length;k++){
+          let newExportItem= exportListData[k];
+          let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
+          oldSop.map(function (oldItem: any, index: number) {
+            oldItem.issues = [{
+              id: 0,
+              laborHour: 0,
+              machineHour: 0,
+              personnelNumber: 0,
+            }];
+            let yearIndex = oldItem.year;
+            newSop.map(function (newItem: any, newIndex: number) {
+              let newYearIndex = newItem.year ? newItem.year : '----';
+              if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+                  oldItem.issues = newItem.issues;
+              }
+            })
+          })
+          newExportItem.sopInfo = oldSop;
+          dataArr.value.push(newExportItem);
+      }
+      // let newSop = JSON.parse(JSON.stringify(exportListData[0].sopInfo ? exportListData[0].sopInfo : []));
+      // oldSop.map(function (item: any, index: number) {
+      //   item.issues = [{
+      //     id: 0,
+      //     laborHour: 0,
+      //     machineHour: 0,
+      //     personnelNumber: 0,
+      //   }];
+      //   let yearIndex = item.year;
+      //   newSop.map(function (newItem: any, newIndex: number) {
+      //     let newYearIndex = newItem.year ? newItem.year : '----';
+      //     if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+      //       item.issues = newItem.issues;
+      //     }
+      //   })
+      // })
+      // exportListData[0].sopInfo = oldSop;
+      // let newData: any = exportListData[0];
+      // dataArr.value.push(newData);
     } else {
       dataArr.value = exportListData;
     }

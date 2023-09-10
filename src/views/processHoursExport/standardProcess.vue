@@ -92,8 +92,11 @@
                             <el-input v-model="data.dialogAddProcessForm.standardProcessName"></el-input>
                         </el-form-item>
                         <el-form-item label="选择文件" label-width="150px">
-                            <el-upload class="upload-demo" ref="upload" :action="uploadAction" :limit="1"
-                                :show-file-list="false" :on-error="uploadErrror" :on-success="uploadSuccess"
+                            <el-upload   style="width: 100%;" ref="upload" :action="uploadAction" :limit="1" 
+                                :show-file-list="showUploadFile" 
+                                :on-remove="onFileRemove"
+                                :on-error="uploadErrror" 
+                                :on-success="uploadSuccess"
                                 :on-exceed="handleExceed">
                                 <template #trigger>
                                     <el-button type="primary">标准工艺库导入</el-button>
@@ -188,12 +191,20 @@ const submitSearch = () => {
 
 //上传相关
 const upload = ref<UploadInstance>()
+const showUploadFile=ref(false)
 const handleExceed: UploadProps['onExceed'] = (files) => {
+    showUploadFile.value=false;
     upload.value!.clearFiles()
     const file = files[0] as UploadRawFile
     file.uid = genFileId()
     upload.value!.handleStart(file)
 }
+
+const onFileRemove=(uploadFile: any, uploadFiles: any)=>{
+    showUploadFile.value=false;
+    data.exportTableData =[];
+}
+
 //上传成功,响应数据渲染到工序弹窗里面
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     console.log("responese", response);
@@ -204,6 +215,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
             type: "success",
             message: '导入成功'
         })
+        showUploadFile.value=true;
         data.exportTableData = response.result;
         return;
     } else {
@@ -219,6 +231,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     console.log("error", error);
     console.log("uploadFile", uploadFile);
     console.log("uploadFiles", uploadFiles);
+    showUploadFile.value=false;
     ElMessage({
         type: "error",
         message: '导入失败'

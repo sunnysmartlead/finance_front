@@ -2087,7 +2087,8 @@ const dialogProData = reactive([
   }
 ])
 
-//-----------------------------标准工艺名称代码块---------------------------------
+//-----------------------------选择标准工艺名称代码块---------------------------------
+//#region 
 const dialogFormVisible = ref(false)
 const dialogForm = ref({
   name: "",
@@ -2197,25 +2198,46 @@ const confirmSelectStandardProcess = () => {
   standardProcessLoading.value = true;
   if (dataArr.value.length > 0) {
     let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
-    let newSop = JSON.parse(JSON.stringify(pList[0].sopInfo ? pList[0].sopInfo : []));
-    oldSop.map(function (item: any, index: number) {
-      item.issues = [{
-        id: 0,
-        laborHour: 0,
-        machineHour: 0,
-        personnelNumber: 0,
-      }];
-      let yearIndex = item.year;
-      newSop.map(function (newItem: any, newIndex: number) {
-        let newYearIndex = newItem.year ? newItem.year : '----';
-        if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-          item.issues = newItem.issues;
-        }
-      })
-    })
-    pList[0].sopInfo = oldSop;
-    let newData: any = pList[0];
-    dataArr.value.push(newData);
+    for(let k=0;k<pList.length;k++){
+          let newExportItem= pList[k];
+          let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
+          oldSop.map(function (oldItem: any, index: number) {
+            oldItem.issues = [{
+              id: 0,
+              laborHour: 0,
+              machineHour: 0,
+              personnelNumber: 0,
+            }];
+            let yearIndex = oldItem.year;
+            newSop.map(function (newItem: any, newIndex: number) {
+              let newYearIndex = newItem.year ? newItem.year : '----';
+              if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+                  oldItem.issues = newItem.issues;
+              }
+            })
+          })
+          newExportItem.sopInfo = oldSop;
+          dataArr.value.push(newExportItem);
+      }
+    // let newSop = JSON.parse(JSON.stringify(pList[0].sopInfo ? pList[0].sopInfo : []));
+    // oldSop.map(function (item: any, index: number) {
+    //   item.issues = [{
+    //     id: 0,
+    //     laborHour: 0,
+    //     machineHour: 0,
+    //     personnelNumber: 0,
+    //   }];
+    //   let yearIndex = item.year;
+    //   newSop.map(function (newItem: any, newIndex: number) {
+    //     let newYearIndex = newItem.year ? newItem.year : '----';
+    //     if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+    //       item.issues = newItem.issues;
+    //     }
+    //   })
+    // })
+    // pList[0].sopInfo = oldSop;
+    // let newData: any = pList[0];
+    // dataArr.value.push(newData);
   } else {
     dataArr.value = pList;
   }
@@ -2227,7 +2249,7 @@ const confirmSelectStandardProcess = () => {
     message: "success!"
   })
 }
-
+//#endregion
 //------------------------------end------------------------------------------
 
 // --------------------------板部件弹窗代码块 start-----------

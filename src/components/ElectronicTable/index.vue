@@ -450,7 +450,7 @@ defineExpose({
     align-items: center;
 
     .el-descriptions {
-      width: calc(100% - 100px);
+      width: calc(100% - 200px);
     }
   }
 
@@ -458,7 +458,7 @@ defineExpose({
     display: block;
     line-height: 80px;
     text-align: center;
-    width: 100px;
+    width: 200px;
     border: 1px solid #f5f5f5;
     background-color: #f5f7fa;
   }

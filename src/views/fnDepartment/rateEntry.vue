@@ -58,8 +58,11 @@ const logListRef = ref<LogListAPI | null>(null)
 // 新增年
 const handleAddYear = () => {
   const len = tableData.value.length
-  const newYear = (tableData.value[len - 1].year || 0) + 1
-  tableData.value.push({
+  let newYear = new Date().getFullYear()
+ if (len) {
+    newYear = (tableData.value[len - 1].year || 0) + 1
+ }
+ tableData.value.push({
     directManufacturingRate: 0,
     indirectLaborRate: 0,
     indirectDepreciationRate: 0,

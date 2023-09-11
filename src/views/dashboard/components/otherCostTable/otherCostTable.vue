@@ -1,38 +1,33 @@
 <template>
   <el-table :data="otherCostData" border height="675">
-    <el-table-column prop="fixture" label="夹具">
+    <el-table-column prop="itemName" label="成本项目">
       <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.fixture" />
+        <el-input v-if="isEdit" v-model="row.itemName" />
       </template>
     </el-table-column>
-    <el-table-column prop="logisticsFee" label="物流费">
+    <el-table-column prop="total" label="总费用">
       <template #default="{ row }">
-        <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.logisticsFee" />
+        <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
       </template>
     </el-table-column>
-    <el-table-column prop="productCategory" label="产品类别">
+    <el-table-column prop="count" label="分摊数量">
       <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.productCategory" />
+        <el-input v-if="isEdit" v-model="row.count" />
       </template>
     </el-table-column>
-    <el-table-column prop="accountingPeriod" label="账期（天）">
+    <el-table-column prop="note" label="备注">
       <template #default="{ row }">
-        <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.accountingPeriod" />
+        <el-input v-if="isEdit" v-model="row.note" />
       </template>
     </el-table-column>
-    <el-table-column prop="capitalCostRate" label="资金成本率" :formatter="formatter">
+    <el-table-column prop="isShare" label="是否分摊" :formatter="formatter">
       <template #default="{ row }">
-        <el-input v-model="row.capitalCostRate" v-if="isEdit" type="number">
-          <template #append>%</template>
-        </el-input>
+        <el-select v-model="row.isShare" placeholder="是否分摊">
+              <el-option v-for="item in options" :key="item.label" :label="item.label"
+                :value="item.value" />
+            </el-select>
       </template>
     </el-table-column>
-    <el-table-column prop="taxCost" label="税务成本">
-      <template #default="{ row }">
-        <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.taxCost" />
-      </template>
-    </el-table-column>
-    <el-table-column prop="total" label="合计" />
     <el-table-column label="操作" width="200" v-if="!hideEdit">
       <template #default="{ row, $index }">
         <el-row>
@@ -61,6 +56,17 @@ const props = defineProps({
   },
   hideEdit: Boolean
 })
+
+const options = [
+  {
+    label: '是',
+    value: true
+  },
+  {
+    label: '否',
+    value: false
+  }
+]
 
 const formatter = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return `${val * 100} %`

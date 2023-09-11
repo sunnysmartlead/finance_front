@@ -793,7 +793,7 @@ const initFetch = async () => {
 const handleFethNreTableDownload = async () => {
   try {
     const res: any = await NreTableDownload({
-      Year: year,
+      // Year: year,
       AuditFlowId: auditFlowId,
       ModelCountId: productId
     })

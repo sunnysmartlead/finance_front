@@ -33,9 +33,15 @@
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
-      <el-table :data="nre.models" style="width: 100%" border height="500px"  :summary-method="getSummaries"
-        show-summary>
-        <el-table-column label="序号" type="index"/>
+      <el-table
+        :data="nre.models"
+        style="width: 100%"
+        border
+        height="500px"
+        :summary-method="getSummaries"
+        show-summary
+      >
+        <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
         <el-table-column prop="pricingMoney" label="核价金额" />
         <el-table-column label="报价系数">
@@ -85,19 +91,16 @@
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border height="500px">
       <el-table-column prop="projectName" label="项目名称" />
-      <el-table-column :label="item.grossMargin" v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
-        :key="index">
+      <el-table-column
+        :label="item.grossMargin"
+        v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
+        :key="index"
+      >
         <template #default="scope">
           <el-input v-model="scope.row.grossMarginList[index].grossMarginNumber" type="number" />
         </template>
       </el-table-column>
     </el-table>
-    <el-card class="card">
-      <el-row justify="end" m="2">
-        <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
-      </el-row>
-    </el-card>
-
     <p>报价毛利率测算-阶梯数量</p>
     <!-- <el-card class="card">
       <el-table :data="listOne" border>
@@ -193,7 +196,9 @@
         </el-table-column>
       </el-table>
     </el-card> -->
-    
+    <el-row justify="end" m="2">
+      <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
+    </el-row>
     <el-card class="card">
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
@@ -211,16 +216,16 @@
           <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price">
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.client.price">
-                <template #append>
-                  <!-- <el-button @click="
+                <!-- <template #append>
+                  <el-button @click="
                     calculateFullGrossMargin(
                       scope.row,
                       scope.$index,
                       'clientTargetUnitPrice',
                       'clientTargetGrossMargin'
                     )
-                    ">计算</el-button> -->
-                </template>
+                    ">计算</el-button>
+                </template> -->
               </el-input>
             </template>
           </el-table-column>
@@ -234,7 +239,7 @@
               {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="剔除分摊费用毛利率" >
+          <el-table-column label="剔除分摊费用毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
             </template>
@@ -246,7 +251,9 @@
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
                   <el-button
-                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')">计算</el-button>
+                    @click="calculateFullGrossMargin(scope.row, scope.$index, 'offerUnitPrice', 'offeGrossMargin')"
+                    >计算</el-button
+                  >
                 </template>
               </el-input>
             </template>
@@ -256,12 +263,12 @@
               {{ `${row.quotedGrossMarginSimple.thisQuotation.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="增加客供料毛利率" >
+          <el-table-column label="增加客供料毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="剔除分摊费用毛利率" >
+          <el-table-column label="剔除分摊费用毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
             </template>
@@ -276,7 +283,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
 
     <!-- <el-card class="card" v-for="(table, index) in data.allRes.gradientQuotedGrossMargins" :key="index">
       <el-row justify="end" m="2">
@@ -366,12 +372,27 @@
         </el-table>
       </div>
     </el-card> -->
+    <el-card class="card">
+      <div v-for="(value, key) in gradientTableMap" :key="key">
+        <p>{{ key }}</p>
+        <el-table :data="value" border>
+          <el-table-column label="产品" prop="product" />
+          <el-table-column label="目标价（内部）" width="300" prop="quotedGrossMarginSimple.interior.price" />
+          <el-table-column label="目标价（客户）" prop="quotedGrossMarginSimple.client.price" />
+          <el-table-column label="本次报价" prop="quotedGrossMarginSimple.thisQuotation.price" />
+          <el-table-column label="上轮报价" prop="quotedGrossMarginSimple.astRound.price" />
+        </el-table>
+        <div :id="'unitpriceChart' + key"  class="h-400px"/>
+        <div :id="'revenueGrossMarginChart' + key"  class="h-400px"/>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import * as echarts from "echarts"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
@@ -1148,7 +1169,7 @@ const data = reactive({
     gradientQuotedGrossMargins: [
       {
         gradient: "25K/Y",
-        proudct: "AR0820",
+        product: "AR0820",
         quotedGrossMarginSimple: {
           interior: {
             price: 730,
@@ -1178,7 +1199,7 @@ const data = reactive({
       },
       {
         gradient: "35K/Y",
-        proudct: "AR0820",
+        product: "AR0820",
         quotedGrossMarginSimple: {
           interior: {
             price: 730,
@@ -1566,6 +1587,23 @@ const data = reactive({
 //   })
 //   return listOne
 // })
+
+// 过滤相同梯度的数据
+interface stringKeyObj {
+  [propName: string]: any
+}
+const gradientTableMap = computed(() => {
+  let gradientTableMap: stringKeyObj = {}
+  data.allRes.gradientQuotedGrossMargins.forEach((item) => {
+    if (!gradientTableMap[item.gradient]) {
+      gradientTableMap[item.gradient] = []
+    }
+    gradientTableMap[item.gradient].push(item)
+  })
+  setData(gradientTableMap)
+  return gradientTableMap
+})
+
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -1660,103 +1698,95 @@ const addNewPlan = () => {
     name: "1/JAN"
   })
 }
-
-let ProjectUnitPrice: any = {
-  title: {
-    text: "项目单价对比"
-  },
-  tooltip: {
-    trigger: "item",
-    axisPointer: {
-      // Use axis to trigger tooltip
-      type: "shadow" // 'shadow' as default; can also be 'line' or 'shadow'
-    }
-  },
-  legend: {},
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true
-  },
-  xAxis: {
-    type: "category",
-    data: ["目标价（内部）", "目标价（客户）", "本次报价"]
-  },
-  // yAxis: {
-  //   type: "value"
-  // },
-  yAxis: [
-    {
-      type: "value",
-      name: "单价",
-      min: 0,
-      axisLabel: {
-        formatter: "{value} 元"
+const setData = (gradientTableMap: any) => {
+  let ProjectUnitPrice: stringKeyObj = {}
+  let keys = Object.keys(gradientTableMap)
+  keys.forEach((key) => {
+    ProjectUnitPrice[key].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
+    ProjectUnitPrice[key].series = gradientTableMap[key].map((item: any) => {
+      return {
+        name: item.product,
+        type: "bar",
+        stack: "total",
+        label: {
+          show: true
+        },
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          item.quotedGrossMarginSimple.interior.price,
+          item.quotedGrossMarginSimple.client.price,
+          item.quotedGrossMarginSimple.thisQuotation.price
+        ]
       }
-    },
-    {
-      type: "value",
-      name: "毛利率",
-      min: 0,
-      axisLabel: {
-        formatter: "{value}%"
-      }
-    }
-  ],
-  series: []
+    })
+    ProjectUnitPrice[key].series.push({
+      yAxisIndex: 1,
+      name: "整体毛利率",
+      type: "line",
+      tooltip: {
+        formatter: "{a}{b}{c}%"
+      },
+      data: [Number(111).toFixed(2), Number(2222).toFixed(2), Number(2222).toFixed(2) || 0]
+    })
+    initCharts("unitpriceChart" + key, ProjectUnitPrice[key])
+    debugger
+  })
+  // chart1.setOption(ProjectUnitPrice)
+  // let RevenueGrossMarginSeries = [] as any[]
+  // data.projectBoard.forEach((item: any) => {
+  //   if (item.projectName === "销售收入") {
+  //     let RevenueGrossMarginData = {
+  //       name: item.projectName,
+  //       type: "bar",
+  //       stack: "total",
+  //       label: {
+  //         show: true
+  //       },
+  //       emphasis: {
+  //         focus: "series"
+  //       },
+  //       data: [item.interiorTarget.grossMarginNumber, item.clientTarget.grossMarginNumber]
+  //     }
+  //     if (item.offer?.grossMarginNumber) {
+  //       RevenueGrossMarginData.data.push(item.offer.grossMarginNumber)
+  //     }
+  //     RevenueGrossMarginSeries.push(RevenueGrossMarginData)
+  //   }
+  //   // if (item.projectName === "毛利率") {
+  //   //   let RevenueGrossMarginDataY = {
+  //   //     yAxisIndex: 1,
+  //   //     name: "毛利率",
+  //   //     type: "line",
+  //   //     tooltip: {
+  //   //       formatter: "{a}{b}{c}%"
+  //   //     },
+  //   //     data: [item.interiorTarget.grossMarginNumber, item.clientTarget.grossMarginNumber]
+  //   //   }
+  //   //   if (item.offer?.grossMarginNumber) {
+  //   //     //这里计算只有grossMarginNumber
+  //   //     RevenueGrossMarginDataY.data.push(item.offer.grossMarginNumber)
+  //   //   }
+  //   //   RevenueGrossMarginSeries.push(RevenueGrossMarginDataY)
+  //   // }
+  //   RevenueGrossMarginSeries.push({
+  //     yAxisIndex: 1,
+  //     name: "整体毛利率",
+  //     type: "line",
+  //     tooltip: {
+  //       formatter: "{a}{b}{c}%"
+  //     },
+  //     data: [
+  //       Number(data.allInteriorGrossMargin).toFixed(2),
+  //       Number(data.allClientGrossMargin).toFixed(2),
+  //       data.allGrossMargin?.toFixed(2) || 0
+  //     ]
+  //   })
+  // })
+  // RevenueGrossMargin.series = RevenueGrossMarginSeries
+  // chart2.setOption(RevenueGrossMargin)
 }
-let RevenueGrossMargin: any = {
-  title: {
-    text: "收入和毛利率对比"
-  },
-  xAxis: {
-    type: "category",
-    data: ["目标价(内部)", "目标价(客户)", "本次报价"]
-  },
-  tooltip: {
-    trigger: "item",
-    axisPointer: {
-      // Use axis to trigger tooltip
-      type: "shadow" // 'shadow' as default; can also be 'line' or 'shadow'
-    }
-  },
-  legend: {},
-  yAxis: [
-    {
-      type: "value",
-      name: "收入",
-      min: 0,
-      axisLabel: {
-        formatter: "{value} 元"
-      }
-    },
-    {
-      type: "value",
-      name: "毛利率",
-      min: 0,
-      axisLabel: {
-        formatter: "{value}%"
-      }
-    }
-  ],
-  series: [
-    // {
-    //   data: [120, 200, 150],
-    //   type: "bar",
-    //   name: "OV方案销售收入"
-    // },
-    // {
-    //   data: [0, 0.05, 0.1],
-    //   type: "line",
-    //   name: "OV方案毛利率",
-    //   yAxisIndex: 1
-    // }
-  ]
-}
-
-let chart1: any = null
-let chart2: any = null
 const initCharts = (id: string, chartOption: any) => {
   // 基于准备好的dom，初始化echarts实例
   let chartEl: HTMLElement | null = document.getElementById(id)

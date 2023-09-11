@@ -11,101 +11,77 @@ export interface baseDto {
   productId?: number
 }
 /**
- * TangentSaveDto，保存工序工时是传入Dto
+ * WorkingHoursV2Dto
  */
-export interface TangentSaveDto {
+export interface WorkingHoursV2Dto {
   /**
-   * 流程表ID
+   * 人工工时
    */
-  auditFlowId?: number
+  laborHour?: number
   /**
-   * 是否成功标志位
+   * 机器工时
    */
-  isSuccess?: boolean
+  machineHour?: number
   /**
-   * 错误信息
+   * 人均跟线数量
    */
-  message?: null | string
-  /**
-   * MoudelCount表id
-   */
-  productId?: number
-  /**
-   * 切线工时详细信息
-   */
-  tangentHoursDetailList?: TangentHoursDetail[] | null
-  /**
-   * UPH
-   */
-  uph?: number
-}
-
-/**
- * TangentHoursDetail，切线工时
- */
-export interface TangentHoursDetail {
-  /**
-   * 标准人工工时
-   */
-  laborTime?: number
-  /**
-   * 标准机器工时
-   */
-  machineHours?: number
-  /**
-   * 原【人员数量】字段改成【人均跟线数量】
-   */
-  personnelNumber?: number
+  perFollowUpQuantity?: number
   /**
    * 年份
    */
   year?: number
 }
+
+/**
+ * PagedInputDto，分页Dto
+ */
+export interface PagedInputDto {
+  /**
+   * 每页行数
+   */
+  maxResultCount?: number
+  /**
+   * 当前第几页，下标从0开始,第一页传过来为0
+   */
+  pageIndex?: number
+  /**
+   * 跳过数量
+   */
+  skipCount?: number
+}
 /** 保存切线工时 */
-export function saveTangentHours(data: TangentSaveDto) {
+export function addFollowLineTangent(data: WorkingHoursV2Dto) {
   return request({
-    url: "/api/services/app/WorkingHours/SaveTangentHours",
+    url: "/api/services/app/WorkingHoursV2/AddFollowLineTangent",
     method: "post",
     data
   })
 }
 
-// /** 修改国家 */
-// export function updateCountry(data: CountryLibraryDto) {
-//   return request({
-//     url: "/api/services/app/CountryLibrary/EditCountryLibrary",
-//     method: "post",
-//     data
-//   })
-// }
-// /** 删除国家 */
-// export function deleteCountry(id: number) {
-//   return request({
-//     url: "/api/services/app/CountryLibrary/DeleteCountryLibrary",
-//     method: "delete",
-//     data: {
-//       id
-//     }
-//   })
-// }
+/** 修改切线工时 */
+export function editFollowLineTangent(data: WorkingHoursV2Dto) {
+  return request({
+    url: "/api/services/app/WorkingHoursV2/EditFollowLineTangent",
+    method: "post",
+    data
+  })
+}
+// /** 删除切线工时 */
+export function deleteFollowLineTangent(id: number) {
+  return request({
+    url: "/api/services/app/WorkingHoursV2/DeleteFollowLineTangent",
+    method: "delete",
+    data: {
+      id
+    }
+  })
+}
 
 /** 获取切线工时列表 */
-export function getTangentHoursList(data: baseDto) {
+export function getTangentHoursList(data: PagedInputDto) {
   return request({
-    url: "/api/services/app/WorkingHours/GetTangentHoursList",
+    url: "/api/services/app/WorkingHoursV2/PostFollowLineTangentList",
     method: "post",
     data
-  })
-}
-
-/** 工序工时及切线工时界面提交
- */
-export function submitWorkingHourAndSwitchLine(auditFlowId: number | string) {
-  return request({
-    url: "/api/services/app/WorkingHours/SubmitWorkingHourAndSwitchLine",
-    method: "post",
-    data: {
-      auditFlowId
-    }
   })
 }

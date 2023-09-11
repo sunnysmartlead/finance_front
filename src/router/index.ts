@@ -1142,7 +1142,24 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
-
+  {
+    path: "/engineeringParameters",
+    redirect: "/engineeringParameters/followLineTangent",
+    component: Layout,
+    meta: {
+      title: "工程部维护参数"
+    },
+    children: [
+      {
+        path: "followLineTangent",
+        component: () => import("@/views/tangentHours/index.vue"),
+        name: "followLineTangent",
+        meta: {
+          title: "切线工时"
+        }
+      }
+    ]
+  },
   // {
   //   path: "/permission",
   //   component: Layout,

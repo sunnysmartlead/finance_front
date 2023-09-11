@@ -1,14 +1,14 @@
 <template>
   <div class="tangentHours" py-20px>
     <div flex mb-20px>
-      <el-button type="primary" @click="handleCreateCountry">新增年份</el-button>
+      <el-button type="primary" @click="handleCreate">新增</el-button>
     </div>
     <el-table :data="data.tableData" style="width: 100%">
       <el-table-column label="序号" type="index" />
-      <el-table-column label="年份" prop="country" />
-      <el-table-column label="人工工时" prop="country" />
-      <el-table-column label="机器工时" prop="country" />
-      <el-table-column label="人均跟线数量" prop="country" />
+      <el-table-column label="年份" prop="year" />
+      <el-table-column label="人工工时" prop="laborHour" />
+      <el-table-column label="机器工时" prop="machineHour" />
+      <el-table-column label="人均跟线数量" prop="perFollowUpQuantity" />
       <!-- <el-table-column label="比例" prop="rate">
         <template #default="scope"> {{ scope.row.rate + "%" }}</template>
       </el-table-column> -->
@@ -33,22 +33,22 @@
       <option-log-record :base-lib-log-records="baseLibLogRecords" @reload-data="getOptionLog" />
     </template>
 
-    <el-dialog v-model="data.dialogVisible" title="跟线/切线工时" @close="clearcountryForm">
-      <el-form :model="data.countryForm">
+    <el-dialog v-model="data.dialogVisible" title="跟线/切线工时" @close="clearForm">
+      <el-form :model="data.tangentForm">
         <el-form-item label="年份" :label-width="data.formLabelWidth">
-          <el-input v-model="data.countryForm.country" autocomplete="off" />
+          <el-input v-model="data.tangentForm.year" />
         </el-form-item>
         <el-form-item label="人工工时" :label-width="data.formLabelWidth">
-          <el-input v-model="data.countryForm.country" autocomplete="off" type="number" />
+          <el-input v-model="data.tangentForm.laborHour" type="number" />
         </el-form-item>
         <el-form-item label="机器工时" :label-width="data.formLabelWidth">
-          <el-input v-model="data.countryForm.country" autocomplete="off" type="number" />
+          <el-input v-model="data.tangentForm.machineHour" type="number" />
         </el-form-item>
         <el-form-item label="人均跟线数量" :label-width="data.formLabelWidth">
-          <el-input v-model="data.countryForm.country" autocomplete="off" type="number" />
+          <el-input v-model="data.tangentForm.perFollowUpQuantity" type="number" />
         </el-form-item>
         <!-- <el-form-item label="比例" :label-width="data.formLabelWidth">
-          <el-input v-model="data.countryForm.rate" type="number">
+          <el-input v-model="data.tangentForm.rate" type="number">
             <template #append> % </template>
           </el-input>
         </el-form-item> -->
@@ -65,7 +65,12 @@
 <script lang="ts" setup>
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
-import { createCountry, updateCountry, deleteCountry, getCountryLibraryList } from "@/api/countrylibrary"
+import {
+  addFollowLineTangent,
+  editFollowLineTangent,
+  deleteFollowLineTangent,
+  getTangentHoursList
+} from "@/api/tangentHours"
 import optionLogRecord from "@/components/processHoursExport/option-log-records.vue"
 import { getLogRecord } from "@/api/logRecord"
 //console.log('1-开始创建组件-setup')
@@ -79,10 +84,11 @@ const data = reactive({
   pageSize: 20,
   pageNo: 1,
   total: 0,
-  countryForm: {
-    country: "",
-    nationalType: "",
-    rate: ""
+  tangentForm: {
+    year: "",
+    laborHour: "",
+    machineHour: "",
+    perFollowUpQuantity: ""
   } as any,
   isEdit: false
 })
@@ -95,45 +101,23 @@ onMounted(() => {
 })
 watchEffect(() => {})
 
-const countryType = ref([
-  {
-    label: "一级管制国家",
-    val: "1"
-  },
-  {
-    label: "二级管制国家",
-    val: "2"
-  },
-  {
-    label: "三级管制国家",
-    val: "3"
-  },
-  {
-    label: "四级管制国家",
-    val: "4"
-  },
-  {
-    label: "五级管制国家",
-    val: "5"
-  }
-])
-const handleCreateCountry = () => {
+const handleCreate = () => {
   data.dialogVisible = true
   data.isEdit = false
 }
 const handleEdit = (row: any) => {
   data.isEdit = true
-  data.countryForm = row
+  data.tangentForm = row
   data.dialogVisible = true
 }
 const handleDelete = (index: number, row: any) => {
-  ElMessageBox.confirm("确定删除该国家?", "警告", {
+  ElMessageBox.confirm("确定删除该条记录?", "警告", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
     if (typeof row.id === "number") {
-      let res: any = await deleteCountry(row.id)
+      let res: any = await deleteFollowLineTangent(row.id)
       if (res.success) {
         ElMessage({
           type: "success",
@@ -147,19 +131,22 @@ const handleDelete = (index: number, row: any) => {
 const handlePageChange = () => {
   getList()
 }
-const clearcountryForm = () => {
-  data.countryForm = {
-    country: "",
-    nationalType: "",
-    rate: ""
+const clearForm = () => {
+  data.tangentForm = {
+    year: "",
+    laborHour: "",
+    machineHour: "",
+    perFollowUpQuantity: ""
   }
 }
 const save = async () => {
   let res: any = null
+  const { year } = data.tangentForm
+  data.tangentForm.year = Number(year)
   if (data.isEdit) {
-    res = await updateCountry(data.countryForm)
+    res = await editFollowLineTangent(data.tangentForm)
   } else {
-    res = await createCountry(data.countryForm)
+    res = await addFollowLineTangent(data.tangentForm)
   }
   if (res.success) {
     ElMessage({
@@ -167,6 +154,7 @@ const save = async () => {
       message: "保存成功"
     })
     data.dialogVisible = false
+    getList()
   }
 }
 const getList = async () => {
@@ -177,7 +165,7 @@ const getList = async () => {
   params.skipCount = (data.pageNo - 1) * data.pageSize
   params.maxResultCount = data.pageSize
 
-  let res: any = await getCountryLibraryList(params)
+  let res: any = await getTangentHoursList(params)
   // console.log(res)
   data.tableData = res.result.items
   data.total = res.result.totalCount
@@ -186,7 +174,7 @@ const getList = async () => {
 const baseLibLogRecords = ref([])
 const getOptionLog = () => {
   let data = {
-    type: 14
+    type: 17
   }
   getLogRecord(data).then((response: any) => {
     if (response.success) {

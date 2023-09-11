@@ -43,7 +43,7 @@
               v-else
               :request="GetFoundationEmc"
               :onChange="(record: any) => handleChangeData(record, $index)"
-              v-model:value="row.projectName"
+              v-model="row.projectName"
             />
           </template>
         </el-table-column>

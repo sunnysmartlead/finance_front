@@ -6,7 +6,7 @@
           <span>损耗率-参数</span>
           <el-row>
             <CommonUpload path="api/services/app/UnitPriceLibrary/LossRateImport" btn-text="损耗率导入"
-              v-model:file-list="fileList" :onSuccess="handleSuccess" />
+              v-model="fileList" :onSuccess="handleSuccess" />
             <el-button m="2" type="primary" @click="handleExport">损耗率导出</el-button>
             <el-button m="2" type="primary" @click="handleExportTemplate">损耗率模板导出</el-button>
           </el-row>

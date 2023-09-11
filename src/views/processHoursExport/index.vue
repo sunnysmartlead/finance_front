@@ -537,13 +537,13 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.smtuph" />
+              <el-input v-model="uphItem.smtuph"  @change="uphChange($event,uphIndex)" />
             </div>
             <div class="u-border u-width-150 u-text-center" v-show="isCOB">
-              <el-input v-model="uphItem.cobuph" class="u-text-center" />
+              <el-input v-model="uphItem.cobuph" class="u-text-center"  @change="uphChange($event,uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.zcuph" class="u-text-center" />
+              <el-input v-model="uphItem.zcuph" class="u-text-center"  @change="uphChange($event,uphIndex)"/>
             </div>
           </div>
         </div>
@@ -703,6 +703,7 @@ import {
   getProcessHourDetail,
   handleCreate,
   getListUphOrLine,
+  changeUphData,
   handleUpdate,
   handleDelete,
   uploadAction,
@@ -936,6 +937,23 @@ const getUPHAndLineData = () => {
         message: "列表加载失败"
       })
     }
+  })
+}
+
+const uphChange=async (value:any,uphIndex:number)=>{
+  let uphData= UPHData.value;
+  let param={
+    "auditFlowId": auditFlowId,
+    "solutionId": productId,
+    "processHoursEnterUphListDtos":uphData
+  }
+  console.log("uphData",uphData);
+  await changeUphData(param).then((response: any)=>{
+      if(response.success){
+        let data=  response.result;
+        lineData.value=data;
+        return;
+      }
   })
 }
 

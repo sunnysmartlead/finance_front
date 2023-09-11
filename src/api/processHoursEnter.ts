@@ -36,6 +36,14 @@ export function getListUphOrLine(data: QueryParams) {
   })
 }
 
+export function changeUphData(data:any){
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/ListProcessHoursEnterLine",
+    method: "post",
+    data
+  })
+}
+
 //查询工序详细
 export function getProcessHourDetail(id: number) {
     return request({

@@ -36,7 +36,7 @@
     <el-dialog v-model="data.dialogVisible" title="跟线/切线工时" @close="clearForm">
       <el-form :model="data.tangentForm">
         <el-form-item label="年份" :label-width="data.formLabelWidth">
-          <el-input v-model="data.tangentForm.year" />
+          <el-input v-model="data.tangentForm.year" :disabled="data.isEdit" />
         </el-form-item>
         <el-form-item label="人工工时" :label-width="data.formLabelWidth">
           <el-input v-model="data.tangentForm.laborHour" type="number" />

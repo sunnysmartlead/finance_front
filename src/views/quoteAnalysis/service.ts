@@ -110,3 +110,18 @@ export function PostComparison(data: any): any {
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率
+
+interface calculateRateParam {
+  auditFlowId: number
+  gradientId: number
+  productId: number
+  solutionId: number
+}
+
+export function calculateRate(data: calculateRateParam) {
+  return request({
+    url: "/api/services/app/FoundationProcedure/Create",
+    method: "post",
+    data: data
+  })
+}

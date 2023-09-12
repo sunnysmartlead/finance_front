@@ -6,7 +6,7 @@
           <span>损耗率-参数</span>
           <el-row>
             <CommonUpload path="api/services/app/UnitPriceLibrary/LossRateImport" btn-text="损耗率导入"
-              v-model:file-list="fileList" :onSuccess="handleSuccess" />
+              v-model="fileList" :onSuccess="handleSuccess" />
             <el-button m="2" type="primary" @click="handleExport">损耗率导出</el-button>
             <el-button m="2" type="primary" @click="handleExportTemplate">损耗率模板导出</el-button>
           </el-row>
@@ -14,7 +14,7 @@
       </template>
       <el-row align="middle">
         关键字：
-        <el-input v-model="data.selfTableParams.filter" @change="fetchTableData" style="width: 250px" />
+        <el-input v-model="data.selfTableParams.filter" @change.enter="fetchTableData" style="width: 250px" />
         <el-button m="2" @click="onReset" type="primary">重置</el-button>
       </el-row>
       <el-table :data="tableData" height="500">

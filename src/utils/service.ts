@@ -131,7 +131,7 @@ function createRequestFunction(service: AxiosInstance) {
               text: "下载中"
             })
           }
-          console.log(((progressEvent.loaded / progressEvent.total) * 100).toFixed(2) + "%")
+          console.log(((progressEvent.loaded / progressEvent.total) * 100).toFixed(2) + "%", new Date().getSeconds())
           if (((progressEvent.loaded / progressEvent.total) * 100).toFixed(2) === "100.00") {
             loadingInstance.close()
             loadingInstance = null

@@ -42,7 +42,7 @@ const props = defineProps({
   },
   onDelete: {
     type: Function as PropType<any>
-  },,
+  },
   hideEdit: Boolean
 })
 

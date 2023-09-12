@@ -8,11 +8,10 @@
           :on-error="handleUploadError">
           <el-button type="primary" style="margin: 10px 10px 0 0;">TR方案上传</el-button>
         </el-upload>
-        <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 产品核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
-        <el-button type="primary" class="m-2"> 下载核价表 </el-button>
-        <SchemeCompare />
+        <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
+        <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
       </el-row>
       <el-row class="m-2">
@@ -160,11 +159,12 @@ import {
   GetPriceEvaluationTableInputCount,
   SetPriceEvaluationTableInputCount,
   CreatePriceEvaluationTable,
-  GetIsTradeCompliance
+  GetIsTradeCompliance,
+  PriceEvaluationTableDownload
 } from "../../service"
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus"
 import debounce from "lodash/debounce"
 import * as echarts from "echarts"
 import router from "@/router"
@@ -359,15 +359,34 @@ const getPricingPanelTimeSelectList = async () => {
 
 // 产品核价表下载
 const handleFetchPriceEvaluationTableDownload = async () => {
-  router.push({
-    path: `/nupriceManagement/productPriceList`,
-    query: {
-      auditFlowId,
-      productId,
-      year: filterYearData.value.year,
-      upDown: filterYearData.value.upDown
-    }
+  const loading = ElLoading.service({
+    lock: true,
+    text: '下载中',
+    background: 'rgba(0, 0, 0, 0.7)',
   })
+  try {
+      const result: any = await PriceEvaluationTableDownload({
+      auditFlowId,
+      SolutionId: productId,
+      GradientId: data.form.gradientId,
+    })
+    const blob = result
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = '产品核价表.xlsx'
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+    loading.close()
+  } catch {
+    loading.close()
+  }
 }
 
 // NRE核价表下载

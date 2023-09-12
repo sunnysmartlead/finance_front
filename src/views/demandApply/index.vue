@@ -390,10 +390,10 @@
             <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" /> -->
             <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
               :key="`moduleTableTotal-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`" />
-            <el-table-column label="模组总量" width="180" :formatter="formatThousandths">
-              <template #default="{ row }">
+            <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="formatThousandths">
+              <!-- <template #default="{ row }">
                 {{ price(row) }}
-              </template>
+              </template> -->
             </el-table-column>
           </el-table>
           <h6 />
@@ -1252,14 +1252,21 @@ const moduleTableTotal = computed(() => {
   flatData.forEach((item: any) => {
     const currentData = productModule.get(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`) || {}
     if (item.product && item.pixel && item.productType && item?.code && _.isEmpty(currentData)) {
+      let modelTotal = 0
+      item.modelCountYearList?.forEach((item: any) => {
+        modelTotal += Number(item.quantity || 0)
+      })
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         ...item,
         productType: item.productType,
-        ourRole: [item.ourRole]
+        ourRole: [item.ourRole],
+        sumQuantity: modelTotal,
       })
     }
     console.log(currentData, "[获取当前的模组]")
     if (!_.isEmpty(currentData)) {
+
+
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         carModel: compareString(currentData.carModel, item.carModel),
         product: item.product,
@@ -1271,14 +1278,14 @@ const moduleTableTotal = computed(() => {
         marketShare: (currentData.marketShare += item.marketShare || 0),
         moduleCarryingRate: (currentData.moduleCarryingRate += item.moduleCarryingRate || 0),
         singleCarProductsQuantity: (currentData.singleCarProductsQuantity += item.singleCarProductsQuantity || 0),
-        modelTotal: (currentData.modelTotal += item.modelTotal || 0),
+        sumQuantity: item.sumQuantity += currentData.sumQuantity,
         modelCountYearList: currentData.modelCountYearList.map((m: any, i: number) => {
           const modalCountYearItem: any = item.modelCountYearList[i] || {}
           return {
             ...m,
             quantity: (m.quantity += modalCountYearItem?.quantity || 0)
           }
-        })
+        }),
       })
     }
   })

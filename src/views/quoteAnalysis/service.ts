@@ -66,3 +66,62 @@ export function PostIsOfferSave(data: any): any {
     data
   })
 }
+
+//计算毛利率
+export function PostSpreadSheetCalculate(data: {
+  auditFlowId: number
+  gradientId: number
+  productId: number
+  solutionId: number //方案
+}): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostSpreadSheetCalculate",
+    method: "post",
+    data
+  })
+}
+
+//获取方案
+export function GetSolution(data: { auditFlowId: number }): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetSolution",
+    method: "get",
+    data
+  })
+}
+
+//报价分析看板
+export function PostStatementAnalysisBoardSecond(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostStatementAnalysisBoardSecond",
+    method: "post",
+    data
+  })
+}
+
+//查看年份维度对比(全部模组)
+export function PostComparison(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostYearDimensionalityComparison",
+    method: "post",
+    data
+  })
+}
+// AnalyseBoardSecond / PostStatementAnalysisBoardSecond
+// AnalyseBoardSecond / PostYearDimensionalityComparison
+// AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率
+
+interface calculateRateParam {
+  auditFlowId: number
+  gradientId: number
+  productId: number
+  solutionId: number
+}
+
+export function calculateRate(data: calculateRateParam) {
+  return request({
+    url: "/api/services/app/FoundationProcedure/Create",
+    method: "post",
+    data: data
+  })
+}

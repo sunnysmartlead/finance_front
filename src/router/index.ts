@@ -9,7 +9,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/redirect",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -22,7 +22,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/login",
     component: () => import("@/views/login/index.vue"),
     meta: {
-      hidden: true
+      hidden: false
     }
   },
   {
@@ -170,7 +170,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM单价录入"
-      // hidden: true
+      // hidden: false
     },
     children: [
       {
@@ -195,7 +195,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "moduleNumber",
         meta: {
           title: "项目走量",
-          hidden: true
+          hidden: false
         }
       }
     ]
@@ -241,7 +241,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM损耗率表单",
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -267,7 +267,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/processImport/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -285,7 +285,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/manufacturingCost/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -303,7 +303,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/pmDepartment/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -550,7 +550,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      title: "核价看板"
+      hidden: true
     },
     // meta: {
     //   hidden: true
@@ -565,19 +565,27 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/projectPriceAudit/index",
-        component: () => import("@/views/dashboard/projectPriceAudit/index.vue"),
-        name: "ProjectPriceAudit",
+        path: "/projectChiefAudit",
+        component: () => import("@/views/dashboard/projectChiefAudit/index.vue"),
+        name: "ProjectChiefAudit",
         meta: {
-          title: "项目部核价审核界面"
+          title: "项目部科长审核"
         }
       },
       {
-        path: "/financePriceAudit/index",
-        component: () => import("@/views/dashboard/financePriceAudit/index.vue"),
-        name: "FinancePriceAudit",
+        path: "/financeDirectorAudit",
+        component: () => import("@/views/dashboard/financeDirectorAudit/index.vue"),
+        name: "FinanceDirectorAudit",
         meta: {
-          title: "财务部核价审核界面"
+          title: "财务审核"
+        }
+      },
+      {
+        path: "/projectDirectorLook",
+        component: () => import("@/views/dashboard/projectDirectorLook/index.vue"),
+        name: "ProjectDirectorLook",
+        meta: {
+          title: "项目部长查看"
         }
       }
     ]
@@ -586,9 +594,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/tradeCompliance",
     redirect: "/tradeCompliance/index",
     component: Layout,
-    // meta: {
-    //   hidden: true
-    // },
+    meta: {
+      hidden: false
+    },
     children: [
       {
         path: "/tradeCompliance/index",
@@ -605,7 +613,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/quoteAnalysis/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -615,6 +623,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "报价分析看板"
         }
+      },
+      {
+        path: "/quoteAnalysis/new",
+        component: () => import("@/views/quoteAnalysis/new.vue"),
+        name: "quoteAnalysisNew",
+        meta: {
+          title: "报价分析看板new"
+        }
       }
     ]
   },
@@ -623,7 +639,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/marketingQuotation/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -660,7 +676,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "结构料BOM查看"
         }
-      },
+      }
       // {
       //   path: "/bomView/index",
       //   component: () => import("@/views/bomView/index.vue"),
@@ -677,7 +693,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/summaryTable/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -696,7 +712,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/archive/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -739,7 +755,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "timelinessOperationRecord",
         meta: {
           title: "时效性管理",
-          hidden: true
+          hidden: false
         }
       }
     ]
@@ -896,7 +912,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "operationRecord",
         meta: {
           title: "时效性管理",
-          hidden: true
+          hidden: false
         }
       },
       {
@@ -1003,7 +1019,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "detailList",
         meta: {
           title: "字典管理明细表",
-          hidden: true
+          hidden: false
         }
       }
     ]
@@ -1072,6 +1088,14 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "rateEntry",
         meta: {
           title: "作业价格"
+        }
+      },
+      {
+        path: "/fnDepartment/nreCoreDevices",
+        component: () => import("@/views/fnDepartment/nreCoreDevices.vue"),
+        name: "nreCoreDevices",
+        meta: {
+          title: "nre核心"
         }
       }
     ]
@@ -1142,7 +1166,24 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
-
+  {
+    path: "/engineeringParameters",
+    redirect: "/engineeringParameters/followLineTangent",
+    component: Layout,
+    meta: {
+      title: "工程部维护参数"
+    },
+    children: [
+      {
+        path: "followLineTangent",
+        component: () => import("@/views/tangentHours/index.vue"),
+        name: "followLineTangent",
+        meta: {
+          title: "切线工时"
+        }
+      }
+    ]
+  },
   // {
   //   path: "/permission",
   //   component: Layout,
@@ -1182,7 +1223,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     meta: {
       title: "错误页面",
       icon: "404",
-      hidden: true
+      hidden: false
     },
     children: [
       {

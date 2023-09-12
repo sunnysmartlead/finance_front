@@ -13,11 +13,11 @@
   </el-select>
 </template>
 <script lang="ts" setup>
-import { reactive, PropType } from "vue"
+import { reactive, PropType, watch, ref } from "vue"
 import { map } from "lodash"
-
+const value = ref("")
 const props = defineProps({
-  value: String,
+  // value: String,
   onChange: {
     type: Function as PropType<any>,
     required: false
@@ -27,7 +27,11 @@ const props = defineProps({
     required: false
   }
 })
-
+const emit = defineEmits(["update:modelValue"])
+watch(value, (val) => {
+  console.log(val, props)
+  emit("update:modelValue", val)
+})
 const data = reactive<any>({
   options: [],
   searchDetail: []

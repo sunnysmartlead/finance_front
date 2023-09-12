@@ -1,6 +1,6 @@
 <template>
   <el-upload
-    v-model:file-list="fileList"
+    v-model="value"
     show-file-list
     :action="$baseUrl + path"
     :on-success="onSuccess"
@@ -13,16 +13,19 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, PropType } from "vue"
+import { ref, PropType, watch } from "vue"
 import { handleUploadTemplateError } from "@/utils/upload"
 import { getToken } from "@/utils/cookies"
 
 const data = {
   Authorization: "Bearer " + getToken()
 }
-
+const value = ref([])
 const props = defineProps({
   fileList: {
+    type: Array as PropType<any[]>
+  },
+  modelValue: {
     type: Array as PropType<any[]>
   },
   path: String,
@@ -30,5 +33,10 @@ const props = defineProps({
     type: Function as PropType<any>
   },
   btnText: String
+})
+const emit = defineEmits(["update:modelValue"])
+watch(value, (val) => {
+  console.log(val, props)
+  emit("update:modelValue", val)
 })
 </script>

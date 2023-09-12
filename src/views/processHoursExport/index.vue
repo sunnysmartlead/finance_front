@@ -1249,20 +1249,25 @@ const handleDel = (index: number, row: any) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    handleDelete(row.id).then((response: any) => {
-      if (response.success) {
-        ElMessage({
+    dataArr.value.splice(index,1);
+    ElMessage({
           type: "success",
-          message: "删除成功"
-        })
-        initData()
-      } else {
-        ElMessage({
-          type: "error",
-          message: "删除失败"
-        })
-      }
+          message: "删除成功,确认无误请保存!"
     })
+    // handleDelete(row.id).then((response: any) => {
+    //   if (response.success) {
+    //     ElMessage({
+    //       type: "success",
+    //       message: "删除成功"
+    //     })
+    //     initData()
+    //   } else {
+    //     ElMessage({
+    //       type: "error",
+    //       message: "删除失败"
+    //     })
+    //   }
+    // })
   })
 }
 

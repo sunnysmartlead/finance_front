@@ -623,14 +623,6 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "报价分析看板"
         }
-      },
-      {
-        path: "/quoteAnalysis/new",
-        component: () => import("@/views/quoteAnalysis/new.vue"),
-        name: "quoteAnalysisNew",
-        meta: {
-          title: "报价分析看板new"
-        }
       }
     ]
   },

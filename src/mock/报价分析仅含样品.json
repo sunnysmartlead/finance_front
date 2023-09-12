@@ -1,0 +1,58 @@
+入参
+{
+  "auditFlowId": 59,
+  "solutionTables": [
+    {
+      "id": 0,
+      "creationTime": "2023-08-07T15:37:39.757Z",
+      "creatorUserId": 0,
+      "lastModificationTime": "2023-08-07T15:37:39.757Z",
+      "lastModifierUserId": 0,
+      "isDeleted": true,
+      "deleterUserId": 0,
+      "deletionTime": "2023-08-07T15:37:39.757Z",
+      "auditFlowId": 0,
+      "productld": 0,
+      "moduleName": "string",
+      "solutionName": "前是有一",
+      "product": "string",
+      "isCOB": true,
+      "elecEngineerId": 0,
+      "structEngineerId": 0,
+      "isFirst": true
+    }
+  ]
+}
+
+
+返回参数
+
+{
+  "result": {
+    "nre": null,
+    "unitPrice": null,
+    "sampleOffer": [
+      {
+        "onlySampleModels": [
+          {
+            "sampleName": "SampleName_C",
+            "pcs": 200,
+            "cost": 0,
+            "unitPrice": 0,
+            "grossMargin": 0,
+            "salesRevenue": 0
+          }
+        ],
+        "solutionName": "样品报价-前是有一"
+      }
+    ],
+    "isSuccess": true,
+    "message": "调用成功"
+  },
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}
+Response headers

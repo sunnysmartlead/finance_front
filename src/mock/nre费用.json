@@ -1,0 +1,49 @@
+{
+	"result": {
+		"projects": [
+			{
+				"name": "前视-方案一"
+			}
+		],
+		"kValue": 0.7,
+		"Costitems": [
+			{
+				"Costitem": "Sensor芯片",
+				"gradient": 100,
+				"items": [
+					{
+						"project": "前视-方案一",
+						"UnitPrice": "100",
+						"ExchangeRate": 100,
+						"Number": 100,
+						"Subtotal": 100
+					},
+					{
+						"project": "前视-方案而",
+						"UnitPrice": "100",
+						"ExchangeRate": 100,
+						"Number": 100
+					}
+				]
+			}
+		],
+		"Nres": [
+			{
+				"nre": "手板件费用",
+				"Amount": 100,
+				"reMark": "1111"
+			}
+		],
+		"gradient": [
+			{
+				"index": 60,
+				"gradientValue": 60
+			}
+		]
+	},
+	"targetUrl": null,
+	"success": true,
+	"error": null,
+	"unAuthorizedRequest": false,
+	"__abp": true
+}

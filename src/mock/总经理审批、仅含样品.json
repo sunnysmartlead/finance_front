@@ -1,0 +1,48 @@
+{
+  "result": [
+    {
+      "managerApproval": [
+        {
+          "sampleName": "SampleName_C",//样品阶段
+          "pcs": 200,//需求量
+          "cost": 0,//成本
+          "unitPrice": 0,
+          "grossMargin": 0,
+          "salesRevenue": 0
+        }
+      ],
+      "solutionName": "样品报价-前视"
+    },
+    {
+      "managerApproval": [
+        {
+          "sampleName": "SampleName_C",
+          "pcs": 200,
+          "cost": 0,
+          "unitPrice": 0,
+          "grossMargin": 0,
+          "salesRevenue": 0
+        }
+      ],
+      "solutionName": "样品报价-侧视"
+    },
+    {
+      "managerApproval": [
+        {
+          "sampleName": "SampleName_C",
+          "pcs": 200,
+          "cost": 0,
+          "unitPrice": 0,
+          "grossMargin": 0,
+          "salesRevenue": 0
+        }
+      ],
+      "solutionName": "样品报价-后视"
+    }
+  ],
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

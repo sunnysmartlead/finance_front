@@ -35,7 +35,7 @@
       </div>
       <div class="u-m-5">
         <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="showUploadFile" :on-error="uploadErrror"
-          :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction" :limit="1">
+          :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadActionUrl" :limit="1">
           <template #trigger>
             <el-button type="primary">工序工时导入</el-button>
           </template>
@@ -321,7 +321,7 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="deviceItem.deviceNumber" :min="1" :disabled="isDisable(dataIndex)"
+                    <el-input-number v-model="deviceItem.deviceNumber" :min="1"  :precision="2" :step="0.01" :disabled="isDisable(dataIndex)"
                       @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                   <div class="u-width-150 u-border">
@@ -348,7 +348,7 @@
                     </el-select>
                   </div>
                   <div class="u-border u-width-150">
-                    <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="1" :disabled="isDisable(dataIndex)"
+                    <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="1" :precision="2" :step="0.01" :disabled="isDisable(dataIndex)"
                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                   <div class="u-border u-width-150">
@@ -406,7 +406,7 @@
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
+                      <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)" :precision="2" :step="0.01"
                         @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                     </div>
                     <div class="u-width-150 u-border">
@@ -437,7 +437,7 @@
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
-                  <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
+                  <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)" :precision="2" :step="0.01"
                     @change="handleJianJuCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -453,7 +453,7 @@
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
-                  <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="1" :disabled="isDisable(dataIndex)"
+                  <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="1" :disabled="isDisable(dataIndex)" :precision="2" :step="0.01"
                     @change="handleGongZhuangCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -469,7 +469,7 @@
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
-                  <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="1" :disabled="isDisable(dataIndex)"
+                  <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="1" :precision="2" :step="0.01" :disabled="isDisable(dataIndex)"
                     @change="handleTestLineCountChange($event, dataIndex)" />
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -487,15 +487,15 @@
                 <div v-for="(scopItem, sopIndex) in dataItem.sopInfo" :key="sopIndex" class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1"
+                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" :precision="2" :step="0.01"
                       :disabled="isDisable(dataIndex)"/>
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="1"
+                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="1" :precision="2" :step="0.01"
                         :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="1"
+                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="1" :precision="2" :step="0.01"
                         :disabled="isDisable(dataIndex)" />
                     </div>
                   </div>
@@ -814,16 +814,19 @@ const tempData: any = {
         {
           laborHour: 0,
           machineHour: 0,
+          personnelNumber: 0,
+          modelCountYearId: 0
+        },
+        {
+          laborHour: 0,
+          machineHour: 0,
+          modelCountYearId: 0,
           personnelNumber: 0
         },
         {
           laborHour: 0,
           machineHour: 0,
-          personnelNumber: 0
-        },
-        {
-          laborHour: 0,
-          machineHour: 0,
+          modelCountYearId: 0,
           personnelNumber: 0
         }
       ],
@@ -835,6 +838,7 @@ const tempData: any = {
         {
           laborHour: 0,
           machineHour: 0,
+          modelCountYearId: 0,
           personnelNumber: 0
         },
         {
@@ -856,16 +860,19 @@ const tempData: any = {
         {
           laborHour: 0,
           machineHour: 0,
+          personnelNumber: 0,
+          modelCountYearId: 0,
+        },
+        {
+          laborHour: 0,
+          machineHour: 0,
+          modelCountYearId: 0,
           personnelNumber: 0
         },
         {
           laborHour: 0,
           machineHour: 0,
-          personnelNumber: 0
-        },
-        {
-          laborHour: 0,
-          machineHour: 0,
+          modelCountYearId: 0,
           personnelNumber: 0
         }
       ],
@@ -878,6 +885,7 @@ const dataArr = ref<any>([])
 const currentEditIndex = ref<number>()
 let currentEditItem: any = null
 const addFlag = ref(false)
+
 const structuralDataDialogTableVisible = ref(false)
 const FindElectronicBomByProcessOMDataDialogTableVisible = ref(false)
 const { auditFlowId, productId }: any = getQuery()
@@ -886,6 +894,7 @@ const lineData = ref<any>([])
 const structuralData = ref<any>([])
 const electronicBomData = ref<any>([])
 const isCOB = ref(true)
+const uploadActionUrl = ref(uploadAction + "?AuditFlowId=" + auditFlowId + "&SolutionId=" + productId)
 onMounted(() => {
   initData()
 })
@@ -1076,6 +1085,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
               laborHour: 0,
               machineHour: 0,
               personnelNumber: 0,
+              modelCountYearId : 0,
             }];
             let yearIndex = oldItem.year;
             console.log(yearIndex)
@@ -1112,7 +1122,6 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     } else {
       dataArr.value = exportListData;
     }
-    console.log(exportListData)
     ElMessage({
       type: "success",
       message: "请确认无误后保存"

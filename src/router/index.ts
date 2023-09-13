@@ -9,7 +9,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/redirect",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -22,7 +22,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/login",
     component: () => import("@/views/login/index.vue"),
     meta: {
-      hidden: false
+      hidden: true
     }
   },
   {
@@ -170,7 +170,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM单价录入"
-      // hidden: false
+      // hidden: true
     },
     children: [
       {
@@ -195,7 +195,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "moduleNumber",
         meta: {
           title: "项目走量",
-          hidden: false
+          hidden: true
         }
       }
     ]
@@ -241,7 +241,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "BOM损耗率表单",
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -267,7 +267,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/processImport/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -285,7 +285,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/manufacturingCost/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -303,7 +303,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/pmDepartment/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -631,7 +631,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/marketingQuotation/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -685,7 +685,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/summaryTable/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -704,7 +704,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/archive/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: true
     },
     children: [
       {
@@ -1011,7 +1011,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "detailList",
         meta: {
           title: "字典管理明细表",
-          hidden: false
+          hidden: true
         }
       }
     ]
@@ -1215,7 +1215,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     meta: {
       title: "错误页面",
       icon: "404",
-      hidden: false
+      hidden: true
     },
     children: [
       {

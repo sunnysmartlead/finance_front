@@ -184,40 +184,60 @@ const bomCostProcessType = [
 // 报价看板审核
 const priceEvaluationBoard = [
   {
-    val: "EvalReason_Yp",
-    label: "样品"
+    val: "HjkbSelect_Yes",
+    label: "同意"
   },
   {
-    val: "EvalReason_Ffabg",
-    label: "非方案变更"
+    val: "HjkbSelect_Scjgbom",
+    label: "上传结构BOM"
   },
   {
-    val: "EvalReason_Nj",
-    label: "年降"
+    val: "HjkbSelect_Dzjgj",
+    label: "定制结构件"
   },
   {
-    val: "EvalReason_Shj",
-    label: "售后件"
+    val: "HjkbSelect_Jgbomppxg",
+    label: "结构BOM匹配修改"
   },
   {
-    val: "EvalReason_Bb1",
-    label: "版本1"
+    val: "HjkbSelect_Scdzbom",
+    label: "上传电子BOM"
   },
   {
-    val: "EvalReason_Fabg",
-    label: "方案变更"
+    val: "HjkbSelect_Dzbomppxg",
+    label: "电子BOM匹配修改"
   },
   {
-    val: "EvalReason_Qt",
-    label: "其他"
+    val: "HjkbSelect_Wlcblr",
+    label: "物流成本录入"
   },
   {
-    val: "EvalReason_Jdcbpg",
-    label: "节点成本预估"
+    val: "HjkbSelect_Gsgxtj",
+    label: "工序工时添加"
   },
   {
-    val: "EvalReason_Xmbg",
-    label: "项目变更"
+    val: "HjkbSelect_Cobzzcblr",
+    label: "COB制造成本录入"
+  },
+  {
+    val: "HjkbSelect_Nremjflr",
+    label: "NRE模具费录入"
+  },
+  {
+    val: "HjkbSelect_Nrekkxsyflr",
+    label: "NRE-可靠性实验费录入"
+  },
+  {
+    val: "HjkbSelect_Nresbj",
+    label: "NRE手板件"
+  },
+  {
+    val: "HjkbSelect_Nreemcsyflr",
+    label: "NRE-EMC实验费录入"
+  },
+  {
+    val: "HjkbSelect_Input",
+    label: "核价需求录入"
   },
 ]
 

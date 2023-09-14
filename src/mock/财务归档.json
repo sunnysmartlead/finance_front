@@ -1,0 +1,117 @@
+
+AnalyseBoardSecond/GetFinancialArchive?auditFlowId=67  财务归档
+{
+	"date": "2023-09-02T18:02:33.445Z",
+	"recordNumber": "string",//
+	"versions": 0,
+	"offerForm": "string",//报价形式
+	"sampleQuotationType": "string",//样品报价类型
+	"directCustomerName": "string",//直接客户名称
+	"clientNature": "string",//客户性质
+	"terminalCustomerName": "string",//终端客户名称
+	"terminalClientNature": "string",//终端客户性质
+	"developmentPlan": "string",//开发计划
+	"sopTime": 0,//Sop时间
+	"projectCycle": 0,//项目声明周期
+	"forSale": "string",//销售类型
+	"modeOfTrade": "string",//贸易方式
+	"paymentMethod": "string",//付款方式
+	"quoteCurrency": "string",//报价币种
+	"exchangeRate": 0,//汇率
+        ///
+	"motionMessage": [//走量信息
+		{
+			"messageName": "string",//名称
+			"sop": [
+				{
+					"year": 0,//
+					"value": 0
+				}
+			]
+		}
+	],
+	"projectName": "string",//项目名称
+	"nres": [
+		{
+			"solutionName": "string",//方案名
+			"solutionId": 0,//
+			"auditFlowId": 0,//
+			"models": [
+				{
+					"id": 0,//
+					"formName": "string",//表单名称
+					"pricingMoney": 0,//核价金额
+					"offerCoefficient": 0,//报价系数
+					"offerMoney": 0,//报价金额
+					"remark": "string"//备注
+				}
+			],
+			"devices": [//
+				{
+					"deviceName": "string",
+					"devicePrice": 0,
+					"number": 0,
+					"equipmentMoney": 0
+				}
+			],
+			"numberLine": 0,//线体数量
+			"collinearAllocationRate": 0  //共线分摊率
+		}
+	],
+	"sampleOffer": [//样品报价
+		{
+			"solutionName": "string",
+			"auditFlowId": 0,
+			"solutionId": 0, "onlySampleModels": [
+        {
+          "sampleName": "string",
+          "pcs": 0,
+          "cost": 0,
+          "unitPrice": 0,
+          "grossMargin": 0,
+          "salesRevenue": 0
+        }
+      ]
+		}
+	],
+	"componenSocondModels": [//核心部件
+		{
+			"coreComponent": "string",//核心部件
+			"type": "string",
+			"remark": "string"  ,  "specifications": [
+        {
+          "solutionname": "string",//方案名
+          "specification": "string"
+        }
+      ]
+		}
+	],
+	"pricingMessageSecondModels": [//内部核价信息
+		{
+			"solutionName": "string",
+			"solutionId": "string",
+			"name": "string",
+			"sops": [
+				{
+					"gradientValue": 0,//梯度
+					"sop": 0,//sop值
+					"all": 0//全周期
+				}
+			]
+		}
+	],
+	"biddingStrategySecondModels": [//报价策略
+		{
+			"gradientId": 0,
+			"productId": 0,
+			"product": "string",
+			"sopCost": 0,//Sop年成本
+			"fullLifeCyclecost": 0,//全生命周期成本
+			"grossMargin": 0,//毛利率
+			"price": 0,//价格
+			"commission": 0,//佣金
+			"sopGrossMargin": 0,//Sop年毛利率
+			"grossMarginCommission": 0//含佣金的毛利率
+		}
+	]
+}

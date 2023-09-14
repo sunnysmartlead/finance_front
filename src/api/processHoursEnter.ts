@@ -17,11 +17,29 @@ export function GetListAll(data: QueryParams) {
     })
 }
 
+//
+/** 获取设备状态枚举列表 */
+export function getDeviceStatus() {
+  return request({
+    url: "api/services/app/ProcessHoursEnter/GetDeviceStatus",
+    method: "get",
+  })
+}
+
+
 
 export function getListUphOrLine(data: QueryParams) {
   return request({
     url: "/api/services/app/ProcessHoursEnter/GetListUphOrLine",
     method: "get",
+    data
+  })
+}
+
+export function changeUphData(data:any){
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/ListProcessHoursEnterLine",
+    method: "post",
     data
   })
 }
@@ -144,6 +162,50 @@ export function FindElectronicBomByProcess(data:any) {
 export function GetBoardInfomation(data: any) {
   return request({
     url: "/api/services/app/ElectronicBom/GetBoardInfomation",
+    method: "get",
+    data
+  })
+}
+
+
+//获取硬件设备下拉列表
+export function getHardWareListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationHardwareItem/GetListAll",
+    method: "get",
+    data
+  })
+}
+//获取下拉治具列表
+export function getZhiJuListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationFixtureItem/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//获取下拉检具列表
+export function getJianJuListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationFixture/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+//获取下拉工装列表
+export function getWorkClothsListForSelect(data: any) {
+  return request({
+    url: "/api/services/app/FoundationProcedure/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+export function GetEditorByProcessNumber(data: any) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetEditorByProcessNumber",
     method: "get",
     data
   })

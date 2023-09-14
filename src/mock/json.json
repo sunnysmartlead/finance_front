@@ -1,0 +1,195 @@
+计算毛利率
+
+入参{
+  "auditFlowId": 0, 流程表id
+  "gradientId": 0,梯度Id
+  "productId": 0,模组数量Id
+  "solutionId": 0 //方案
+}
+
+
+出参
+{
+  "grossMargin": 0,.//毛利率
+  "clientGrossMargin": 0,//增加客供料毛利率
+  "nreGrossMargin": 0//剔除分摊费用毛利
+}
+年度对比
+{
+  "auditFlowId": 0,
+  "grossMargin": 0,
+  "productId": 0
+}
+
+{
+  "numk": [//数量K
+    {
+      "year": "string",
+      "value": 0
+    }
+  ],
+  "prices": [单价
+    {
+      "year": "string",
+      "value": 0
+    }
+  ],
+  "sellingCost": [销售成本
+    {
+      "year": "string",
+      "value": 0
+    }
+  ],
+  "averageCost": [单位平均成本
+    {
+      "year": "string",
+      "value": 0
+    }
+  ],
+  "salesRevenue": [销售收入
+    {
+      "year": "string",
+      "value": 0
+    }
+  ],
+  "salesMargin": [销售毛利
+    {
+      "year": "string",
+      "value": 0
+    }
+  ],
+  "grossMargin": [毛利率
+    {
+      "year": "string",
+      "value": 0
+    }
+  ]
+}
+
+
+方案获取
+
+auditFlowId
+{
+  "result": [
+    {
+      "auditFlowId": 67,
+      "productld": 528,
+      "moduleName": "侧前",
+      "solutionName": "OX03C",
+      "product": "侧前-OX03C",
+      "isCOB": false,
+      "elecEngineerId": 219,
+      "structEngineerId": 210,
+      "isFirst": false,
+      "isDeleted": false,
+      "deleterUserId": null,
+      "deletionTime": null,
+      "lastModificationTime": "2023-08-23T11:36:51.1687348",
+      "lastModifierUserId": 291,
+      "creationTime": "2023-08-23T11:36:51.1592524",
+      "creatorUserId": null,
+      "id": 65
+    },
+    {
+      "auditFlowId": 67,
+      "productld": 528,
+      "moduleName": "侧前",
+      "solutionName": "OX01F",
+      "product": "侧前-OX01F",
+      "isCOB": true,
+      "elecEngineerId": 219,
+      "structEngineerId": 210,
+      "isFirst": true,
+      "isDeleted": false,
+      "deleterUserId": null,
+      "deletionTime": null,
+      "lastModificationTime": "2023-08-23T11:36:51.1687357",
+      "lastModifierUserId": 291,
+      "creationTime": "2023-08-23T11:36:51.1592526",
+      "creatorUserId": null,
+      "id": 68
+    },
+    {
+      "auditFlowId": 67,
+      "productld": 529,
+      "moduleName": "侧后",
+      "solutionName": "OX03C",
+      "product": "侧后-OX03C",
+      "isCOB": false,
+      "elecEngineerId": 219,
+      "structEngineerId": 210,
+      "isFirst": false,
+      "isDeleted": false,
+      "deleterUserId": null,
+      "deletionTime": null,
+      "lastModificationTime": "2023-08-23T11:36:51.1687365",
+      "lastModifierUserId": 291,
+      "creationTime": "2023-08-23T11:36:51.1592528",
+      "creatorUserId": null,
+      "id": 66
+    },
+    {
+      "auditFlowId": 67,
+      "productld": 526,
+      "moduleName": "前视",
+      "solutionName": "AR0820",
+      "product": "前视-AR0820",
+      "isCOB": false,
+      "elecEngineerId": 219,
+      "structEngineerId": 210,
+      "isFirst": false,
+      "isDeleted": false,
+      "deleterUserId": null,
+      "deletionTime": null,
+      "lastModificationTime": "2023-08-23T11:36:51.1687319",
+      "lastModifierUserId": 291,
+      "creationTime": "2023-08-23T11:36:51.1592507",
+      "creatorUserId": null,
+      "id": 63
+    },
+    {
+      "auditFlowId": 67,
+      "productld": 526,
+      "moduleName": "前视",
+      "solutionName": "IMX728",
+      "product": "前视-IMX728",
+      "isCOB": true,
+      "elecEngineerId": 219,
+      "structEngineerId": 210,
+      "isFirst": true,
+      "isDeleted": false,
+      "deleterUserId": null,
+      "deletionTime": null,
+      "lastModificationTime": "2023-08-23T11:36:51.1687332",
+      "lastModifierUserId": 291,
+      "creationTime": "2023-08-23T11:36:51.159252",
+      "creatorUserId": null,
+      "id": 67
+    },
+    {
+      "auditFlowId": 67,
+      "productld": 527,
+      "moduleName": "后视",
+      "solutionName": "AR0233",
+      "product": "后视-AR0233",
+      "isCOB": false,
+      "elecEngineerId": 219,
+      "structEngineerId": 210,
+      "isFirst": true,
+      "isDeleted": false,
+      "deleterUserId": null,
+      "deletionTime": null,
+      "lastModificationTime": "2023-08-23T11:36:51.168734",
+      "lastModifierUserId": 291,
+      "creationTime": "2023-08-23T11:36:51.1592521",
+      "creatorUserId": null,
+      "id": 64
+    }
+  ],
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

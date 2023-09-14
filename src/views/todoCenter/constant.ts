@@ -64,7 +64,7 @@ const urlMap = {
   NRE_ManualComponentInput:{path:"/nre/nreProjectManageMent",query: {}},//手板件费录入
   PriceEvaluationBoard:{path:"/dashboard/index",query: {}},//核价看板
   FinanceDirectorAudit:{path:"/financeDirectorAudit",query: {}},// 财务部部长审核
-  ProjectChiefAudit:{path:"/projectChiefLook",query: {}},// 项目科长审核
+  ProjectChiefAudit:{path:"/projectChiefAudit",query: {}},// 项目科长审核
   ProjectDirectorLook:{path:"/projectDirectorLook",query: {}},// 项目部长查看
   // 报价分析看板
   QuoteAnalysis:{path:"/quoteAnalysis/index",query: {}}, // 报价分析看板

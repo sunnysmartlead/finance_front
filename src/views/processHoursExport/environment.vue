@@ -327,7 +327,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       console.log("valid", valid);
       if (ruleForm.id == 0) {
         createFoundationReliable(ruleForm).then((response) => {
-
           if (response.result.success){
             open.value = false
             initData()

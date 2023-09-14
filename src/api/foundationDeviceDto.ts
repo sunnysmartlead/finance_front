@@ -18,6 +18,7 @@ export function createFoundationDevice(data:any) {
   })
 }
 
+
 export function getFoundationDeviceById(id: number) {
   return request({
     url: "api/services/app/FoundationDevice/GetAsyncById",
@@ -45,6 +46,23 @@ export function getListAll(data: QueryParams) {
     data
   })
 }
+
+
+export function getListAllForSelect(data: QueryParams) {
+  return request({
+    url: "api/services/app/FoundationDeviceItem/GetListAll",
+    method: "get",
+    data
+  })
+}
+
+export function getDeviceStatus() {
+  return request({
+    url: "api/services/app/ProcessHoursEnter/GetDeviceStatus",
+    method: "get",
+  })
+}
+
 export function deleteFoundationPFoundationDevice(id: number | undefined) {
   return request({
     url: "/api/services/app/FoundationDevice/Delete",

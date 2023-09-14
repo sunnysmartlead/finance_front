@@ -7,7 +7,7 @@ export {uploadAction}
  */
 
 export interface QueryParams {
-  DeviceName?: string
+  hardwareName?: string,
   softwareName?: string
 }
 /** 新增 */
@@ -56,7 +56,7 @@ export function deleteFoundationHardware(id: number | undefined) {
   })
 }
 /** 导出 */
-export function exportFoundationFixture(data:any) {
+export function exportFoundationFixture(data:QueryParams) {
   return request({
     url: "/api/services/app/FoundationHardware/FoundationHardwareDownloadStream",
     method: "post",

@@ -550,7 +550,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      title: "核价看板"
+      hidden: true
     },
     // meta: {
     //   hidden: true
@@ -594,9 +594,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: "/tradeCompliance",
     redirect: "/tradeCompliance/index",
     component: Layout,
-    // meta: {
-    //   hidden: true
-    // },
+    meta: {
+      hidden: false
+    },
     children: [
       {
         path: "/tradeCompliance/index",
@@ -613,7 +613,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/quoteAnalysis/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -668,7 +668,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "结构料BOM查看"
         }
-      },
+      }
       // {
       //   path: "/bomView/index",
       //   component: () => import("@/views/bomView/index.vue"),
@@ -747,7 +747,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "timelinessOperationRecord",
         meta: {
           title: "时效性管理",
-          hidden: true
+          hidden: false
         }
       }
     ]
@@ -904,7 +904,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: "operationRecord",
         meta: {
           title: "时效性管理",
-          hidden: true
+          hidden: false
         }
       },
       {
@@ -1081,6 +1081,14 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "作业价格"
         }
+      },
+      {
+        path: "/fnDepartment/nreCoreDevices",
+        component: () => import("@/views/fnDepartment/nreCoreDevices.vue"),
+        name: "nreCoreDevices",
+        meta: {
+          title: "nre核心"
+        }
       }
     ]
   },
@@ -1150,7 +1158,24 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
-
+  {
+    path: "/engineeringParameters",
+    redirect: "/engineeringParameters/followLineTangent",
+    component: Layout,
+    meta: {
+      title: "工程部维护参数"
+    },
+    children: [
+      {
+        path: "followLineTangent",
+        component: () => import("@/views/tangentHours/index.vue"),
+        name: "followLineTangent",
+        meta: {
+          title: "切线工时"
+        }
+      }
+    ]
+  },
   // {
   //   path: "/permission",
   //   component: Layout,

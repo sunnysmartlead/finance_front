@@ -78,8 +78,6 @@
                         <div class="u-flex u-row-left u-col-center  u-text-center">
                             <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                             <div class="u-width-150 u-border">
-                                <!-- <el-input v-model="dataItem.processNumber" style="border: none;"
-                                    :disabled="data.currentEditProcessIndex != dataIndex" /> -->
                                 <el-select :disabled="data.currentEditProcessIndex != dataIndex"
                                     v-model="dataItem.processNumber" filterable remote reserve-keyword
                                     :remote-method="remoteMethodForProcessNumber"
@@ -89,8 +87,6 @@
                                 </el-select>
                             </div>
                             <div class="u-width-150 u-border">
-                                <!-- <el-input v-model="dataItem.processName" style="border: none;"
-                                    :disabled="data.currentEditProcessIndex != dataIndex" /> -->
                                 <el-select v-model="dataItem.processName" filterable remote reserve-keyword
                                     :disabled="data.currentEditProcessIndex != dataIndex"
                                     :remote-method="remoteMethodForProcessName"
@@ -104,16 +100,22 @@
                         <div class="u-text-center">
                             <div v-if="dataItem.deviceList && dataItem.deviceList.length > 0"
                                 class="u-flex u-row-left u-col-center  u-text-center">
-                                <div v-for="(deviceItem, deviceIndex) in dataItem.deviceList" :key="deviceIndex"
+                                <div v-for="(deviceItem, deviceIndex) in dataItem.deviceList" 
+                                        :key="deviceIndex"
                                     class="u-flex u-row-left u-col-center u-text-center">
                                     <div class="u-width-200   u-border">
                                         <el-input v-model="deviceItem.deviceName"
                                             :disabled="data.currentEditProcessIndex != dataIndex" />
                                     </div>
                                     <div class="u-width-200   u-border">
-                                        <el-input v-model="deviceItem.deviceStatus" class="input-with-select"
+                                        <el-select  v-model="deviceItem.deviceStatus"
                                             :disabled="data.currentEditProcessIndex != dataIndex">
-                                        </el-input>
+                                            <el-option v-for="item in deviceStatusEnmus" 
+                                                        :key="item.code" 
+                                                        :label="item.value"
+                                                        :value="item.value"/>
+                                        </el-select>
+
                                     </div>
                                     <div class="u-width-200   u-border">
                                         <el-input-number v-model="deviceItem.devicePrice" :min="1" :precision="2"
@@ -223,7 +225,7 @@ import {
     getListAll, createFoundationDevice,
     updateFoundationDevice, deleteFoundationPFoundationDevice,
     getDeviceLog,
-    saveDeviceLog, exportDevice, uploadAction
+    saveDeviceLog, exportDevice, uploadAction,getDeviceStatus
 } from '@/api/foundationDeviceDto';
 import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
@@ -251,6 +253,8 @@ const data = reactive<any>({
     processNameOptions: <Array<selectOptionListItem>>[],
 })
 
+const deviceStatusEnmus=ref<any>([]);
+
 let currentEditProcessItem: any = null;
 onMounted(() => {
     initData();
@@ -267,7 +271,17 @@ const initData = async () => {
         data.tableData = listResult.result;
         console.log("工装数据数量", data.tableData.value);
     }
+    getDeviceStatuEnmu();
     getDeviceOptionLog()
+}
+
+const getDeviceStatuEnmu = () => {
+    getDeviceStatus().then((response:any) => {
+        console.log("======设备状态列表=======", response);
+        if (response.success) {
+            deviceStatusEnmus.value=response.result;
+        }
+    })
 }
 
 const upload = ref<UploadInstance>()

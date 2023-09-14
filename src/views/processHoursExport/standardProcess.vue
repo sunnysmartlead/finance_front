@@ -13,7 +13,9 @@
         <div class="u-flex u-row-between u-col-center">
             <div>
                 <el-button type="primary" @click="addStandardProcess">新增标准工艺</el-button>
+              <el-button type="primary" @click="downLoadStandardProcess">模版下载</el-button>
             </div>
+
         </div>
         <div class="u-m-t-10">
             <el-table :data="standardProcessList" :border="true">
@@ -90,8 +92,11 @@
                             <el-input v-model="data.dialogAddProcessForm.standardProcessName"></el-input>
                         </el-form-item>
                         <el-form-item label="选择文件" label-width="150px">
-                            <el-upload class="upload-demo" ref="upload" :action="uploadAction" :limit="1"
-                                :show-file-list="false" :on-error="uploadErrror" :on-success="uploadSuccess"
+                            <el-upload   style="width: 100%;" ref="upload" :action="uploadAction" :limit="1" 
+                                :show-file-list="showUploadFile" 
+                                :on-remove="onFileRemove"
+                                :on-error="uploadErrror" 
+                                :on-success="uploadSuccess"
                                 :on-exceed="handleExceed">
                                 <template #trigger>
                                     <el-button type="primary">标准工艺库导入</el-button>
@@ -186,12 +191,20 @@ const submitSearch = () => {
 
 //上传相关
 const upload = ref<UploadInstance>()
+const showUploadFile=ref(false)
 const handleExceed: UploadProps['onExceed'] = (files) => {
+    showUploadFile.value=false;
     upload.value!.clearFiles()
     const file = files[0] as UploadRawFile
     file.uid = genFileId()
     upload.value!.handleStart(file)
 }
+
+const onFileRemove=(uploadFile: any, uploadFiles: any)=>{
+    showUploadFile.value=false;
+    data.exportTableData =[];
+}
+
 //上传成功,响应数据渲染到工序弹窗里面
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     console.log("responese", response);
@@ -202,6 +215,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
             type: "success",
             message: '导入成功'
         })
+        showUploadFile.value=true;
         data.exportTableData = response.result;
         return;
     } else {
@@ -217,6 +231,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     console.log("error", error);
     console.log("uploadFile", uploadFile);
     console.log("uploadFiles", uploadFiles);
+    showUploadFile.value=false;
     ElMessage({
         type: "error",
         message: '导入失败'
@@ -366,6 +381,14 @@ const handleDelete = (index: number, row: any) => {
         .catch(() => { })
 }
 
+const downLoadStandardProcess= async () => {
+  const link = document.createElement('a')
+  link.href = import.meta.env.VITE_BASE_API + "/Excel/标准工艺库导入.xlsx"
+  link.download = '标准工艺库导入.xls'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 
 //#region
 const editLogFlag = ref(false);

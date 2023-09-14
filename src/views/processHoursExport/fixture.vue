@@ -3,8 +3,11 @@
 
     <div>
       <el-form :inline="true" :model="queryForm" class="demo-form-inline">
-        <el-form-item label="设备名称">
-          <el-input v-model="queryForm.deviceName" placeholder="输入设备名称" clearable />
+        <el-form-item label="治具名称">
+          <el-input v-model="queryForm.fixtureName" placeholder="输入治具名称" clearable />
+        </el-form-item>
+        <el-form-item label="检具名称">
+          <el-input v-model="queryForm.fixtureGaugeName" placeholder="输入检具名称" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitSearch">查询</el-button>
@@ -45,29 +48,51 @@
           <div class="u-text-center">
             <div class="u-text-center u-border  u-p-t-5 u-p-b-5" style="background-color:#79bbff;">治具部分</div>
             <div class="u-flex u-row-left u-col-center  u-text-center">
-              <div v-for="index in data.tableData[0]?.fixtureList.length" :key="index"
-                class="u-flex u-row-left u-col-center u-text-center">
-                <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
-                  <span>治具{{ index }}名称</span>
+              <template v-if="data.tableData.length > 0 && data.tableData[0]?.fixtureList.length > 0">
+                <div v-for="index in data.tableData[0]?.fixtureList.length" :key="index"
+                  class="u-flex u-row-left u-col-center u-text-center">
+                  <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
+                    <span>治具{{ index }}名称</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5" style="background-color: #eebe77;">
+                    <span>治具{{ index }}状态</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>治具{{ index }}单价</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>治具{{ index }}供应商</span>
+                  </div>
                 </div>
-                <div class="u-width-200  u-border   u-p-t-5 u-p-b-5" style="background-color: #eebe77;">
-                  <span>治具{{ index }}状态</span>
+              </template>
+              <template v-else>
+                <div class="u-flex u-row-left u-col-center u-text-center">
+                  <div class="u-width-200 u-border   u-p-t-5 u-p-b-5" style="background-color: #f29100;">
+                    <span>治具名称</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5" style="background-color: #eebe77;">
+                    <span>治具状态</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>治具单价</span>
+                  </div>
+                  <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
+                    <span>治具供应商</span>
+                  </div>
                 </div>
-                <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
-                  <span>治具{{ index }}单价</span>
-                </div>
-                <div class="u-width-200  u-border   u-p-t-5 u-p-b-5">
-                  <span>治具{{ index }}供应商</span>
-                </div>
-              </div>
+              </template>
+            </div>
+          </div>
+          <div class="u-text-center">
+            <div class="u-text-center u-border u-p-t-5 u-p-b-5" style="background-color:#70ec87;">检具部分</div>
+            <div class="u-flex u-row-left u-col-center  u-text-center">
+              <div class="u-width-150 u-border   u-p-t-5 u-p-b-5"><span>检具名称</span></div>
+              <div class="u-width-150 u-border   u-p-t-5 u-p-b-5"><span>检具状态</span></div>
+              <div class="u-width-150 u-border   u-p-t-5 u-p-b-5"><span>检具单价</span></div>
+              <div class="u-width-150 u-border   u-p-t-5 u-p-b-5"><span>检具供应商</span></div>
             </div>
           </div>
           <div class="u-flex u-row-left u-col-center  u-text-center">
-
-            <div class="u-width-150 u-border u-height-60"><span>检具名称</span></div>
-            <div class="u-width-150 u-border u-height-60"><span>检具状态</span></div>
-            <div class="u-width-150 u-border u-height-60"><span>检具单价</span></div>
-            <div class="u-width-150 u-border u-height-60"><span>检具供应商</span></div>
             <div class="u-width-150 u-border u-height-60"><span>治具维护人</span></div>
             <div class="u-width-200 u-border u-height-60"><span>设备维护时间</span></div>
             <div class="u-width-300 u-border u-height-60"><span>操作</span></div>
@@ -80,8 +105,6 @@
               <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border  u-p-t-5 u-p-b-5"><span>{{ dataIndex + 1 }}</span></div>
                 <div class="u-width-150 u-border">
-                  <!-- <el-input v-model="dataItem.processNumber" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" /> -->
                   <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
                     :disabled="data.currentEditProcessIndex != dataIndex" :remote-method="remoteMethodForProcessNumber"
                     @change="processNumberChange($event, dataIndex)" :loading="optionLoading">
@@ -90,8 +113,6 @@
                   </el-select>
                 </div>
                 <div class="u-width-150 u-border">
-                  <!-- <el-input v-model="dataItem.processName" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" /> -->
                   <el-select v-model="dataItem.processName" filterable remote reserve-keyword
                     :disabled="data.currentEditProcessIndex != dataIndex" :remote-method="remoteMethodForProcessName"
                     @change="processNameChange($event, dataIndex)" :loading="optionLoading">
@@ -109,7 +130,13 @@
                       <el-input v-model="deviceItem.fixtureName" :disabled="data.currentEditProcessIndex != dataIndex" />
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input v-model="deviceItem.fixtureState" :disabled="data.currentEditProcessIndex != dataIndex" />
+                      <el-select  v-model="deviceItem.fixtureState"
+                                  :disabled="data.currentEditProcessIndex != dataIndex">
+                        <el-option v-for="item in deviceStatusEnmus"
+                                   :key="item.code"
+                                   :label="item.value"
+                                   :value="item.value"/>
+                      </el-select>
                     </div>
                     <div class="u-width-200   u-border">
                       <el-input-number v-model="deviceItem.fixturePrice" :min="1" :precision="2"
@@ -123,14 +150,20 @@
                 </div>
               </div>
 
-              <div class="u-flex u-row-left u-col-center  u-text-center">
-                <div class="u-width-150  u-border">
+              <div class="u-text-center">
+                <div class="u-flex u-row-left u-col-center  u-text-center">
+                  <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.fixtureGaugeName" style="border: none;"
                     :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input v-model="dataItem.fixtureGaugeState" style="border: none;"
-                    :disabled="data.currentEditProcessIndex != dataIndex" />
+                  <el-select  v-model="dataItem.fixtureGaugeState"
+                              :disabled="data.currentEditProcessIndex != dataIndex">
+                    <el-option v-for="item in deviceStatusEnmus"
+                               :key="item.code"
+                               :label="item.value"
+                               :value="item.value"/>
+                  </el-select>
                 </div>
                 <div class="u-width-150  u-border">
                   <el-input-number v-model="dataItem.fixtureGaugePrice" style="border: none;"
@@ -140,11 +173,14 @@
                   <el-input v-model="dataItem.fixtureGaugeBusiness" style="border: none;"
                     :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
+                </div>
+              </div>
+
+              <div class="u-flex u-row-left u-col-center  u-text-center">
                 <div class="u-width-150  u-border">
                   <el-input v-model="dataItem.lastModifierUserName" style="border: none;" disabled />
                 </div>
                 <div class="u-width-200 u-border">
-                  <!-- <el-input v-model="dataItem.deviceManageTime"  style="border: none;" /> -->
                   <el-date-picker v-model="dataItem.lastModificationTime" style="width: 200px;" disabled type="datetime"
                     value-format="YYYY-MM-DD hh:mm:ss" @change="timeChange" :disabled-date="disabledDate"
                     placeholder="请输入工序维护时间" />
@@ -225,7 +261,7 @@ import { reactive, toRefs, onMounted, ref } from 'vue';
 import { formatDateTime } from "@/utils"
 import { ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus"
 import { getListAll, updateFoundationFixture, createFoundationFixture, deleteFoundationPFoundationFixture, exportFoundationFixture, uploadAction } from "@/api/foundationFixtureDto";
-import { exportDevice, getDeviceLog, saveDeviceLog } from "@/api/foundationDeviceDto";
+import {exportDevice, getDeviceLog, getDeviceStatus, saveDeviceLog} from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
 const data = reactive<any>({
   tableColumnWidth: 200,
@@ -233,6 +269,7 @@ const data = reactive<any>({
   currentEditProcessIndex: -1,
 })
 const baseLibLogRecords = ref([])
+const deviceStatusEnmus=ref<any>([]);
 const addFlag = ref(false);
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -268,6 +305,14 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
   })
 }
 
+const getDeviceStatuEnmu = () => {
+  getDeviceStatus().then((response:any) => {
+    console.log("======设备状态列表=======", response);
+    if (response.success) {
+      deviceStatusEnmus.value=response.result;
+    }
+  })
+}
 
 //获取日志记录
 const getDeviceOptionLog = () => {
@@ -290,7 +335,8 @@ const getDeviceOptionLog = () => {
 }
 //查询关键字
 const queryForm = reactive({
-  deviceName: ''
+  fixtureName: "",
+  fixtureGaugeName: ""
 })
 let currentEditProcessItem: any = null;
 onMounted(() => {
@@ -300,11 +346,12 @@ onMounted(() => {
 const initData = async () => {
   addFlag.value = false;
   data.currentEditProcessIndex = -1;
-  let listResult: any = await getListAll({ DeviceName: queryForm.deviceName })
+  let listResult: any = await getListAll(queryForm)
   if (listResult.success) {
     data.tableData = listResult.result
   }
   getDeviceOptionLog()
+  getDeviceStatuEnmu();
 }
 
 const addDevice = () => {

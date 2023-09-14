@@ -282,7 +282,7 @@
               </div>
 
               <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                <span>{{ dataIndex }}</span>
+                <span>{{ dataIndex +1 }}</span>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote

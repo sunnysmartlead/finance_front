@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card m="2" header="质量成本">
-      <qualityTable :qualityData="qualityData" :onEdit="handleEdit" />
+      <qualityTable :qualityData="qualityData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>

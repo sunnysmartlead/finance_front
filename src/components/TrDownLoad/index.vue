@@ -1,10 +1,6 @@
 <template>
   <div>
-    <el-form inline>
-      <el-form-item label="Tr主方案">
-        <el-button @click="downLoad" type="primary">点击下载附件</el-button>
-      </el-form-item>
-    </el-form>
+    <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
   </div>
 </template>
 
@@ -12,24 +8,16 @@
 import { reactive, toRefs, onBeforeMount, onMounted, watchEffect} from "vue"
 import { useRoute } from "vue-router"
 import { getAuditFlowVersion, downloadFile } from "./service"
+import getQuery from "@/utils/getQuery"
 
-/**
- * 路由对象
- */
-const route = useRoute()
-/**
- * 路由实例
- */
-// const router = useRouter()
+const { auditFlowId } = getQuery()
+
 //console.log('1-开始创建组件-setup')
-/**
- * 数据部分
- */
-const data = reactive({})
-let trFileId: null | number = null
-let solutionFileName = "" //文件名
-const downLoad = async () => {
-  console.log(trFileId, "trFileId")
+// TR主方案下载
+const downTrFile = async () => {
+  let res: any = await getAuditFlowVersion(Number(auditFlowId))
+  const trFileId = res.result.solutionFileIdentifier
+  const solutionFileName = res.result.solutionFileName
   if (trFileId) {
     try {
       let res: any = await downloadFile(trFileId)
@@ -51,21 +39,8 @@ const downLoad = async () => {
     }
   }
 }
-onBeforeMount(() => {
-  //console.log('2.组件挂载页面之前执行----onBeforeMount')
-})
-onMounted(async () => {
-  let { auditFlowId } = route.query
-  let res: any = await getAuditFlowVersion(Number(auditFlowId))
-  trFileId = res.result.solutionFileIdentifier
-  solutionFileName = res.result.solutionFileName
-  //console.log('3.-组件挂载到页面之后执行-------onMounted')
-})
+
 watchEffect(() => {})
-// 使用toRefs解构
-// let { } = { ...toRefs(data) }
-defineExpose({
-  ...toRefs(data)
-})
+
 </script>
 <style scoped lang="scss"></style>

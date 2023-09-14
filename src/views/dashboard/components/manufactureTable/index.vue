@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card m="2" header="制造成本">
-      <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" />
+      <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>

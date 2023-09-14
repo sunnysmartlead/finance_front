@@ -191,7 +191,7 @@
         <el-card header="项目走量">
           <el-row justify="space-between" align="middle" style="margin: 10px 0px">
             <h6 style="margin: 0px">客户输入终端走量K（台）</h6>
-            <el-button type="primary" @click="addPCS" v-havedone>新增车型</el-button>
+            <el-button type="primary" @click="addPCS" :disabled="isDisabled" v-havedone>新增车型</el-button>
           </el-row>
           <el-table :data="pcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
             <el-table-column label="车厂" width="180" fixed="left">
@@ -2389,9 +2389,7 @@ const ChangeShareCount = debounce((row: any, index: number) => {
       )
     })
     .reduce((a: any, b: { quantity: any }) => a + b.quantity, 0)
-  console.log(moduleTableTotal.value[index]?.modelCountYearList, index, "[分摊数量3年之和]")
   if (row.count > total) {
-    row.count = total.toFixed(2)
     ElMessage({
       type: "error",
       message: "分摊数量不能大于前三年模组走量之合"

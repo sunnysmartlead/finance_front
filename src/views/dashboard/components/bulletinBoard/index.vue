@@ -2,12 +2,13 @@
   <div class="dashboard">
     <el-card class="m-2">
       <el-row justify="end" align="middle">
-        <el-upload v-model:file-list="fileList" show-file-list
+        <el-upload v-if="!hideEdit" v-model:file-list="fileList" show-file-list
           :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
           :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
           :on-error="handleUploadError">
           <el-button type="primary" style="margin: 10px 10px 0 0;">TR方案上传</el-button>
         </el-upload>
+        <TrDownLoad v-if="hideEdit" />
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
@@ -179,6 +180,7 @@ import otherCostTable from "../otherCostTable/index.vue"
 import { isEmpty } from "lodash"
 import useJump from "@/hook/useJump"
 import SchemeCompare from "@/components/SchemeCompare/index.vue"
+import TrDownLoad from "@/components/TrDownLoad/index.vue"
 
 enum upDownEnum {
   "全年",

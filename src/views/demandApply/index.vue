@@ -1754,8 +1754,7 @@ watch(
   (val) => {
     const [moduleTableTotalData, kvList, isHasGradient] = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
-      let filterData = _.cloneDeep(kvList)
-
+      let filterData: any = _.cloneDeep(kvList)
       filterData = filterData.map((item: any) => {
         console.log(isHasGradient, "isHasGradient12313")
         return {
@@ -1775,33 +1774,29 @@ watch(
           }))
         }
       })
-      // console.log(filterData, "[filterDatafilterData]")
       gradientModelTable.value = filterData
-    }
-  },
-  {
-    deep: true
-  }
-)
-
-watch(
-  () => [productTableData.value, kvPricingData.value],
-  (val) => {
-    const [productList, kvList] = val
-    if (productList.length && kvList.length && isFirstShow.value) {
-      let arr: any = []
-      kvList.forEach((kvItem: any) => {
-        productList.forEach((productItem: any) => {
-          arr.push({
-            kv: kvItem.gradientValue,
-            product: productItem.product,
-            targetPrice: 0,
-            currency: 0
+      if (moduleTableTotalData?.length && kvList?.length && isFirstShow.value) {
+        let arr: any = []
+        kvList.forEach((gradientValue: any) => {
+          moduleTableTotalData.forEach((item: any) => {
+            const findItem = customerTargetPrice.value.find(c => c.product === item.product)
+            if (findItem) {
+              arr.push({
+                ...findItem,
+                kv: gradientValue,
+              })
+            } else {
+              arr.push({
+                kv: gradientValue,
+                product: item.product,
+                targetPrice: 0,
+                currency: 0
+              })
+            }
           })
         })
-      })
-      console.log(kvList, arr, "kvList")
-      customerTargetPrice.value = arr
+        customerTargetPrice.value = arr
+      }
     }
   },
   {

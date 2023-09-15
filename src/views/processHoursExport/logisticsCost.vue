@@ -374,16 +374,16 @@ const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("当前下表",cardIndex);
   console.log(`index===${index}`,item)
   if (item.packagingPrice && item.singlyDemandPrice) {
-    item.transportPrice = (Number(item.packagingPrice) + item.singlyDemandPrice)/item.
+    item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice
   }
   if(cardIndex==0&&index==0){
-     cardData.value.map(function(cardItem:any){
-        if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
-          cardItem.logisticscostList.map(function(logItem:any){
-              logItem.packagingPrice=value;
-          })
-        }
-     })
+    cardData.value.map(function(cardItem:any){
+      if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
+        cardItem.logisticscostList.map(function(logItem:any){
+          logItem.packagingPrice=value;
+        })
+      }
+    })
   }
 }
 //运费/月发生变化
@@ -402,22 +402,22 @@ const freightPriceChange = (value: any, index: any, item: any,cardIndex:number) 
     console.log("单PCS总物流成本", item.transportPrice)
   }
   if(cardIndex==0&&index==0){
-     cardData.value.map(function(cardItem:any){
-        if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
-          cardItem.logisticscostList.map(function(logItem:any){
-              logItem.freightPrice=value;
-              let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
-              let monthlyDemandPrice = yearCount / 12
-              logItem.monthlyDemandPrice = monthlyDemandPrice
-              let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
-              logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
-              if (logItem.packagingPrice && logItem.singlyDemandPrice) {
-                logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
-              }
+    cardData.value.map(function(cardItem:any){
+      if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
+        cardItem.logisticscostList.map(function(logItem:any){
+          logItem.freightPrice=value;
+          let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
+          let monthlyDemandPrice = yearCount / 12
+          logItem.monthlyDemandPrice = monthlyDemandPrice
+          let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
+          logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
+          if (logItem.packagingPrice && logItem.singlyDemandPrice) {
+            logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
+          }
 
-          })
-        }
-     })
+        })
+      }
+    })
   }
 
 
@@ -439,21 +439,21 @@ const storagePriceChange = (value: any, index: any, item: any,cardIndex:number) 
   }
 
   if(cardIndex==0&&index==0){
-     cardData.value.map(function(cardItem:any){
-        if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
-          cardItem.logisticscostList.map(function(logItem:any){
-              logItem.storagePrice=value;
-              let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
-              let monthlyDemandPrice = yearCount / 12
-              logItem.monthlyDemandPrice = monthlyDemandPrice
-              let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
-              logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
-              if (logItem.packagingPrice && logItem.singlyDemandPrice) {
-                logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
-              }
-          })
-        }
-     })
+    cardData.value.map(function(cardItem:any){
+      if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
+        cardItem.logisticscostList.map(function(logItem:any){
+          logItem.storagePrice=value;
+          let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
+          let monthlyDemandPrice = yearCount / 12
+          logItem.monthlyDemandPrice = monthlyDemandPrice
+          let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
+          logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
+          if (logItem.packagingPrice && logItem.singlyDemandPrice) {
+            logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
+          }
+        })
+      }
+    })
   }
 
 }
@@ -507,6 +507,8 @@ const submitData = ({ comment, opinion, nodeInstanceId }: any) => {
     }
   })
 }
+
+
 
 const openEdit = () => {
   console.log("开启编辑")

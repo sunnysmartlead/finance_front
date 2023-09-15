@@ -191,7 +191,7 @@
         <el-card header="项目走量">
           <el-row justify="space-between" align="middle" style="margin: 10px 0px">
             <h6 style="margin: 0px">客户输入终端走量K（台）</h6>
-            <el-button type="primary" @click="addPCS" v-havedone>新增车型</el-button>
+            <el-button type="primary" @click="addPCS" :disabled="isDisabled" v-havedone>新增车型</el-button>
           </el-row>
           <el-table :data="pcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
             <el-table-column label="车厂" width="180" fixed="left">
@@ -1252,10 +1252,7 @@ const moduleTableTotal = computed(() => {
   flatData.forEach((item: any) => {
     const currentData = productModule.get(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`) || {}
     if (item.product && item.pixel && item.productType && item?.code && _.isEmpty(currentData)) {
-      let modelTotal = 0
-      item.modelCountYearList?.forEach((item: any) => {
-        modelTotal += Number(item.quantity || 0)
-      })
+      const modelTotal = item.modelCountYearList?.reduce((a: number, b: any) => a + b.quantity, 0) || 0
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         ...item,
         productType: item.productType,
@@ -1265,8 +1262,6 @@ const moduleTableTotal = computed(() => {
     }
     console.log(currentData, "[获取当前的模组]")
     if (!_.isEmpty(currentData)) {
-
-
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         carModel: compareString(currentData.carModel, item.carModel),
         product: item.product,
@@ -1338,19 +1333,47 @@ const handleDealWithModelCount = (arr: any) => {
   })
 }
 
+const checkModuleTableDataV2Data = () => {
+  let text = ''
+  let title = ''
+  const notPass = moduleTableDataV2.value.some((row: any, index: number) => {
+    return row.some((prop: any, rowIndex: number) => {
+      title = `${prop.carModel}-模组数量K下第${rowIndex + 1}行的`
+      const modelCountYearListNotPass = prop.modelCountYearList.some((item: any, yearIndex: number) => {
+        if (!item.quantity) {
+          text = `${item.year}的值`
+        }
+      })
+      if (!prop.code) {
+        text = title + '子项目代码'
+        return true
+      } else if (!prop.product) {
+        text = title + '产品名称'
+        return true
+      } else if (!prop.productType) {
+        text = title + '产品大类'
+        return true
+      } else if (!prop.pixel) {
+        text = title + '像素'
+        return true
+      } else if (modelCountYearListNotPass) {
+        return true
+      }
+    })
+  })
+  if (notPass) {
+    ElMessage({
+      type: "error",
+      message: `${text}不能为空`
+    })
+    throw Error()
+  }
+}
+
 const save = async (formEl: FormInstance | undefined) => {
   let { auditFlowId } = route.query
   // 模组走量不能为0
   let isModuleTableDataQuantity = false
-  moduleTableDataV2.value.forEach((row: any) => {
-    row.forEach((prop: any) => {
-      prop.modelCountYearList.forEach((item: any) => {
-        if (!item.quantity) {
-          isModuleTableDataQuantity = true
-        }
-      })
-    })
-  })
   const isPass = pcsTableData.value.some((item: any) => {
     if (!item.carFactory || !item.carModel) return false
     return true
@@ -1359,6 +1382,7 @@ const save = async (formEl: FormInstance | undefined) => {
     if (!item.carFactory || !item.carModel) return false
     return true
   })
+  checkModuleTableDataV2Data()
   if (!isPass || !isPassTwo) {
     ElMessage({
       type: "error",
@@ -1366,15 +1390,7 @@ const save = async (formEl: FormInstance | undefined) => {
     })
     return
   }
-  if (isModuleTableDataQuantity) {
-    ElMessage({
-      type: "error",
-      message: "模组走量不能为空！"
-    })
-    return
-  }
   if (!formEl) return
-  console.log(state.quoteForm.sorFile, "{state.quoteForm.sorFile}")
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       saveloading.value = true
@@ -1769,10 +1785,10 @@ watch(
 )
 
 watch(
-  () => [productTableData.value, kvPricingData.value, isFirstShow],
+  () => [productTableData.value, kvPricingData.value],
   (val) => {
-    const [productList, kvList, isFirstShowData] = val
-    if (productList.length && kvList.length && !isFirstShowData) {
+    const [productList, kvList] = val
+    if (productList.length && kvList.length && isFirstShow.value) {
       let arr: any = []
       kvList.forEach((kvItem: any) => {
         productList.forEach((productItem: any) => {
@@ -2373,9 +2389,7 @@ const ChangeShareCount = debounce((row: any, index: number) => {
       )
     })
     .reduce((a: any, b: { quantity: any }) => a + b.quantity, 0)
-  console.log(moduleTableTotal.value[index]?.modelCountYearList, index, "[分摊数量3年之和]")
   if (row.count > total) {
-    row.count = total.toFixed(2)
     ElMessage({
       type: "error",
       message: "分摊数量不能大于前三年模组走量之合"

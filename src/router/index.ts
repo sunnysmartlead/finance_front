@@ -550,7 +550,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      hidden: true
+      title: '核价看板'
+      // hidden: true
     },
     // meta: {
     //   hidden: true
@@ -569,7 +570,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/dashboard/projectChiefAudit/index.vue"),
         name: "ProjectChiefAudit",
         meta: {
-          title: "项目部科长审核"
+          title: "项目部核价审核"
         }
       },
       {

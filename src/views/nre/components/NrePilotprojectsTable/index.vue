@@ -22,8 +22,8 @@
             </el-upload>
             <SORDonwload />
             <TrView />
-            <el-button type="primary" @click="handleFethNreTableDownload" m="2">NRE实验费模板下载</el-button>
-            <el-button type="primary" @click="handleFethNreExcelDownload" m="2" v-if="!isVertify">NRE实验费数据导出</el-button>
+            <el-button type="primary" @click="handleFethNreExcelDownload" m="2">NRE实验费模板下载</el-button>
+            <el-button type="primary" @click="handleFethNreTableDownload" m="2" v-if="!isVertify">NRE实验费数据导出</el-button>
             <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
           </el-row>
         </el-row>
@@ -113,7 +113,8 @@ import {
   GetProductDepartment,
   GetExportOfProductDepartmentFeeForm,
   GetFoundationEmc,
-  NREToExamine
+  NREToExamine,
+  PostProductDepartmentDownloadExcel
 } from "../../common/request"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { getLaboratoryFeeSummaries } from "../../common/nrePilotprojectsSummaries"
@@ -231,7 +232,7 @@ const handleFethNreExcelDownload = async () => {
     })
   }
   try {
-    const res: any = await GetExportOfProductDepartmentFeeForm({
+    const res: any = await PostProductDepartmentDownloadExcel({
       auditFlowId,
       solutionId: productId
     })

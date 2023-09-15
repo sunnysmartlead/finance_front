@@ -235,7 +235,7 @@ export function GetExportOfProductDepartmentFeeForm(data: any) {
   })
 }
 
-//  Nre 品保部=>试验项目 产品开发部-NRE 下载
+//  Nre 产品部EMC+电性能实验费 导出数据
 export function GetExportOfEnvironmentalExperimentFeeForm(data: any) {
   return request({
     url: "/api/services/app/NrePricing/GetExportOfEnvironmentalExperimentFeeForm",
@@ -258,7 +258,7 @@ export function GetFoundationEmc(data: any) {
 export function PostProductDepartmentDownloadExcel(data: any) {
   return request({
     url: "/api/services/app/NrePricing/PostProductDepartmentDownloadExcel",
-    method: "get",
+    method: "post",
     data,
     responseType: "blob"
   })

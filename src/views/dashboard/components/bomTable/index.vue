@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card m="2" header="bom成本">
-      <bomTable :bomData="bomData" :onEdit="handleEdit" />
+      <bomTable :bomData="bomData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2"  v-if="!hideEdit">
       <template #header>
@@ -24,7 +24,7 @@
           </el-row>
         </el-row>
       </template>
-      <bomTable isEdit v-model:bomData="bomModifyData" :onDelete="handleDelete" />
+      <bomTable isEdit  v-model:bomData="bomModifyData" :onDelete="handleDelete" />
     </el-card>
   </div>
 </template>

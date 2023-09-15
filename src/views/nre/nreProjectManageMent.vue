@@ -1,7 +1,7 @@
 <template>
-  <div style="padding: 0 10px">
+  <div class="margin-top">
     <ProcessVertifyBox :onSubmit="submit" processType="confirmProcessType" />
-    <el-card class="margin-top">
+    <el-card >
       <template #header>
         <el-row style="width: 100%" justify="space-between" align="middle">
           手板件费用
@@ -160,9 +160,9 @@
       </el-table>
     </el-card>
 
-    <div style="float: right; margin: 20px 0">
+    <!-- <div style="float: right; margin: 20px 0">
       <el-button type="primary" @click="submit" v-havedone>提交</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -220,6 +220,7 @@ const calculateCost = (row: TravelExpenseModel) => {
 }
 
 const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  console.log('触发了')
   const { success } = await PostProjectManagement({
     projectManagement: {
       ...data,

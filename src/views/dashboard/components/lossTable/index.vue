@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card m="2" header="损耗成本">
-      <lossTable :lossData="lossData" :onEdit="handleEdit" />
+      <lossTable :lossData="lossData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>

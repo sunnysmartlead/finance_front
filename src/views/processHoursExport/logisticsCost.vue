@@ -374,7 +374,7 @@ const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("当前下表",cardIndex);
   console.log(`index===${index}`,item)
   if (item.packagingPrice && item.singlyDemandPrice) {
-    item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice
+    item.transportPrice = (Number(item.packagingPrice) + item.singlyDemandPrice)/item.
   }
   if(cardIndex==0&&index==0){
      cardData.value.map(function(cardItem:any){

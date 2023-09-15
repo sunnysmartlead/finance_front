@@ -100,7 +100,7 @@
                         <div class="u-text-center">
                             <div v-if="dataItem.deviceList && dataItem.deviceList.length > 0"
                                 class="u-flex u-row-left u-col-center  u-text-center">
-                                <div v-for="(deviceItem, deviceIndex) in dataItem.deviceList" 
+                                <div v-for="(deviceItem, deviceIndex) in dataItem.deviceList"
                                         :key="deviceIndex"
                                     class="u-flex u-row-left u-col-center u-text-center">
                                     <div class="u-width-200   u-border">
@@ -110,16 +110,16 @@
                                     <div class="u-width-200   u-border">
                                         <el-select  v-model="deviceItem.deviceStatus"
                                             :disabled="data.currentEditProcessIndex != dataIndex">
-                                            <el-option v-for="item in deviceStatusEnmus" 
-                                                        :key="item.code" 
+                                            <el-option v-for="item in deviceStatusEnmus"
+                                                        :key="item.code"
                                                         :label="item.value"
                                                         :value="item.value"/>
                                         </el-select>
 
                                     </div>
                                     <div class="u-width-200   u-border">
-                                        <el-input-number v-model="deviceItem.devicePrice" :min="1" :precision="2"
-                                            :disabled="data.currentEditProcessIndex != dataIndex" :step="0.01" />
+                                        <el-input-number v-model="deviceItem.devicePrice" :min="1"
+                                            :disabled="data.currentEditProcessIndex != dataIndex"  />
                                     </div>
                                     <div class="u-width-200   u-border">
                                         <el-input v-model="deviceItem.deviceProvider"

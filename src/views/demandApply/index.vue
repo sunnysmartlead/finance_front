@@ -427,7 +427,8 @@
             </el-table-column>
           </el-table>
           <div v-for="(item, Findex) in gradientModelTable" :key="Findex">
-            <p class="mx-1" size="large">{{ item.kv }} (K/Y)</p>
+            <p class="mx-1" size="large">{{ `${item.kv} ${state.quoteForm.updateFrequency == updateFrequency.HalfYear ?
+              '(K/HY)' : '(K/Y)'}` }} </p>
             <el-table :data="item.children" style="width: 100%" border>
               <el-table-column type="index" width="80" label="序号" />
               <el-table-column label="客户零件号" prop="number" width="180" />
@@ -824,7 +825,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="exchange" label="汇率" />
-          <el-table-column prop="total" label="合计" />
+          <el-table-column prop="total" label="合计" :formatter="formatValue" />
         </el-table>
         <h6 />
         <h6 />
@@ -1291,6 +1292,14 @@ let router = useRouter()
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (cellValue) {
     return (Number(cellValue).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return 0
+  }
+}
+
+const formatValue = (_record: any, _row: any, cellValue: any) => {
+  if (cellValue) {
+    return Number(cellValue).toFixed(2)
   } else {
     return 0
   }

@@ -165,6 +165,7 @@
                 :label="`${c.kv} K/Y`"
                 width="150"
                 :key="`rebateMoney${i}`"
+                :formatter="formatThousandths"
               >
                 <template #default="{ row }">
                   <el-input-number
@@ -173,7 +174,6 @@
                     controls-position="right"
                     :min="0"
                   />
-                  <span v-if="!row.isEdit">{{ row.rebateMoney[i]?.value?.toFixed(5) }}</span>
                 </template>
               </el-table-column>
               <!-- <template #default="{ row }">
@@ -380,7 +380,11 @@ const fetchInitData = async () => {
 }
 
 const formatDatas = (record: any, _row: any, cellValue: any) => {
-  return cellValue || ""
+  if (cellValue) {
+    return (Number(cellValue).toFixed() + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return ''
+  }
 }
 
 let SumCount = computed(() => {
@@ -484,6 +488,14 @@ const handleEdit = (row: any, isEdit: boolean) => {
 
 const filterStandardMoney = (record: any, _row: any, cellValue: any) => {
   return cellValue?.toFixed(5) || ""
+}
+
+const formatThousandths = (_record: any, _row: any, cellValue: any) => {
+  if (cellValue) {
+    return (Number(cellValue).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return 0
+  }
 }
 
 const filterinTheRate = (record: any, _row: any, cellValue: any) => {

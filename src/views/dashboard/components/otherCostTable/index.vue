@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card m="2" header="其他成本">
-      <otherCostTable :manufactureData="manufactureData" :hideEdit="hideEdit" />
+      <otherCostTable :otherCostData="otherCostData" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>
@@ -68,14 +68,16 @@ const getModifyData = async () => {
 const getOtherCost = async () => {
   try {
   const { yearData, gradientId } = props
-    const { result }: any = await GetOtherCostItem({
+    const { result, success }: any = await GetOtherCostItem({
       Year: yearData.year,
       AuditFlowId: auditFlowId,
       SolutionId,
       UpDown: yearData.upDown,
       GradientId: gradientId,
     }) || {}
-    otherCostData.value = result || []
+    if (success) {
+      otherCostData.value = result || []
+    }
     console.log(result, "获取其他成本")
   } catch (err: any) {
     console.log(err, "[ 获取其他成本失败 ]")

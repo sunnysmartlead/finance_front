@@ -218,7 +218,7 @@ export function GetIsTradeCompliance(auditFlowId: number) {
 // 获取其他成本项目
 export function GetOtherCostItem(data: any) {
   return request({
-    url: "/api/services/app/PriceEvaluationGet/GetOtherCostItem2",
+    url: "/api/services/app/PriceEvaluationGet/GetOtherCostItem2List",
     method: "get",
     data
   })

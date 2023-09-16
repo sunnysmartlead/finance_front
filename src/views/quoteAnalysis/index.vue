@@ -99,7 +99,7 @@
     <el-card class="card">
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
-        <el-table-column label="产品" prop="product" />
+        <el-table-column label="产品" prop="proudct" />
         <el-table-column label="单车产品数量" prop="amount" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
@@ -184,7 +184,7 @@
         <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
       </el-row>
       <el-table :data="item.grossMargins" border>
-        <el-table-column label="产品" prop="product" />
+        <el-table-column label="产品" prop="proudct" />
         <el-table-column label="单车产品数量" prop="amount" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />

@@ -4,7 +4,7 @@
     <el-card>
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px>新增方案</el-button>
-      <el-button type="primary" mb-20px>确定</el-button>
+      <el-button type="primary" mb-20px @click="comfirmPlans"  v-loading.fullscreen.lock="fullscreenLoading">确定</el-button>
       <el-row :gutter="20">
         <el-col :span="6" v-for="(item, index) in planList" :key="index">
           <div>方案{{ index + 1 }}:</div>
@@ -15,7 +15,7 @@
       </el-row>
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
-    <el-button-group style=" float: right">
+    <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(1)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(0)" v-havedone>不报价</el-button>
     </el-button-group>
@@ -24,7 +24,14 @@
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
-      <el-table :data="nre.models" style="width: 100%" border height="400px" :summary-method="getSummaries" show-summary>
+      <el-table
+        :data="nre.models"
+        style="width: 100%"
+        border
+        height="400px"
+        :summary-method="getSummaries"
+        show-summary
+      >
         <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
         <el-table-column prop="pricingMoney" label="核价金额" />
@@ -75,8 +82,11 @@
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border height="500px">
       <el-table-column prop="projectName" label="项目名称" />
-      <el-table-column :label="item.grossMargin" v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
-        :key="index">
+      <el-table-column
+        :label="item.grossMargin"
+        v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
+        :key="index"
+      >
         <template #default="scope">
           <el-input v-model="scope.row.grossMarginList[index].grossMarginNumber" type="number" />
         </template>
@@ -183,6 +193,16 @@
               {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.interior.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.interior.nreGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price">
@@ -206,16 +226,23 @@
               {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.client.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.client.nreGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
           <el-table-column label="单价">
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
-                  <el-button @click="calculateFullGrossMargin(
-                    scope.row,
-                    scope.$index
-                  )">计算</el-button>
+                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
                 </template>
               </el-input>
             </template>
@@ -223,6 +250,16 @@
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.thisQuotation.grossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.thisQuotation.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.thisQuotation.nreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
@@ -283,7 +320,7 @@ import * as echarts from "echarts"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
-import { calculateRate } from "./service"
+import { calculateRate, PostStatementAnalysisBoardSecond } from "./service"
 /**
  * 路由对象
  */
@@ -297,13 +334,15 @@ const router = useRouter()
  * 数据部分
  */
 let { auditFlowId, productId } = getQuery()
-const productStore = useProductStore()
-productStore.productList
 const planList = reactive([
   {
     value: ""
   }
 ])
+const productStore = useProductStore()
+
+const fullscreenLoading = ref(false)
+
 const data = reactive({
   //仅含样品
   sampleOnlyRes: {
@@ -1697,13 +1736,40 @@ const calculateFullGrossMargin = async (row: any, index: any) => {
   let res = await calculateRate({ auditFlowId, gradientId, productId, solutionId })
   console.log(res, index)
 }
+
+const comfirmPlans = async () => {
+  fullscreenLoading.value = true
+  console.log(productStore.productList)
+  let planMap = {}
+  let solutionTables: any[] = []
+  productStore.productList.forEach((item) => {
+    planMap[item.id as keyof Object] = item
+  })
+  planList.forEach((item) => {
+    if (planMap[item.value as keyof Object]) {
+      solutionTables.push(planMap[item.value as keyof Object])
+    }
+  })
+  let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
+  console.log(res)
+  console.log(planList)
+  console.log(solutionTables)
+  data.allRes = res.result
+  fullscreenLoading.value = false
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
-onMounted(() => {
+onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
+
+  if (auditFlowId) {
+    // productStore.setProductList(auditFlowId)
+    // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
+    // console.log(res)
+  }
 })
-watchEffect(() => { })
+watchEffect(() => {})
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

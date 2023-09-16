@@ -147,7 +147,7 @@
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
-                  <el-button>计算</el-button>
+                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
                 </template>
               </el-input>
             </template>
@@ -320,7 +320,7 @@ import * as echarts from "echarts"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
-import { calculateRate, PostStatementAnalysisBoardSecond } from "./service"
+import { calculateRate, PostStatementAnalysisBoardSecond, PostComparison } from "./service"
 /**
  * 路由对象
  */
@@ -842,6 +842,11 @@ const openDialog = async (row: any) => {
   // console.log(result, "res")
   // data.dialogTable = result
   // dialogVisible.value = true
+  const { result } = await PostComparison({
+    auditFlowId: auditFlowId,
+    productId
+  })
+  console.log(result)
 }
 const getSummaries = (param: { columns: any; data: any }) => {
   const { columns, data } = param
@@ -1064,6 +1069,7 @@ const initCharts = (id: string, chartOption: any) => {
     return chart
   }
 }
+
 const postOffer = (isOffer: number) => {
   console.log(isOffer)
 }

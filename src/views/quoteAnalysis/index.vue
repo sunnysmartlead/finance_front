@@ -925,7 +925,7 @@ const setChartData = (gradientTableMap: any) => {
     ProjectUnitPrice[key].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
     ProjectUnitPrice[key].series = gradientTableMap[key].map((item: any) => {
       return {
-        name: item.product,
+        name: item.proudct,
         type: "bar",
         stack: "total",
         label: {
@@ -1001,9 +1001,9 @@ const setChartData = (gradientTableMap: any) => {
     }
     let RevenueGrossMarginSeries = [] as any[]
     gradientTableMap[key].forEach((item: any) => {
-      if (item.product === "销售收入") {
+      if (item.proudct === "销售收入") {
         let RevenueGrossMarginData = {
-          name: item.product,
+          name: item.proudct,
           type: "bar",
           stack: "total",
           label: {
@@ -1019,7 +1019,7 @@ const setChartData = (gradientTableMap: any) => {
         }
         RevenueGrossMarginSeries.push(RevenueGrossMarginData)
       }
-      if (item.product === "毛利率") {
+      if (item.proudct === "毛利率") {
         let RevenueGrossMarginDataY = {
           yAxisIndex: 1,
           name: "毛利率",

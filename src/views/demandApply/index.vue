@@ -49,9 +49,10 @@
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="项目代码(自动带出):" prop="projectCode">
-              <el-select v-model="state.quoteForm.projectCode" filterable placeholder="Select" :disabled="isDisabled">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            <el-form-item label="项目代码:" prop="projectCode">
+              <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
+                placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
+                <el-option v-for="item in projectCodeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -1023,7 +1024,7 @@ import { ElMessage } from "element-plus"
 // import { SearchPerson } from "@/components/SearchPerson"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-
+import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
 import dayjs from "dayjs"
 
 //整个页面是否可以编辑
@@ -1036,28 +1037,7 @@ const props = defineProps({
 
 //客户目标价
 var customerTargetPrice: any = ref([])
-const options = [
-  {
-    value: "Option1",
-    label: "卡宴"
-  },
-  {
-    value: "Option2",
-    label: "吉利"
-  },
-  {
-    value: "Option3",
-    label: "天马"
-  },
-  {
-    value: "Option4",
-    label: "小鹏"
-  },
-  {
-    value: "Option5",
-    label: "小米"
-  }
-]
+const projectCodeOptions = ref<any>([])
 const refForm = ref<FormInstance>()
 
 interface Options {
@@ -1313,6 +1293,20 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
     return (Number(cellValue).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
     return 0
+  }
+}
+
+const getProjectCodeOptions = async (filter?: any) => {
+  const { result }: any = await GetAllProjectSelf({
+    filter: filter || '',
+    skipCount: 100,
+    maxResultCount: 100
+  })
+  if (result?.items) {
+    projectCodeOptions.value = map(result?.items, item => ({
+      label: item.code,
+      value: item.code,
+    }))
   }
 }
 
@@ -2254,6 +2248,7 @@ onMounted(async () => {
   // 设置单据编号
   setNumber()
   try {
+    getProjectCodeOptions()
     let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
     state.updateFrequencyOptions = UpdateFrequency.result?.financeDictionaryDetailList
 

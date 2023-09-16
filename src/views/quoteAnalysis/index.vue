@@ -4,7 +4,7 @@
     <el-card>
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px>新增方案</el-button>
-      <el-button type="primary" mb-20px>确定</el-button>
+      <el-button type="primary" mb-20px @click="comfirmPlans"  v-loading.fullscreen.lock="fullscreenLoading">确定</el-button>
       <el-row :gutter="20">
         <el-col :span="6" v-for="(item, index) in planList" :key="index">
           <div>方案{{ index + 1 }}:</div>
@@ -15,7 +15,7 @@
       </el-row>
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
-    <el-button-group style=" float: right">
+    <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(1)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(0)" v-havedone>不报价</el-button>
     </el-button-group>
@@ -24,7 +24,14 @@
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
-      <el-table :data="nre.models" style="width: 100%" border height="400px" :summary-method="getSummaries" show-summary>
+      <el-table
+        :data="nre.models"
+        style="width: 100%"
+        border
+        height="400px"
+        :summary-method="getSummaries"
+        show-summary
+      >
         <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
         <el-table-column prop="pricingMoney" label="核价金额" />
@@ -75,8 +82,11 @@
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border height="500px">
       <el-table-column prop="projectName" label="项目名称" />
-      <el-table-column :label="item.grossMargin" v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
-        :key="index">
+      <el-table-column
+        :label="item.grossMargin"
+        v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
+        :key="index"
+      >
         <template #default="scope">
           <el-input v-model="scope.row.grossMarginList[index].grossMarginNumber" type="number" />
         </template>
@@ -89,8 +99,8 @@
     <el-card class="card">
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
-        <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="amount" />
+        <el-table-column label="产品" prop="proudct" />
+        <el-table-column label="单车产品数量" prop="productNumber" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率" prop="quotedGrossMarginSimple.interior.grossMargin">
@@ -174,13 +184,23 @@
         <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
       </el-row>
       <el-table :data="item.grossMargins" border>
-        <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="amount" />
+        <el-table-column label="产品" prop="proudct" />
+        <el-table-column label="单车产品数量" prop="productNumber" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.interior.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.interior.nreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
@@ -206,16 +226,23 @@
               {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.client.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.client.nreGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
           <el-table-column label="单价">
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
-                  <el-button @click="calculateFullGrossMargin(
-                    scope.row,
-                    scope.$index
-                  )">计算</el-button>
+                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
                 </template>
               </el-input>
             </template>
@@ -223,6 +250,16 @@
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.thisQuotation.grossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.thisQuotation.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.thisQuotation.nreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
@@ -263,7 +300,7 @@
       <div v-for="(value, key) in gradientTableMap" :key="key">
         <p>{{ key }}</p>
         <el-table :data="value" border>
-          <el-table-column label="产品" prop="product" />
+          <el-table-column label="产品" prop="proudct" />
           <el-table-column label="目标价（内部）" width="300" prop="quotedGrossMarginSimple.interior.price" />
           <el-table-column label="目标价（客户）" prop="quotedGrossMarginSimple.client.price" />
           <el-table-column label="本次报价" prop="quotedGrossMarginSimple.thisQuotation.price" />
@@ -283,7 +320,7 @@ import * as echarts from "echarts"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
-import { calculateRate } from "./service"
+import { calculateRate, PostStatementAnalysisBoardSecond } from "./service"
 /**
  * 路由对象
  */
@@ -297,13 +334,15 @@ const router = useRouter()
  * 数据部分
  */
 let { auditFlowId, productId } = getQuery()
-const productStore = useProductStore()
-productStore.productList
 const planList = reactive([
   {
     value: ""
   }
 ])
+const productStore = useProductStore()
+
+const fullscreenLoading = ref(false)
+
 const data = reactive({
   //仅含样品
   sampleOnlyRes: {
@@ -511,186 +550,6 @@ const data = reactive({
         devices: [],
         numberLine: 0,
         collinearAllocationRate: 0
-      },
-      {
-        solutionName: "NRE 汇总",
-        solutionId: 0,
-        auditFlowId: 0,
-        models: [
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "手板件费",
-            pricingMoney: 4000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725675+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "模具费",
-            pricingMoney: 193000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.972568+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "生产设备费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725681+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "工装费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725788+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "治具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725791+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "检具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725795+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "实验费",
-            pricingMoney: 372770,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725796+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "测试软件费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725797+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "差旅费",
-            pricingMoney: 800,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725799+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "其他费用",
-            pricingMoney: 50000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9725801+08:00",
-            creatorUserId: null,
-            id: 0
-          }
-        ],
-        devices: [],
-        numberLine: 0,
-        collinearAllocationRate: 0
       }
     ],
     sampleOffer: [
@@ -806,56 +665,6 @@ const data = reactive({
             grossvalue: 2452.059120576555
           }
         ]
-      },
-      {
-        gradientValue: "35K/Y",
-        product: "AR0820",
-        grossValues: [
-          {
-            gross: "5",
-            grossvalue: 1961.647296461244
-          },
-          {
-            gross: "6",
-            grossvalue: 1982.51588472147
-          },
-          {
-            gross: "8",
-            grossvalue: 2025.6140561284585
-          },
-          {
-            gross: "10",
-            grossvalue: 2070.6277018202018
-          },
-          {
-            gross: "12",
-            grossvalue: 2117.6874223161158
-          },
-          {
-            gross: "14",
-            grossvalue: 2166.9359670211416
-          },
-          {
-            gross: "16",
-            grossvalue: 2218.529680521645
-          },
-          {
-            gross: "18",
-            grossvalue: 2272.640160534368
-          },
-          {
-            gross: "20",
-            grossvalue: 2329.4561645477274
-          },
-          {
-            gross: "22",
-            grossvalue: 2389.1858097925406
-          },
-          {
-            gross: "24",
-            grossvalue: 2452.059120576555
-          }
-        ]
       }
     ],
     quotedGrossMargins: [
@@ -893,146 +702,11 @@ const data = reactive({
             }
           }
         ]
-      },
-      {
-        project: "报价毛利率测算-实际数量-X01",
-        grossMargins: [
-          {
-            proudct: "AR0820",
-            productNumber: 1,
-            quotedGrossMarginSimple: {
-              interior: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 20
-              },
-              client: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 25
-              },
-              thisQuotation: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 24,
-                nreGrossMargin: 25
-              },
-              lastRound: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 21,
-                nreGrossMargin: 25
-              }
-            }
-          }
-        ]
-      },
-      {
-        project: "报价毛利率测算-实际数量-X02",
-        grossMargins: [
-          {
-            proudct: "AR0820",
-            productNumber: 2,
-            quotedGrossMarginSimple: {
-              interior: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 20
-              },
-              client: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 25
-              },
-              thisQuotation: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 24,
-                nreGrossMargin: 25
-              },
-              lastRound: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 21,
-                nreGrossMargin: 25
-              }
-            }
-          }
-        ]
-      },
-      {
-        project: "报价毛利率测算-实际数量-X03",
-        grossMargins: [
-          {
-            proudct: "AR0820",
-            productNumber: 2,
-            quotedGrossMarginSimple: {
-              interior: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 20
-              },
-              client: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 25
-              },
-              thisQuotation: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 24,
-                nreGrossMargin: 25
-              },
-              lastRound: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 21,
-                nreGrossMargin: 25
-              }
-            }
-          }
-        ]
       }
     ],
     gradientQuotedGrossMargins: [
       {
         gradient: "25K/Y",
-        proudct: "AR0820",
-        quotedGrossMarginSimple: {
-          interior: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 22,
-            nreGrossMargin: 20
-          },
-          client: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 22,
-            nreGrossMargin: 25
-          },
-          thisQuotation: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 24,
-            nreGrossMargin: 25
-          },
-          lastRound: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 21,
-            nreGrossMargin: 25
-          }
-        }
-      },
-      {
-        gradient: "35K/Y",
         proudct: "AR0820",
         quotedGrossMarginSimple: {
           interior: {
@@ -1109,300 +783,6 @@ const data = reactive({
           {
             grossMargin: 24,
             grossMarginNumber: 1.32
-          }
-        ]
-      },
-      {
-        projectName: "销售成本",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 0
-          }
-        ]
-      },
-      {
-        projectName: "单位平均成本",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 0
-          }
-        ]
-      },
-      {
-        projectName: "返利后销售收入",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 0
-          }
-        ]
-      },
-      {
-        projectName: "平均单价",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 0
-          }
-        ]
-      },
-      {
-        projectName: "销售毛利",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 0
-          }
-        ]
-      },
-      {
-        projectName: "毛利率",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 0
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 0
           }
         ]
       }
@@ -1545,7 +925,7 @@ const setChartData = (gradientTableMap: any) => {
     ProjectUnitPrice[key].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
     ProjectUnitPrice[key].series = gradientTableMap[key].map((item: any) => {
       return {
-        name: item.product,
+        name: item.proudct,
         type: "bar",
         stack: "total",
         label: {
@@ -1621,9 +1001,9 @@ const setChartData = (gradientTableMap: any) => {
     }
     let RevenueGrossMarginSeries = [] as any[]
     gradientTableMap[key].forEach((item: any) => {
-      if (item.product === "销售收入") {
+      if (item.proudct === "销售收入") {
         let RevenueGrossMarginData = {
-          name: item.product,
+          name: item.proudct,
           type: "bar",
           stack: "total",
           label: {
@@ -1639,7 +1019,7 @@ const setChartData = (gradientTableMap: any) => {
         }
         RevenueGrossMarginSeries.push(RevenueGrossMarginData)
       }
-      if (item.product === "毛利率") {
+      if (item.proudct === "毛利率") {
         let RevenueGrossMarginDataY = {
           yAxisIndex: 1,
           name: "毛利率",
@@ -1697,13 +1077,40 @@ const calculateFullGrossMargin = async (row: any, index: any) => {
   let res = await calculateRate({ auditFlowId, gradientId, productId, solutionId })
   console.log(res, index)
 }
+
+const comfirmPlans = async () => {
+  fullscreenLoading.value = true
+  console.log(productStore.productList)
+  let planMap = {}
+  let solutionTables: any[] = []
+  productStore.productList.forEach((item) => {
+    planMap[item.id as keyof Object] = item
+  })
+  planList.forEach((item) => {
+    if (planMap[item.value as keyof Object]) {
+      solutionTables.push(planMap[item.value as keyof Object])
+    }
+  })
+  let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
+  console.log(res)
+  console.log(planList)
+  console.log(solutionTables)
+  data.allRes = res.result
+  fullscreenLoading.value = false
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
-onMounted(() => {
+onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
+
+  if (auditFlowId) {
+    // productStore.setProductList(auditFlowId)
+    // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
+    // console.log(res)
+  }
 })
-watchEffect(() => { })
+watchEffect(() => {})
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 defineExpose({

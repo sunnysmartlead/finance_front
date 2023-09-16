@@ -282,7 +282,7 @@
               </div>
 
               <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                <span>{{ dataIndex }}</span>
+                <span>{{ dataIndex +1 }}</span>
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
@@ -325,12 +325,12 @@
                       @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="deviceItem.devicePrice" :precision="2" :step="0.01"
+                    <el-input-number v-model="deviceItem.devicePrice"
                       :disabled="isDisable(dataIndex)" @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                   </div>
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  <span>{{ dataItem.deviceInfo.deviceTotalCost.toFixed(2) }}</span>
+                  <span>{{ dataItem.deviceInfo.deviceTotalCost.toFixed(0) }}</span>
                 </div>
               </div>
             </div>
@@ -352,13 +352,13 @@
                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                   <div class="u-border u-width-150">
-                    <el-input-number v-model="hardInfo.hardwareDevicePrice" :precision="2" :step="0.01"
+                    <el-input-number v-model="hardInfo.hardwareDevicePrice"
                       :disabled="isDisable(dataIndex)"
                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                   </div>
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(2) }}
+                  {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(0) }}
                 </div>
                 <div class="u-width-150  u-border">
                   <el-select v-model="dataItem.developCostInfo.traceabilitySoftware"
@@ -372,17 +372,17 @@
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost" :precision="2" :step="0.01"
+                  <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost" :precision="2"
                                    :disabled="isDisable(dataIndex)"
                                     />
                 </div>
                 <div class="u-width-150 u-border">
-                  <el-input @change="kaiTuChange($event, dataIndex)" v-model="dataItem.developCostInfo.openDrawingSoftware" :precision="2" :step="0.01"
+                  <el-input @change="kaiTuChange($event, dataIndex)" v-model="dataItem.developCostInfo.openDrawingSoftware" :precision="2"
                                    :disabled="isDisable(dataIndex)"
                   />
                 </div>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  <el-input-number @change="kaiTuChange($event, dataIndex)" v-model="dataItem.developCostInfo.softwarePrice" :precision="2" :step="0.01"
+                  <el-input-number @change="kaiTuChange($event, dataIndex)" v-model="dataItem.developCostInfo.softwarePrice"
                                    :disabled="isDisable(dataIndex)"
                   />
                 </div>
@@ -410,7 +410,7 @@
                         @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="zhiju.fixturePrice" :precision="2" :step="0.01" disabled
+                      <el-input-number v-model="zhiju.fixturePrice" :precision="2"  disabled
                         @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                     </div>
                   </div>

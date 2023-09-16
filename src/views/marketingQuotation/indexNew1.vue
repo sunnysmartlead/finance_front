@@ -1,6 +1,8 @@
 <template>
+  <!-- 总经理审批1 -->
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
     <!-- 单价汇总 -->
+    <p>单价汇总</p>
     <el-table :data="data.resa.unitPriceSum" border>
       <el-table-column type="expand">
         <template #default="props">
@@ -13,6 +15,7 @@
       <el-table-column label="产品名称" prop="product" />
     </el-table>
     <!-- NRE汇总 -->
+    <p>NRE汇总</p>
     <el-table :data="data.resa.nreUnitSumModels" border>
       <el-table-column type="expand">
         <template #default="props">
@@ -56,8 +59,8 @@
         :summary-method="getSummaries"
         show-summary
       >
-        <el-table-column prop="index" label="序号" />
-        <el-table-column prop="costName" label="费用名称" />
+        <el-table-column type="index" label="序号" />
+        <el-table-column prop="formName" label="费用名称" />
         <el-table-column prop="pricingMoney" label="核价金额" />
         <el-table-column label="报价系数">
           <template #default="scope">
@@ -105,73 +108,225 @@ const data = reactive<any>({
   motionMessageSop: [],
   resa: {
     unitPriceSum: [
-      //单价汇总
       {
-        product: "string", //产品名
+        product: "前视-AR0820",
         solutuionAndValues: [
           {
-            solutionId: 0,
-            value: 0
+            solutionId: 115,
+            value: 5
           }
         ]
       }
     ],
     nreUnitSumModels: [
-      //NR汇总
       {
-        product: "string",
+        product: "前视-AR0820",
         solutuionAndValues: [
           {
-            solutionId: 0,
-            value: 0
+            solutionId: 115,
+            value: 5
           }
         ]
       }
     ],
     managerApprovalOfferNres: [
-      //报价毛利率测算-实际数量
       {
+        solutionName: "AR0820",
+        solutionId: 115,
         analyseBoardNreDto: {
-          //NRE
-          solutionName: "string",
+          solutionName: "NRE AR0820",
           solutionId: 0,
           auditFlowId: 0,
           models: [
             {
-              id: 0,
-              formName: "string",
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "手板件费",
+              pricingMoney: 4000,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5843489+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "模具费",
+              pricingMoney: 193000,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845263+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "生产设备费",
               pricingMoney: 0,
               offerCoefficient: 0,
               offerMoney: 0,
-              remark: "string"
-            }
-          ],
-          devices: [
-            //设备
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845277+08:00",
+              creatorUserId: null,
+              id: 0
+            },
             {
-              deviceName: "string",
-              devicePrice: 0,
-              number: 0,
-              equipmentMoney: 0
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "工装费",
+              pricingMoney: 0,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845281+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "治具费",
+              pricingMoney: 0,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845311+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "检具费",
+              pricingMoney: 0,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845328+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "实验费",
+              pricingMoney: 372770,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845332+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "测试软件费",
+              pricingMoney: 0,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845336+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "差旅费",
+              pricingMoney: 800,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845339+08:00",
+              creatorUserId: null,
+              id: 0
+            },
+            {
+              auditFlowId: 0,
+              solutionId: null,
+              formName: "其他费用",
+              pricingMoney: 50000,
+              offerCoefficient: 0,
+              offerMoney: 0,
+              remark: null,
+              isDeleted: false,
+              deleterUserId: null,
+              deletionTime: null,
+              lastModificationTime: null,
+              lastModifierUserId: null,
+              creationTime: "2023-09-14T02:02:49.5845345+08:00",
+              creatorUserId: null,
+              id: 0
             }
           ],
+          devices: [],
           numberLine: 0,
           collinearAllocationRate: 0
         },
         managerApprovalOfferModels: [
           {
-            product: "string", //产品
-            sopCost: 0,
-            fullLifeCyclecost: 0, //全周期
-            salesRevenue: 0, //销售收入
-            sellingCost: 0, //销售成本
-            grossMargin: 0, //毛利率
-            price: 0, //价格
-            commission: 0, //佣金
-            sopGrossMargin: 0, //Sop年毛利率
-            grossMarginCommission: 0, //含佣金的毛利率
-            clientGrossMargin: 0, //增加客供料毛利率
-            nreGrossMargin: 0 //剔除NRE分摊费用毛利率
+            product: "前视-AR0820",
+            sopCost: 4,
+            fullLifeCyclecost: 5,
+            salesRevenue: 5,
+            sellingCost: 6,
+            grossMargin: 12,
+            price: 10,
+            commission: 1,
+            sopGrossMargin: 11,
+            grossMarginCommission: 11,
+            clientGrossMargin: 12,
+            nreGrossMargin: 10
           }
         ]
       }

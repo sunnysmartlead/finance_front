@@ -42,6 +42,20 @@ export function PostAuditQuotationList(data: {
   })
 }
 
+// 报价审核
+export function PostAuditQuotationListSave(data: {
+  /**
+   * 流程Id
+   */
+  Id?: number
+}): any {
+  return request({
+    url: "/api/services/app/AnalyseBoard/PostAuditQuotationList",
+    method: "post",
+    data
+  })
+}
+
 // // 总经理报价审批
 // export function GeneralManagerQuoteCheck(data: {
 //   /**

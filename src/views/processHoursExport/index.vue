@@ -352,7 +352,7 @@
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{ sumDeviceTotalCost() }}</span>
                   <span v-else>
-                    {{ dataItem.deviceInfo.deviceTotalCost ? dataItem.deviceInfo.deviceTotalCost.toFixed(2) : 0.00 }}
+                    {{ dataItem.deviceInfo.deviceTotalCost ? dataItem.deviceInfo.deviceTotalCost.toFixed(0) : 0 }}
                   </span>
                 </div>
               </div>
@@ -385,8 +385,7 @@
                         @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                     </div>
                     <div class="u-border u-width-150">
-                      <el-input-number v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)"
-                        :precision="2" :step="0.01" @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
+                      <el-input-number v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)" @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                     </div>
                   </div>
                 </template>
@@ -457,7 +456,7 @@
                           @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                       </div>
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="zhiju.fixturePrice" :precision="2" :step="0.01"
+                        <el-input-number v-model="zhiju.fixturePrice"
                           @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                       </div>
                     </div>
@@ -655,7 +654,7 @@
       <div>
         <el-card v-for="(project, index) in dialogProData" :key="index" class="u-m-b-10">
           <template #header>
-            <div style="font-weight: bold">{{ project.spec }}</div>
+            <div style="font-weight: bold">{{ project.sumQuantity }}/KY</div>
           </template>
           <div>
             <div class="u-flex u-row-left u-col-center">
@@ -669,23 +668,23 @@
                 <span>产品大类</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
-                v-for="(yearItem, yearIndex) in project.data[0]?.years" :key="yearIndex">
+                v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
                 <span>{{ yearItem.year }}</span>
               </div>
             </div>
-            <div v-for="(dataItem, dataIndex) in project.data" class="u-flex u-row-left u-col-center">
+            <div  class="u-flex u-row-left u-col-center">
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                <span>{{ dataItem.groupIndex }}</span>
+                <span>{{ project.order }}</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                <span>{{ dataItem.prodName }}</span>
+                <span>{{ project.product }}</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                <span>{{ dataItem.prodBigCategory }}</span>
+                <span>{{ project.code }}</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
-                v-for="(yearItem, yearIndex) in dataItem.years" :key="yearIndex">
-                <span>{{ yearItem.yearVal }}</span>
+                v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
+                <span>{{ yearItem.quantity }}</span>
               </div>
             </div>
           </div>
@@ -2159,7 +2158,7 @@ const showProjectDialog = async () => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;
-      dialogProData.value = modelCounts ? modelCounts : [];
+      dialogProData.value = response.result.modelCount;
       dialogTableVisible.value = true;
     } else {
       ElMessage({
@@ -2487,7 +2486,7 @@ const sumDeviceTotalCost = () => {
     sumVal = sumVal + Number(subValItem);
   };
   console.log("设备总计求和", sumVal);
-  return sumVal.toFixed(2);
+  return sumVal.toFixed(0);
 }
 //软硬件总计求和
 const sumHardwareDeviceTotalCost = () => {
@@ -2500,7 +2499,7 @@ const sumHardwareDeviceTotalCost = () => {
     sumVal = sumVal + Number(hardwareTotalPrice) + Number(softwarePrice) + Number(zhuiSuCost);
   }
   console.log("软硬件总计求和", sumVal);
-  return  sumVal.toFixed(2);
+  return  sumVal.toFixed(0);
 }
 //工装治具列求和
 const sumToolTotalCost = () => {
@@ -2528,7 +2527,7 @@ const sumToolTotalCost = () => {
     sumVal = sumVal + developTotalPrice;
   }
   console.log("工装治具列求和", sumVal);
-  return  sumVal.toFixed(2);
+  return  sumVal.toFixed(0);
 }
 //人工工时合计
 const sumSopCost=(type:number,sopIndex:number)=>{

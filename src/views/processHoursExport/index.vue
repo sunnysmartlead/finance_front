@@ -720,7 +720,8 @@ import {
   getJianJuListForSelect,
   getZhiJuListForSelect,
   getHardWareListForSelect,
-  GetEditorByProcessNumber
+  GetEditorByProcessNumber,
+  GetPriceEvaluationStartData,
 } from "@/api/processHoursEnter"
 import { GetListAll as queryProcessList } from "@/api/process"
 import { getListAllForQuery as getStandardProcessList } from "@/api/standardProcess"
@@ -2079,18 +2080,25 @@ const sorDownloadFile =async () => {
   }
 }
 //模组数据
-const showProjectDialog = () => {
-  router.push({
-    path: "/resourcesDepartment/moduleNumber",
-    query: {
-      auditFlowId
-    }
-  })
-  return;
-  dialogTableVisible.value = true;
+const showProjectDialog =async () => {
+  await GetPriceEvaluationStartData({auditFlowId:152}).then((response: any) => {
+      console.log("项目走量数据",response);
+      if(response.success){
+        let modelCounts= response.result.modelCount;
+        dialogProData.value=modelCounts?modelCounts:[];
+        dialogTableVisible.value = true;
+      }else{
+        ElMessage({
+          type:"warning",
+          message:"数据加载失败!"
+        })
+        return;
+      }
+  }) 
+  
 }
 const dialogTableVisible = ref(false)
-const dialogProData = reactive([
+const dialogProData = ref([
   {
     spec: "300K/Y",
     data: [

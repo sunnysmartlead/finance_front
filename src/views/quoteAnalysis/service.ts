@@ -82,11 +82,13 @@ export function PostSpreadSheetCalculate(data: {
 }
 
 //获取方案
-export function GetSolution(data: { auditFlowId: number }): any {
+export function GetSolution(auditFlowId: number): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetSolution",
     method: "get",
-    data
+    data: {
+      auditFlowId
+    }
   })
 }
 
@@ -100,7 +102,7 @@ export function PostStatementAnalysisBoardSecond(data: any): any {
 }
 
 //查看年份维度对比(全部模组)
-export function PostComparison(data: any): any {
+export function PostComparison(data: { auditFlowId: number; productId: number }): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostYearDimensionalityComparison",
     method: "post",

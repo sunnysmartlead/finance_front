@@ -210,3 +210,12 @@ export function GetEditorByProcessNumber(data: any) {
     data
   })
 }
+
+
+export function GetPriceEvaluationStartData(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetPriceEvaluationStartData",
+    method: "get",
+    data
+  })
+}

@@ -1,5 +1,6 @@
 <template>
   <div class="demand-apply" v-loading="state.taebleLoading">
+    <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone />
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
@@ -995,8 +996,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-button type="primary" size="large" style="float: right; margin: 20px 0" @click="save(refForm)" v-havedone
-          :loading="saveloading" v-if="!isDisabled">提交</el-button>
       </el-card>
     </el-form>
     <!-- <div class="demand-apply__step">
@@ -1017,7 +1016,7 @@ import { useRoute, useRouter } from "vue-router"
 
 import type { UploadProps, UploadUserFile } from "element-plus"
 
-import _, { uniq, map, debounce } from "lodash"
+import _, { uniq, map, debounce, cloneDeep } from "lodash"
 import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
@@ -1026,6 +1025,7 @@ import { ElMessage } from "element-plus"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import dayjs from "dayjs"
 
 //整个页面是否可以编辑
@@ -1095,7 +1095,6 @@ const state = reactive({
   taebleLoading: false,
   quoteForm: {
     shareCount: [],
-    opinion: "", // 审批意见
     countryType: "", // 国家类型
     isHasNre: false,
     isHasGradient: null,
@@ -1241,8 +1240,8 @@ const moduleTableTotal = computed(() => {
         sumQuantity: modelTotal,
       })
     }
-    console.log(currentData, "[获取当前的模组]")
     if (!_.isEmpty(currentData)) {
+      const modelTotal = item.modelCountYearList?.reduce((a: number, b: any) => a + b.quantity, 0) || 0
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         carModel: compareString(currentData.carModel, item.carModel),
         product: item.product,
@@ -1254,7 +1253,7 @@ const moduleTableTotal = computed(() => {
         marketShare: (currentData.marketShare += item.marketShare || 0),
         moduleCarryingRate: (currentData.moduleCarryingRate += item.moduleCarryingRate || 0),
         singleCarProductsQuantity: (currentData.singleCarProductsQuantity += item.singleCarProductsQuantity || 0),
-        sumQuantity: item.sumQuantity += currentData.sumQuantity,
+        sumQuantity: (currentData.sumQuantity || 0) + (modelTotal || 0),
         modelCountYearList: currentData.modelCountYearList.map((m: any, i: number) => {
           const modalCountYearItem: any = item.modelCountYearList[i] || {}
           return {
@@ -1326,7 +1325,8 @@ const dealWithItem = (v: any) => {
   return v
 }
 const handleDealWithModelCount = (arr: any) => {
-  return map(arr, (item: any) => {
+  const filterData = cloneDeep(arr)
+  return map(filterData, (item: any) => {
     return {
       ...item,
       carModel: dealWithItem(item.carModel),
@@ -1373,7 +1373,7 @@ const checkModuleTableDataV2Data = () => {
   }
 }
 
-const save = async (formEl: FormInstance | undefined) => {
+const save = async (formEl: FormInstance | undefined, { comment, opinion }: any) => {
   let { auditFlowId } = route.query
   // 模组走量不能为0
   let isModuleTableDataQuantity = false
@@ -1405,6 +1405,7 @@ const save = async (formEl: FormInstance | undefined) => {
       if (quoteForm.isHasNre) {
         quoteForm.shareCount = shareCountTable.value
       }
+      quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
       quoteForm.pcs = [...pcsTableData.value, ...interiorPcsTableData.value] //终端走量（PCS）
       let prop = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
       prop.forEach((item: any, index: number) => {
@@ -1414,28 +1415,30 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.requirement = requireTableData // 要求
       quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
-      // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
       let gradientModel = map(gradientModelTable.value, (item: any) =>
         map(item.children, c => ({
           ...c,
           number: Array.isArray(c.number) ? c.number.join(",") : c.number
         }))
       ).flat(2)
-      quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
+          comment,
+          opinion,
           gradient: kvPricingData.value,
           gradientModel: gradientModel
         })
         if (res.success) {
           ElMessage({
             type: "success",
-            message: "保存成功"
+            message: `${opinion === 'DONE' ? '提交' : '保存'}成功`
           })
-          router.push({
-            path: "/todoCenter/index"
-          })
+          if (opinion === 'DONE') {
+            router.push({
+              path: "/todoCenter/index"
+            })
+          }
           saveloading.value = false
         }
       } catch (error) {
@@ -2244,8 +2247,6 @@ const ledTypeSelectChange = (val: any, index: number) => {
 
 onMounted(async () => {
   let query = getQuery()
-  const { processType } = query
-  state.quoteForm.opinion = processType
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
   state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
   state.quoteForm.quoteVersion = query.quoteVersion ? query.quoteVersion + "" : ""

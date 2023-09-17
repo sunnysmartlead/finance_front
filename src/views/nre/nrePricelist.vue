@@ -709,7 +709,8 @@ const data = ref<any>({
   productionEquipmentCost: [],
   softwareTestingCost: [],
   rmbAllCost: 0,
-  usdAllCost: 0
+  usdAllCost: 0,
+  uphAndValues: [], // 线体数量和共线分摊率的值
 })
 
 watch(

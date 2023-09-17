@@ -117,11 +117,84 @@ interface calculateRateParam {
   productId: number
   solutionId: number
 }
-
+// 计算
 export function calculateRate(data: calculateRateParam) {
   return request({
     url: "/api/services/app/FoundationProcedure/Create",
     method: "post",
     data: data
+  })
+}
+
+// 获取报价反馈数据
+export function getQuotationFeedback(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedback",
+    method: "post",
+    data: {
+      auditFlowId
+    }
+  })
+}
+// 获取归档数据
+export function getFinancialArchive(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetFinancialArchive",
+    method: "post",
+    data: {
+      auditFlowId
+    }
+  })
+}
+/**
+ * 营销部报价审批数据
+ */
+export function getQuotationApprovedMarketing(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotationApprovedMarketing",
+    method: "post",
+    data: {
+      auditFlowId
+    }
+  })
+}
+/**
+ * 中标确认
+ * @param auditFlowId
+ * @returns
+ */
+export function getAcceptanceBid(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetAcceptanceBid",
+    method: "post",
+    data: {
+      auditFlowId
+    }
+  })
+}
+
+/**
+ * 总经理中标查看
+ * @param auditFlowId
+ * @returns
+ */
+export function getBidView(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetBidView",
+    method: "post",
+    data: {
+      auditFlowId
+    }
+  })
+}
+
+// 归档
+export function getDownloadList(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadList",
+    method: "post",
+    data: {
+      auditFlowId
+    }
   })
 }

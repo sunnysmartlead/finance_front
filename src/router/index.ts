@@ -93,7 +93,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "产品开发部审核"
         }
-      }
+      },
       // {
       //   path: "/partEntry/managerOperate",
       //   component: () => import("@/views/partEntry/managerOperate.vue"),
@@ -118,14 +118,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       //     title: "项目核价表"
       //   }
       // },
-      // {
-      //   path: "/demandApply/result",
-      //   component: () => import("@/views/demandApply/result.vue"),
-      //   name: "demandApplyResult",
-      //   meta: {
-      //     title: "营销部报价表"
-      //   }
-      // }
+      {
+        path: "/demandApply/result",
+        component: () => import("@/views/demandApply/resultNew.vue"),
+        name: "demandApplyResult",
+        meta: {
+          title: "营销部报价表"
+        }
+      }
     ]
   },
   {
@@ -641,6 +641,22 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "marketingQuotation",
         meta: {
           title: "总经理审批"
+        }
+      },
+      {
+        path: "/marketingQuotation/indexNew1",
+        component: () => import("@/views/marketingQuotation/indexNew1.vue"),
+        name: "indexNew1",
+        meta: {
+          title: "总经理审批1"
+        }
+      },
+      {
+        path: "/marketingQuotation/indexNew2",
+        component: () => import("@/views/demandApply/resultNew.vue"),
+        name: "indexNew2",
+        meta: {
+          title: "总经理审批2"
         }
       }
     ]

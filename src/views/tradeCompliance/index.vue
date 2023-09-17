@@ -78,7 +78,9 @@ onBeforeMount(() => {
 
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
-  initFetch()
+  if (auditFlowId && productId) {
+    initFetch()
+  }
 })
 
 const initFetch = async () => {

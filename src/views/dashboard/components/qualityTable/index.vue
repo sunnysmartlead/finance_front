@@ -7,7 +7,7 @@
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-row>
+          <el-row v-if="!hideEdit">
             <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
             <el-upload
@@ -24,7 +24,7 @@
           </el-row>
         </el-row>
       </template>
-      <qualityTable isEdit :qualityData="modifyData" :on-delete="handleDelete" />
+      <qualityTable :isEdit="!hideEdit" :qualityData="modifyData" :on-delete="handleDelete" />
     </el-card>
   </div>
 </template>

@@ -58,7 +58,7 @@ const baseProcessType = [
 const confirmProcessType = [
   //Done
   {
-    label: "完成",
+    label: "提交",
     val: "Done"
   },
   {

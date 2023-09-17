@@ -12,7 +12,7 @@
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column type="index" label="序号" width="70" />
-        <el-table-column label="费用名称" prop="modelName" width="180" />
+        <el-table-column label="模具费用" prop="modelName" width="180" />
         <el-table-column label="模穴数" width="150">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.moldCavityCount }}</span>
@@ -37,7 +37,7 @@
             <el-input-number v-else :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="费用" prop="cost" width="180" />
+        <el-table-column label="金额" prop="cost" width="180" />
         <el-table-column label="备注" width="180">
           <template #default="{ row }">
             <el-input v-if="!isVertify" v-model="row.remark" :disabled="row.isSubmit" />

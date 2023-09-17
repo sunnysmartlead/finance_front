@@ -7,7 +7,7 @@
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-row>
+          <el-row v-if="!hideEdit">
             <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
             <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
@@ -18,7 +18,7 @@
           </el-row>
         </el-row>
       </template>
-      <manufactureTable isEdit :manufactureData="modifyData" :on-delete="handleDelete" />
+      <manufactureTable :isEdit="!hideEdit" :manufactureData="modifyData" :on-delete="handleDelete" />
     </el-card>
   </div>
 </template>

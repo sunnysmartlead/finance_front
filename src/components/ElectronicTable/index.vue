@@ -85,7 +85,7 @@
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
           <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} K/Y`"
             width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`"
-            :formatter="filterStandardMoney">
+            :formatter="formatThousandths">
             <template #default="{ row }">
               <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
                 controls-position="right" :min="0" />
@@ -258,11 +258,19 @@ const allStandardMoney = computed(() => {
 })
 
 const formatDatas = (record: any, _row: any, cellValue: any) => {
-  return cellValue.toFixed() || ""
+  if (cellValue) {
+    return (Number(cellValue).toFixed() + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return ''
+  }
 }
 
 const filterStandardMoney = (record: any, _row: any, cellValue: any) => {
   return cellValue?.toFixed(5) || 0
+}
+
+const toFixedTwo = (record: any, _row: any, cellValue: any) => {
+  return cellValue?.toFixed(2) || ""
 }
 
 const filterinTheRate = (record: any, _row: any, cellValue: any) => {
@@ -337,6 +345,14 @@ const fetchElectronicInitData = async () => {
     isAll.value = result.isAll
     tableLoading.value = false
   }, 500)
+}
+
+const formatThousandths = (_record: any, _row: any, cellValue: any) => {
+  if (cellValue) {
+    return (Number(cellValue).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return 0
+  }
 }
 
 // 提交电子料单价行数据

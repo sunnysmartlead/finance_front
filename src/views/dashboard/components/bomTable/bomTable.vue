@@ -12,7 +12,10 @@
     </el-table-column>
     <el-table-column prop="isCustomerSupply" label="是否客供" width="175">
       <template #default="{ row }">
-        {{ row.isCustomerSupply ? "是" : "否" }}
+        <el-select v-model="row.isShare" placeholder="是否分摊">
+              <el-option v-for="item in options" :key="item.label" :label="item.label"
+                :value="item.value" />
+            </el-select>
       </template>
     </el-table-column>
     <el-table-column prop="typeName" label="物料种类" width="175">
@@ -134,5 +137,16 @@ const toFixedThree = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(3)
   return val
 }
+
+const options = [
+  {
+    label: '是',
+    value: true
+  },
+  {
+    label: '否',
+    value: false
+  }
+]
 
 </script>

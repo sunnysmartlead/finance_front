@@ -17,11 +17,7 @@
           <el-table-column type="index" width="50" />
           <el-table-column prop="solutionName" label="方案">
             <template #default="{ row }">
-              <el-input
-                v-model="row.solutionName"
-                placeholder="请录入方案"
-                @change="(val) => schemeChange(val, row.id)"
-              />
+              <el-input v-model="row.solutionName" placeholder="请录入方案" @change="(val) => schemeChange(val, row.id)" />
             </template>
           </el-table-column>
           <el-table-column prop="product" label="产品名称" />
@@ -57,9 +53,8 @@
           </el-table-column>
           <el-table-column label="操作">
             <template #default="{ row }">
-              <el-button type="danger" @click="deleteScheme(row.id)" :disabled="schemeTableData(item)?.length == 1"
-                >删除</el-button
-              >
+              <el-button type="danger" @click="deleteScheme(row.id)"
+                :disabled="schemeTableData(item)?.length == 1">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -70,20 +65,11 @@
       <template #header>
         <div class="card-header">
           <span>项目设计方案</span>
-          <el-button type="primary" :style="'float:right;margin:0 10px'" @click="DownloadTemplateClick()"
-            >下载模版</el-button
-          >
-          <el-upload
-            :style="'float:right;margin:0 10px'"
-            :v-model:file-list="[]"
-            :show-file-list="false"
-            :action="$baseUrl + 'api/services/app/DemandApplyAudit/ImportData'"
-            :on-success="handleSuccess"
-            :on-change="handleFileChange"
-            name="fileName"
-            :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadTemplateError"
-          >
+          <el-button type="primary" :style="'float:right;margin:0 10px'" @click="DownloadTemplateClick()">下载模版</el-button>
+          <el-upload :style="'float:right;margin:0 10px'" :v-model:file-list="[]" :show-file-list="false"
+            :action="$baseUrl + 'api/services/app/DemandApplyAudit/ImportData'" :on-success="handleSuccess"
+            :on-change="handleFileChange" name="fileName" :on-progress="handleGetUploadProgress"
+            :on-error="handleUploadTemplateError">
             <el-button>导入模版数据</el-button>
           </el-upload>
         </div>
@@ -157,16 +143,10 @@
         </el-table-column>
         <el-table-column prop="fileId" label="上传3D爆炸图" fixed="right" width="200">
           <template #default="{ row, $index }">
-            <el-upload
-              v-model:file-list="fileList[$index]"
-              class="upload-demo"
+            <el-upload v-model:file-list="fileList[$index]" class="upload-demo"
               :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-              :on-success="(val) => handleSuccess3D(val, row.uuid, $index)"
-              :on-change="handleFileChange3D"
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadTemplateError"
-              show-file-list
-            >
+              :on-success="(val) => handleSuccess3D(val, row.uuid, $index)" :on-change="handleFileChange3D"
+              :on-progress="handleGetUploadProgress" :on-error="handleUploadTemplateError" show-file-list>
               <el-button type="primary">点击上传3D爆炸图</el-button>
             </el-upload>
           </template>
@@ -197,10 +177,7 @@
           <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流成本录入员" />
         </el-form-item>
         <el-form-item label="项目核价审核员">
-          <SearchDepartMentPerson
-            v-model="state.quoteForm.auditId"
-            :roleName="['市场部-项目课长', '项目管理部-项目课长']"
-          />
+          <SearchDepartMentPerson v-model="state.quoteForm.auditId" :roleName="['市场部-项目课长', '项目管理部-项目课长']" />
         </el-form-item>
       </el-form>
     </el-card>
@@ -219,12 +196,8 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="TR预计提交时间:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.trSubmitTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.trSubmitTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -235,12 +208,8 @@
 
         <el-col :span="6">
           <el-form-item label="产品部-结构工程师:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.structEngineerTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.structEngineerTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -250,73 +219,45 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="品质保证部-实验费用录入员:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.qualityBenchTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.qualityBenchTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
           <el-form-item label="资源管理部-电子资源开发:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.resourceElecTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.resourceElecTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="资源管理部-结构资源开发:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.resourceStructTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.resourceStructTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="资源部-模具费录入员:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.mouldWorkHourTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.mouldWorkHourTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="工程技术部-工序工时录入员:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.engineerWorkHourTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.engineerWorkHourTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="生产管理部-物流成本录入员:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.productManageTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.productManageTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="制造成本录入员:">
-            <el-date-picker
-              type="date"
-              placeholder="请输入预计提交时间"
-              v-model="state.quoteForm.productCostInputTime"
-              value-format="YYYY-MM-DD"
-            />
+            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.productCostInputTime"
+              value-format="YYYY-MM-DD" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -453,6 +394,36 @@ onMounted(async () => {
   }, 2000)
 })
 
+const checkDesignSolution = () => {
+  let isNotPass = false
+  if (!designSolution.value?.length) isNotPass = true
+  isNotPass = designSolution.value.some((item: any) => {
+    if (!item.solutionName
+      || !item.sensor
+      || !item.serial
+      || !item.lens
+      || !item.isp
+      || !item.vcsel
+      || !item.mcu
+      || !item.connector
+      || !item.harness
+      || !item.stand
+      || !item.transmissionStructure
+      || !item.productType
+      || item.processProgram
+      || !item.fileId) {
+      return true
+    }
+  })
+  if (isNotPass) {
+    ElMessage({
+      type: 'warning',
+      message: '项目设计方案不能有空数据！'
+    })
+    throw Error()
+  }
+}
+
 const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
@@ -463,6 +434,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   } as Response
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
+  checkDesignSolution()
   value.designSolutionList = _.cloneDeep(designSolution.value)
   value.solutionTableList = _.cloneDeep(solutionTable.value)
 
@@ -660,10 +632,12 @@ watch(
   .demand-apply__card {
     margin: 20px;
   }
+
   .demand-apply_row {
     float: right;
     margin: 20px;
   }
+
   width: 100%;
 }
 </style>

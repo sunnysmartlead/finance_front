@@ -1,18 +1,43 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
   <div>
-    <el-card>
+    <el-card mb-20px>
       <p>请选择报价方案组合：</p>
-      <el-button type="primary" @click="addNewPlan" mb-20px>新增方案</el-button>
-      <el-button type="primary" mb-20px @click="comfirmPlans"  v-loading.fullscreen.lock="fullscreenLoading">确定</el-button>
-      <el-row :gutter="20">
+      <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
+      <!-- <el-row :gutter="20">
         <el-col :span="6" v-for="(item, index) in planList" :key="index">
           <div>方案{{ index + 1 }}:</div>
           <el-select clearable v-model="item.value" mb-20px>
             <el-option v-for="item in productStore.productList" :label="item.product" :value="item.id" :key="item.id" />
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
+      <el-table :data="planList" style="width: 100%" border height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="报价模组">
+          <template #default="scope">
+            <el-select clearable v-model="scope.row.value">
+              <el-option
+                v-for="item in productStore.productList"
+                :label="item.product"
+                :value="item.id"
+                :key="item.id"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否报价">
+          <template #default="scope">
+            <el-select clearable v-model="scope.row.isOffer">
+              <el-option label="是" :value="true" />
+              <el-option label="否" :value="false" />
+            </el-select>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-button type="primary" my-20px float-right v-loading.fullscreen.lock="fullscreenLoading" @click="comfirmPlans"
+        >确定</el-button
+      >
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
@@ -99,7 +124,7 @@
     <el-card class="card">
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
-        <el-table-column label="产品" prop="proudct" />
+        <el-table-column label="产品" prop="product" />
         <el-table-column label="单车产品数量" prop="productNumber" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
@@ -184,7 +209,7 @@
         <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
       </el-row>
       <el-table :data="item.grossMargins" border>
-        <el-table-column label="产品" prop="proudct" />
+        <el-table-column label="产品" prop="product" />
         <el-table-column label="单车产品数量" prop="productNumber" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
@@ -300,7 +325,7 @@
       <div v-for="(value, key) in gradientTableMap" :key="key">
         <p>{{ key }}</p>
         <el-table :data="value" border>
-          <el-table-column label="产品" prop="proudct" />
+          <el-table-column label="产品" prop="product" />
           <el-table-column label="目标价（内部）" width="300" prop="quotedGrossMarginSimple.interior.price" />
           <el-table-column label="目标价（客户）" prop="quotedGrossMarginSimple.client.price" />
           <el-table-column label="本次报价" prop="quotedGrossMarginSimple.thisQuotation.price" />
@@ -320,7 +345,7 @@ import * as echarts from "echarts"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
-import { calculateRate, PostStatementAnalysisBoardSecond, PostComparison } from "./service"
+import { calculateRate, PostStatementAnalysisBoardSecond, PostComparison, GetSolution } from "./service"
 /**
  * 路由对象
  */
@@ -334,11 +359,11 @@ const router = useRouter()
  * 数据部分
  */
 let { auditFlowId, productId } = getQuery()
-const planList = reactive([
-  {
-    value: ""
-  }
-])
+interface planListItem {
+  value: string
+  isOffer: boolean
+}
+const planList: Array<planListItem> = reactive([])
 const productStore = useProductStore()
 
 const fullscreenLoading = ref(false)
@@ -672,7 +697,7 @@ const data = reactive({
         project: "报价毛利率测算-实际数量-X01",
         grossMargins: [
           {
-            proudct: "AR0820",
+            product: "AR0820",
             productNumber: 1,
             quotedGrossMarginSimple: {
               interior: {
@@ -707,7 +732,7 @@ const data = reactive({
     gradientQuotedGrossMargins: [
       {
         gradient: "25K/Y",
-        proudct: "AR0820",
+        product: "AR0820",
         quotedGrossMarginSimple: {
           interior: {
             price: 730,
@@ -876,7 +901,8 @@ const getSummaries = (param: { columns: any; data: any }) => {
 }
 const addNewPlan = () => {
   planList.push({
-    value: ""
+    value: "",
+    isOffer: false
   })
 }
 // 设置图表
@@ -930,7 +956,7 @@ const setChartData = (gradientTableMap: any) => {
     ProjectUnitPrice[key].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
     ProjectUnitPrice[key].series = gradientTableMap[key].map((item: any) => {
       return {
-        name: item.proudct,
+        name: item.product,
         type: "bar",
         stack: "total",
         label: {
@@ -1006,9 +1032,9 @@ const setChartData = (gradientTableMap: any) => {
     }
     let RevenueGrossMarginSeries = [] as any[]
     gradientTableMap[key].forEach((item: any) => {
-      if (item.proudct === "销售收入") {
+      if (item.product === "销售收入") {
         let RevenueGrossMarginData = {
-          name: item.proudct,
+          name: item.product,
           type: "bar",
           stack: "total",
           label: {
@@ -1024,7 +1050,7 @@ const setChartData = (gradientTableMap: any) => {
         }
         RevenueGrossMarginSeries.push(RevenueGrossMarginData)
       }
-      if (item.proudct === "毛利率") {
+      if (item.product === "毛利率") {
         let RevenueGrossMarginDataY = {
           yAxisIndex: 1,
           name: "毛利率",
@@ -1111,6 +1137,8 @@ onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 
   if (auditFlowId) {
+    let res = await GetSolution(auditFlowId)
+    console.log(res)
     // productStore.setProductList(auditFlowId)
     // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
     // console.log(res)

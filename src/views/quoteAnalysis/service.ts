@@ -82,11 +82,13 @@ export function PostSpreadSheetCalculate(data: {
 }
 
 //获取方案
-export function GetSolution(data: { auditFlowId: number }): any {
+export function GetSolution(auditFlowId: number): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetSolution",
     method: "get",
-    data
+    data: {
+      auditFlowId
+    }
   })
 }
 

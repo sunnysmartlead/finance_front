@@ -120,7 +120,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       // },
       {
         path: "/demandApply/result",
-        component: () => import("@/views/demandApply/resultNew.vue"),
+        component: () => import("@/views/demandApply/marketingApproval.vue"),
         name: "demandApplyResult",
         meta: {
           title: "营销部报价表"
@@ -550,7 +550,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard/index",
     component: Layout,
     meta: {
-      title: '核价看板'
+      title: "核价看板"
       // hidden: true
     },
     // meta: {
@@ -624,6 +624,30 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "报价分析看板"
         }
+      },
+      {
+        path: "/quoteAnalysis/quoteFeedback",
+        component: () => import("@/views/quoteAnalysis/quoteFeedback.vue"),
+        name: "quoteFeedback",
+        meta: {
+          title: "报价反馈"
+        }
+      },
+      {
+        path: "/quoteAnalysis/quoteForm",
+        component: () => import("@/views/quoteAnalysis/quoteForm.vue"),
+        name: "quoteForm",
+        meta: {
+          title: "报价单"
+        }
+      },
+      {
+        path: "/quoteAnalysis/nreCoreDevices",
+        component: () => import("@/views/fnDepartment/nreCoreDevices.vue"),
+        name: "nreCoreDevices",
+        meta: {
+          title: "NRE核心器件"
+        }
       }
     ]
   },
@@ -637,24 +661,25 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "/marketingQuotation/index",
-        component: () => import("@/views/marketingQuotation/index.vue"),
+        component: () => import("@/views/marketingQuotation/old.vue"),
         name: "marketingQuotation",
         meta: {
           title: "总经理审批"
         }
       },
       {
-        path: "/marketingQuotation/indexNew1",
-        component: () => import("@/views/marketingQuotation/indexNew1.vue"),
-        name: "indexNew1",
+        path: "/marketingQuotation/indexFirst",
+        component: () => import("@/views/marketingQuotation/indexFirst.vue"),
+        name: "indexFirst",
         meta: {
           title: "总经理审批1"
         }
       },
       {
-        path: "/marketingQuotation/indexNew2",
-        component: () => import("@/views/demandApply/resultNew.vue"),
-        name: "indexNew2",
+        path: "/marketingQuotation/indexSecond",
+        // component: () => import("@/views/demandApply/marketingApproval.vue"),
+        component: () => import("@/views/demandApply/indexSecond.vue"),
+        name: "indexSecond",
         meta: {
           title: "总经理审批2"
         }
@@ -1098,15 +1123,15 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "作业价格"
         }
-      },
-      {
-        path: "/fnDepartment/nreCoreDevices",
-        component: () => import("@/views/fnDepartment/nreCoreDevices.vue"),
-        name: "nreCoreDevices",
-        meta: {
-          title: "nre核心"
-        }
       }
+      // {
+      //   path: "/fnDepartment/nreCoreDevices",
+      //   component: () => import("@/views/fnDepartment/nreCoreDevices.vue"),
+      //   name: "nreCoreDevices",
+      //   meta: {
+      //     title: "nre核心"
+      //   }
+      // }
     ]
   },
   {

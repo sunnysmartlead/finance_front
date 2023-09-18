@@ -1,3 +1,4 @@
+<!-- 财务中标确认、总经理中标查看、总经理审批2的界面是一样的 -->
 <template>
   <div>
     <el-card class="marketingQuotation-page" header="总经理审批2" m="2">
@@ -45,19 +46,6 @@
         </el-descriptions-item>
         <el-descriptions-item label="汇率"> {{ data.resa.exchangeRate }} </el-descriptions-item>
       </el-descriptions>
-      <!-- <el-card header="走量信息" m="2">
-        <el-table :data="data.marketingQuotationData?.motionMessage" border>
-          <el-table-column type="index" width="100" />
-          <el-table-column label="名称" prop="messageName" />
-          <el-table-column
-            v-for="(item, index) in data?.motionMessageSop"
-            :key="item.year"
-            :label="item.year"
-            :prop="`sop[${index}].value`"
-            :formatter="formatMarketingQuotationDatas"
-          />
-        </el-table>
-      </el-card> -->
       <!-- sop走量信息 -->
       <el-card header="sop走量信息" m="2">
         <el-table :data="data.resa.motionMessage" border>
@@ -93,8 +81,8 @@
           </el-card>
         </template>
       </el-card>
-      <!-- nre汇总 -->
-      <el-card>
+      <!-- nre汇总 只有单个nre表格 字段可能需要变动 -->
+      <!-- <el-card>
         <p>{{ item.analyseBoardNreDto.solutionName }}</p>
         <p>
           线体数量：{{ item.analyseBoardNreDto.numberLine }} 共线分摊率：{{
@@ -131,7 +119,7 @@
           <el-table-column prop="number" label="设备数量" />
           <el-table-column prop="equipmentMoney" label="设备金额" />
         </el-table>
-      </el-card>
+      </el-card> -->
 
       <el-card header="内部核价信息：" m="2">
         <template v-for="item in data.resa.pricingMessage" :key="item.messageName">
@@ -263,7 +251,264 @@ const data = reactive<any>({
   sor: {
     sorFileName: "",
     fileId: null
-  }
+  },
+  resa: {
+    date: "2023-09-14T02:04:14.3874625+08:00",
+    recordNumber: null,
+    versions: 0,
+    offerForm: null,
+    sampleQuotationType: null,
+    directCustomerName: "理想",
+    clientNature: null,
+    terminalCustomerName: "理想",
+    terminalClientNature: null,
+    developmentPlan: null,
+    sopTime: 0,
+    projectCycle: 0,
+    forSale: null,
+    modeOfTrade: null,
+    paymentMethod: null,
+    quoteCurrency: null,
+    exchangeRate: 0,
+    motionMessage: [
+      {
+        messageName: "25K/Y",
+        sop: [
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          }
+        ]
+      },
+      {
+        messageName: "35K/Y",
+        sop: [
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          },
+          {
+            year: 0,
+            value: 0,
+            sopValue: 0,
+            fullValue: 0
+          }
+        ]
+      }
+    ],
+    projectName: null,
+    nres: null,
+    sampleOffer: [
+      {
+        solutionName: "AR0820",
+        auditFlowId: 0,
+        solutionId: 0,
+        onlySampleModels: [
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_A",
+            pcs: 200,
+            cost: 1866.5904956533818,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-14T02:04:17.9590589+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_B",
+            pcs: 300,
+            cost: 1866.5904956533818,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-14T02:04:17.9594331+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_C",
+            pcs: 400,
+            cost: 1866.5904956533818,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-14T02:04:17.959434+08:00",
+            creatorUserId: null,
+            id: 0
+          }
+        ]
+      }
+    ],
+    componenSocondModels: [
+      {
+        coreComponent: "Sensor",
+        type: null,
+        remark: null,
+        specifications: [
+          {
+            solutionname: "AR0820",
+            specification: "12"
+          }
+        ]
+      },
+      {
+        coreComponent: "Lens",
+        type: null,
+        remark: null,
+        specifications: [
+          {
+            solutionname: "AR0820",
+            specification: "12"
+          }
+        ]
+      },
+      {
+        coreComponent: "ISP",
+        type: null,
+        remark: null,
+        specifications: [
+          {
+            solutionname: "AR0820",
+            specification: "12"
+          }
+        ]
+      },
+      {
+        coreComponent: "串行芯片",
+        type: null,
+        remark: null,
+        specifications: [
+          {
+            solutionname: "AR0820",
+            specification: "12"
+          }
+        ]
+      },
+      {
+        coreComponent: "线缆",
+        type: null,
+        remark: null,
+        specifications: [
+          {
+            solutionname: "AR0820",
+            specification: "12"
+          }
+        ]
+      }
+    ],
+    pricingMessageSecondModels: null,
+    biddingStrategySecondModels: [
+      {
+        gradientId: 202,
+        gradient: "25K/Y",
+        productId: 0,
+        product: "前视-AR0820",
+        sopCost: 1,
+        fullLifeCyclecost: 2,
+        salesRevenue: 0,
+        sellingCost: 0,
+        grossMargin: 0,
+        price: 1,
+        commission: 0,
+        sopGrossMargin: 23,
+        grossMarginCommission: 0,
+        totallifeCyclegrossMargin: 12,
+        clientGrossMargin: 23,
+        nreGrossMargin: 10
+      },
+      {
+        gradientId: 203,
+        gradient: "35K/Y",
+        productId: 0,
+        product: "前视-AR0820",
+        sopCost: 1,
+        fullLifeCyclecost: 2,
+        salesRevenue: 0,
+        sellingCost: 0,
+        grossMargin: 0,
+        price: 1,
+        commission: 0,
+        sopGrossMargin: 23,
+        grossMarginCommission: 0,
+        totallifeCyclegrossMargin: 12,
+        clientGrossMargin: 23,
+        nreGrossMargin: 10
+      }
+    ]
+  },
+  targetUrl: null,
+  success: true,
+  error: null,
+  unAuthorizedRequest: false,
+  __abp: true
 })
 
 const columns = reactive({
@@ -278,6 +523,13 @@ const formatterP = (_record: any, _row: any, cellValue: any) => {
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
+// 计算含佣金的毛利率
+const changeCommission = (row: any, index: number) => {
+  console.log(row, index, "changeCommission")
+  // data.marketingQuotationData.biddingStrategy[index].grossMarginCommission =
+  //   (1 - (row.commission + row.cost) / row.price) * 100
+}
+
 onBeforeMount(() => {
   if (data.userInfo.userJobs === "总经理") {
     data.isShowBtn = true

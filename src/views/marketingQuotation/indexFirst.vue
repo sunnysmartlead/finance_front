@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
-import { GetQuotationList } from "../marketingQuotation/service"
+import { GetQuotationList } from "./service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
 import { PostAuditQuotationListSave } from "./service"

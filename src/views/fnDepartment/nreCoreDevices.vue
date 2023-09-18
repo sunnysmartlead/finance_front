@@ -5,7 +5,13 @@
       <el-table :data="data.productAndGradients" style="width: 100%" border height="500px">
         <el-table-column type="expand">
           <template v-slot="props">
-            <el-descriptions :column="3" border v-for="item in props.row.items" :key="item.project" mb-15px>
+            <el-descriptions
+              :column="3"
+              border
+              v-for="item in props.row.solutionAndprices"
+              :key="item.solutionName"
+              mb-15px
+            >
               <el-descriptions-item>
                 <template v-slot:label> 方案名称 </template>
                 {{ item.solutionName }}

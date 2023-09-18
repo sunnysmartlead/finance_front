@@ -13,12 +13,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.handPieceCost"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')"
-        show-summary
-      >
+      <el-table :data="data.handPieceCost" border
+        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="partName" label="手板件名称" />
         <el-table-column prop="partNumber" label="料号" />
@@ -35,12 +31,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.handPieceCostModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')"
-        show-summary
-      >
+      <el-table :data="data.handPieceCostModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="partName" label="手板件名称">
           <template #default="{ row }">
@@ -81,12 +73,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('mouldInventoryModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.mouldInventory"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
-        show-summary
-      >
+      <el-table :data="data.mouldInventory" border :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
+        show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="modelName" label="模具名称" />
         <el-table-column prop="moldCavityCount" label="模穴数" />
@@ -103,12 +91,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.mouldInventoryModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
-        show-summary
-      >
+      <el-table :data="data.mouldInventoryModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '模具费用')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="modelName" label="模具名称">
           <template #default="{ row }">
@@ -147,13 +131,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('experimentalExpensesModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.laboratoryFeeModels"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')"
-        show-summary
-      >
+      <el-table :data="data.laboratoryFeeModels" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="projectName" label="试验项目" />
         <el-table-column prop="isThirdParty" label="是否指定第三方">
@@ -176,12 +155,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.experimentalExpensesModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')"
-        show-summary
-      >
+      <el-table :data="data.experimentalExpensesModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="projectName" label="试验项目">
           <template #default="{ row }">
@@ -232,13 +207,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.toolingCost"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.toolingCost" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="workName" label="工装名称" />
         <el-table-column prop="toolingCount" label="工装数量" />
@@ -252,12 +222,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.toolingCostsModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.toolingCostsModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="workName" label="工装名称">
           <template #default="{ row }">
@@ -291,13 +257,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.fixtureCost"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '治具费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.fixtureCost" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '治具费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="toolingName" label="治具名称" />
         <el-table-column prop="unitPrice" label="治具单价" />
@@ -311,12 +272,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.fixtureCostsModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '治具费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.fixtureCostsModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '治具费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="toolingName" label="治具名称">
           <template #default="{ row }">
@@ -346,18 +303,16 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <el-card class="margin-top" header="检具费用">
+      <el-descriptions m="2" border>
+        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
+      </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.qaqcDepartments"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.qaqcDepartments" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="qc" label="检具名称" />
         <el-table-column prop="unitPrice" label="检具单价" />
@@ -373,12 +328,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.inspectionToolCostModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.inspectionToolCostModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="qc" label="检具名称">
           <template #default="{ row }">
@@ -409,16 +360,15 @@
       </el-table>
     </el-card>
     <el-card class="margin-top" header="生产设备费用">
+      <el-descriptions m="2" border>
+        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
+      </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.productionEquipmentCost"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.productionEquipmentCost" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="equipmentName" label="生产设备名" />
         <el-table-column prop="equipmentName" label="生产设备状态" />
@@ -428,19 +378,15 @@
         <el-table-column prop="remark" label="备注" />
         <el-table-column label="操作" fixed="right" width="160">
           <template #default="{ row, $index }">
-            <el-button link @click="handleEdit(row, $index, 'inspectionToolCostModifyDtos')" type="primary">
+            <el-button link @click="handleEdit(row, $index, 'productionEquipmentCostsModifyDtos')" type="primary">
               修改
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.productionEquipmentCostsModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.productionEquipmentCostsModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="equipmentName" label="生产设备名">
           <template #default="{ row }">
@@ -476,13 +422,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.softwareTestingCost"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.softwareTestingCost" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="softwareProject" label="软件项目" />
         <el-table-column prop="costH" label="费用/H" />
@@ -491,19 +432,15 @@
         <el-table-column prop="remark" label="备注" />
         <el-table-column label="操作" fixed="right" width="160">
           <template #default="{ row, $index }">
-            <el-button link @click="handleEdit(row, $index, 'inspectionToolCostModifyDtos')" type="primary">
+            <el-button link @click="handleEdit(row, $index, 'testingSoftwareCostsModifyDtos')" type="primary">
               修改
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.testingSoftwareCostsModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.testingSoftwareCostsModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="softwareProject" label="软件项目">
           <template #default="{ row }">
@@ -539,13 +476,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('travelExpenseModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.travelExpense"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '差旅费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.travelExpense" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '差旅费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="reasonsId" label="事由">
           <template #default="{ row }">
@@ -568,12 +500,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.travelExpenseModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '差旅费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.travelExpenseModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '差旅费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="reasonsId" label="事由">
           <template #default="{ row }">
@@ -614,13 +542,8 @@
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('restsCostModifyDtos')">新增</el-button>
       </el-row>
-      <el-table
-        :data="data.restsCost"
-        style="width: 100%"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '其他费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.restsCost" style="width: 100%" border
+        :summary-method="(val: any) => getMouldSummaries(val, '其他费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="constName" label="费用类型" />
         <el-table-column prop="cost" label="费用" />
@@ -632,12 +555,8 @@
         </el-table-column>
       </el-table>
       <h6>修改项：</h6>
-      <el-table
-        :data="data.restsCostModifyDtos"
-        border
-        :summary-method="(val: any) => getMouldSummaries(val, '其他费用', 'cost')"
-        show-summary
-      >
+      <el-table :data="data.restsCostModifyDtos" border
+        :summary-method="(val: any) => getMouldSummaries(val, '其他费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="constName" label="费用类型">
           <template #default="{ row }">
@@ -673,7 +592,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, watchEffect, ref, watch } from "vue"
+import { onBeforeMount, onMounted, watchEffect, ref, watch, reactive } from "vue"
 import {
   GetPricingForm,
   NreTableDownload,
@@ -693,6 +612,7 @@ import getQuery from "@/utils/getQuery"
 import { formatDateTime, downloadFileExcel } from "@/utils"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElMessage } from "element-plus"
+import { cloneDeep } from "lodash"
 
 const { auditFlowId, productId, year, hideBtn }: any = getQuery()
 
@@ -710,7 +630,11 @@ const data = ref<any>({
   softwareTestingCost: [],
   rmbAllCost: 0,
   usdAllCost: 0,
-  uphAndValues: [], // 线体数量和共线分摊率的值
+})
+
+const uphAndValues = reactive<any>({// 线体数量和共线分摊率的值
+  xtsl: 0, // 线体数量
+  gxftl: 0, // 分摊数量
 })
 
 watch(
@@ -738,19 +662,19 @@ watch(
     // 治具
     if (data.value.fixtureCostsModifyDtos.length) {
       data.value.fixtureCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.number || 0) * (item.unitPrice || 0) // to-do 缺少线体数量和共线分摊率
+        item.cost = (item.number || 0) * (item.unitPrice || 0)
       })
     }
     // 检具
     if (data.value.inspectionToolCostModifyDtos.length) {
       data.value.inspectionToolCostModifyDtos.forEach((item: any) => {
-        item.cost = (item.count || 0) * (item.unitPrice || 0) // to-do 缺少线体数量和共线分摊率
+        item.cost = (item.count || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 生产设备
     if (data.value.productionEquipmentCostsModifyDtos.length) {
       data.value.productionEquipmentCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.count || 0) * (item.unitPrice || 0)// to-do 缺少线体数量和共线分摊率 缺少设备状态
+        item.cost = (item.count || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 实验费
@@ -783,8 +707,9 @@ const initFetch = async () => {
   try {
     const { success, result } = await GetPricingForm({ auditFlowId, solutionId: productId })
     if (!success) throw Error()
-    console.log(result, "result")
     data.value = result
+    uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')
+    uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')
   } catch (err) {
     console.log(err, "[ GetPricingForm err ]")
   }
@@ -811,9 +736,10 @@ const handleEdit = (row: any, index: number, key: string) => {
   const findItemIndex = data.value[key]?.findIndex((item: any) => item.modifyId === row.id)
   console.log(findItemIndex, "currentItem")
   if (!data.value[key]?.length || findItemIndex === -1) {
+    const val = cloneDeep(row)
     data.value[key].push({
-      ...row,
-      modifyId: row.id
+      ...val,
+      modifyId: val.id
     })
   }
   console.log(data.value[key], "data[key]")
@@ -833,91 +759,121 @@ const addTableData = (key: string) => {
 }
 
 const handleAdditionOfCostModificationItemsForHandBoards = async (row: any) => {
-  const res = await AdditionOfCostModificationItemsForHandBoards({
+  const { success } = await AdditionOfCostModificationItemsForHandBoards({
     ...row,
     auditFlowId,
     solutionId: productId
   })
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddMoldCostModificationItem = async (row: any) => {
-  const res = await AddMoldCostModificationItem({
+  const { success } = await AddMoldCostModificationItem({
     ...row,
     auditFlowId,
     solutionId: productId
   })
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddToolingCostModificationItem = async (row: any) => {
-  const res =
+  const { success } =
     (await AddToolingCostModificationItem({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAdditionOfFixtureCostModificationItem = async (row: any) => {
-  const res =
+  const { success } =
     (await AdditionOfFixtureCostModificationItem({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddInspectionToolCostModificationItem = async (row: any) => {
-  const res =
+  const { success } =
     (await AddInspectionToolCostModificationItem({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddProductionEquipmentCostModificationItem = async (row: any) => {
-  const res =
+  const { success } =
     (await AddProductionEquipmentCostModificationItem({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddExperimentalFeeModificationItem = async (row: any) => {
-  const res =
+  const { success } =
     (await AddExperimentalFeeModificationItem({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddingModificationItemsForTestingSoftwareCosts = async (row: any) => {
-  const res =
+  const { success } =
     (await AddingModificationItemsForTestingSoftwareCosts({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleAddTravelExpenseModificationItem = async (row: any) => {
-  const res =
+  const { success } =
     (await AddTravelExpenseModificationItem({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 const handleOtherExpenseModificationItemsAdded = async (row: any) => {
-  const res =
+  const { success } =
     (await OtherExpenseModificationItemsAdded({
       ...row,
       auditFlowId,
       solutionId: productId
     })) || {}
+  if (success) {
+    ElMessage.success('提交成功～')
+  }
 }
 
 onBeforeMount(() => {
@@ -930,7 +886,7 @@ onMounted(() => {
   getResonOptions()
 })
 
-watchEffect(() => {})
+watchEffect(() => { })
 </script>
 <style scoped lang="scss">
 .margin-top {

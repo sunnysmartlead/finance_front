@@ -1,6 +1,9 @@
 <template>
   <div class="demand-apply" v-loading="state.taebleLoading">
-    <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone />
+    <!-- <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone /> -->
+    <el-row justify="end">
+      <el-button @click="save" type="primary">提交</el-button>
+    </el-row>
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
@@ -52,8 +55,8 @@
           <el-col :span="8">
             <el-form-item label="项目代码:" prop="projectCode">
               <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
-                placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
-                <el-option v-for="item in projectCodeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions" @change="changeProjectName">
+                <el-option v-for="item in projectCodeOptions" :key="item.subCode" :label="item.subCode" :value="item.subCode" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -998,13 +1001,6 @@
         </el-row>
       </el-card>
     </el-form>
-    <!-- <div class="demand-apply__step">
-      <el-steps :active="1" direction="vertical">
-        <el-step title="Step 1" description="Some description" />
-        <el-step title="Step 2" description="Some description" />
-        <el-step title="Step 3" description="Some description" />
-      </el-steps>
-    </div> -->
   </div>
 </template>
 <script lang="ts" setup>
@@ -1311,10 +1307,7 @@ const getProjectCodeOptions = async (filter?: any) => {
     maxResultCount: 100
   })
   if (result?.items) {
-    projectCodeOptions.value = map(result?.items, item => ({
-      label: item.code,
-      value: item.code,
-    }))
+    projectCodeOptions.value = result?.items
   }
 }
 
@@ -1373,7 +1366,8 @@ const checkModuleTableDataV2Data = () => {
   }
 }
 
-const save = async (formEl: FormInstance | undefined, { comment, opinion }: any) => {
+const save = async (formEl: FormInstance | undefined) => {
+  const opinion = ''
   let { auditFlowId } = route.query
   // 模组走量不能为0
   let isModuleTableDataQuantity = false
@@ -1424,7 +1418,7 @@ const save = async (formEl: FormInstance | undefined, { comment, opinion }: any)
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
-          comment,
+          // comment,
           opinion,
           gradient: kvPricingData.value,
           gradientModel: gradientModel
@@ -1432,13 +1426,11 @@ const save = async (formEl: FormInstance | undefined, { comment, opinion }: any)
         if (res.success) {
           ElMessage({
             type: "success",
-            message: `${opinion === 'DONE' ? '提交' : '保存'}成功`
+            message: `提交成功`
           })
-          if (opinion === 'DONE') {
-            router.push({
-              path: "/todoCenter/index"
-            })
-          }
+          router.push({
+            path: "/todoCenter/index"
+          })
           saveloading.value = false
         }
       } catch (error) {
@@ -2403,6 +2395,14 @@ const changeExchangRate = (val: string, index: number) => {
       item.exchangeRate = val
     })
   }
+}
+
+const changeProjectName = (val: string) => {
+  const findItem = projectCodeOptions.value.find((item: any) => item.code === val)
+  if (findItem) {
+    state.quoteForm.projectName = findItem.description
+  }
+  console.log(val)
 }
 
 defineExpose({

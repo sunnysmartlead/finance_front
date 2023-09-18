@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-card m="2" header="其他成本">
-      <otherCostTable :manufactureData="manufactureData" :hideEdit="hideEdit" />
+      <otherCostTable :otherCostData="otherCostData" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
-          <el-row>
+          <el-row v-if="!hideEdit">
             <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
             <el-upload
@@ -24,7 +24,7 @@
           </el-row>
         </el-row>
       </template>
-      <otherCostTable isEdit :manufactureData="modifyData" :on-delete="handleDelete" />
+      <otherCostTable :isEdit="!hideEdit" :manufactureData="modifyData" :on-delete="handleDelete" />
     </el-card>
   </div>
 </template>
@@ -68,14 +68,16 @@ const getModifyData = async () => {
 const getOtherCost = async () => {
   try {
   const { yearData, gradientId } = props
-    const { result }: any = await GetOtherCostItem({
+    const { result, success }: any = await GetOtherCostItem({
       Year: yearData.year,
       AuditFlowId: auditFlowId,
       SolutionId,
       UpDown: yearData.upDown,
       GradientId: gradientId,
     }) || {}
-    otherCostData.value = result || []
+    if (success) {
+      otherCostData.value = result || []
+    }
     console.log(result, "获取其他成本")
   } catch (err: any) {
     console.log(err, "[ 获取其他成本失败 ]")

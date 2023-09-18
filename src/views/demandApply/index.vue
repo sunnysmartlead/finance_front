@@ -1,5 +1,6 @@
 <template>
   <div class="demand-apply" v-loading="state.taebleLoading">
+    <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone />
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
@@ -49,9 +50,10 @@
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="项目代码(自动带出):" prop="projectCode">
-              <el-select v-model="state.quoteForm.projectCode" filterable placeholder="Select" :disabled="isDisabled">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            <el-form-item label="项目代码:" prop="projectCode">
+              <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
+                placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
+                <el-option v-for="item in projectCodeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -426,7 +428,8 @@
             </el-table-column>
           </el-table>
           <div v-for="(item, Findex) in gradientModelTable" :key="Findex">
-            <p class="mx-1" size="large">{{ item.kv }} (K/Y)</p>
+            <p class="mx-1" size="large">{{ `${item.kv} ${state.quoteForm.updateFrequency == updateFrequency.HalfYear ?
+              '(K/HY)' : '(K/Y)'}` }} </p>
             <el-table :data="item.children" style="width: 100%" border>
               <el-table-column type="index" width="80" label="序号" />
               <el-table-column label="客户零件号" prop="number" width="180" />
@@ -823,7 +826,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="exchange" label="汇率" />
-          <el-table-column prop="total" label="合计" />
+          <el-table-column prop="total" label="合计" :formatter="formatValue" />
         </el-table>
         <h6 />
         <h6 />
@@ -993,8 +996,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-button type="primary" size="large" style="float: right; margin: 20px 0" @click="save(refForm)" v-havedone
-          :loading="saveloading" v-if="!isDisabled">提交</el-button>
       </el-card>
     </el-form>
     <!-- <div class="demand-apply__step">
@@ -1015,7 +1016,7 @@ import { useRoute, useRouter } from "vue-router"
 
 import type { UploadProps, UploadUserFile } from "element-plus"
 
-import _, { uniq, map, debounce } from "lodash"
+import _, { uniq, map, debounce, cloneDeep } from "lodash"
 import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
@@ -1023,7 +1024,8 @@ import { ElMessage } from "element-plus"
 // import { SearchPerson } from "@/components/SearchPerson"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-
+import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import dayjs from "dayjs"
 
 //整个页面是否可以编辑
@@ -1036,28 +1038,7 @@ const props = defineProps({
 
 //客户目标价
 var customerTargetPrice: any = ref([])
-const options = [
-  {
-    value: "Option1",
-    label: "卡宴"
-  },
-  {
-    value: "Option2",
-    label: "吉利"
-  },
-  {
-    value: "Option3",
-    label: "天马"
-  },
-  {
-    value: "Option4",
-    label: "小鹏"
-  },
-  {
-    value: "Option5",
-    label: "小米"
-  }
-]
+const projectCodeOptions = ref<any>([])
 const refForm = ref<FormInstance>()
 
 interface Options {
@@ -1114,7 +1095,6 @@ const state = reactive({
   taebleLoading: false,
   quoteForm: {
     shareCount: [],
-    opinion: "", // 审批意见
     countryType: "", // 国家类型
     isHasNre: false,
     isHasGradient: null,
@@ -1260,8 +1240,8 @@ const moduleTableTotal = computed(() => {
         sumQuantity: modelTotal,
       })
     }
-    console.log(currentData, "[获取当前的模组]")
     if (!_.isEmpty(currentData)) {
+      const modelTotal = item.modelCountYearList?.reduce((a: number, b: any) => a + b.quantity, 0) || 0
       productModule.set(`${item.product}-${item.pixel}-${item.productType}-${item?.code}`, {
         carModel: compareString(currentData.carModel, item.carModel),
         product: item.product,
@@ -1273,7 +1253,7 @@ const moduleTableTotal = computed(() => {
         marketShare: (currentData.marketShare += item.marketShare || 0),
         moduleCarryingRate: (currentData.moduleCarryingRate += item.moduleCarryingRate || 0),
         singleCarProductsQuantity: (currentData.singleCarProductsQuantity += item.singleCarProductsQuantity || 0),
-        sumQuantity: item.sumQuantity += currentData.sumQuantity,
+        sumQuantity: (currentData.sumQuantity || 0) + (modelTotal || 0),
         modelCountYearList: currentData.modelCountYearList.map((m: any, i: number) => {
           const modalCountYearItem: any = item.modelCountYearList[i] || {}
           return {
@@ -1316,6 +1296,28 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   }
 }
 
+const formatValue = (_record: any, _row: any, cellValue: any) => {
+  if (cellValue) {
+    return Number(cellValue).toFixed(2)
+  } else {
+    return 0
+  }
+}
+
+const getProjectCodeOptions = async (filter?: any) => {
+  const { result }: any = await GetAllProjectSelf({
+    filter: filter || '',
+    skipCount: 100,
+    maxResultCount: 100
+  })
+  if (result?.items) {
+    projectCodeOptions.value = map(result?.items, item => ({
+      label: item.code,
+      value: item.code,
+    }))
+  }
+}
+
 const dealWithItem = (v: any) => {
   if (Array.isArray(v)) {
     return v.join(",")
@@ -1323,7 +1325,8 @@ const dealWithItem = (v: any) => {
   return v
 }
 const handleDealWithModelCount = (arr: any) => {
-  return map(arr, (item: any) => {
+  const filterData = cloneDeep(arr)
+  return map(filterData, (item: any) => {
     return {
       ...item,
       carModel: dealWithItem(item.carModel),
@@ -1370,7 +1373,7 @@ const checkModuleTableDataV2Data = () => {
   }
 }
 
-const save = async (formEl: FormInstance | undefined) => {
+const save = async (formEl: FormInstance | undefined, { comment, opinion }: any) => {
   let { auditFlowId } = route.query
   // 模组走量不能为0
   let isModuleTableDataQuantity = false
@@ -1402,6 +1405,7 @@ const save = async (formEl: FormInstance | undefined) => {
       if (quoteForm.isHasNre) {
         quoteForm.shareCount = shareCountTable.value
       }
+      quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
       quoteForm.pcs = [...pcsTableData.value, ...interiorPcsTableData.value] //终端走量（PCS）
       let prop = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
       prop.forEach((item: any, index: number) => {
@@ -1411,28 +1415,30 @@ const save = async (formEl: FormInstance | undefined) => {
       quoteForm.requirement = requireTableData // 要求
       quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
       quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
-      // state.quoteForm.sorFile = fileList.value.map((item: any) => item.response.result?.fileId) // SOR附件上传
       let gradientModel = map(gradientModelTable.value, (item: any) =>
         map(item.children, c => ({
           ...c,
           number: Array.isArray(c.number) ? c.number.join(",") : c.number
         }))
       ).flat(2)
-      quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
       try {
         let res: any = await saveApplyInfo({
           ...quoteForm,
+          comment,
+          opinion,
           gradient: kvPricingData.value,
           gradientModel: gradientModel
         })
         if (res.success) {
           ElMessage({
             type: "success",
-            message: "保存成功"
+            message: `${opinion === 'DONE' ? '提交' : '保存'}成功`
           })
-          router.push({
-            path: "/todoCenter/index"
-          })
+          if (opinion === 'DONE') {
+            router.push({
+              path: "/todoCenter/index"
+            })
+          }
           saveloading.value = false
         }
       } catch (error) {
@@ -1754,8 +1760,7 @@ watch(
   (val) => {
     const [moduleTableTotalData, kvList, isHasGradient] = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
-      let filterData = _.cloneDeep(kvList)
-
+      let filterData: any = _.cloneDeep(kvList)
       filterData = filterData.map((item: any) => {
         console.log(isHasGradient, "isHasGradient12313")
         return {
@@ -1775,33 +1780,29 @@ watch(
           }))
         }
       })
-      // console.log(filterData, "[filterDatafilterData]")
       gradientModelTable.value = filterData
-    }
-  },
-  {
-    deep: true
-  }
-)
-
-watch(
-  () => [productTableData.value, kvPricingData.value],
-  (val) => {
-    const [productList, kvList] = val
-    if (productList.length && kvList.length && isFirstShow.value) {
-      let arr: any = []
-      kvList.forEach((kvItem: any) => {
-        productList.forEach((productItem: any) => {
-          arr.push({
-            kv: kvItem.gradientValue,
-            product: productItem.product,
-            targetPrice: 0,
-            currency: 0
+      if (moduleTableTotalData?.length && kvList?.length && isFirstShow.value) {
+        let arr: any = []
+        kvList.forEach((gradientValue: any) => {
+          moduleTableTotalData.forEach((item: any) => {
+            const findItem = customerTargetPrice.value.find(c => c.product === item.product)
+            if (findItem) {
+              arr.push({
+                ...findItem,
+                kv: gradientValue,
+              })
+            } else {
+              arr.push({
+                kv: gradientValue,
+                product: item.product,
+                targetPrice: 0,
+                currency: 0
+              })
+            }
           })
         })
-      })
-      console.log(kvList, arr, "kvList")
-      customerTargetPrice.value = arr
+        customerTargetPrice.value = arr
+      }
     }
   },
   {
@@ -2246,8 +2247,6 @@ const ledTypeSelectChange = (val: any, index: number) => {
 
 onMounted(async () => {
   let query = getQuery()
-  const { processType } = query
-  state.quoteForm.opinion = processType
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
   state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
   state.quoteForm.quoteVersion = query.quoteVersion ? query.quoteVersion + "" : ""
@@ -2259,6 +2258,7 @@ onMounted(async () => {
   // 设置单据编号
   setNumber()
   try {
+    getProjectCodeOptions()
     let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
     state.updateFrequencyOptions = UpdateFrequency.result?.financeDictionaryDetailList
 

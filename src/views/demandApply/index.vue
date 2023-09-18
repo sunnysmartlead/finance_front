@@ -2,7 +2,7 @@
   <div class="demand-apply" v-loading="state.taebleLoading">
     <!-- <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone /> -->
     <el-row justify="end">
-      <el-button @click="save" type="primary">提交</el-button>
+      <el-button @click="save(refForm)" type="primary">提交</el-button>
     </el-row>
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->

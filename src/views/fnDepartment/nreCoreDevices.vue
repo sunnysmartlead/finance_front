@@ -5,7 +5,13 @@
       <el-table :data="data.productAndGradients" style="width: 100%" border height="500px">
         <el-table-column type="expand">
           <template v-slot="props">
-            <el-descriptions :column="3" border v-for="item in props.row.items" :key="item.project" mb-15px>
+            <el-descriptions
+              :column="3"
+              border
+              v-for="item in props.row.solutionAndprices"
+              :key="item.solutionName"
+              mb-15px
+            >
               <el-descriptions-item>
                 <template v-slot:label> 方案名称 </template>
                 {{ item.solutionName }}
@@ -38,8 +44,8 @@
       <p>线体数量：2 共线分摊率：2</p>
       <el-table :data="data.nres" style="width: 100%" border height="500px">
         <el-table-column prop="nre" label="NRE费用" />
-        <el-table-column prop="Amount" label="金额" />
-        <el-table-column prop="reMark" label="备注" />
+        <el-table-column prop="price" label="金额" />
+        <el-table-column prop="remark" label="备注" />
       </el-table>
     </el-card>
   </div>

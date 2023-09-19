@@ -1,11 +1,8 @@
 <!-- 报价单 -->
-
 <template>
-  <div class="app-container">
-    <div>
-      <el-button type="primary" @click="downLoad" style="margin-left: 10px">下载报价单</el-button>
-    </div>
+  <div>
     <el-card>
+      <el-button type="primary" @click="downLoad" mb-20px float-right>下载报价单</el-button>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="客户名称">
           {{ data.form.customerName }}

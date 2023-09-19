@@ -3,10 +3,10 @@
 <template>
   <div>
     <div>
-      <el-button type="primary" @click="downLoad" style="margin-left: 10px">成本信息表下载</el-button>
+      <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     </div>
-   <!-- nre -->
-   <h3>NRE</h3>
+    <!-- nre -->
+    <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
@@ -76,7 +76,7 @@
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="amount" />
+        <el-table-column label="单车产品数量" prop="productNumber" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率" prop="quotedGrossMarginSimple.interior.grossMargin">
@@ -123,7 +123,7 @@
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
-                  <el-button>计算</el-button>
+                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
                 </template>
               </el-input>
             </template>
@@ -161,12 +161,22 @@
       </el-row>
       <el-table :data="item.grossMargins" border>
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="amount" />
+        <el-table-column label="单车产品数量" prop="productNumber" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.interior.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.interior.nreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
@@ -192,16 +202,23 @@
               {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.client.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.client.nreGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
           <el-table-column label="单价">
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
-                  <el-button @click="calculateFullGrossMargin(
-                    scope.row,
-                    scope.$index
-                  )">计算</el-button>
+                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
                 </template>
               </el-input>
             </template>
@@ -209,6 +226,16 @@
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.quotedGrossMarginSimple.thisQuotation.grossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.thisQuotation.clientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.quotedGrossMarginSimple.thisQuotation.nreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
@@ -265,6 +292,7 @@
 <script lang="ts" setup>
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import * as echarts from "echarts"
 import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { calculateRate, getQuotationFeedback } from "./service"

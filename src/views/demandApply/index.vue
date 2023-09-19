@@ -2,7 +2,8 @@
   <div class="demand-apply" v-loading="state.taebleLoading">
     <!-- <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone /> -->
     <el-row justify="end">
-      <el-button @click="save(refForm)" type="primary">提交</el-button>
+      <el-button @click="save(refForm, false)" type="primary">保存</el-button>
+      <el-button @click="save(refForm, true)" type="primary">提交</el-button>
     </el-row>
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->
@@ -1366,9 +1367,9 @@ const checkModuleTableDataV2Data = () => {
   }
 }
 
-const save = async (formEl: FormInstance | undefined) => {
+const save = async (formEl: FormInstance | undefined, isSubmit: boolean) => {
   const opinion = ''
-  let { auditFlowId } = route.query
+  let { auditFlowId, nodeInstanceId } = route.query
   // 模组走量不能为0
   let isModuleTableDataQuantity = false
   const isPass = pcsTableData.value.some((item: any) => {
@@ -1421,7 +1422,9 @@ const save = async (formEl: FormInstance | undefined) => {
           // comment,
           opinion,
           gradient: kvPricingData.value,
-          gradientModel: gradientModel
+          gradientModel: gradientModel,
+          isSubmit,
+          nodeInstanceId: nodeInstanceId || 0
         })
         if (res.success) {
           ElMessage({

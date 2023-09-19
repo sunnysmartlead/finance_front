@@ -212,10 +212,11 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
-import { GetQuotationList } from "../marketingQuotation/service"
+// import { GetQuotationList } from "../marketingQuotation/service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
-import { PostAuditQuotationListSave } from "./service"
+// import { PostAuditQuotationListSave } from "./service"
+import { getQuotationApprovedMarketing } from "./service"
 import { ElMessage } from "element-plus"
 // import { ElMessageBox } from "element-plus"
 
@@ -1034,7 +1035,7 @@ onBeforeMount(() => {
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   initFetch()
-  fetchSopYear()
+  // fetchSopYear()
 })
 
 const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) => {
@@ -1047,10 +1048,8 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 }
 
 const initFetch = async () => {
-  const { result } = await GetQuotationList({ Id: auditFlowId })
+  const { result } = await getQuotationApprovedMarketing(auditFlowId)
   data.resa = result
-  data.motionMessageSop = result.motionMessage[0].sop.map((item: any) => item)
-  console.log(result, "result")
 }
 
 // 计算含佣金的毛利率
@@ -1065,12 +1064,12 @@ const fetchSopYear = async () => {
 }
 
 const save = async () => {
-  const { success }: any =
-    (await PostAuditQuotationListSave({
-      auditFlowId,
-      ...data.resa
-    })) || {}
-  if (success) ElMessage.success("保存成功！")
+  // const { success }: any =
+  //   (await PostAuditQuotationListSave({
+  //     auditFlowId,
+  //     ...data.resa
+  //   })) || {}
+  // if (success) ElMessage.success("保存成功！")
 }
 
 watchEffect(() => {})

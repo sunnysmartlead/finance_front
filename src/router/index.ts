@@ -118,14 +118,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       //     title: "项目核价表"
       //   }
       // },
-      {
-        path: "/demandApply/result",
-        component: () => import("@/views/demandApply/marketingApproval.vue"),
-        name: "demandApplyResult",
-        meta: {
-          title: "营销部报价表"
-        }
-      }
+      // {
+      //   path: "/demandApply/result",
+      //   component: () => import("@/views/demandApply/marketingApproval.vue"),
+      //   name: "demandApplyResult",
+      //   meta: {
+      //     title: "营销部报价表"
+      //   }
+      // }
     ]
   },
   {
@@ -614,6 +614,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/quoteAnalysis/index",
     component: Layout,
     meta: {
+      title: "报价模块",
       hidden: false
     },
     children: [
@@ -623,6 +624,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "quoteAnalysis",
         meta: {
           title: "报价分析看板"
+        }
+      },
+      {
+        path: "/quoteAnalysis/marketingApproval",
+        component: () => import("@/views/quoteAnalysis/marketingApproval.vue"),
+        name: "marketingApproval",
+        meta: {
+          title: "营销部审批"
         }
       },
       {
@@ -656,17 +665,18 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/marketingQuotation/index",
     component: Layout,
     meta: {
-      hidden: true
+      title: "总经理审批",
+      hidden: false
     },
     children: [
-      {
-        path: "/marketingQuotation/index",
-        component: () => import("@/views/marketingQuotation/old.vue"),
-        name: "marketingQuotation",
-        meta: {
-          title: "总经理审批"
-        }
-      },
+      // {
+      //   path: "/marketingQuotation/index",
+      //   component: () => import("@/views/marketingQuotation/old.vue"),
+      //   name: "marketingQuotation",
+      //   meta: {
+      //     title: "总经理审批"
+      //   }
+      // },
       {
         path: "/marketingQuotation/indexFirst",
         component: () => import("@/views/marketingQuotation/indexFirst.vue"),
@@ -678,7 +688,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: "/marketingQuotation/indexSecond",
         // component: () => import("@/views/demandApply/marketingApproval.vue"),
-        component: () => import("@/views/demandApply/indexSecond.vue"),
+        component: () => import("@/views/marketingQuotation/indexSecond.vue"),
         name: "indexSecond",
         meta: {
           title: "总经理审批2"

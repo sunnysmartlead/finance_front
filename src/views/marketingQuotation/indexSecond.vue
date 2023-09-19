@@ -1,7 +1,7 @@
 <!-- 财务中标确认、总经理中标查看、总经理审批2的界面是一样的 -->
 <template>
   <div>
-    <el-card class="marketingQuotation-page" header="总经理审批2" m="2">
+    <el-card header="总经理审批2">
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
         <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
@@ -48,17 +48,17 @@
       </el-descriptions>
       <!-- sop走量信息 -->
       <el-card header="sop走量信息" m="2">
-        <el-table :data="data.resa.motionMessage" border>
-          <el-table-column type="index" width="100" />
-          <el-table-column label="名称" prop="messageName" />
-          <el-table-column
-            v-for="(item, index) in data.motionMessageSop"
-            :key="item.year"
-            :label="item.year"
-            :prop="`sop[${index}].value`"
-            :formatter="formatMarketingQuotationDatas"
-          />
-        </el-table>
+        <div v-for="item in data.resa.motionMessage" :key="item.messageName">
+          <p>{{ item.messageName }}</p>
+          <el-table :data="item.sop" border>
+            <el-table-column type="index" width="100" />
+            <el-table-column prop="year" label="年份" />
+            <el-table-column prop="value" />
+            <el-table-column prop="sopValue" label="sop" />
+            <el-table-column prop="fullValue" />
+            <!-- <el-table-column label="梯度" prop="messageName" /> -->
+          </el-table>
+        </div>
       </el-card>
       <!-- 核心部件 -->
       <el-card header="核心部件：" m="2">
@@ -160,13 +160,8 @@
           <el-table-column label="价格" prop="price" />
           <el-table-column label="佣金" prop="commission" width="180">
             <template #default="scope">
-              <el-input-number
-                controls-position="right"
-                v-model="scope.row.commission"
-                placeholder="请输入佣金"
-                @change="(val: any) => changeCommission(scope.row, scope.$index)"
-                :min="0"
-              />
+              <el-input-number controls-position="right" v-model="scope.row.commission" placeholder="请输入佣金"
+                @change="(val: any) => changeCommission(scope.row, scope.$index)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="含佣金的毛利率" prop="grossMarginCommission">
@@ -214,9 +209,10 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
-import { GetQuotationList, PostAuditQuotationList } from "./service"
+import { GetQuotationList, PostAuditQuotationList, GetManagerApprovalOfferTwo } from "./service"
+import { getAcceptanceBid, getBidView } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
-import { getYears } from "../pmDepartment/service"
+// import { getYears } from "../pmDepartment/service"
 import { ElMessageBox, ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
@@ -232,7 +228,7 @@ const query = useJump()
 const route = useRoute()
 const { closeSelectedTag, jumpPage } = query
 
-const { auditFlowId = 1 }: any = getQuery()
+const { auditFlowId } = getQuery()
 const dialogVisible = ref(false)
 const ProductByAuditFlowId = ref<any>({})
 /**
@@ -511,15 +507,15 @@ const data = reactive<any>({
   __abp: true
 })
 
-const columns = reactive({
-  sopData: []
-})
-const formatter = (_record: any, _row: any, cellValue: any) => {
-  return Number(cellValue).toFixed(2)
-}
-const formatterP = (_record: any, _row: any, cellValue: any) => {
-  return Number(cellValue).toFixed(2) + "%"
-}
+// const columns = reactive({
+//   sopData: []
+// })
+// const formatter = (_record: any, _row: any, cellValue: any) => {
+//   return Number(cellValue).toFixed(2)
+// }
+// const formatterP = (_record: any, _row: any, cellValue: any) => {
+//   return Number(cellValue).toFixed(2) + "%"
+// }
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
@@ -544,7 +540,7 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   initFetch()
-  fetchSopYear()
+  // fetchSopYear()
 })
 const jumpToAnalysis = () => {
   jumpPage("/quoteAnalysis/index", {
@@ -563,18 +559,30 @@ const jumpToStru = () => {
     right: 1
   })
 }
+// const initFetch = async () => {
+//   const { result } = await GetQuotationList({ Id: auditFlowId })
+//   data.marketingQuotationData = result
+//   data.motionMessageSop = result.motionMessage[0].sop.map((item: any) => item)
+//   console.log(result, "result")
+// }
+
+// const fetchSopYear = async () => {
+//   const { result } = (await getYears(auditFlowId)) || {}
+//   columns.sopData = result || []
+// }
+
 const initFetch = async () => {
-  const { result } = await GetQuotationList({ Id: auditFlowId })
-  data.marketingQuotationData = result
-  data.motionMessageSop = result.motionMessage[0].sop.map((item: any) => item)
-  console.log(result, "result")
+  if (auditFlowId) {
+    // 总经理审批2
+    const { result } = await GetManagerApprovalOfferTwo(auditFlowId)
+    // 总经理中标查看
+    // const { result } = await getAcceptanceBid(auditFlowId)
+    // 中标确认
+    // const { result } = await getAcceptanceBid(auditFlowId)
+    data.resa = result
+    console.log(result, "result")
+  }
 }
-
-const fetchSopYear = async () => {
-  const { result } = (await getYears(auditFlowId)) || {}
-  columns.sopData = result || []
-}
-
 const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) => {
   if (record.messageName.includes("%")) return `${cellValue.toFixed(2)} %`
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -719,12 +727,13 @@ const toNREPriceList = () => {
   })
 }
 
-watchEffect(() => {})
+watchEffect(() => { })
 </script>
 <style scoped lang="scss">
 .demandApply-result-page {
   margin: 10px;
 }
+
 * {
   font-size: 20px;
 }

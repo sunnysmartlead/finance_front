@@ -1,6 +1,6 @@
 <template>
   <!-- 总经理审批1 -->
-  <el-card class="marketingQuotation-page" header="报价审核表" m="2">
+  <el-card header="报价审核表">
     <!-- 单价汇总 -->
     <p>单价汇总</p>
     <el-table :data="data.resa.unitPriceSum" border>
@@ -93,11 +93,11 @@ import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
 import { GetQuotationList } from "./service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
-import { PostAuditQuotationListSave } from "./service"
+import { PostAuditQuotationListSave, GetManagerApprovalOfferOne } from "./service"
 import { ElMessage } from "element-plus"
 // import { ElMessageBox } from "element-plus"
 
-const { auditFlowId = 1 }: any = getQuery()
+const { auditFlowId } = getQuery()
 /**
  * 数据部分
  */
@@ -371,7 +371,7 @@ onBeforeMount(() => {
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   initFetch()
-  fetchSopYear()
+  // fetchSopYear()
 })
 
 const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) => {
@@ -383,11 +383,19 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
 
+// const initFetch = async () => {
+//   const { result } = await GetQuotationList({ Id: auditFlowId })
+//   data.resa = result
+//   data.motionMessageSop = result.motionMessage[0].sop.map((item: any) => item)
+//   console.log(result, "result")
+// }
+
 const initFetch = async () => {
-  const { result } = await GetQuotationList({ Id: auditFlowId })
-  data.resa = result
-  data.motionMessageSop = result.motionMessage[0].sop.map((item: any) => item)
-  console.log(result, "result")
+  if (auditFlowId) {
+    const { result } = await GetManagerApprovalOfferOne(auditFlowId)
+    data.resa = result
+    console.log(result, "result")
+  }
 }
 
 // 计算含佣金的毛利率

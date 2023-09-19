@@ -44,7 +44,7 @@
         </el-form-item>
         <el-form-item label="国家类型" :label-width="data.formLabelWidth">
           <el-select v-model="data.countryForm.nationalType">
-            <el-option v-for="item in countryType" :key="item.val" :label="item.label" />
+            <el-option v-for="item in countryType" :key="item.val" :label="item.label" :value="item.val" />
           </el-select>
           <!-- <el-input v-model="data.countryForm.nationalType" autocomplete="off" /> -->
         </el-form-item>
@@ -133,7 +133,7 @@ const handleDelete = (index: number, row: any) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    if (typeof row.id === "number") {
+    if (row.id) {
       let res: any = await deleteCountry(row.id)
       if (res.success) {
         ElMessage({
@@ -167,6 +167,7 @@ const save = async () => {
       type: "success",
       message: "保存成功"
     })
+    getList()
     data.dialogVisible = false
   }
 }

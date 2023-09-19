@@ -117,7 +117,7 @@
               <el-table-column label="单PCS运输费" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.singlyDemandPrice?Number(scope.row.singlyDemandPrice).toFixed(2):'0.00' }}</span>
+                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/scope.row.yearMountCount).toFixed(2)}}</span>
                   </div>
                 </template>
               </el-table-column>

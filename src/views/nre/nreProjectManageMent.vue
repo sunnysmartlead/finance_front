@@ -144,7 +144,7 @@
         </el-table-column>
         <el-table-column label="费用">
           <template #default="{ row }">
-            <el-input v-model="row.cost" :min="0" controls-position="right" />
+            <el-input-number v-model="row.cost" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="备注">

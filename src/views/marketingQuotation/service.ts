@@ -56,6 +56,26 @@ export function PostAuditQuotationListSave(data: {
   })
 }
 
+// 总经理审批1
+export function GetManagerApprovalOfferOne(auditFlowId: number): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferOne",
+    data: {
+      auditFlowId
+    }
+  })
+}
+
+// 总经理审批2
+export function GetManagerApprovalOfferTwo(auditFlowId: number): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferTwo",
+    data: {
+      auditFlowId
+    }
+  })
+}
+
 // // 总经理报价审批
 // export function GeneralManagerQuoteCheck(data: {
 //   /**

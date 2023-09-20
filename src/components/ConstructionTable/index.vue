@@ -165,6 +165,7 @@
                 :label="`${c.kv} K/Y`"
                 width="150"
                 :key="`rebateMoney${i}`"
+                :prop="`rebateMoney.${index}.value`"
                 :formatter="formatThousandths"
               >
                 <template #default="{ row }">

@@ -4,14 +4,6 @@
     <el-card mb-20px>
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
-      <!-- <el-row :gutter="20">
-        <el-col :span="6" v-for="(item, index) in planList" :key="index">
-          <div>方案{{ index + 1 }}:</div>
-          <el-select clearable v-model="item.value" mb-20px>
-            <el-option v-for="item in productStore.productList" :label="item.product" :value="item.id" :key="item.id" />
-          </el-select>
-        </el-col>
-      </el-row> -->
       <el-table :data="planList" style="width: 100%" border height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="报价模组">
@@ -342,7 +334,7 @@
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import * as echarts from "echarts"
-import debounce from "lodash/debounce"
+// import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
 import { calculateRate, PostStatementAnalysisBoardSecond, PostComparison, GetSolution } from "./service"

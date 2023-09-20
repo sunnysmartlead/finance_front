@@ -109,7 +109,7 @@
               <el-table-column label="月需求量" align="center">
                 <template #default="scope">
                   <div>
-                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / 12*1000).toFixed(2) }}</span>
+                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / scope.row.yearMountCount).toFixed(2) }}</span>
                     <span v-else>--</span>
                   </div>
                 </template>
@@ -117,14 +117,14 @@
               <el-table-column label="单PCS运输费" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/scope.row.yearMountCount).toFixed(2)}}</span>
+                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount / scope.row.yearMountCount)).toFixed(2)}}</span>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column label="单PCS总物流成本" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.transportPrice?Number(scope.row.transportPrice).toFixed(2):'0.00' }}</span>
+                    <span>{{ scope.row.transportPrice?Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount / scope.row.yearMountCount)).toFixed(2):'0.00' }}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -373,9 +373,11 @@ const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("单片价格变化", value);
   console.log("当前下表",cardIndex);
   console.log(`index===${index}`,item)
-  if (item.packagingPrice && item.singlyDemandPrice) {
-    item.transportPrice = Number(item.packagingPrice) + item.singlyDemandPrice
+  if (item.packagingPrice && item.packagingPrice) {
+    item.transportPrice = ((item.row.freightPrice +item.row.storagePrice)/(item.row.yearMountCount / item.row.yearMountCount)).toFixed(2)
   }
+
+
   if(cardIndex==0&&index==0){
     cardData.value.map(function(cardItem:any){
       if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
@@ -391,7 +393,7 @@ const freightPriceChange = (value: any, index: any, item: any,cardIndex:number) 
   console.log("运费变化", value)
   console.log(`index===${index}`, item)
   let yearCount = item.yearMountCount ? item.yearMountCount : 1
-  let monthlyDemandPrice = yearCount / 12
+  let monthlyDemandPrice = yearCount / item.moon
   item.monthlyDemandPrice = monthlyDemandPrice
   console.log("月需求量", monthlyDemandPrice)
   let singlePCS = (item.freightPrice + item.storagePrice) / monthlyDemandPrice
@@ -407,7 +409,7 @@ const freightPriceChange = (value: any, index: any, item: any,cardIndex:number) 
         cardItem.logisticscostList.map(function(logItem:any){
           logItem.freightPrice=value;
           let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
-          let monthlyDemandPrice = yearCount / 12
+          let monthlyDemandPrice = yearCount / logItem.moon
           logItem.monthlyDemandPrice = monthlyDemandPrice
           let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
           logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
@@ -427,7 +429,7 @@ const storagePriceChange = (value: any, index: any, item: any,cardIndex:number) 
   console.log("仓储费用变化", value)
   console.log(`index===${index}`, item)
   let yearCount = item.yearMountCount ? item.yearMountCount : 1
-  let monthlyDemandPrice = yearCount / 12
+  let monthlyDemandPrice = yearCount / item.moon
   item.monthlyDemandPrice = monthlyDemandPrice
   console.log("月需求量", monthlyDemandPrice)
   let singlePCS = (item.freightPrice + item.storagePrice) / monthlyDemandPrice
@@ -444,7 +446,7 @@ const storagePriceChange = (value: any, index: any, item: any,cardIndex:number) 
         cardItem.logisticscostList.map(function(logItem:any){
           logItem.storagePrice=value;
           let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
-          let monthlyDemandPrice = yearCount / 12
+          let monthlyDemandPrice = yearCount / item.moon
           logItem.monthlyDemandPrice = monthlyDemandPrice
           let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
           logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))

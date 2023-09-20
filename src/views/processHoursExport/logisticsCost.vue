@@ -107,9 +107,10 @@
                 </template>
               </el-table-column>
               <el-table-column label="月需求量" align="center">
-                <template #default="scope">
+                <template #default="scope" c>
                   <div>
-                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / scope.row.yearMountCount).toFixed(2) }}</span>
+                    <span v-if="scope.row.yearMountCount"  v-format="'#,##0.00'">{{  amoutInterval((scope.row.yearMountCount *1000 / scope.row.moon),0)}}
+                    </span>
                     <span v-else>--</span>
                   </div>
                 </template>
@@ -117,14 +118,14 @@
               <el-table-column label="单PCS运输费" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount / scope.row.yearMountCount)).toFixed(2)}}</span>
+                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount *1000 / scope.row.moon)).toFixed(2)}}</span>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column label="单PCS总物流成本" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.transportPrice?Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount / scope.row.yearMountCount)).toFixed(2):'0.00' }}</span>
+                    <span>{{ scope.row.transportPrice?Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount * 1000 / scope.row.moon)).toFixed(2):'0.00' }}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -251,6 +252,7 @@ import {
 import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service";
 import {CommonDownloadFile,getProductDevelopmentInput} from "@/api/bom";
 import {isEmpty, map} from "lodash";
+import {round} from "lodash-es";
 
 const data = reactive({
   editDisabled: true,
@@ -270,6 +272,26 @@ const data = reactive({
     picture3DFileId: ""
   },
 })
+/**
+ * 数字格式化
+ * @param a 数字
+ * @param b 保留后几位
+ * @returns
+ */
+const amoutInterval = function (a: number, b: number) {
+  const amout = round(a, b).toLocaleString()
+  // 如果不需要保留后几位，直接返回
+  if (!b) {
+    return amout
+  }
+  // 如果小数点后几位不符合要求，则动态+0
+  if (amout.includes('.')) {
+    const num = amout.length - amout.indexOf('.') - 1
+    return num < b ? `${amout}${Array(b - num).fill(0).join('')}` : amout
+  }
+  //如是整数，则动态补0
+  return `${amout}.${Array(b).fill(0).join('')}`
+}
 const productStore = useProductStore()
 //路径上的参数
 const queryParam = ref({
@@ -360,7 +382,9 @@ const showSor=()=>{
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   saveTableData()
-  submitData({ comment, opinion, nodeInstanceId })
+  setTimeout(() => {
+    submitData({ comment, opinion, nodeInstanceId })
+  }, 1000)
 }
 
 const planChange = (value: any) => {

@@ -11,7 +11,7 @@
         <el-input v-model="data.tableParams.filter" @change="fetchTableData" style="width: 250px" />
         <el-button m="2" @click="onReset" type="primary">重置</el-button>
       </el-row>
-      <el-table :data="data.tableData" style="width: 100%; margin-top: 25px" border>
+      <el-table :data="data.tableData" height="50vh" style="width: 100%; margin-top: 25px" border>
         <el-table-column type="index" width="80" />
         <el-table-column label="类别" prop="category" width="180">
           <template #default="{ row }">

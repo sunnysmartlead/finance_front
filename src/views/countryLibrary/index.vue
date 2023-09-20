@@ -125,6 +125,7 @@ const handleCreateCountry = () => {
 const handleEdit = (row: any) => {
   data.isEdit = true
   data.countryForm = row
+  data.countryForm.id = row.dbId
   data.dialogVisible = true
 }
 const handleDelete = (index: number, row: any) => {
@@ -133,8 +134,8 @@ const handleDelete = (index: number, row: any) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    if (row.id) {
-      let res: any = await deleteCountry(row.id)
+    if (row.dbId) {
+      let res: any = await deleteCountry(row.dbId)
       if (res.success) {
         ElMessage({
           type: "success",

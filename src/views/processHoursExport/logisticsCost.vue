@@ -109,7 +109,7 @@
               <el-table-column label="月需求量" align="center">
                 <template #default="scope">
                   <div>
-                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount / scope.row.yearMountCount).toFixed(2) }}</span>
+                    <span v-if="scope.row.yearMountCount">{{ (scope.row.yearMountCount *1000 / scope.row.moon).toFixed(2) }}</span>
                     <span v-else>--</span>
                   </div>
                 </template>
@@ -117,14 +117,14 @@
               <el-table-column label="单PCS运输费" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount / scope.row.yearMountCount)).toFixed(2)}}</span>
+                    <span>{{((scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount *1000 / scope.row.moon)).toFixed(2)}}</span>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column label="单PCS总物流成本" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.transportPrice?Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount / scope.row.yearMountCount)).toFixed(2):'0.00' }}</span>
+                    <span>{{ scope.row.transportPrice?Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount * 1000 / scope.row.moon)).toFixed(2):'0.00' }}</span>
                   </div>
                 </template>
               </el-table-column>

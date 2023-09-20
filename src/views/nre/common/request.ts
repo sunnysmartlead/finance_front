@@ -28,18 +28,7 @@ export function PostProjectManagement(data: {
 }
 
 // 产品部-电子工程师 录入
-export function PostProductDepartment(data: {
-  /**
-   * 流程Id
-   */
-  auditFlowId?: number
-  solutionId: number
-  isSubmit: boolean
-  /**
-   * 实验费 实体类
-   */
-  productDepartmentModels?: ProductDepartmentModel | null
-}): any {
+export function PostProductDepartment(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/PostProductDepartmentSingle",
     method: "post",

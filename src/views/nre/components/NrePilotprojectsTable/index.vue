@@ -1,108 +1,87 @@
 <template>
-  <ProcessVertifyBox :onSubmit="isVertify?NREToExamineFun:submit" v-havedone :processType="isVertify?'baseProcessType':'confirmProcessType'" />
-  <InterfaceRequiredTime :ProcessIdentifier="Host" />
-  <div style="padding: 0 10px">
-    <el-card class="card-warp">
-      <template #header>
-        <el-row style="width: 100%" justify="space-between" align="middle">
-          实验费用
-          <el-row>
-            <el-upload
-              v-model:file-list="fileList"
-              show-file-list
-              :action="$baseUrl + 'api/services/app/NrePricing/PostProductDepartmentSingleExcel'"
-              :on-success="handleSuccess"
-              :on-change="handleFileChange"
-              name="fileName"
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadTemplateError"
-              v-if="!isVertify"
-            >
-              <el-button class="uploadBtn">NRE实验费模板上传</el-button>
-            </el-upload>
-            <SORDonwload />
-            <TrView />
-            <el-button type="primary" @click="handleFethNreExcelDownload" m="2">NRE实验费模板下载</el-button>
-            <el-button type="primary" @click="handleFethNreTableDownload" m="2" v-if="!isVertify">NRE实验费数据导出</el-button>
-            <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
+  <div >
+    <ProcessVertifyBox :onSubmit="isVertify ? NREToExamineFun : submit" v-havedone
+      :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'" />
+    <InterfaceRequiredTime :ProcessIdentifier="Host" />
+    <div style="padding: 0 10px">
+      <el-card class="card-warp">
+        <template #header>
+          <el-row style="width: 100%" justify="space-between" align="middle">
+            实验费用
+            <el-row>
+              <el-upload v-model:file-list="fileList" show-file-list
+                :action="$baseUrl + 'api/services/app/NrePricing/PostProductDepartmentSingleExcel'"
+                :on-success="handleSuccess" :on-change="handleFileChange" name="fileName"
+                :on-progress="handleGetUploadProgress" :on-error="handleUploadTemplateError" v-if="!isVertify">
+                <el-button class="uploadBtn">NRE实验费模板上传</el-button>
+              </el-upload>
+              <SORDonwload />
+              <TrView />
+              <el-button type="primary" @click="handleFethNreExcelDownload" m="2">NRE实验费模板下载</el-button>
+              <el-button type="primary" @click="handleFethNreTableDownload" m="2" v-if="!isVertify">NRE实验费数据导出</el-button>
+              <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
+            </el-row>
           </el-row>
-        </el-row>
-      </template>
-      <el-table
-        :data="data.laboratoryFeeModels"
-        border
-        :summary-method="getLaboratoryFeeSummaries"
-        show-summary
-        height="70vh"
-      >
-        <el-table-column type="index" width="50" />
-        <el-table-column label="试验项目（根据与客户协定项目）" width="180">
-          <template #default="{ row, $index }">
-            <span v-if="isVertify">{{ row.projectName }}</span>
-            <SelectSearch
-              v-else
-              :request="GetFoundationEmc"
-              :onChange="(record: any) => handleChangeData(record, $index)"
-              v-model="row.projectName"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="是否指定第三方" width="150">
-          <template #default="{ row }">
-            <el-select v-model="row.isThirdParty" :disabled="isVertify">
-              <el-option :value="true" label="是" />
-              <el-option :value="false" label="否" />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="单价" prop="unitPrice" width="175" />
-        <el-table-column label="调整系数" width="180">
-          <template #default="{ row }">
-            <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
-          </template>
-        </el-table-column>
-        <el-table-column label="单位" prop="unit" width="180" />
-        <el-table-column label="时间-摸底" width="180">
-          <template #default="{ row }">
-            <span v-if="isVertify">{{ row.countBottomingOut }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
-          </template>
-        </el-table-column>
-        <el-table-column label="时间-DV" width="180">
-          <template #default="{ row }">
-            <span v-if="isVertify">{{ row.countDV }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
-          </template>
-        </el-table-column>
-        <el-table-column label="时间-PV" width="180">
-          <template #default="{ row }">
-            <span v-if="isVertify">{{ row.countPV }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
-          </template>
-        </el-table-column>
-        <el-table-column label="总费用" prop="allCost" width="150" />
-        <el-table-column label="备注" width="180">
-          <template #default="{ row }">
-            <span v-if="isVertify">{{ row.remark }}</span>
-            <el-input v-else v-model="row.remark" />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" v-if="!isVertify" fixed="right" width="90">
-          <template #default="{ $index }">
-            <el-button @click="deleteLaboratoryFeeModel($index)" type="danger" v-havedone>删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-    <!-- <div style="float: right; margin: 20px 0" v-if="isVertify">
-      <el-button type="primary" v-havedone m="2">同意</el-button>
-      <el-button type="primary" v-havedone>退回</el-button>
+        </template>
+        <el-table :data="data.laboratoryFeeModels" border :summary-method="getLaboratoryFeeSummaries" show-summary
+          height="70vh">
+          <el-table-column type="index" width="50" />
+          <el-table-column label="试验项目（根据与客户协定项目）" width="180">
+            <template #default="{ row, $index }">
+              <span v-if="isVertify">{{ row.projectName }}</span>
+              <SelectSearch v-else :request="GetFoundationEmc"
+                :onChange="(record: any) => handleChangeData(record, $index)" v-model="row.projectName" />
+            </template>
+          </el-table-column>
+          <el-table-column label="是否指定第三方" width="150">
+            <template #default="{ row }">
+              <el-select v-model="row.isThirdParty" :disabled="isVertify">
+                <el-option :value="true" label="是" />
+                <el-option :value="false" label="否" />
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="单价" prop="unitPrice" width="175" />
+          <el-table-column label="调整系数" width="180">
+            <template #default="{ row }">
+              <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
+              <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
+            </template>
+          </el-table-column>
+          <el-table-column label="单位" prop="unit" width="180" />
+          <el-table-column label="时间-摸底" width="180">
+            <template #default="{ row }">
+              <span v-if="isVertify">{{ row.countBottomingOut }}</span>
+              <el-input-number v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
+            </template>
+          </el-table-column>
+          <el-table-column label="时间-DV" width="180">
+            <template #default="{ row }">
+              <span v-if="isVertify">{{ row.countDV }}</span>
+              <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
+            </template>
+          </el-table-column>
+          <el-table-column label="时间-PV" width="180">
+            <template #default="{ row }">
+              <span v-if="isVertify">{{ row.countPV }}</span>
+              <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
+            </template>
+          </el-table-column>
+          <el-table-column label="总费用" prop="allCost" width="150" />
+          <el-table-column label="备注" width="180">
+            <template #default="{ row }">
+              <span v-if="isVertify">{{ row.remark }}</span>
+              <el-input v-else v-model="row.remark" />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" v-if="!isVertify" fixed="right" width="90">
+            <template #default="{ $index }">
+              <el-button @click="deleteLaboratoryFeeModel($index)" type="danger" v-havedone>删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
     </div>
-    <div style="float: right; margin: 20px 0" v-else>
-      <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
-      <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
-    </div> -->
   </div>
 </template>
 
@@ -195,7 +174,7 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
   try {
     const { success } = await NREToExamine({
       auditFlowId,
-      nreCheckType:3,
+      nreCheckType: 3,
       opinionDescription: comment,
       opinion,
       nodeInstanceId
@@ -292,6 +271,7 @@ onBeforeMount(() => {
 onMounted(() => {
   auditFlowId = Number(auditFlowId)
   productId = Number(productId)
+  if (!auditFlowId && !productId) return
   initFetch()
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
@@ -300,6 +280,7 @@ onMounted(() => {
 .card-warp {
   margin-top: 20px;
 }
+
 .uploadBtn {
   margin-top: 8px;
 }

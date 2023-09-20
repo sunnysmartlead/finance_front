@@ -60,7 +60,7 @@
         <el-table-column prop="pricingMoney" label="核价金额" />
         <el-table-column label="报价系数">
           <template #default="scope">
-            <el-input v-model="scope.row.offerCoefficient" type="number" />
+            <el-input v-model="scope.row.offerCoefficient" type="number" @change="offerCoefficientChange(scope.row)" />
           </template>
         </el-table-column>
         <el-table-column prop="offerMoney" label="报价金额" />
@@ -1107,6 +1107,10 @@ const postOffer = (isOffer: number) => {
 
 const downLoad = async () => {
   console.log("downLoad")
+}
+//报价值change
+const offerCoefficientChange = (row: any) => {
+  row.offerMoney = row.offerCoefficient * row.pricingMoney
 }
 // 计算
 const calculateFullGrossMargin = async (row: any, index: any) => {

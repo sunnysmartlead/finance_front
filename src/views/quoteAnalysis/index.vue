@@ -14,6 +14,7 @@
                 :label="item.product"
                 :value="item.id"
                 :key="item.id"
+                :disabled="hasSelectPlans.includes(item.id)"
               />
             </el-select>
           </template>
@@ -24,6 +25,11 @@
               <el-option label="是" :value="true" />
               <el-option label="否" :value="false" />
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="deletePlan(scope.$index)" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -824,6 +830,13 @@ const gradientTableMap = computed(() => {
   setChartData(gradientTableMap)
   return gradientTableMap
 })
+const hasSelectPlans = computed(() => {
+  let ids = planList.map((item) => item.value)
+  return ids
+})
+const deletePlan = (index: number) => {
+  planList.splice(index, 1)
+}
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -1111,7 +1124,7 @@ const comfirmPlans = async () => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
-    if (planMap[item.value as keyof Object]) {
+    if (planMap[item.value as keyof Object] && item.isOffer) {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })

@@ -1,6 +1,5 @@
 <template>
   <el-row align="middle" justify="end" m="2">
-    <!-- <el-button type="primary" @click="submit(refForm)" v-havedone>提交</el-button> -->
     <el-button type="primary" @click="submit(refForm)" v-havedone>校验</el-button>
     <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" v-havedone />
   </el-row>
@@ -244,41 +243,7 @@ const downLoadTemplate = async () => {
     a.remove() //将a标签移除
   }
 }
-// const submit = async (formEl: FormInstance | undefined) => {
-//   if (!formEl) return
-//   await formEl.validate(async (valid, fields) => {
-//     if (valid) {
-//       const loading = ElLoading.service({
-//         lock: true,
-//         text: "加载中",
-//         background: "rgba(0, 0, 0, 0.7)"
-//       })
-//       try {
-//         let params: SaveBOM = Object.assign(
-//           { auditFlowId, solutionId: productId, structureBomDtos: data.tableData },
-//           data.logisticsForm
-//         )
-//         let res: any = await SaveStructionBom(params)
-//         let resO: any = await SaveProductDevelopmentInput(params)
-//         loading.close()
-//         if (res.success) {
-//           ElMessage({
-//             message: "保存成功",
-//             type: "success"
-//           })
-//         }
-//       } catch (error) {
-//         loading.close()
-//       }
-//     } else {
-//       ElMessage({
-//         message: "有必填项没有填写",
-//         type: "error"
-//       })
-//       console.log("error submit!", fields)
-//     }
-//   })
-// }
+
 const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
@@ -293,6 +258,7 @@ const submit = async (formEl: FormInstance | undefined) => {
     }
   })
 }
+
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   const loading = ElLoading.service({
     lock: true,

@@ -33,6 +33,7 @@ const isQualified = (prop: string) => {
 
 onMounted(async () => {
   console.log(auditFlowId, props.ProcessIdentifier)
+  if (!auditFlowId) return
   let { success, result } = await getPermissionList({
     auditFlowId: auditFlowId,
     processIdentifier: props.ProcessIdentifier

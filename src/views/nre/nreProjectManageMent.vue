@@ -179,7 +179,7 @@ import { getDictionaryAndDetail } from "@/api/dictionary"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-const { auditFlowId = 1, productId = 1 }: any = getQuery()
+const { auditFlowId, productId }: any = getQuery()
 
 /**
  * 数据部分
@@ -241,6 +241,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
 }
 
 const initFetch = async () => {
+  if (!(auditFlowId && productId)) return
   const { result } = await GetReturnProjectManagement(auditFlowId, productId)
   console.log(result, "res")
   if (!result) return false

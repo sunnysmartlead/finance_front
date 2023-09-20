@@ -164,7 +164,7 @@ import { map } from "lodash"
 
 const router = useRouter()
 const Host = "ElectronicPriceInput"
-const { auditFlowId = 1, productId }: any = getQuery()
+const { auditFlowId, productId }: any = getQuery()
 
 const route = useRoute()
 const props = defineProps({
@@ -278,6 +278,7 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 }
 
 onMounted(async () => {
+  if (!auditFlowId && !productId) return
   if (props.isVertify) {
     window.sessionStorage.setItem("placePath", router.currentRoute.value.path)
     fetchElectronicInitData().then(() => {

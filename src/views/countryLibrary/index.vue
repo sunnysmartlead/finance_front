@@ -186,6 +186,7 @@ const getList = async () => {
   data.total = res.result.totalCount
   getOptionLog()
 }
+
 const baseLibLogRecords = ref([])
 const getOptionLog = () => {
   let data = {

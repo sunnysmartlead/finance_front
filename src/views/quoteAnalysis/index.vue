@@ -57,7 +57,7 @@
       >
         <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额" />
+        <el-table-column prop="pricingMoney" label="核价金额"  :formatter="formatThousandths"/>
         <el-table-column label="报价系数">
           <template #default="scope">
             <el-input-number
@@ -121,7 +121,8 @@
         width="180"
       >
         <template #default="scope">
-          <el-input-number v-model="scope.row.grossValues[index].grossvalue" controls-position="right" :precision="2" />
+          <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
+          <!-- <el-input-number v-model="scope.row.grossValues[index].grossvalue" controls-position="right" :precision="2" /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -135,11 +136,14 @@
         width="180"
       >
         <template #default="scope">
-          <el-input-number
+          <div>
+            {{ scope.row.grossMarginList[index].grossMarginNumber.toFixed(2) }}
+          </div>
+          <!-- <el-input-number
             v-model="scope.row.grossMarginList[index].grossMarginNumber"
             controls-position="right"
             :precision="2"
-          />
+          /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -151,7 +155,7 @@
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="productNumber" />
+        <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率" prop="quotedGrossMarginSimple.interior.grossMargin">
@@ -236,7 +240,7 @@
       </el-row>
       <el-table :data="item.grossMargins" border>
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="productNumber" />
+        <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率">

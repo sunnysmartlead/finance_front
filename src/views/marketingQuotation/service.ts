@@ -60,6 +60,7 @@ export function PostAuditQuotationListSave(data: {
 export function GetManagerApprovalOfferOne(auditFlowId: number): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferOne",
+    method: "get",
     data: {
       auditFlowId
     }
@@ -70,6 +71,7 @@ export function GetManagerApprovalOfferOne(auditFlowId: number): any {
 export function GetManagerApprovalOfferTwo(auditFlowId: number): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferTwo",
+    method: "get",
     data: {
       auditFlowId
     }

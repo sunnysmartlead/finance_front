@@ -970,8 +970,8 @@
             <el-form-item label="出口国家:" prop="country">
               <el-select v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
                 :disabled="isDisabled">
-                <el-option v-for="item in state.countryOptions" :key="item.id" :label="item.displayName"
-                  :value="item.id" />
+                <el-option v-for="item in state.countryOptions" :key="item.dbId" :label="item.country"
+                  :value="item.country" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -1022,7 +1022,7 @@ import { ElMessage } from "element-plus"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
-import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
 
 //整个页面是否可以编辑
@@ -1160,7 +1160,7 @@ const state = reactive({
   terminalNatureOptions: [] as unknown as Options[],
   quotationTypeOptions: [] as unknown as Options[],
   sampleQuotationTypeOptions: [] as unknown as Options[],
-  countryOptions: [] as unknown as Options[],
+  countryOptions: [] as any[],
   productOptions: [] as unknown as Options[],
   productTypeOptions: [] as unknown as Options[],
   allocationOfMouldCostOptions: [] as unknown as Options[],
@@ -1380,7 +1380,9 @@ const save = async (formEl: FormInstance | undefined, isSubmit: boolean) => {
     if (!item.carFactory || !item.carModel) return false
     return true
   })
-  checkModuleTableDataV2Data()
+  if (isSubmit) {
+    checkModuleTableDataV2Data()
+  }
   if (!isPass || !isPassTwo) {
     ElMessage({
       type: "error",
@@ -2254,6 +2256,7 @@ onMounted(async () => {
   setNumber()
   try {
     getProjectCodeOptions()
+    initCountry()
     let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
     state.updateFrequencyOptions = UpdateFrequency.result?.financeDictionaryDetailList
 
@@ -2271,9 +2274,6 @@ onMounted(async () => {
 
     // let quotationType: any = await getDictionaryAndDetail("QuotationType") //报价形式
     // state.quotationTypeOptions = quotationType.result.financeDictionaryDetailList
-
-    let country: any = await getDictionaryAndDetail("Country") // 出国国家
-    state.countryOptions = country.result.financeDictionaryDetailList
 
     let productType: any = await getDictionaryAndDetail("ProductType") // 产品小类
     state.productTypeOptions = productType.result.financeDictionaryDetailList
@@ -2369,9 +2369,23 @@ const handleChangekvPricingData = (type: string, index?: number) => {
   }
 }
 
-// to-do
+const initCountry = async () => {
+  let params: any = {
+    maxResultCount: 500,
+    skipCount: 0
+  }
+  const { result } = (await getCountryLibraryList(params) as any) || {}
+  state.countryOptions = result?.items || []
+  if (!state.quoteForm.countryType && result?.items.length) {
+    changeCountry(result?.items[0]?.nationalType)
+  }
+}
+
 const changeCountry = (country: string) => {
-  const findData = state.countryOptions.find((item: any) => item.displayName === country)
+  const findData = state.countryOptions.find(val => val.country === country)
+  if (findData) {
+    state.quoteForm.countryType = findData.nationalType
+  }
   console.log(findData, state.countryOptions, "选择")
 }
 
@@ -2401,7 +2415,7 @@ const changeExchangRate = (val: string, index: number) => {
 }
 
 const changeProjectName = (val: string) => {
-  const findItem = projectCodeOptions.value.find((item: any) => item.code === val)
+  const findItem = projectCodeOptions.value.find((item: any) => item.subCode === val)
   if (findItem) {
     state.quoteForm.projectName = findItem.description
   }

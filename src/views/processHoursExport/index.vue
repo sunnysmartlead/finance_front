@@ -669,7 +669,10 @@
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
                 v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
-                <span>{{ yearItem.year }}</span>
+
+                <span v-if="yearItem.upDown==1">{{ yearItem.year }}上半年</span>
+                <span v-if="yearItem.upDown==2">{{ yearItem.year }}下半年</span>
+                <span v-if="yearItem.upDown==0">{{ yearItem.year }}</span>
               </div>
             </div>
             <div  class="u-flex u-row-left u-col-center">
@@ -2154,7 +2157,7 @@ const sorDownloadFile = async () => {
 }
 //模组数据
 const showProjectDialog = async () => {
-  await GetPriceEvaluationStartData({ auditFlowId: 152 }).then((response: any) => {
+  await GetPriceEvaluationStartData({ auditFlowId: productId }).then((response: any) => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;
@@ -2535,13 +2538,39 @@ const sumSopCost=(type:number,sopIndex:number)=>{
   for (let i = 0; i < dataArr.value.length - 1; i++) {
     let dataItem = dataArr.value[i];
     if(type==1){
-      sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].laborHour;
+
+      if (null != dataItem.sopInfo[sopIndex] && undefined != dataItem.sopInfo[sopIndex]){
+        if (null != dataItem.sopInfo[sopIndex].issues){
+          sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].laborHour;
+        }else {
+          sumVal= 0;
+        }
+      }else {
+        sumVal= 0;
+      }
     }
     if(type==2){
-      sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].machineHour;
+
+      if (null != dataItem.sopInfo[sopIndex] && undefined != dataItem.sopInfo[sopIndex]){
+        if (null != dataItem.sopInfo[sopIndex].issues){
+          sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].machineHour;
+        }else {
+          sumVal= 0;
+        }
+      }else {
+        sumVal= 0;
+      }
     }
     if(type==3){
-      sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].personnelNumber;
+      if (null != dataItem.sopInfo[sopIndex] && undefined != dataItem.sopInfo[sopIndex]){
+        if (null != dataItem.sopInfo[sopIndex].issues){
+          sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].personnelNumber;
+        }else {
+          sumVal= 0;
+        }
+      }else {
+        sumVal= 0;
+      }
     }
   }
   console.log("工时求和", sumVal);

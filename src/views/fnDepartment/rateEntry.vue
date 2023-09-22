@@ -8,7 +8,7 @@
           <el-button m="2" type="primary" @click="submit">提交</el-button>
         </el-row>
       </el-row>
-      <el-table :data="tableData" style="width: 100%; margin-top: 25px" border>
+      <el-table :data="tableData" height="50vh" style="width: 100%; margin-top: 25px" border>
         <el-table-column label="年份" prop="year" />
         <el-table-column label="直接其他费用作业价格">
           <template #default="{ row }">

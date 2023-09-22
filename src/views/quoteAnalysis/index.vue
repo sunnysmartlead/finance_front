@@ -4,7 +4,7 @@
     <el-card mb-20px>
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
-      <el-table :data="planList" style="width: 100%" border height="300px">
+      <el-table :data="planList" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="报价模组">
           <template #default="scope">
@@ -14,6 +14,7 @@
                 :label="item.product"
                 :value="item.id"
                 :key="item.id"
+                :disabled="hasSelectPlans.includes(item.id)"
               />
             </el-select>
           </template>
@@ -24,6 +25,11 @@
               <el-option label="是" :value="true" />
               <el-option label="否" :value="false" />
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="deletePlan(scope.$index)" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -45,16 +51,20 @@
         :data="nre.models"
         style="width: 100%"
         border
-        height="400px"
+        max-height="400px"
         :summary-method="getSummaries"
         show-summary
       >
         <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额" />
+        <el-table-column prop="pricingMoney" label="核价金额"  :formatter="formatThousandths"/>
         <el-table-column label="报价系数">
           <template #default="scope">
-            <el-input v-model="scope.row.offerCoefficient" type="number" />
+            <el-input-number
+              v-model="scope.row.offerCoefficient"
+              controls-position="right"
+              @change="offerCoefficientChange(scope.row)"
+            />
           </template>
         </el-table-column>
         <el-table-column prop="offerMoney" label="报价金额" />
@@ -65,7 +75,7 @@
         </el-table-column>
       </el-table>
       <p>专用设备</p>
-      <el-table :data="nre.devices" style="width: 100%" border height="250px">
+      <el-table :data="nre.devices" style="width: 100%" border max-height="250px">
         <el-table-column prop="deviceName" label="设备名称" />
         <el-table-column prop="devicePrice" label="设备单价" />
         <el-table-column prop="number" label="设备数量" />
@@ -76,36 +86,64 @@
     <h3>样品报价</h3>
     <el-card v-for="sample in data.allRes.sampleOffer" :key="sample.solutionName">
       <p>{{ sample.solutionName }}</p>
-      <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
+      <el-table :data="sample.onlySampleModels" style="width: 100%" border max-height="500px">
         <el-table-column prop="name" label="样品阶段" />
-        <el-table-column prop="pcs" label="需求量（pcs）" />
-        <el-table-column prop="cost" label="成本" />
-        <el-table-column prop="unitPrice" label="单价" />
+        <el-table-column prop="pcs" label="需求量（pcs）">
+          <template #default="scope">
+            <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="cost" label="成本" :formatter="toFixedTwo" />
+        <el-table-column prop="unitPrice" label="单价">
+          <template #default="scope">
+            <el-input-number
+              v-model="scope.row.unitPrice"
+              controls-position="right"
+              @change="unitPriceChange(scope.row)"
+              :precision="2"
+            />
+          </template>
+        </el-table-column>
         <el-table-column prop="grossMargin" label="毛利率" />
         <el-table-column prop="salesRevenue" label="销售收入" />
       </el-table>
     </el-card>
     <!-- sop -->
     <h3>单价表（sop年）</h3>
-    <el-table :data="data.allRes.sops" style="width: 100%" border height="500px">
+    <el-table :data="data.allRes.sops" style="width: 100%" border max-height="500px">
       <el-table-column prop="gradientValue" label="梯度" />
       <el-table-column prop="product" label="产品" />
-      <el-table-column :label="item.gross" v-for="(item, index) in data.allRes.sops[0].grossValues" :key="item.gross">
+      <el-table-column
+        :label="item.gross + '%'"
+        v-for="(item, index) in data.allRes.sops[0].grossValues"
+        :key="item.gross"
+        :formatter="toFixedTwo"
+        width="180"
+      >
         <template #default="scope">
-          <el-input v-model="scope.row.grossValues[index].grossvalue" type="number" />
+          <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
+          <!-- <el-input-number v-model="scope.row.grossValues[index].grossvalue" controls-position="right" :precision="2" /> -->
         </template>
       </el-table-column>
     </el-table>
     <p>项目全生命周期汇总分析表-实际数量</p>
-    <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border height="500px">
+    <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border max-height="500px">
       <el-table-column prop="projectName" label="项目名称" />
       <el-table-column
-        :label="item.grossMargin"
         v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
+        :label="item.grossMargin + '%'"
         :key="index"
+        width="180"
       >
         <template #default="scope">
-          <el-input v-model="scope.row.grossMarginList[index].grossMarginNumber" type="number" />
+          <div>
+            {{ scope.row.grossMarginList[index].grossMarginNumber.toFixed(2) }}
+          </div>
+          <!-- <el-input-number
+            v-model="scope.row.grossMarginList[index].grossMarginNumber"
+            controls-position="right"
+            :precision="2"
+          /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -117,7 +155,7 @@
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="productNumber" />
+        <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率" prop="quotedGrossMarginSimple.interior.grossMargin">
@@ -127,9 +165,9 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price">
+          <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.quotedGrossMarginSimple.client.price">
+              <el-input v-model="scope.row.quotedGrossMarginSimple.client.price" :precision="2">
                 <!-- <template #append>
                   <el-button @click="
                     calculateFullGrossMargin(
@@ -160,7 +198,7 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
-          <el-table-column label="单价">
+          <el-table-column label="单价" width="150">
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
@@ -202,7 +240,7 @@
       </el-row>
       <el-table :data="item.grossMargins" border>
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="productNumber" />
+        <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
@@ -222,9 +260,13 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price">
+          <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.quotedGrossMarginSimple.client.price">
+              <el-input-number
+                v-model="scope.row.quotedGrossMarginSimple.client.price"
+                :precision="2"
+                controls-position="right"
+              >
                 <!-- <template #append>
                   <el-button @click="
                     calculateFullGrossMargin(
@@ -235,7 +277,7 @@
                     )
                     ">计算</el-button>
                 </template> -->
-              </el-input>
+              </el-input-number>
             </template>
           </el-table-column>
           <el-table-column label="毛利率">
@@ -255,7 +297,7 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
-          <el-table-column label="单价">
+          <el-table-column label="单价" width="150">
             <template #default="scope">
               <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
                 <template #append>
@@ -628,6 +670,276 @@ const data = reactive({
             creationTime: "2023-09-12T02:45:38.7715628+08:00",
             creatorUserId: null,
             id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_A",
+            pcs: 200,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7712274+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_B",
+            pcs: 300,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.771562+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_C",
+            pcs: 400,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7715628+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_A",
+            pcs: 200,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7712274+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_B",
+            pcs: 300,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.771562+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_C",
+            pcs: 400,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7715628+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_A",
+            pcs: 200,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7712274+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_B",
+            pcs: 300,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.771562+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_C",
+            pcs: 400,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7715628+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_A",
+            pcs: 200,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7712274+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_B",
+            pcs: 300,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.771562+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_C",
+            pcs: 400,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7715628+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_A",
+            pcs: 200,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7712274+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_B",
+            pcs: 300,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.771562+08:00",
+            creatorUserId: null,
+            id: 0
+          },
+          {
+            auditFlowId: 0,
+            solutionId: 0,
+            name: "SampleName_C",
+            pcs: 400,
+            cost: 1863.5649316381819,
+            unitPrice: 0,
+            grossMargin: 0,
+            salesRevenue: 0,
+            isDeleted: false,
+            deleterUserId: null,
+            deletionTime: null,
+            lastModificationTime: null,
+            lastModifierUserId: null,
+            creationTime: "2023-09-12T02:45:38.7715628+08:00",
+            creatorUserId: null,
+            id: 0
           }
         ]
       }
@@ -824,6 +1136,15 @@ const gradientTableMap = computed(() => {
   setChartData(gradientTableMap)
   return gradientTableMap
 })
+
+const hasSelectPlans = computed(() => {
+  let ids = planList.map((item) => item.value)
+  return ids
+})
+
+const deletePlan = (index: number) => {
+  planList.splice(index, 1)
+}
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -1095,6 +1416,17 @@ const postOffer = (isOffer: number) => {
 const downLoad = async () => {
   console.log("downLoad")
 }
+//报价值change
+const offerCoefficientChange = (row: any) => {
+  row.offerMoney = row.offerCoefficient * row.pricingMoney
+}
+
+const unitPriceChange = (row: any) => {
+  row.grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
+}
+const pcsChange = (row: any) => {
+  row.salesRevenue = row.pcs * row.salesRevenue
+}
 // 计算
 const calculateFullGrossMargin = async (row: any, index: any) => {
   let { auditFlowId, gradientId, productId, solutionId } = row
@@ -1111,16 +1443,24 @@ const comfirmPlans = async () => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
-    if (planMap[item.value as keyof Object]) {
+    if (planMap[item.value as keyof Object] && item.isOffer) {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })
-  let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
-  console.log(res)
-  console.log(planList)
-  console.log(solutionTables)
-  data.allRes = res.result
-  fullscreenLoading.value = false
+  try {
+    let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
+    console.log(res)
+    console.log(planList)
+    console.log(solutionTables)
+    data.allRes = res.result
+    fullscreenLoading.value = false
+  } catch (error) {
+    fullscreenLoading.value = false
+  }
+}
+const toFixedTwo = (_recoed: any, _row: any, val: any) => {
+  if (typeof val === "number" && val > 0) return val.toFixed(2)
+  return val
 }
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')

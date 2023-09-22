@@ -10,7 +10,7 @@
           </el-row>
         </el-row>
       </template>
-      <el-table :data="data.tableData" style="width: 100%; margin-top: 25px" border>
+      <el-table :data="data.tableData" height="50vh" style="width: 100%; margin-top: 25px" border>
         <el-table-column label="年份Sop" prop="year" width="180" />
         <el-table-column label="月工作天数" width="180">
           <template #default="{ row }">

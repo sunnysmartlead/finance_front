@@ -18,17 +18,11 @@
             <div class="card-header">
               <span>{{ item.superTypeName }}</span>
               <span class="card-span">
-                未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span
-              >
+                未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span>
             </div>
           </template>
-          <el-table
-            :ref="setTableRefs"
-            :data="item.structureMaterial"
-            style="width: 100%"
-            height="75vh"
-            @selection-change="selectionChange($event, bomIndex)"
-          >
+          <el-table :ref="setTableRefs" :data="item.structureMaterial" style="width: 100%" height="75vh"
+            @selection-change="selectionChange($event, bomIndex)">
             <el-table-column type="selection" width="55" v-if="isVertify" />
             <el-table-column type="index" label="序号" width="80" fixed="left" />
             <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
@@ -43,60 +37,31 @@
             <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="80" />
             <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
             <el-table-column prop="materialsUseCount" label="项目物料的使用量">
-              <el-table-column
-                align="center"
-                :label="`${c.kv} K/Y`"
-                :class-name="`column-class-${i}`"
-                v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount"
-                prop="materialsUseCount"
-                width="150"
-                :key="`materialsUseCount${i}`"
-              >
-                <el-table-column
-                  width="100"
-                  v-for="(yearItem, iIndex) in c?.yearOrValueModes"
-                  :key="iIndex"
+              <el-table-column align="center" :label="`${c.kv} K/Y`" :class-name="`column-class-${i}`"
+                v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount" prop="materialsUseCount" width="150"
+                :key="`materialsUseCount${i}`">
+                <el-table-column width="100" v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
                   :prop="`materialsUseCount.${i}.yearOrValueModes.${iIndex}.value`"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  :formatter="formatDatas"
-                />
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" :formatter="formatDatas" />
               </el-table-column>
             </el-table-column>
             <el-table-column prop="currency" label="币种" width="120">
               <template #default="scope">
                 <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
-                  <el-option
-                    v-for="item in exchangeSelectOptions"
-                    :key="item.id"
-                    :label="item.exchangeRateKind"
-                    :value="item.exchangeRateKind"
-                  />
+                  <el-option v-for="item in exchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
+                    :value="item.exchangeRateKind" />
                 </el-select>
               </template>
             </el-table-column>
             <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
-              <el-table-column
-                v-for="(c, i) in item.structureMaterial[0]?.systemiginalCurrency"
-                align="center"
-                :class-name="`column-class-${i}`"
-                :label="`${c.kv} K/Y`"
-                width="150"
-                :key="`systemiginalCurrency${i}`"
-              >
-                <el-table-column
-                  v-for="(yearItem, iIndex) in c?.yearOrValueModes"
-                  :key="iIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="150"
-                >
+              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.systemiginalCurrency" align="center"
+                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="150" :key="`systemiginalCurrency${i}`">
+                <el-table-column v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150">
                   <template #default="scope">
-                    <el-input-number
-                      v-if="scope.row.isEdit"
-                      v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value"
-                      controls-position="right"
-                      :min="0"
-                      @input="handleCalculation(scope.row, bomIndex, scope.$index)"
-                    />
+                    <el-input-number v-if="scope.row.isEdit"
+                      v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value" controls-position="right"
+                      :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index)" />
                     <span v-if="!scope.row.isEdit">{{
                       scope.row.systemiginalCurrency[i]?.yearOrValueModes[iIndex]?.value.toFixed(5)
                     }}</span>
@@ -105,27 +70,14 @@
               </el-table-column>
             </el-table-column>
             <el-table-column prop="inTheRate" label="年降率">
-              <el-table-column
-                v-for="(c, i) in item.structureMaterial[0]?.inTheRate"
-                align="center"
-                :class-name="`column-class-${i}`"
-                :label="`${c.kv} K/Y`"
-                width="150"
-                :key="`inTheRate${i}`"
-                :formatter="filterinTheRate"
-              >
-                <el-table-column
-                  v-for="(yearItem, yIndex) in c?.yearOrValueModes"
-                  :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="150"
-                >
+              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.inTheRate" align="center"
+                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="150" :key="`inTheRate${i}`"
+                :formatter="filterinTheRate">
+                <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150">
                   <template #default="scope">
-                    <el-input
-                      v-if="scope.row.isEdit"
-                      v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
-                      type="number"
-                    >
+                    <el-input v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
+                      type="number">
                       <template #append> % </template>
                     </el-input>
                     <span v-else>{{ (scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value || 0) * 100 }} %</span>
@@ -134,22 +86,11 @@
               </el-table-column>
             </el-table-column>
             <el-table-column prop="standardMoney" label="本位币">
-              <el-table-column
-                v-for="(c, i) in item.structureMaterial[0]?.standardMoney"
-                align="center"
-                :class-name="`column-class-${i}`"
-                :label="`${c.kv} K/Y`"
-                width="150"
-                :key="`standardMoney${i}`"
-              >
-                <el-table-column
-                  v-for="(yearItem, yIndex) in c?.yearOrValueModes"
-                  :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="150"
-                  :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`"
-                  :formatter="filterStandardMoney"
-                />
+              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.standardMoney" align="center"
+                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="150" :key="`standardMoney${i}`">
+                <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150"
+                  :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`" :formatter="filterStandardMoney" />
               </el-table-column>
             </el-table-column>
             <el-table-column prop="moq" label="MOQ" width="150">
@@ -159,22 +100,12 @@
               </template>
             </el-table-column>
             <el-table-column prop="rebateMoney" label="物料返利金额" width="150">
-              <el-table-column
-                v-for="(c, i) in item.structureMaterial[0]?.rebateMoney"
-                align="center"
-                :label="`${c.kv} K/Y`"
-                width="150"
-                :key="`rebateMoney${i}`"
-                :prop="`rebateMoney.${index}.value`"
-                :formatter="formatThousandths"
-              >
+              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.rebateMoney" align="center"
+                :label="`${c.kv} K/Y`" width="150" :key="`rebateMoney${i}`" :prop="`rebateMoney.${index}.value`"
+                :formatter="formatThousandths">
                 <template #default="{ row }">
-                  <el-input-number
-                    v-if="row.isEdit"
-                    v-model="row.rebateMoney[i].value"
-                    controls-position="right"
-                    :min="0"
-                  />
+                  <el-input-number v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
+                    :min="0" />
                 </template>
               </el-table-column>
               <!-- <template #default="{ row }">
@@ -201,31 +132,14 @@
             <el-table-column prop="peopleName" label="确认人" />
             <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
               <template #default="{ row, $index }">
-                <el-button
-                  link
-                  :disabled="row.isSubmit"
-                  @click="handleSubmit(row, 0, bomIndex, $index)"
-                  type="danger"
-                  :loading="row.loading"
-                  >确认</el-button
-                >
-                <el-button
-                  v-if="row.isEntering"
-                  :disabled="row.isSubmit"
-                  link
-                  @click="handleSubmit(row, 1, bomIndex, $index)"
-                  type="warning"
-                  :loading="row.loading"
-                >
+                <el-button link :disabled="row.isSubmit" @click="handleSubmit(row, 0, bomIndex, $index)" type="danger"
+                  :loading="row.loading">确认</el-button>
+                <el-button v-if="row.isEntering" :disabled="row.isSubmit" link
+                  @click="handleSubmit(row, 1, bomIndex, $index)" type="warning" :loading="row.loading">
                   提交
                 </el-button>
-                <el-button
-                  v-if="!row.isEdit"
-                  :disabled="row.isSubmit || row.loading"
-                  link
-                  @click="handleEdit(row, true)"
-                  type="primary"
-                >
+                <el-button v-if="!row.isEdit" :disabled="row.isSubmit || row.loading" link @click="handleEdit(row, true)"
+                  type="primary">
                   修改
                 </el-button>
                 <el-button v-if="row.isEdit" link @click="handleEdit(row, false)">取消</el-button>
@@ -238,11 +152,8 @@
             <el-row class="descriptions-box" v-for="c in computeStandardMoney(item.structureMaterial)" :key="c?.kv">
               <span class="descriptions-label">{{ `${c.kv} K/Y` }}</span>
               <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
-                <el-descriptions-item
-                  v-for="yearItem in c.yearOrValueModes"
-                  :key="yearItem.year"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                >
+                <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]">
                   {{ yearItem.value.toFixed(4) }}
                 </el-descriptions-item>
               </el-descriptions>
@@ -325,7 +236,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-
+  if (!auditFlowId && !productId) return
   if (props.isVertify) {
     await fetchConstructionInitData()
     toggleSelection() //数据反填
@@ -346,7 +257,7 @@ const toggleSelection = () => {
     let parseData: any = null
     try {
       parseData = JSON.parse(storageData)
-    } catch(err) {
+    } catch (err) {
       console.log(err, '[结构bom单价审核界面赋值浏览器缓存失败]')
     }
     if (parseData) {
@@ -561,7 +472,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
 defineExpose({
   getSelection: () => multipleSelection.value
 })
-watchEffect(() => {})
+watchEffect(() => { })
 </script>
 <style scoped lang="scss">
 .table-wrap {

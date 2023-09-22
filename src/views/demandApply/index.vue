@@ -1,7 +1,7 @@
 <template>
   <div class="demand-apply" v-loading="state.taebleLoading">
     <!-- <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone /> -->
-    <el-row justify="end">
+    <el-row justify="end" v-if="!isDisabled">
       <el-button @click="save(refForm, false)" type="primary">保存</el-button>
       <el-button @click="save(refForm, true)" type="primary">提交</el-button>
     </el-row>
@@ -56,8 +56,10 @@
           <el-col :span="8">
             <el-form-item label="项目代码:" prop="projectCode">
               <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
-                placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions" @change="changeProjectName">
-                <el-option v-for="item in projectCodeOptions" :key="item.subCode" :label="item.subCode" :value="item.subCode" />
+                placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions"
+                @change="changeProjectName">
+                <el-option v-for="item in projectCodeOptions" :key="item.subCode" :label="item.subCode"
+                  :value="item.subCode" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -1368,86 +1370,93 @@ const checkModuleTableDataV2Data = () => {
 }
 
 const save = async (formEl: FormInstance | undefined, isSubmit: boolean) => {
+
+  if (isSubmit) {
+    const isPass = pcsTableData.value.some((item: any) => {
+      if (!item.carFactory || !item.carModel) return false
+      return true
+    })
+    const isPassTwo = interiorPcsTableData.value.some((item: any) => {
+      if (!item.carFactory || !item.carModel) return false
+      return true
+    })
+    if (isSubmit) {
+      checkModuleTableDataV2Data()
+    }
+    if (!isPass || !isPassTwo) {
+      ElMessage({
+        type: "error",
+        message: "请填写完整的终端走量！"
+      })
+      return
+    }
+    if (!formEl) return
+    await formEl.validate(async (valid, fields) => {
+      if (valid) {
+        handleSubmitData(isSubmit)
+      } else {
+        saveloading.value = false
+        console.log("error submit!", fields)
+        console.log(state.quoteForm, "quoteForm")
+      }
+    })
+  } else {
+    handleSubmitData(isSubmit)
+  }
+}
+
+const handleSubmitData = async (isSubmit: boolean) => {
   const opinion = ''
   let { auditFlowId, nodeInstanceId } = route.query
-  // 模组走量不能为0
-  let isModuleTableDataQuantity = false
-  const isPass = pcsTableData.value.some((item: any) => {
-    if (!item.carFactory || !item.carModel) return false
-    return true
-  })
-  const isPassTwo = interiorPcsTableData.value.some((item: any) => {
-    if (!item.carFactory || !item.carModel) return false
-    return true
-  })
-  if (isSubmit) {
-    checkModuleTableDataV2Data()
+  saveloading.value = true
+  let { quoteForm } = state
+  quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
+  if (quoteForm.isHasSample) {
+    quoteForm.sample = specimenData //样品
   }
-  if (!isPass || !isPassTwo) {
-    ElMessage({
-      type: "error",
-      message: "请填写完整的终端走量！"
+  if (quoteForm.isHasNre) {
+    quoteForm.shareCount = shareCountTable.value
+  }
+  quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
+  quoteForm.pcs = [...pcsTableData.value, ...interiorPcsTableData.value] //终端走量（PCS）
+  let prop = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
+  prop.forEach((item: any, index: number) => {
+    item.order = ++index
+  }) // 模组数量
+  quoteForm.carModelCount = prop
+  quoteForm.requirement = requireTableData // 要求
+  quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
+  quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
+  let gradientModel = map(gradientModelTable.value, (item: any) =>
+    map(item.children, c => ({
+      ...c,
+      number: Array.isArray(c.number) ? c.number.join(",") : c.number
+    }))
+  ).flat(2)
+  try {
+    let res: any = await saveApplyInfo({
+      ...quoteForm,
+      // comment,
+      opinion,
+      gradient: kvPricingData.value,
+      gradientModel: gradientModel,
+      isSubmit,
+      nodeInstanceId: nodeInstanceId || 0
     })
-    return
-  }
-  if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
-    if (valid) {
-      saveloading.value = true
-      let { quoteForm } = state
-      quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
-      if (quoteForm.isHasSample) {
-        quoteForm.sample = specimenData //样品
-      }
-      if (quoteForm.isHasNre) {
-        quoteForm.shareCount = shareCountTable.value
-      }
-      quoteForm.modelCount = handleDealWithModelCount(moduleTableTotal.value)
-      quoteForm.pcs = [...pcsTableData.value, ...interiorPcsTableData.value] //终端走量（PCS）
-      let prop = _.cloneDeep(moduleTableDataV2.value.flat(Infinity))
-      prop.forEach((item: any, index: number) => {
-        item.order = ++index
-      }) // 模组数量
-      quoteForm.carModelCount = prop
-      quoteForm.requirement = requireTableData // 要求
-      quoteForm.productInformation = productTableData.value // 产品信息（下表【客户指定/供应详情】，根据此表内容生成，只作展示用，不填写）
-      quoteForm.customerTargetPrice = customerTargetPrice // 客户目标价
-      let gradientModel = map(gradientModelTable.value, (item: any) =>
-        map(item.children, c => ({
-          ...c,
-          number: Array.isArray(c.number) ? c.number.join(",") : c.number
-        }))
-      ).flat(2)
-      try {
-        let res: any = await saveApplyInfo({
-          ...quoteForm,
-          // comment,
-          opinion,
-          gradient: kvPricingData.value,
-          gradientModel: gradientModel,
-          isSubmit,
-          nodeInstanceId: nodeInstanceId || 0
-        })
-        if (res.success) {
-          ElMessage({
-            type: "success",
-            message: `提交成功`
-          })
-          router.push({
-            path: "/todoCenter/index"
-          })
-          saveloading.value = false
-        }
-      } catch (error) {
-        console.log(error, "[参数错误]")
-        saveloading.value = false
-      }
-    } else {
+    if (res.success) {
+      ElMessage({
+        type: "success",
+        message: `提交成功`
+      })
+      router.push({
+        path: "/todoCenter/index"
+      })
       saveloading.value = false
-      console.log("error submit!", fields)
-      console.log(state.quoteForm, "quoteForm")
     }
-  })
+  } catch (error) {
+    console.log(error, "[参数错误]")
+    saveloading.value = false
+  }
 }
 
 let specimenData: any = ref([

@@ -92,10 +92,10 @@
                             <el-input v-model="data.dialogAddProcessForm.standardProcessName"></el-input>
                         </el-form-item>
                         <el-form-item label="选择文件" label-width="150px">
-                            <el-upload   style="width: 100%;" ref="upload" :action="uploadAction" :limit="1" 
-                                :show-file-list="showUploadFile" 
+                            <el-upload   style="width: 100%;" ref="upload" :action="uploadAction" :limit="1"
+                                :show-file-list="showUploadFile"
                                 :on-remove="onFileRemove"
-                                :on-error="uploadErrror" 
+                                :on-error="uploadErrror"
                                 :on-success="uploadSuccess"
                                 :on-exceed="handleExceed">
                                 <template #trigger>
@@ -145,6 +145,7 @@ import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from "@/utils";
 import { getListAll, getDetail, create, uploadAction, update, deleteProcess, getProcessLog, saveProcessLog } from "@/api/standardProcess";
 import customTableFormList from "@/components/processHoursExport/custom-table-form-list.vue"
+import {deleteFoundationEmc} from "@/api/foundationEmc";
 const data = reactive({
     queryForm: {
         standardProcessName: '',
@@ -371,7 +372,9 @@ const handleEdit = (index: number, row: any) => {
 const handleDelete = (index: number, row: any) => {
     ElMessageBox.confirm("是否确认删除!").then(function () {
         standardProcessList.value.splice(index, 1);
+      return deleteProcess(row.id)
     }).then(() => {
+
         initData()
         ElMessage({
             type: "success",

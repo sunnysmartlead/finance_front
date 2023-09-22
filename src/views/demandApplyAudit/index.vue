@@ -397,7 +397,7 @@ onMounted(async () => {
 const checkDesignSolution = () => {
   let isNotPass = false
   if (!designSolution.value?.length) isNotPass = true
-  isNotPass = designSolution.value.some((item: any) => {
+  isNotPass = designSolution.value.some((item: any, index) => {
     if (!item.solutionName
       || !item.sensor
       || !item.serial
@@ -410,8 +410,7 @@ const checkDesignSolution = () => {
       || !item.stand
       || !item.transmissionStructure
       || !item.productType
-      || item.processProgram
-      || !item.fileId) {
+      || !item.processProgram || !item.fileId) {
       return true
     }
   })
@@ -434,7 +433,9 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   } as Response
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
-  checkDesignSolution()
+  if (opinion === 'YesOrNo_Yes') {
+    checkDesignSolution()
+  }
   value.designSolutionList = _.cloneDeep(designSolution.value)
   value.solutionTableList = _.cloneDeep(solutionTable.value)
 

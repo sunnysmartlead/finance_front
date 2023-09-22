@@ -58,8 +58,8 @@
               <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
                 placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions"
                 @change="changeProjectName">
-                <el-option v-for="item in projectCodeOptions" :key="item.subCode" :label="item.subCode"
-                  :value="item.subCode" />
+                <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code"
+                  :value="item.code" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -295,7 +295,11 @@
               </el-table-column>
               <el-table-column label="子项目代码" width="180">
                 <template #default="{ row }">
-                  <el-input v-model="row.code" placeholder="未导入PLM" :disabled="isDisabled" />
+                  <el-select v-model="row.code" remote-show-suffix reserve-keyword filterable
+                    placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
+                    <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code"
+                      :value="item.code" />
+                  </el-select>
                 </template>
               </el-table-column>
               <el-table-column label="产品名称" width="180">
@@ -2424,7 +2428,7 @@ const changeExchangRate = (val: string, index: number) => {
 }
 
 const changeProjectName = (val: string) => {
-  const findItem = projectCodeOptions.value.find((item: any) => item.subCode === val)
+  const findItem = projectCodeOptions.value.find((item: any) => item.code === val)
   if (findItem) {
     state.quoteForm.projectName = findItem.description
   }

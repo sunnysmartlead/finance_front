@@ -20,9 +20,12 @@ import { BomReview } from "@/components/ElectronicTable/common/request"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import { map } from "lodash"
+import { useRouter } from "vue-router"
+
+const router = useRouter()
 
 const { auditFlowId }: any = getQuery()
-const { jumpTodoCenter } = useJump()
+const { closeSelectedTag } = useJump()
 
 const constructionRef = ref<any>()
 const electronicRef = ref<any>()
@@ -50,6 +53,6 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     structureUnitPriceId: constructionIds,
     electronicsUnitPriceId: electronicSelection
   })
-  if (success) jumpTodoCenter()
+  if (success) closeSelectedTag(router.path)
 }
 </script>

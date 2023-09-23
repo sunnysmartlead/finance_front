@@ -179,8 +179,12 @@ import { getDictionaryAndDetail } from "@/api/dictionary"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import useJump from "@/hook/useJump"
+
 const { auditFlowId, productId }: any = getQuery()
 
+const { jumpTodoCenter } = useJump()
+jumpTodoCenter()
 /**
  * 数据部分
  */
@@ -237,7 +241,12 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
     opinion,
     nodeInstanceId
   })
-  if (success) ElMessage.success("提交成功！")
+  if (success) {
+    ElMessage.success("提交成功！")
+    import useJump from "@/hook/useJump"
+const { jumpTodoCenter } = useJump()
+jumpTodoCenter()
+  }
 }
 
 const initFetch = async () => {

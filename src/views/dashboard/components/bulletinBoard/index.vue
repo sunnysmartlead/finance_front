@@ -10,7 +10,6 @@
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
         <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
-        <el-button type="primary" class="m-2" @click="data.createVisible = true"> 生成核价表 </el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
@@ -114,32 +113,6 @@
         <span>
           <el-button @click="dialogVisible = false" v-havedone>取消</el-button>
           <el-button type="primary" @click="setPriceBoardStateAgree(false)" v-havedone>确定</el-button>
-        </span>
-      </template>
-    </el-dialog>
-    <el-dialog v-model="data.createVisible" title="生成核价表">
-      <el-table :data="data.priceEvaluationTableInputCount">
-        <el-table-column prop="productName" label="产品名称" width="180" />
-        <el-table-column prop="year" label="年份">
-          <template #default="{ row }">
-            <el-select v-model="row.year" class="m-2" placeholder="请选择年份">
-              <el-option v-for="item in data.yearsOptions" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column prop="inputCount" label="投入量" width="180">
-          <template #default="{ row }">
-            <el-input-number controls-position="right" v-model="row.inputCount" placeholder="请输入投入量" />
-          </template>
-        </el-table-column>
-      </el-table>
-      <template #footer>
-        <span>
-          <el-button @click="data.createVisible = false">取消</el-button>
-          <el-button @click="handleSetPriceEvaluationTableInputCount" :disabled="isPricing"
-            type="primary">设置投入量和年份</el-button>
-          <el-button @click="handleCreatePriceEvaluation" type="primary"
-            :disabled="isPricing || isHandleCreatePriceEvaluation">生成核价表</el-button>
         </span>
       </template>
     </el-dialog>

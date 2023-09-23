@@ -120,7 +120,7 @@ onMounted(async () => {
   data.auditFlowId = Number(query.auditFlowId) || 0
   data.productId = Number(query.productId) || 0
   // 获取运费信息
-  let res: any = await getProductFreight({ auditFlowId: data.auditFlowId, productId: data.productId })
+  let res: any = await getProductFreight({ auditFlowId: data.auditFlowId, solutionId: data.productId })
   data.logisticsForm = res.result
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })

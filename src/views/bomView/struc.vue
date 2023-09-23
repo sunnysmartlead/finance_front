@@ -50,8 +50,11 @@ import { sortBy } from "lodash"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import { useRouter } from "vue-router"
 
-const { jumpTodoCenter } = useJump()
+const router = useRouter()
+
+const { closeSelectedTag } = useJump()
 const { auditFlowId, productId }: any = getQuery()
 
 /**
@@ -73,37 +76,6 @@ const data = reactive({
   isFilter: false
 })
 
-// const jumpToImport = (type: number) => {
-//   if (type === 1) {
-//     router.push({
-//       path: "/electronicImport/index"
-//     })
-//   } else {
-//     router.push({
-//       path: "/structuralMaterialImport/index"
-//     })
-//   }
-// }
-// const agree = async (bomCheckType: number, isAgree: boolean) => {
-//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-//     confirmButtonText: "确定",
-//     cancelButtonText: "取消",
-//     type: "warning"
-//   }).then(async (val) => {
-//     let res: any = await SetBomState({
-//       auditFlowId: auditFlowId,
-//       productId: productId,
-//       bomCheckType,
-//       isAgree,
-//       opinionDescription: !isAgree ? val?.value : ""
-//     })
-//     if (res.success) {
-//       jumpTodoCenter()
-//       ElMessage.success("操作成功")
-//     }
-//   })
-// }
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await SetBomState({
     auditFlowId: auditFlowId,
@@ -115,7 +87,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
     nodeInstanceId
   })
   if (res.success) {
-    jumpTodoCenter()
+    closeSelectedTag(router.path)
     ElMessage.success("操作成功")
   }
 }

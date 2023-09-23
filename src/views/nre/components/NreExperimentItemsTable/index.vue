@@ -100,11 +100,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <div style="float: right; margin: 20px 0" v-if="!isVertify">
-      <el-button :disabled="data.isSubmit" type="primary" @click="submit(false)" v-havedone m="2">保存</el-button>
-      <el-button :disabled="data.isSubmit" type="primary" @click="submit(true)" v-havedone>提交</el-button>
-    </div>
-
     <designScheme v-model:dialogTableVisible="data.dialogTableVisible" @close="data.dialogTableVisible = false" />
   </div>
 </template>
@@ -130,8 +125,14 @@ import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import { designScheme } from "@/views/demandApplyAudit"
-// import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import useJump from "@/hook/useJump"
+
+import { useRouter } from "vue-router"
+
+const route = useRouter()
+
+const { closeSelectedTag } = useJump()
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
@@ -205,7 +206,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     if (!success) throw Error()
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
-    // jumpTodoCenter()
+    closeSelectedTag(route.path)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")
@@ -223,7 +224,6 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     if (!success) throw Error()
     ElMessage.success(`提交成功`)
-    // jumpTodoCenter()
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

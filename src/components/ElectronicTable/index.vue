@@ -172,7 +172,7 @@ const props = defineProps({
   isMergeVertify: Boolean
 })
 
-const { jumpTodoCenter } = useJump()
+const { closeSelectedTag } = useJump()
 
 const STORAGE_KEY = "electronicVertify" // 浏览器缓存key
 const MERGE_STORAGE_KEY = "electronicMergeVertify"
@@ -427,7 +427,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId,
     electronicsUnitPriceId: multipleSelection.value
   })
-  if (success) jumpTodoCenter()
+  if (success) closeSelectedTag(route.path)
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {

@@ -106,7 +106,11 @@ import SelectSearch from "../SelectSearch/index.vue"
 import TrView from "@/components/TrView/index.vue"
 import SORDonwload from "@/components/SORDonwload/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import useJump from "@/hook/useJump"
+import { useRoute } from "vue-router"
+const route = useRoute()
 
+const { closeSelectedTag } = useJump()
 let { auditFlowId, productId } = getQuery()
 
 let Host = "NreInputEmc"
@@ -163,7 +167,9 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       opinion,
       nodeInstanceId
     })
-    if (success) ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+    if (success) {
+      ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+    }
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {
     console.log(err, "[PostProductDepartment err]")
@@ -181,7 +187,7 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     if (!success) throw Error()
     ElMessage.success(`提交成功`)
-    // jumpTodoCenter()
+    closeSelectedTag(route.path)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

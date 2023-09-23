@@ -31,14 +31,14 @@
           </el-table-column>
           <el-table-column prop="elecEngineerId" label="电子工程师">
             <template #default="{ row }">
-              <el-select v-model="row.elecEngineerId" placeholder="请选择姓名">
+              <el-select v-model="row.elecEngineerId" filterable placeholder="请选择姓名">
                 <el-option v-for="item in elecEngineerId" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </template>
           </el-table-column>
           <el-table-column prop="structEngineerId" label="结构工程师">
             <template #default="{ row }">
-              <el-select v-model="row.structEngineerId" placeholder="请选择姓名">
+              <el-select v-model="row.structEngineerId" filterable placeholder="请选择姓名">
                 <el-option v-for="item in structEngineerId" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </template>

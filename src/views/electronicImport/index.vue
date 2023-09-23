@@ -107,7 +107,10 @@ import { customerTargetPrice } from "@/views/demandApply"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { GetBoardInfomation } from "@/api/processHoursEnter"
+import useJump from "@/hook/useJump"
 import { map } from "lodash"
+
+const { jumpTodoCenter } = useJump()
 
 const Host = "ElectronicBomImport"
 const { auditFlowId, productId: solutionId } = getQuery()
@@ -217,7 +220,10 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     let { success }: any = await SaveElectronicBom(params)
     await SaveBoard(params)
     loading.close()
-    success && ElMessage.success("提交成功！")
+    if (success) {
+      ElMessage.success("提交成功！")
+      jumpTodoCenter()
+    }
   } catch (error) {
     loading.close()
   }

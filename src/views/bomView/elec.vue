@@ -37,8 +37,10 @@ import ProductInfo from "@/components/ProductInfo/index.vue"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import { useRouter } from "vue-router"
 
-const { jumpTodoCenter } = useJump()
+const router = useRouter()
+const { closeSelectedTag } = useJump()
 
 const { auditFlowId, productId }: any = getQuery()
 
@@ -101,7 +103,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
     nodeInstanceId
   })
   if (res.success) {
-    jumpTodoCenter()
+    closeSelectedTag(router.path)
     ElMessage.success("操作成功")
   }
 }

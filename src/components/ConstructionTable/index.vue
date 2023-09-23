@@ -228,7 +228,7 @@ const data = reactive({
 
 const router = useRouter()
 
-const { jumpTodoCenter } = useJump()
+const { closeSelectedTag } = useJump()
 
 onBeforeMount(() => {
   fetchOptionsData()
@@ -467,7 +467,9 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     // peopleId: data.peopleId
   })
 
-  if (success) jumpTodoCenter()
+  if (success) {
+     closeSelectedTag(route.path)
+  }
 }
 defineExpose({
   getSelection: () => multipleSelection.value

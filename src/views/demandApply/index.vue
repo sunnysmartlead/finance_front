@@ -1,6 +1,5 @@
 <template>
   <div class="demand-apply" v-loading="state.taebleLoading">
-    <!-- <ProcessVertifyBox :onSubmit="(arg: any) => save(refForm, { ...arg })" processType="confirmProcessType" v-havedone /> -->
     <el-row justify="end" v-if="!isDisabled">
       <el-button @click="save(refForm, false)" type="primary">保存</el-button>
       <el-button @click="save(refForm, true)" type="primary">提交</el-button>
@@ -353,12 +352,6 @@
               <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
                 :key="`${Findex}-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`">
                 <template #default="{ row }">
-                  <!-- <el-input
-                    v-model="row.modelCountYearList[index].quantity"
-                    @input="modelCountYearListQuantitySum(row)"
-                    oninput="value=value.replace(/[^\d]/g,'')"
-                    :disabled="isDisabled"
-                  /> -->
                   {{ formatThousandths(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
               </el-table-column>

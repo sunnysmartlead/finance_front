@@ -47,41 +47,45 @@
       </el-row>
     </el-card>
 
-    <el-card class="m-2">
-      <el-card header="成本明细表">
-        <!-- Bom成本  -->
-        <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
-        <!-- 损耗成本  -->
-        <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
-        <!-- 制造成本  -->
-        <manufactureTable :hideEdit="hideEdit" v-if="data.mode === '3'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
-        <!-- 物流成本  -->
-        <logisticsTable :hideEdit="hideEdit" v-if="data.mode === '4'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
-        <!-- 质量成本  -->
-        <qualityTable :hideEdit="hideEdit" v-if="data.mode === '5'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
-        <!-- 其他成本  -->
-        <otherCostTable :hideEdit="hideEdit" v-if="data.mode === '6'" :yearData="filterYearData" :gradientId="data.form.gradientId" />
-      </el-card>
-      <el-card style="margin-top: 10px">
-        <el-row>
-          <el-col :span="12">
-            <div class="dashboard__footer">
-              <!-- 饼图 -->
-              <div id="percentageCostChart" />
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="dashboard__body">
-              <!-- 总成本图 -->
-              <div id="costChart" />
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>
-      <el-card style="margin-top: 10px">
-        <!-- 产品总成本推移图 -->
-        <div id="selectCostChart" />
-      </el-card>
+    <div>
+      <!-- Bom成本  -->
+      <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
+        :gradientId="data.form.gradientId" />
+      <!-- 损耗成本  -->
+      <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData"
+        :gradientId="data.form.gradientId" />
+      <!-- 制造成本  -->
+      <manufactureTable :hideEdit="hideEdit" v-if="data.mode === '3'" :yearData="filterYearData"
+        :gradientId="data.form.gradientId" />
+      <!-- 物流成本  -->
+      <logisticsTable :hideEdit="hideEdit" v-if="data.mode === '4'" :yearData="filterYearData"
+        :gradientId="data.form.gradientId" />
+      <!-- 质量成本  -->
+      <qualityTable :hideEdit="hideEdit" v-if="data.mode === '5'" :yearData="filterYearData"
+        :gradientId="data.form.gradientId" />
+      <!-- 其他成本  -->
+      <otherCostTable :hideEdit="hideEdit" v-if="data.mode === '6'" :yearData="filterYearData"
+        :gradientId="data.form.gradientId" />
+    </div>
+    <el-card style="margin-top: 10px" m="2">
+      <el-row>
+        <el-col :span="12">
+          <div class="dashboard__footer">
+            <!-- 饼图 -->
+            <div id="percentageCostChart" />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="dashboard__body">
+            <!-- 总成本图 -->
+            <div id="costChart" />
+          </div>
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-card style="margin-top: 10px" m="2">
+      <!-- 产品总成本推移图 -->
+      <div id="selectCostChart" />
     </el-card>
     <el-dialog v-model="dialogVisible" title="退回选择">
       <el-checkbox-group v-model="checkList">
@@ -160,6 +164,7 @@ enum upDownEnum {
   "上半年",
   "下半年"
 }
+
 const props = defineProps({
   hideEdit: Boolean
 })
@@ -340,7 +345,7 @@ const handleFetchPriceEvaluationTableDownload = async () => {
     background: 'rgba(0, 0, 0, 0.7)',
   })
   try {
-      const result: any = await PriceEvaluationTableDownload({
+    const result: any = await PriceEvaluationTableDownload({
       auditFlowId,
       SolutionId: productId,
       GradientId: data.form.gradientId,
@@ -491,7 +496,6 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
 }
 
 const fetchAllData = async () => {
-  console.log('请求了111111', 'fetchAllData')
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
 }
@@ -535,5 +539,4 @@ const handleSetPriceEvaluationTableInputCount = debounce(async () => {
     margin: 10px 0;
     height: 300px;
   }
-}
-</style>
+}</style>

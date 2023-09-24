@@ -1,13 +1,16 @@
 <template>
   <div class="bomView">
+    <div style="margin: 10px 0; float: right">
+      <ProcessVertifyBox :onSubmit="handleSetBomState" />
+    </div>
     <CustomerSpecificity />
     <el-row>
       <TrView />
       <ProductInfo :auditFlowId="data.auditFlowId" m="2" />
     </el-row>
-    <div class="bomView__child">
+    <el-card class="bomView__child">
+      <el-button type="primary" @click="filterTableData">筛选涉及项</el-button>
       <h4>电子料</h4>
-      <!-- <el-button type="primary" @click="jumpToImport(1)" style="float: right; margin: 10px 0">电子料导入</el-button> -->
       <el-table :data="data.electronicData" border style="width: 100%" height="500">
         <el-table-column prop="categoryName" label="物料大类" width="180" />
         <el-table-column prop="typeName" label="物料种类" width="180" />
@@ -17,81 +20,41 @@
         <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
         <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
       </el-table>
-      <div style="margin: 10px 0; float: right">
-        <ProcessVertifyBox :onSubmit="handleSetBomState" />
-        <!-- <el-button type="primary" @click="agree(1, true)" v-havedone>同意</el-button>
-        <el-button @click="agree(1, false)" type="danger" v-havedone>拒绝</el-button> -->
-      </div>
-    </div>
+
+    </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, toRefs, onBeforeMount, onMounted, watchEffect } from "vue"
-// import { useRouter } from "vue-router"
 import { GetElectronicBom, SetBomState } from "@/api/bom"
 import { ElMessage, ElMessageBox } from "element-plus"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 import TrView from "@/components/TrView/index.vue"
 import ProductInfo from "@/components/ProductInfo/index.vue"
 import getQuery from "@/utils/getQuery"
-import useJump from "@/hook/useJump"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-import { useRouter } from "vue-router"
-
-const router = useRouter()
-const { closeSelectedTag } = useJump()
+import { sortBy } from "lodash";
 
 const { auditFlowId, productId }: any = getQuery()
 
 /**
- * 路由对象
- */
-// const route = useRoute()
-// /**
-//  * 路由实例
-//  */
-// const router = useRouter()
-//console.log('1-开始创建组件-setup')
-/**
  * 数据部分
  */
-const data = reactive({
+const data = reactive<any>({
   electronicData: [],
   structuralData: [],
-  auditFlowId: auditFlowId
+  auditFlowId: auditFlowId,
+  isFilter: false,
 })
-// const jumpToImport = (type: number) => {
-//   if (type === 1) {
-//     router.push({
-//       path: "/electronicImport/index"
-//     })
-//   } else {
-//     router.push({
-//       path: "/structuralMaterialImport/index"
-//     })
-//   }
-// }
-// const agree = async (bomCheckType: number, isAgree: boolean) => {
-//   let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-//   ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "请审核", {
-//     confirmButtonText: "确定",
-//     cancelButtonText: "取消",
-//     type: "warning"
-//   }).then(async (val) => {
-//     let res: any = await SetBomState({
-//       auditFlowId: auditFlowId,
-//       productId: productId,
-//       bomCheckType,
-//       isAgree,
-//       opinionDescription: !isAgree ? val?.value : ""
-//     })
-//     if (res.success) {
-//       jumpTodoCenter()
-//       ElMessage.success("操作成功")
-//     }
-//   })
-// }
+
+const filterTableData = () => {
+  data.isFilter = !data.isFilter
+  data.electronicData = sortBy(data.electronicData, (item) => {
+    return item.isInvolveItem === (data.isFilter ? "否" : "是")
+  })
+}
+
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await SetBomState({
     auditFlowId: auditFlowId,
@@ -103,7 +66,6 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
     nodeInstanceId
   })
   if (res.success) {
-    closeSelectedTag(router.path)
     ElMessage.success("操作成功")
   }
 }
@@ -127,8 +89,6 @@ defineExpose({
 </script>
 <style scoped lang="scss">
 .bomView {
-  &__child {
-    margin: 20px 0;
-  }
+  margin: 20px 0;
 }
 </style>

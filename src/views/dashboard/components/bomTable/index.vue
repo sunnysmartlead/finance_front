@@ -1,43 +1,27 @@
 <template>
   <div>
     <el-card m="2" header="bom成本">
-      <bomTable :bomData="bomData" :onEdit="handleEdit" :hideEdit="hideEdit" />
-    </el-card>
-    <el-card m="2"  v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
-          <span>修改项：</span>
-          <el-row v-if="!hideEdit">
-            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
-            <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
-            <el-upload
-              :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-              :on-success="handleSuccess"
-              show-file-list
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadError"
-              v-model:file-list="fileList"
-              :limit="1"
-            >
-              <el-button type="primary" m="2">上传佐证资料</el-button>
-            </el-upload>
+          <span>bom成本</span>
+          <el-row>
+            <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button>
           </el-row>
         </el-row>
       </template>
-      <bomTable :isEdit="!hideEdit"  v-model:bomData="bomModifyData" :onDelete="handleDelete" />
+      <bomTable :bomData="bomData" :hideEdit="hideEdit" />
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
 import { PropType, ref, onMounted, watch } from "vue"
-import { GetUpdateItemMaterial, GetBomCost, SetUpdateItemMaterial } from "../../service"
-import type { UploadProps, UploadUserFile } from "element-plus"
-import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-import { ElMessage } from "element-plus"
+import { GetUpdateItemMaterial, GetBomCost } from "../../service"
 import bomTable from "./bomTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 const { auditFlowId, productId: solutionId } = getQuery()
 
 const props = defineProps({
@@ -50,8 +34,6 @@ const props = defineProps({
   gradientId: String,
   hideEdit: Boolean
 })
-
-const fileList = ref<UploadUserFile[]>([])
 
 // 获取 bom成本（含损耗）汇总表
 const getBomCost = async () => {
@@ -96,13 +78,14 @@ const init = () => {
   }
 }
 
-const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
-  if (res.success) {
-    ElMessage({
-      message: "上传成功",
-      type: "success"
-    })
-  }
+const goEdit = () => {
+  router.push({
+    path: "/resourcesDepartment/electronic",
+    query: {
+      auditFlowId,
+      productId: solutionId
+    }
+  })
 }
 
 onMounted(() => {
@@ -126,44 +109,4 @@ const handleEdit = (row: any) => {
   bomModifyData.value.push(row)
 }
 
-const addEditList = () => {
-  bomModifyData.value.push({})
-}
-
-const handleSubmit = async () => {
-  const fileIds =  fileList.value.map((item: any) => item.response.result?.fileId) || []
-  if (!fileIds.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先上传佐证资料！'
-    })
-    return
-  }
-  if (!bomModifyData.value.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先添加修改项数据再操作！'
-    })
-    return
-  }
-  const { success } = await SetUpdateItemMaterial({
-    updateItem: bomModifyData.value,
-    auditFlowId,
-    solutionId,
-    gradientId: props.gradientId,
-    file: fileIds[0],
-    Year: props.yearData.year,
-    UpDown: props.yearData.upDown,
-  })
-  if (success) {
-    ElMessage({
-      type: 'success',
-      message: '提交成功！'
-    })
-  }
-}
-
-const handleDelete = (index: number) => {
-  bomModifyData.value.splice(index, 1)
-}
 </script>

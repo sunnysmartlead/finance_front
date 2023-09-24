@@ -41,7 +41,7 @@
 import { reactive, PropType } from "vue"
 import { ElMessage } from "element-plus"
 import { useRoute } from "vue-router"
-
+import useJump from "@/hook/useJump"
 import PROGRESSTYPE from "@/constant/approvalProcess"
 
 const data: any = reactive({
@@ -64,12 +64,16 @@ const props = defineProps({
   }
 })
 const route = useRoute()
-const onSubmit = () => {
+const { closeSelectedTag } = useJump()
+const onSubmit = async () => {
   let { nodeInstanceId } = route.query
-  props.onSubmit({
+  await props.onSubmit({
     comment: data.comment,
     opinion: data.opinion,
     nodeInstanceId: nodeInstanceId
   })
+  if (['YesOrNo_Save', 'Save'].includes(data.opinion)) {
+    closeSelectedTag(route.path)
+  }
 }
 </script>

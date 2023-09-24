@@ -29,8 +29,6 @@
       </el-table>
       <div style="margin: 10px 0; float: right">
         <ProcessVertifyBox :onSubmit="handleSetBomState" />
-        <!-- <el-button type="primary" @click="agree(2, true)" v-havedone>同意</el-button>
-        <el-button @click="agree(2, false)" type="danger" v-havedone>拒绝</el-button> -->
       </div>
     </el-card>
   </div>
@@ -45,7 +43,7 @@ import LogisticsInfo from "@/components/LogisticsInfo/index.vue"
 import TrView from "@/components/TrView/index.vue"
 
 import { GetStructionBom, SetBomState } from "@/api/bom"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage } from "element-plus"
 import { sortBy } from "lodash"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
@@ -58,19 +56,9 @@ const { closeSelectedTag } = useJump()
 const { auditFlowId, productId }: any = getQuery()
 
 /**
- * 路由对象
- */
-// const route = useRoute()
-// /**
-//  * 路由实例
-//  */
-// const router = useRouter()
-//console.log('1-开始创建组件-setup')
-/**
  * 数据部分
  */
-const data = reactive({
-  electronicData: [],
+const data = reactive<any>({
   structuralData: [],
   auditFlowId: auditFlowId,
   isFilter: false
@@ -94,7 +82,6 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
 
 const filterTableData = () => {
   data.isFilter = !data.isFilter
-  console.log(data.isFilter, "data.isFilter")
   data.structuralData = sortBy(data.structuralData, (item) => {
     return item.isInvolveItem === (data.isFilter ? "否" : "是")
   })
@@ -106,8 +93,6 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   let resStruction: any = await GetStructionBom({ auditFlowId,productId, solutionId:productId })
-  // let resElectronic: any = await GetElectronicBom()
-  // data.electronicData = resElectronic.result
   data.structuralData = resStruction.result
 })
 watchEffect(() => {})

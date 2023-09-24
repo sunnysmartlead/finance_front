@@ -17,12 +17,12 @@
         <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
         <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
         <el-table-column prop="sapItemName" label="材料名称" width="120" fixed="left" />
-        <el-table-column prop="assemblyQuantity" label="装配数量" width="120" fixed="left" />
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="80" fixed="left" />
         <el-table-column prop="materialsUseCount" label="项目物料的使用量">
           <el-table-column align="center" :class-name="`column-class-${index}`"
-            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount" width="150"
+            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount"
             :label="`${item.kv} K/Y`" :key="`materialsUseCount${index}`">
-            <el-table-column width="100" v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
+            <el-table-column width="80" v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :prop="`materialsUseCount.${index}.yearOrValueModes.${iIndex}.value`"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" :formatter="formatDatas" />
           </el-table-column>
@@ -54,32 +54,29 @@
         </el-table-column>
         <el-table-column prop="inTheRate" label="年降率">
           <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
-            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="150" :key="`inTheRate${index}`">
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" :key="`inTheRate${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="100"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
               <template #default="scope">
-                <el-input v-if="scope.row.isEdit" v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value"
+                <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value"
                   type="number">
-                  <template #append> % </template>
                 </el-input>
-                <!-- <span v-else>{{ (scope.row.inTheRate?.[index]?.yearOrValueModes?.[iIndex]?.value || 0) * 100 }} %</span> -->
               </template>
             </el-table-column>
           </el-table-column>
         </el-table-column>
         <el-table-column prop="standardMoney" label="本位币">
           <el-table-column v-for="(item, index) in allColums?.standardMoneyYears" align="center"
-            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="150" :key="`standardMoney${index}`">
+            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" :key="`standardMoney${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="100"
               :prop="`standardMoney.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterStandardMoney" />
           </el-table-column>
         </el-table-column>
         <el-table-column prop="moq" label="MOQ" width="150">
           <template #default="{ row }">
             <el-input-number size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
-            <span v-if="!row.isEdit">{{ row.moq }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
@@ -155,8 +152,7 @@ import { useRoute } from "vue-router"
 import { getExchangeRate } from "@/views/demandApply/service"
 import getQuery from "@/utils/getQuery"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
-import { cloneDeep, debounce, forEach } from "lodash"
-import useJump from "@/hook/useJump"
+import { cloneDeep, debounce } from "lodash"
 import { useRouter } from "vue-router"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
@@ -171,8 +167,6 @@ const props = defineProps({
   isVertify: Boolean,
   isMergeVertify: Boolean
 })
-
-const { closeSelectedTag } = useJump()
 
 const STORAGE_KEY = "electronicVertify" // 浏览器缓存key
 const MERGE_STORAGE_KEY = "electronicMergeVertify"
@@ -419,7 +413,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     return
   }
   console.log(multipleSelection.value, "[电子料审核ids]")
-  const { success } = await BomReview({
+  await BomReview({
     auditFlowId,
     bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
     comment,
@@ -427,7 +421,6 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId,
     electronicsUnitPriceId: multipleSelection.value
   })
-  if (success) closeSelectedTag(route.path)
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {

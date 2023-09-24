@@ -507,13 +507,13 @@
           <h6>分摊数量：</h6>
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
-            <el-table-column prop="count" label="分摊年份" width="250">
+            <!-- <el-table-column prop="count" label="分摊年份" width="250">
               <template #default="{ row }">
                 <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled">
                   <el-option v-for="item in shareCountYears" :value="item.year" :label="item.label" />
                 </el-select>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="count" label="分摊数量" width="250">
               <template #default="{ row, $index }">
                 <el-input-number @input="ChangeShareCount(row, $index)" controls-position="right" v-model="row.count"
@@ -1291,14 +1291,14 @@ let router = useRouter()
 //   })
 // }
 
-const shareCountYears = computed(() => {
-  const yearsArr = map(state.yearCols, item => {
-    return {
+// const shareCountYears = computed(() => {
+//   const yearsArr = map(state.yearCols, item => {
+//     return {
 
-    }
-  })
-  return yearsArr
-})
+//     }
+//   })
+//   return yearsArr
+// })
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (cellValue) {

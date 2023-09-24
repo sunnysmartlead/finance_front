@@ -108,6 +108,7 @@
                 </template>
               </el-table-column>
             </el-table-column>
+            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" />
             <el-table-column label="备注" width="120">
               <template #default="{ row }">
                 <el-input v-if="row.isEdit" v-model="row.remark" />

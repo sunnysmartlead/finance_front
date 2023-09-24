@@ -15,6 +15,11 @@
         <el-input v-if="isEdit" v-model="row.count" />
       </template>
     </el-table-column>
+    <el-table-column prop="cost" label="单颗成本">
+      <template #default="{ row }">
+        <el-input v-if="isEdit" v-model="row.cost" />
+      </template>
+    </el-table-column>
     <el-table-column prop="note" label="备注">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.note" />
@@ -23,9 +28,8 @@
     <el-table-column prop="isShare" label="是否分摊" :formatter="formatter">
       <template #default="{ row }">
         <el-select v-model="row.isShare" placeholder="是否分摊">
-              <el-option v-for="item in options" :key="item.label" :label="item.label"
-                :value="item.value" />
-            </el-select>
+          <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
+        </el-select>
       </template>
     </el-table-column>
     <el-table-column label="操作" width="200" v-if="!hideEdit">

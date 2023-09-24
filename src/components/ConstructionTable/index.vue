@@ -79,7 +79,7 @@
                     <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
                       type="number">
                     </el-input>
-                    <span v-else>{{ (scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value || 0) * 100 }} %</span>
+                    <span v-else>{{ (scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value || 0) }} %</span>
                   </template>
                 </el-table-column>
               </el-table-column>

@@ -104,14 +104,6 @@
         <el-input v-model="row.remarks" />
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="120" fixed="right" v-if="!hideEdit">
-      <template #default="{ row, $index }">
-        <el-row>
-          <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
-          <el-button type="primary" v-if="isEdit" @click="onDelete($index)" link>删除</el-button>
-        </el-row>
-      </template>
-    </el-table-column>
   </el-table>
 </template>
 <script lang="ts" setup>

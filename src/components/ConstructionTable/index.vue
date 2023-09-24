@@ -38,9 +38,9 @@
             <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
             <el-table-column prop="materialsUseCount" label="项目物料的使用量">
               <el-table-column align="center" :label="`${c.kv} K/Y`" :class-name="`column-class-${i}`"
-                v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount" prop="materialsUseCount" width="150"
+                v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount" prop="materialsUseCount"
                 :key="`materialsUseCount${i}`">
-                <el-table-column width="100" v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
+                <el-table-column width="80" v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
                   :prop="`materialsUseCount.${i}.yearOrValueModes.${iIndex}.value`"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]" :formatter="formatDatas" />
               </el-table-column>
@@ -59,7 +59,7 @@
                 <el-table-column v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150">
                   <template #default="scope">
-                    <el-input-number v-if="scope.row.isEdit"
+                    <el-input-number size="small" v-if="scope.row.isEdit"
                       v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value" controls-position="right"
                       :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index)" />
                     <span v-if="!scope.row.isEdit">{{
@@ -71,14 +71,13 @@
             </el-table-column>
             <el-table-column prop="inTheRate" label="年降率">
               <el-table-column v-for="(c, i) in item.structureMaterial[0]?.inTheRate" align="center"
-                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="150" :key="`inTheRate${i}`"
+                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" :key="`inTheRate${i}`"
                 :formatter="filterinTheRate">
                 <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150">
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="100">
                   <template #default="scope">
-                    <el-input v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
+                    <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
                       type="number">
-                      <template #append> % </template>
                     </el-input>
                     <span v-else>{{ (scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value || 0) * 100 }} %</span>
                   </template>
@@ -87,15 +86,15 @@
             </el-table-column>
             <el-table-column prop="standardMoney" label="本位币">
               <el-table-column v-for="(c, i) in item.structureMaterial[0]?.standardMoney" align="center"
-                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" width="150" :key="`standardMoney${i}`">
+                :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" :key="`standardMoney${i}`">
                 <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="100"
                   :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`" :formatter="filterStandardMoney" />
               </el-table-column>
             </el-table-column>
             <el-table-column prop="moq" label="MOQ" width="150">
               <template #default="{ row }">
-                <el-input-number v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
+                <el-input-number size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
                 <span v-if="!row.isEdit">{{ row.moq }}</span>
               </template>
             </el-table-column>
@@ -104,14 +103,10 @@
                 :label="`${c.kv} K/Y`" width="150" :key="`rebateMoney${i}`" :prop="`rebateMoney.${index}.value`"
                 :formatter="formatThousandths">
                 <template #default="{ row }">
-                  <el-input-number v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
+                  <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
                     :min="0" />
                 </template>
               </el-table-column>
-              <!-- <template #default="{ row }">
-              <el-input-number v-if="row.isEdit" v-model="row.rebateMoney" controls-position="right" :min="0" />
-              <span v-if="!row.isEdit">{{ row.rebateMoney }}</span>
-            </template> -->
             </el-table-column>
             <el-table-column label="备注" width="120">
               <template #default="{ row }">
@@ -138,7 +133,7 @@
                   @click="handleSubmit(row, 1, bomIndex, $index)" type="warning" :loading="row.loading">
                   提交
                 </el-button>
-                <el-button v-if="!row.isEdit" :disabled="row.isSubmit || row.loading" link @click="handleEdit(row, true)"
+                <el-button v-if="!row.isEdit" :disabled="row.isSubmit || row.loading"  link @click="handleEdit(row, true)"
                   type="primary">
                   修改
                 </el-button>

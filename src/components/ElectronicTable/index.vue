@@ -268,7 +268,7 @@ const toFixedTwo = (record: any, _row: any, cellValue: any) => {
 }
 
 const filterinTheRate = (record: any, _row: any, cellValue: any) => {
-  return `${(cellValue * 100 || 0).toFixed(2)} %`
+  return `${(cellValue || 0).toFixed(2)} %`
 }
 
 onMounted(async () => {

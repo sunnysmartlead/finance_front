@@ -80,7 +80,7 @@ const init = () => {
 
 const goEdit = () => {
   router.push({
-    path: "/resourcesDepartment/electronic",
+    path: "/bomVerify/index",
     query: {
       auditFlowId,
       productId: solutionId

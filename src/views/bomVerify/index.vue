@@ -3,10 +3,10 @@
     <ProcessVertifyBox :onSubmit="handleSetBomState" processType="bomCostProcessType" />
   </el-row>
   <el-card header="结构BOM单价" class="m-2">
-    <ConstructionTable isVertify isMergeVertify ref="constructionRef" />
+    <ConstructionTable ref="constructionRef" />
   </el-card>
   <el-card header="电子料单价" class="m-2">
-    <ElectronicTable isVertify isMergeVertify ref="electronicRef" />
+    <ElectronicTable ref="electronicRef" />
   </el-card>
 </template>
 

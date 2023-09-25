@@ -1319,7 +1319,7 @@ const formatValue = (_record: any, _row: any, cellValue: any) => {
 const getProjectCodeOptions = async (filter?: any) => {
   const { result }: any = await GetAllProjectSelf({
     filter: filter || '',
-    skipCount: 100,
+    skipCount: 0,
     maxResultCount: 100
   })
   if (result?.items) {

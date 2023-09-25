@@ -1,5 +1,5 @@
 <template>
-  <div class="margin-top">
+  <div class="margin-top" v-loading="tableLoading">
     <el-row justify="end" style="margin-top: 20px" v-if="isVertify && constructionBomList.length && !isMergeVertify">
       <ProcessVertifyBox :onSubmit="handleSetBomState" processType="structBomProcessType" />
     </el-row>
@@ -36,6 +36,7 @@
             <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="80" />
             <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="80" />
             <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
+            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" />
             <el-table-column prop="materialsUseCount" label="项目物料的使用量">
               <el-table-column align="center" :label="`${c.kv} K/Y`" :class-name="`column-class-${i}`"
                 v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount" prop="materialsUseCount"
@@ -72,14 +73,13 @@
             <el-table-column prop="inTheRate" label="年降率">
               <el-table-column v-for="(c, i) in item.structureMaterial[0]?.inTheRate" align="center"
                 :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" :key="`inTheRate${i}`"
-                :formatter="filterinTheRate">
+                >
                 <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="100">
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="100" :formatter="filterinTheRate">
                   <template #default="scope">
                     <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
                       type="number">
                     </el-input>
-                    <span v-else>{{ (scope.row.inTheRate?.[i]?.yearOrValueModes?.[yIndex]?.value || 0) }} %</span>
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -100,7 +100,7 @@
             </el-table-column>
             <el-table-column prop="rebateMoney" label="物料返利金额" width="150">
               <el-table-column v-for="(c, i) in item.structureMaterial[0]?.rebateMoney" align="center"
-                :label="`${c.kv} K/Y`" width="150" :key="`rebateMoney${i}`" :prop="`rebateMoney.${index}.value`"
+                :label="`${c.kv} K/Y`" width="150" :key="`rebateMoney${i}`" :prop="`rebateMoney.${i}.value`"
                 :formatter="formatThousandths">
                 <template #default="{ row }">
                   <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
@@ -108,7 +108,6 @@
                 </template>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" />
             <el-table-column label="备注" width="120">
               <template #default="{ row }">
                 <el-input v-if="row.isEdit" v-model="row.remark" />
@@ -200,6 +199,7 @@ enum upDownEnum {
   "下半年"
 }
 
+const tableLoading = ref(false)
 const STORAGE_KEY = "constructionVertify" // 浏览器缓存key
 const MERGE_STORAGE_KEY = "constructionMergeVertify" // 合并审核浏览器缓存key
 
@@ -283,8 +283,14 @@ const fetchOptionsData = async () => {
 
 // 获取初始化数据
 const fetchInitData = async () => {
-  const { result } = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
-  constructionBomList.value = result || []
+  try {
+    tableLoading.value = true
+    const { result } = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
+    constructionBomList.value = result || []
+    tableLoading.value = false
+  } catch {
+    tableLoading.value = false
+  }
 }
 
 const formatDatas = (record: any, _row: any, cellValue: any) => {

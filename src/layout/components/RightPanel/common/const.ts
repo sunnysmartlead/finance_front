@@ -17,6 +17,7 @@ export const wahiteRotes: any[] = [
   "nrePilotprojects", // nre - 产品部EMC环境实验费
   "nrePilotprojectsVertify", // nre - 产品部EMC环境实验费审核
   "nreResourcesDepartment", // nre - 模具费
+  "bomVerify", // bom单价审核
   "nreResourcesDepartmentVertify", // nre - 资源部审核
   "nreExperimentItems", // nre - 品保部
   "nreExperimentItemsVertify", // nre - 品保部审核

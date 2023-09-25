@@ -38,7 +38,7 @@
           </template>
         </el-table-column>
         <el-table-column label="金额" prop="cost" width="180" />
-        <el-table-column label="备注" width="180">
+        <el-table-column label="备注" prop="remark" width="180">
           <template #default="{ row }">
             <el-input v-if="!isVertify" v-model="row.remark" :disabled="row.isSubmit" />
           </template>

@@ -36,7 +36,7 @@
             <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="80" />
             <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="80" />
             <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
-            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" />
+            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" fixed="left" />
             <el-table-column prop="materialsUseCount" label="项目物料的使用量">
               <el-table-column align="center" :label="`${c.kv} K/Y`" :class-name="`column-class-${i}`"
                 v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount" prop="materialsUseCount"

@@ -450,7 +450,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: "/nre/nrePilotprojects",
         component: () => import("@/views/nre/nrePilotprojects.vue"),
-        name: "NrePilotprojects",
+        name: "nrePilotprojects",
         meta: {
           title: "产品部EMC实验费录入"
         }
@@ -458,7 +458,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: "/nre/nrePilotprojectsVertify",
         component: () => import("@/views/nre/vertify/nrePilotprojects.vue"),
-        name: "NrePilotprojectsVertify",
+        name: "nrePilotprojectsVertify",
         meta: {
           title: "产品部EMC实验费录入审核"
         }

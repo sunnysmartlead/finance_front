@@ -340,7 +340,7 @@
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="deviceItem.deviceNumber" :min="1" :precision="2" :step="0.01"
+                      <el-input-number v-model="deviceItem.deviceNumber" :min="0" :precision="2" :step="0.01"
                         :disabled="isDisable(dataIndex)" @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
                     </div>
                     <div class="u-width-150 u-border">
@@ -352,7 +352,7 @@
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{ sumDeviceTotalCost() }}</span>
                   <span v-else>
-                    {{ dataItem.deviceInfo.deviceTotalCost ? dataItem.deviceInfo.deviceTotalCost.toFixed(0) : 0 }}
+                    {{handleDeviceChange(null,dataIndex,null)}}
                   </span>
                 </div>
               </div>
@@ -380,7 +380,7 @@
                       </el-select>
                     </div>
                     <div class="u-border u-width-150">
-                      <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="1" :step="1"
+                      <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="0" :step="1"
                         :disabled="isDisable(dataIndex)"
                         @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
                     </div>
@@ -398,33 +398,36 @@
                 </template>
                 <template v-else>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(0) }}
+                    {{caclHardWareCost(dataIndex)}}
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" filterable remote reserve-keyword
+                    <!-- <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" filterable remote reserve-keyword
                       :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhuiSuSoft"
                       @change="zhuiSuSoftChange($event, dataIndex)" :loading="optionLoading">
                       <el-option v-for="item in zhuiSuSoftOptions" :key="item.id" :label="item.traceabilitySoftware"
                         :value="item.traceabilitySoftware" />
-                    </el-select>
+                    </el-select> -->
+                    <el-input   v-model="dataItem.developCostInfo.traceabilitySoftware"   :disabled="isDisable(dataIndex)" />
                   </div>
                   <div class="u-width-150  u-border">
                     <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost"
+                       @change="handleHardwareDeviceChange($event, dataIndex,null)" 
                       :disabled="isDisable(dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input @change="kaiTuChange($event, dataIndex)"
-                      v-model="dataItem.developCostInfo.openDrawingSoftware" :precision="2"
+                      v-model="dataItem.developCostInfo.openDrawingSoftware" 
                       :disabled="isDisable(dataIndex)" />
                   </div>
-                  <!--  @change="kaiTuChange($event, dataIndex)" -->
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice" :disabled="isDisable(dataIndex)" />
+                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice" 
+                    :disabled="isDisable(dataIndex)"  
+                    @change="handleHardwareDeviceChange($event, dataIndex,null)"/>
                   </div>
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{ sumHardwareDeviceTotalCost() }}</span>
-                  <span v-else>{{ dataItem.developCostInfo.hardwareDeviceTotalPrice }}</span>
+                  <span v-else>{{handleHardwareDeviceChange(null,dataIndex,null)}}</span>
                 </div>
               </div>
             </div>
@@ -488,7 +491,7 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
+                    <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
                       @change="handleJianJuCountChange($event, dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -503,7 +506,7 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="1" :disabled="isDisable(dataIndex)"
+                    <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
                       @change="handleGongZhuangCountChange($event, dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -518,7 +521,7 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="1" :disabled="isDisable(dataIndex)"
+                    <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="0" :disabled="isDisable(dataIndex)"
                       @change="handleTestLineCountChange($event, dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -527,7 +530,7 @@
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{ sumToolTotalCost() }}</span>
-                  <span v-else>{{ calToolTotalCost(dataIndex) }}</span>
+                  <span v-else>{{ calToolTotalCost(dataIndex)}}</span>
                 </div>
               </div>
             </div>
@@ -551,15 +554,15 @@
                   <template v-else>
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" :precision="2" :step="0.01"
+                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="0" :precision="2" :step="0.01"
                         :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="1" :precision="2" :step="0.01"
+                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="0" :precision="2" :step="0.01"
                         :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="1" :precision="2" :step="0.01"
+                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="0" :precision="2" :step="0.01"
                         :disabled="isDisable(dataIndex)" />
                     </div>
                   </div>
@@ -972,9 +975,12 @@ onMounted(() => {
 })
 
 const initData = () => {
-  addFlag.value = false
-  currentEditIndex.value = -1
+  addFlag.value = false;
+  currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
+    dataArr.value=[];
+    UPHData.value =[]; 
+    lineData.value =[];
     getTableData()
     getUPHAndLineData()
     getDeviceStatuEnmu();
@@ -1054,10 +1060,14 @@ const getDeviceStatuEnmu = () => {
 
 //整个页面保存
 const handleSaveData = () => {
+  let pList=JSON.parse(JSON.stringify(dataArr.value));
+  if(pList.length>0){
+    pList.pop();
+  }
   let param = {
     auditFlowId: auditFlowId,
     solutionId: productId,
-    listItemDtos: JSON.parse(JSON.stringify(dataArr.value)),
+    listItemDtos: pList,
     processHoursEnterUphList: JSON.parse(JSON.stringify(UPHData.value)),
     processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
   }
@@ -1110,6 +1120,7 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
       opinion,
       nodeInstanceId
     }
+    console.log("提交参数", param);
     handleSubmitOption(param).then((response: any) => {
       console.log("提交响应", response)
       if (response.success) {
@@ -1557,14 +1568,13 @@ const deviceNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
 }
 //设备价格或数量变化
 const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
-  console.log("第" + dataIndex + "工序的第" + deviceIndex + "个的数量是" + value + "个")
   let deviceCost = 0.0
   dataArr.value[dataIndex].deviceInfo.deviceArr.forEach((item: any) => {
     deviceCost = deviceCost + item.deviceNumber * item.devicePrice
   })
-  console.log("设备总价", deviceCost)
   dataArr.value[dataIndex].deviceInfo.deviceTotalCost = Number(Number(deviceCost).toFixed(2))
   //sumDeviceTotalCost();
+  return Number(Number(deviceCost).toFixed(2));
 }
 //#endregion
 //-------------------------------------end----------------------------------
@@ -1638,17 +1648,26 @@ const hardWareNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
   }
 }
 //软件设备数量和价格变化
-const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIndex: any) => {
-  console.log("第" + dataIndex + "工序的第" + hardwareDeviceIndex + "个的数量是" + value + "个")
+const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDeviceIndex: any) => {
   let handleHardwareDeviceCost = 0.0
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceNumber * item.hardwareDevicePrice
   })
-  console.log("软件设备总价", handleHardwareDeviceCost)
   dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2));
   let kaituCost = dataArr.value[dataIndex].developCostInfo.softwarePrice ? dataArr.value[dataIndex].developCostInfo.softwarePrice : 0;
   let zhuiSuCost = dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost ? dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost : 0;
-  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(handleHardwareDeviceCost) + Number(kaituCost) + Number(zhuiSuCost);
+  let hardwareDeviceTotalPrice= Number(handleHardwareDeviceCost) + Number(kaituCost) + Number(zhuiSuCost);
+  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = hardwareDeviceTotalPrice;
+  return hardwareDeviceTotalPrice;
+}
+
+const caclHardWareCost=(dataIndex: any)=>{
+  let handleHardwareDeviceCost = 0.0;
+  dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
+    handleHardwareDeviceCost=handleHardwareDeviceCost+(Number(item.hardwareDeviceNumber)*Number(item.hardwareDevicePrice)) 
+    console.log("计算硬件总价====",handleHardwareDeviceCost);
+  })
+  return handleHardwareDeviceCost;
 }
 //#endregion
 //-------------------------------------end-------------------------------
@@ -1773,7 +1792,8 @@ const getKaiTuName = (keyWord: String) => {
 //开图名称变化后,查询此开图的单价,并计算价格
 const kaiTuChange = (kaitu: any, dataIndex: number) => {
   console.log("第" + dataIndex + "工序的开图软件名称变化了" + kaitu)
-  dataArr.value[dataIndex].developCostInfo.softwarePrice = Number(random(50000))
+  //TODO 这里要根据开图软件名称获取到对应的单价  Number(random(50000)) 
+  dataArr.value[dataIndex].developCostInfo.softwarePrice =0.00;
   //这里计算总价
   let hardwareTotalPrice = dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;
   let softwarePrice = dataArr.value[dataIndex].developCostInfo.softwarePrice;
@@ -2573,7 +2593,6 @@ const sumSopCost=(type:number,sopIndex:number)=>{
       }
     }
   }
-  console.log("工时求和", sumVal);
   return sumVal.toFixed(2);
 }
 

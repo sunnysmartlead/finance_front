@@ -239,7 +239,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId
   })
   if (success) {
-    ElMessage.success("提交成功！")
+    ElMessage.success(`${opinion === 'Save' ? '保存' : '提交'}成功！`)
   }
 }
 

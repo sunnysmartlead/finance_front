@@ -411,17 +411,17 @@
                   </div>
                   <div class="u-width-150  u-border">
                     <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost"
-                       @change="handleHardwareDeviceChange($event, dataIndex,null)" 
+                       @change="handleHardwareDeviceChange($event, dataIndex,null)"
                       :disabled="isDisable(dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input @change="kaiTuChange($event, dataIndex)"
-                      v-model="dataItem.developCostInfo.openDrawingSoftware" 
+                      v-model="dataItem.developCostInfo.openDrawingSoftware"
                       :disabled="isDisable(dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice" 
-                    :disabled="isDisable(dataIndex)"  
+                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice"
+                    :disabled="isDisable(dataIndex)"
                     @change="handleHardwareDeviceChange($event, dataIndex,null)"/>
                   </div>
                 </template>
@@ -979,7 +979,7 @@ const initData = () => {
   currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
     dataArr.value=[];
-    UPHData.value =[]; 
+    UPHData.value =[];
     lineData.value =[];
     getTableData()
     getUPHAndLineData()
@@ -1664,7 +1664,7 @@ const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDev
 const caclHardWareCost=(dataIndex: any)=>{
   let handleHardwareDeviceCost = 0.0;
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
-    handleHardwareDeviceCost=handleHardwareDeviceCost+(Number(item.hardwareDeviceNumber)*Number(item.hardwareDevicePrice)) 
+    handleHardwareDeviceCost=handleHardwareDeviceCost+(Number(item.hardwareDeviceNumber)*Number(item.hardwareDevicePrice))
     console.log("计算硬件总价====",handleHardwareDeviceCost);
   })
   return handleHardwareDeviceCost;
@@ -1792,7 +1792,7 @@ const getKaiTuName = (keyWord: String) => {
 //开图名称变化后,查询此开图的单价,并计算价格
 const kaiTuChange = (kaitu: any, dataIndex: number) => {
   console.log("第" + dataIndex + "工序的开图软件名称变化了" + kaitu)
-  //TODO 这里要根据开图软件名称获取到对应的单价  Number(random(50000)) 
+  //TODO 这里要根据开图软件名称获取到对应的单价  Number(random(50000))
   dataArr.value[dataIndex].developCostInfo.softwarePrice =0.00;
   //这里计算总价
   let hardwareTotalPrice = dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;

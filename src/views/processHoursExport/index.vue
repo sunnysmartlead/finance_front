@@ -3,8 +3,8 @@
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center" />
       <div>
-        <!-- <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button> -->
+         <el-button @click="handleSaveData" type="primary">保存</el-button>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>
         <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
       </div>
     </div>
@@ -409,7 +409,7 @@
                     </el-select>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost" :precision="2"
+                    <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost"
                       :disabled="isDisable(dataIndex)" />
                   </div>
                   <div class="u-width-150 u-border">
@@ -452,7 +452,7 @@
                         </el-select>
                       </div>
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
+                        <el-input-number v-model="zhiju.fixtureNumber" :min="0" :precision="2" :disabled="isDisable(dataIndex)"
                           @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
                       </div>
                       <div class="u-width-150 u-border">

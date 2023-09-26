@@ -396,10 +396,12 @@ const planChange = (value: any) => {
 const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("单片价格变化", value);
   console.log("当前下表",cardIndex);
-  console.log(`index===${index}`,item)
-  if (item.packagingPrice && item.packagingPrice) {
+  console.log(`index===${index}`,item.value)
+/*
+  if (null !=  item && undefined != item) {
     item.transportPrice = ((item.row.freightPrice +item.row.storagePrice)/(item.row.yearMountCount / item.row.yearMountCount)).toFixed(2)
   }
+*/
 
 
   if(cardIndex==0&&index==0){
@@ -407,6 +409,14 @@ const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
       if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
         cardItem.logisticscostList.map(function(logItem:any){
           logItem.packagingPrice=value;
+          let yearCount = logItem.yearMountCount ? logItem.yearMountCount : 1
+          let monthlyDemandPrice = yearCount / logItem.moon
+          logItem.monthlyDemandPrice = monthlyDemandPrice
+          let singlePCS = (logItem.freightPrice + logItem.storagePrice) / monthlyDemandPrice
+          logItem.singlyDemandPrice = Number(singlePCS.toFixed(2))
+          if (logItem.packagingPrice && logItem.singlyDemandPrice) {
+            logItem.transportPrice = Number(logItem.packagingPrice) + logItem.singlyDemandPrice
+          }
         })
       }
     })

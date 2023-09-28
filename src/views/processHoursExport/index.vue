@@ -3,8 +3,8 @@
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center"/>
       <div>
-        <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button>
+<!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
         <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>
@@ -42,6 +42,9 @@
             <el-button type="primary">工序工时导入</el-button>
           </template>
         </el-upload>
+      </div>
+      <div class="u-m-5">
+        <el-button type="primary" @click="exportTemplate()">工序工时导出</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="downloadTemplate()">工序工时模板下载</el-button>
@@ -807,6 +810,8 @@ import {
   getWorkClothsListForSelect,
   getJianJuListForSelect,
   getZhiJuListForSelect,
+  handelExport,
+  exportDownload,
   getHardWareListForSelect,
   GetEditorByProcessNumber,
   GetPriceEvaluationStartData,
@@ -1246,15 +1251,50 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
 }
 //下载模板
 const downloadTemplate = () => {
-  const baseDomain = import.meta.env.VITE_BASE_API + "Excel/"
-  let href = baseDomain + "工时工序导入.xlsx";
-  console.log("下载模板===" + href);
-  const a = document.createElement('a');
-  a.href = href;
-  a.setAttribute('download', "工时工序导入模板.xlsx");
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  let param={
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+  }
+  handelExport(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"工时工序模板.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
+}
+const exportTemplate = () => {
+  let param={
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+  }
+  exportDownload(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"工时工序.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
 }
 
 //新增工序(新增的时候旧的记录作为模板,需要将数据复原)

@@ -219,3 +219,21 @@ export function GetPriceEvaluationStartData(data: any) {
     data
   })
 }
+
+/** 模板下载 */
+export function handelExport(data:any) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/TemplateDownload",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}
+export function exportDownload(data:any) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/exportDownload",
+    method: "post",
+    responseType:'blob',
+    data: data
+  })
+}

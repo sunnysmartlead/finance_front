@@ -69,7 +69,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目版本号:">
-              <el-input v-model="state.quoteForm.quoteVersion" :disabled="isDisabled" />
+              <el-input disabled v-model="state.quoteForm.quoteVersion" :disabled="isDisabled" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -507,13 +507,13 @@
           <h6>分摊数量：</h6>
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
-            <!-- <el-table-column prop="count" label="分摊年份" width="250">
+            <el-table-column prop="count" label="分摊年份" width="250">
               <template #default="{ row }">
-                <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled">
-                  <el-option v-for="item in shareCountYears" :value="item.year" :label="item.label" />
+                <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled" @change="(val) => changeShareCoutYears(val, row)" >
+                  <el-option v-for="item in shareCountYears" :value="item.value" :label="item.label" />
                 </el-select>
               </template>
-            </el-table-column> -->
+            </el-table-column>
             <el-table-column prop="count" label="分摊数量" width="250">
               <template #default="{ row, $index }">
                 <el-input-number @input="ChangeShareCount(row, $index)" controls-position="right" v-model="row.count"
@@ -1020,7 +1020,7 @@ import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 
 import _, { uniq, map, debounce, cloneDeep } from "lodash"
-import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData } from "./service"
+import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
@@ -1291,14 +1291,36 @@ let router = useRouter()
 //   })
 // }
 
-// const shareCountYears = computed(() => {
-//   const yearsArr = map(state.yearCols, item => {
-//     return {
+const shareCountYears = computed(() => {
+  const yearsArr = map(state.yearCols, (_, index) => {
+    const value = state.quoteForm.updateFrequency === updateFrequency.HalfYear ? (index + 1) / 2 : index + 1
+    return {
+      label: value + '年',
+      value,
+    }
+  })
+  return yearsArr
+})
 
-//     }
-//   })
-//   return yearsArr
-// })
+const changeShareCoutYears = (shareCountYear: number, row: any) => {
+  const { name } = row
+  const { updateFrequency: updateFrequencyVal } = state.quoteForm
+  let count = 0
+  moduleTableTotal.value?.forEach((item) => {
+    if (name === item.product) {
+      item.modelCountYearList?.forEach((yearItem: any, yearIndex: number) => {
+      if (updateFrequencyVal === updateFrequency.HalfYear && ((yearIndex + 1) / 2) <= shareCountYear) {
+        count += Number(yearItem.quantity?.toFixed(2))
+      } else if ((yearIndex + 1) <= shareCountYear) {
+        count += Number(yearItem.quantity?.toFixed(2))
+      }
+    })
+    }
+
+  })
+  console.log(count, '改变了13')
+  row.count = count
+}
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (cellValue) {
@@ -2436,10 +2458,14 @@ const changeExchangRate = (val: string, index: number) => {
   }
 }
 
-const changeProjectName = (val: string) => {
+const changeProjectName = async (val: string) => {
   const findItem = projectCodeOptions.value.find((item: any) => item.code === val)
   if (findItem) {
     state.quoteForm.projectName = findItem.description
+  }
+  const { result } = await GetQuoteVersion({ projectCode: val })
+  if (result) {
+    state.quoteForm.quoteVersion = result
   }
   console.log(val)
 }

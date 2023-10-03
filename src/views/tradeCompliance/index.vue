@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
-import { GetTradeComplianceCheckFromDateBase, IsTradeComplianceCheck } from "./service"
+import { GetTradeComplianceCheckFromDateBase, IsTradeComplianceCheck,SubmitNode } from "./service"
 import { TradeComplianceCheck } from "./data.type"
 import { ElMessage, ElMessageBox } from "element-plus"
 
@@ -110,7 +110,7 @@ const initFetch = async () => {
 //   })
 // }
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
-  let res: any = await IsTradeComplianceCheck({
+  let res: any = await SubmitNode({
     AuditFlowId: auditFlowId,
     opinionDescription: comment,
     comment,

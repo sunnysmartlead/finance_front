@@ -50,3 +50,12 @@ export function PostAuditQuotationListSave(data: any) {
     data
   })
 }
+
+// 获取项目版本
+export function GetQuoteVersion(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetQuoteVersion",
+    method: "get",
+    data
+  })
+}

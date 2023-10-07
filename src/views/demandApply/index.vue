@@ -57,8 +57,7 @@
               <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
                 placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions"
                 @change="changeProjectName">
-                <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code"
-                  :value="item.code" />
+                <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code" :value="item.code" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -294,8 +293,8 @@
               </el-table-column>
               <el-table-column label="子项目代码" width="180">
                 <template #default="{ row }">
-                  <el-select v-model="row.code" remote-show-suffix reserve-keyword filterable
-                    placeholder="Select" :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
+                  <el-select v-model="row.code" remote-show-suffix reserve-keyword filterable placeholder="Select"
+                    :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
                     <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code"
                       :value="item.code" />
                   </el-select>
@@ -507,9 +506,10 @@
           <h6>分摊数量：</h6>
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
-            <el-table-column prop="year" label="分摊年份" width="250">
-              <template #default="{ row }">
-                <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled" @change="(val) => changeShareCoutYears(val, row)" >
+            <el-table-column prop="year" label="分摊年量" width="250">
+              <template #default="{ row, $index }">
+                <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled"
+                  @change="(val) => changeShareCoutYears(val, row, $index)">
                   <el-option v-for="item in shareCountYears" :value="item.value" :label="item.label" />
                 </el-select>
               </template>
@@ -1302,24 +1302,36 @@ const shareCountYears = computed(() => {
   return yearsArr
 })
 
-const changeShareCoutYears = (shareCountYear: number, row: any) => {
+const changeShareCoutYears = (shareCountYear: number, row: any, index: number) => {
   const { name } = row
   const { updateFrequency: updateFrequencyVal } = state.quoteForm
   let count = 0
+  const len = state.yearCols.length
+  const coutYear = updateFrequencyVal === updateFrequency.HalfYear ? len / 2 : len
   moduleTableTotal.value?.forEach((item) => {
     if (name === item.product) {
       item.modelCountYearList?.forEach((yearItem: any, yearIndex: number) => {
-      if (updateFrequencyVal === updateFrequency.HalfYear && ((yearIndex + 1) / 2) <= shareCountYear) {
-        count += Number(yearItem.quantity?.toFixed(2))
-      } else if ((yearIndex + 1) <= shareCountYear) {
-        count += Number(yearItem.quantity?.toFixed(2))
-      }
-    })
+        if (updateFrequencyVal === updateFrequency.HalfYear && ((yearIndex + 1) / 2) <= shareCountYear) {
+          count += Number(yearItem.quantity?.toFixed(2))
+        } else if ((yearIndex + 1) <= shareCountYear) {
+          count += Number(yearItem.quantity?.toFixed(2))
+        }
+      })
     }
-
   })
-  console.log(count, '改变了13')
   row.count = count
+  checkShareCount(coutYear)
+}
+
+const checkShareCount = (countYear: number) => {
+  const total = shareCountTable.value?.reduce((a: any, b: { year: number }) => a + b.year, 0)
+  console.log(total, countYear, "total")
+  if (total > countYear) {
+    ElMessage({
+      type: "error",
+      message: "分摊年量不能大于总年量"
+    })
+  }
 }
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
@@ -1800,7 +1812,7 @@ watch(
   () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient, isFirstShow.value],
   (val) => {
     const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal] = val
-    console.log(kvList,moduleTableTotalData, isFirstShowVal, "kvList111")
+    console.log(kvList, moduleTableTotalData, isFirstShowVal, "kvList111")
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       let filterData: any = _.cloneDeep(kvList)
       filterData = filterData.map((item: any) => {
@@ -1822,7 +1834,7 @@ watch(
         }
       })
       gradientModelTable.value = filterData
-      console.log(kvList,moduleTableTotalData, isFirstShowVal, "kvList111")
+      console.log(kvList, moduleTableTotalData, isFirstShowVal, "kvList111")
       if (moduleTableTotalData?.length && kvList?.length && isFirstShowVal) {
         let arr: any = []
         kvList.forEach((gradientValue: any) => {
@@ -2435,25 +2447,8 @@ const changeCountry = (country: string) => {
   if (findData) {
     state.quoteForm.countryType = findData.nationalType
   }
-  console.log(findData, state.countryOptions, "选择")
+  console.log(findData, state.countryOptions, "选择国家")
 }
-
-const ChangeShareCount = debounce((row: any, index: number) => {
-  const total = moduleTableTotal.value[index]?.modelCountYearList
-    ?.filter((_: any, i: number) => {
-      return (
-        (state.quoteForm.updateFrequency === updateFrequency.HalfYear && i < 6) ||
-        (state.quoteForm.updateFrequency === updateFrequency.Year && i < 3)
-      )
-    })
-    .reduce((a: any, b: { quantity: any }) => a + b.quantity, 0)
-  if (row.count > total) {
-    ElMessage({
-      type: "error",
-      message: "分摊数量不能大于前三年模组走量之合"
-    })
-  }
-}, 300)
 
 const changeExchangRate = (val: string, index: number) => {
   if (index === 0) {

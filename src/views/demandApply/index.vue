@@ -1841,7 +1841,6 @@ watch(
             }
           })
         })
-        console.log(arr, 'arr123')
         customerTargetPrice.value = arr
       }
     }

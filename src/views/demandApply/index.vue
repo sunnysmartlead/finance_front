@@ -1797,13 +1797,12 @@ watch(
 )
 
 watch(
-  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient],
+  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient, isFirstShow.value],
   (val) => {
-    const [moduleTableTotalData, kvList, isHasGradient] = val
+    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal] = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       let filterData: any = _.cloneDeep(kvList)
       filterData = filterData.map((item: any) => {
-        console.log(isHasGradient, "isHasGradient12313")
         return {
           kv: item,
           children: map(moduleTableTotalData, (c, index: number) => ({
@@ -1822,7 +1821,7 @@ watch(
         }
       })
       gradientModelTable.value = filterData
-      if (moduleTableTotalData?.length && kvList?.length && isFirstShow.value) {
+      if (moduleTableTotalData?.length && kvList?.length && isFirstShowVal) {
         let arr: any = []
         kvList.forEach((gradientValue: any) => {
           moduleTableTotalData.forEach((item: any) => {
@@ -1842,6 +1841,7 @@ watch(
             }
           })
         })
+        console.log(arr, 'arr123')
         customerTargetPrice.value = arr
       }
     }

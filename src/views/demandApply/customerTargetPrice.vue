@@ -6,7 +6,7 @@
       <el-table-column prop="productName" label="零件名称" />
       <el-table-column prop="main" label="核心部件" />
       <el-table-column prop="type" label="品牌/型号" />
-      <el-table-column prop="price" label="单价" />
+      <el-table-column prop="price" label="单价" :formatter="toFixedTwo" />
       <el-table-column prop="currency" label="币别">
         <template #default="{ row }">
           <el-select v-model="row.currency" disabled>
@@ -19,8 +19,8 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column prop="exchange" label="汇率" />
-      <el-table-column prop="total" label="合计" />
+      <el-table-column prop="exchange" label="汇率" :formatter="toFixedTwo" />
+      <el-table-column prop="total" label="合计" :formatter="toFixedTwo" />
     </el-table>
   </div>
 </template>
@@ -157,6 +157,10 @@ const generateCustomTable = () => {
       })
     }
   })
+}
+
+const toFixedTwo = (record: any, _row: any, cellValue: any) => {
+  return cellValue?.toFixed(2) || ""
 }
 onMounted(async () => {
   let query = getQuery()

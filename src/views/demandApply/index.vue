@@ -507,7 +507,7 @@
           <h6>分摊数量：</h6>
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
-            <el-table-column prop="count" label="分摊年份" width="250">
+            <el-table-column prop="year" label="分摊年份" width="250">
               <template #default="{ row }">
                 <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled" @change="(val) => changeShareCoutYears(val, row)" >
                   <el-option v-for="item in shareCountYears" :value="item.value" :label="item.label" />
@@ -515,10 +515,10 @@
               </template>
             </el-table-column>
             <el-table-column prop="count" label="分摊数量" width="250">
-              <template #default="{ row, $index }">
+              <!-- <template #default="{ row, $index }">
                 <el-input-number @input="ChangeShareCount(row, $index)" controls-position="right" v-model="row.count"
                   :disabled="isDisabled" />
-              </template>
+              </template> -->
             </el-table-column>
           </el-table>
         </div>
@@ -1800,6 +1800,7 @@ watch(
   () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient, isFirstShow.value],
   (val) => {
     const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal] = val
+    console.log(kvList,moduleTableTotalData, isFirstShowVal, "kvList111")
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       let filterData: any = _.cloneDeep(kvList)
       filterData = filterData.map((item: any) => {
@@ -1821,6 +1822,7 @@ watch(
         }
       })
       gradientModelTable.value = filterData
+      console.log(kvList,moduleTableTotalData, isFirstShowVal, "kvList111")
       if (moduleTableTotalData?.length && kvList?.length && isFirstShowVal) {
         let arr: any = []
         kvList.forEach((gradientValue: any) => {
@@ -1841,6 +1843,7 @@ watch(
             }
           })
         })
+        console.log(arr, "arrrrrr11111")
         customerTargetPrice.value = arr
       }
     }
@@ -2398,9 +2401,12 @@ onMounted(async () => {
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
-      isFirstShow.value = true
     }, 2000)
+
   }
+  setTimeout(() => {
+    isFirstShow.value = true
+  }, 2000)
   state.taebleLoading = false
 })
 

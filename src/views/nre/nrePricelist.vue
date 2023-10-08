@@ -201,8 +201,8 @@
     </el-card>
     <el-card class="margin-top" header="工装费用">
       <el-descriptions m="2" border>
-        <el-descriptions-item label="线体数量">{{ data.aa }}</el-descriptions-item>
-        <el-descriptions-item label="共线分摊率">{{ data.bb }}</el-descriptions-item>
+        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')">新增</el-button>
@@ -674,7 +674,7 @@ watch(
     // 生产设备
     if (data.value.productionEquipmentCostsModifyDtos.length) {
       data.value.productionEquipmentCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.count || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
+        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 实验费
@@ -708,8 +708,8 @@ const initFetch = async () => {
     const { success, result } = await GetPricingForm({ auditFlowId, solutionId: productId })
     if (!success) throw Error()
     data.value = result
-    uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')
-    uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')
+    uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
+    uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
   } catch (err) {
     console.log(err, "[ GetPricingForm err ]")
   }

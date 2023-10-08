@@ -12,7 +12,7 @@
     </el-table-column>
     <el-table-column prop="isCustomerSupply" label="是否客供" width="175">
       <template #default="{ row }">
-        <el-select v-model="row.isShare" placeholder="是否分摊">
+        <el-select v-model="row.isCustomerSupply" :disabled="!hideEdit" placeholder="是否客供">
               <el-option v-for="item in options" :key="item.label" :label="item.label"
                 :value="item.value" />
             </el-select>

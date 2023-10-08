@@ -2,7 +2,7 @@
   <div style="padding: 0 10px">
     <!-- <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" /> -->
     <el-row justify="end">
-      <ProcessVertifyBox v-if="isVertify" :onSubmit="handleSubmit" />
+      <ProcessVertifyBox :onSubmit="handleSubmit" />
       <ThreeDImage m="2" />
     </el-row>
     <el-card class="margin-top">
@@ -72,7 +72,7 @@ import useJump from "@/hook/useJump"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 const route = useRoute()
 const { auditFlowId, right = 1, productId }: any = getQuery()
-const { closeSelectedTag } = useJump()
+
 import { ElTable } from 'element-plus'
 import { map } from "lodash"
 
@@ -142,7 +142,7 @@ const submit = debounce(async (isSubmit: boolean, row: any) => {
   })
   if (success) {
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
-    initFetch()
+    // initFetch()
   }
 }, 300)
 
@@ -169,7 +169,6 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
   })
   if (success) {
     ElMessage.success(`提交成功`)
-    closeSelectedTag(route.path)
     removeSessionStorage('mouldInventorySelection')
   }
 }

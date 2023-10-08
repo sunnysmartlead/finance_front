@@ -11,7 +11,7 @@
           <span class="card-span"> 未提交的数量:{{ electronicBomList.filter((p) => !p.isSubmit).length }}</span>
         </div>
       </template>
-      <el-table :data="electronicBomList" height="75vh" @selection-change="selectionChange" ref="multipleTableRef">
+      <el-table :data="electronicBomList" :height="electronicBomList.length > 5 ? '75vh' : '46vh'" @selection-change="selectionChange" ref="multipleTableRef">
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column prop="categoryName" label="物料大类" width="100" fixed="left" />
         <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
@@ -56,11 +56,12 @@
           <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" :key="`inTheRate${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="100"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value"
                   type="number">
+                  <template #append> % </template>
                 </el-input>
               </template>
             </el-table-column>

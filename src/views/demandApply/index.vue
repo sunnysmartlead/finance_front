@@ -294,9 +294,9 @@
               <el-table-column label="子项目代码" width="180">
                 <template #default="{ row }">
                   <el-select v-model="row.code" remote-show-suffix reserve-keyword filterable placeholder="Select"
-                    :disabled="isDisabled" remote :remote-method="getProjectCodeOptions">
-                    <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code"
-                      :value="item.code" />
+                    :disabled="isDisabled" remote :remote-method="getProjectCodeOptions" @change="(v) => changeCode(v, row)">
+                    <el-option v-for="item in projectCodeOptions" :key="item.subCode" :label="item.subCode"
+                      :value="item.subCode" />
                   </el-select>
                 </template>
               </el-table-column>
@@ -627,10 +627,6 @@
               <el-input v-model="row.sensor" placeholder="品牌/型号" :disabled="isDisabled">
                 <template #prepend>
                   <el-select v-model="row.sensorTypeSelect" :disabled="isDisabled">
-                    <!-- <el-option label="我司推荐" value="1" />
-                    <el-option label="客户指定" value="2" />
-                    <el-option label="客户供应采购" value="3" />
-                    <el-option label="客户要求" value="4" /> -->
                     <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
                       :value="item.id" />
                   </el-select>
@@ -639,14 +635,13 @@
                   <el-input v-model="row.sensorPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.sensorCurrency" @change="(val) => SensorChange(val, $index)"
+                      <el-select v-model="row.sensorCurrency" @change="(val) => SensorChange(val, row, 'sensorExchangeRate')"
                         :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <!-- <el-text class="mx-1">汇率:{{ row.sensorExchangeRate }}</el-text> -->
                   <el-input v-model="row.sensorExchangeRate" placeholder="汇率:" :disabled="isDisabled"
                     style="width: 100px" />
                 </template>
@@ -658,10 +653,6 @@
               <el-input v-model="row.lens" placeholder="品牌/型号" :disabled="isDisabled">
                 <template #prepend>
                   <el-select v-model="row.lensTypeSelect" :disabled="isDisabled">
-                    <!-- <el-option label="我司推荐" value="1" />
-                    <el-option label="客户指定" value="2" />
-                    <el-option label="客户供应采购" value="3" />
-                    <el-option label="客户要求" value="4" /> -->
                     <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
                       :value="item.id" />
                   </el-select>
@@ -670,14 +661,13 @@
                   <el-input v-model="row.lensPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.lensCurrency" @change="(val) => LensChange(val, $index)"
+                      <el-select v-model="row.lensCurrency" @change="(val) => SensorChange(val, row, 'lensExchangeRate')"
                         :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <!-- <el-text class="mx-1">汇率:{{ row.lensExchangeRate }}</el-text> -->
                   <el-input v-model="row.lensExchangeRate" placeholder="汇率:" :disabled="isDisabled"
                     style="width: 100px" />
                 </template>
@@ -689,10 +679,6 @@
               <el-input v-model="row.isp" placeholder="品牌/型号" :disabled="isDisabled">
                 <template #prepend>
                   <el-select v-model="row.ispTypeSelect" :disabled="isDisabled">
-                    <!-- <el-option label="我司推荐" value="1" />
-                    <el-option label="客户指定" value="2" />
-                    <el-option label="客户供应采购" value="3" />
-                    <el-option label="客户要求" value="4" /> -->
                     <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
                       :value="item.id" />
                   </el-select>
@@ -701,14 +687,13 @@
                   <el-input v-model="row.ispPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.ispCurrency" @change="(val) => ISPChange(val, $index)"
+                      <el-select v-model="row.ispCurrency" @change="(val) => SensorChange(val, row, 'ispExchangeRate')"
                         :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <!-- <el-text class="mx-1">汇率:{{ row.ispExchangeRate }}</el-text> -->
                   <el-input v-model="row.ispExchangeRate" placeholder="汇率:" :disabled="isDisabled" style="width: 100px" />
                 </template>
               </el-input>
@@ -719,10 +704,6 @@
               <el-input v-model="row.serialChip" placeholder="品牌/型号" :disabled="isDisabled">
                 <template #prepend>
                   <el-select v-model="row.serialChipTypeSelect" :disabled="isDisabled">
-                    <!-- <el-option label="我司推荐" value="1" />
-                    <el-option label="客户指定" value="2" />
-                    <el-option label="客户供应采购" value="3" />
-                    <el-option label="客户要求" value="4" /> -->
                     <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
                       :value="item.id" />
                   </el-select>
@@ -731,14 +712,13 @@
                   <el-input v-model="row.serialChipPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.serialChipCurrency" @change="(val) => serialChipPriceChange(val, $index)"
+                      <el-select v-model="row.serialChipCurrency" @change="(val) => SensorChange(val, row, 'serialChipExchangeRate')"
                         :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <!-- <el-text class="mx-1">汇率:{{ row.serialChipExchangeRate }}</el-text> -->
                   <el-input v-model="row.serialChipExchangeRate" placeholder="汇率:" :disabled="isDisabled"
                     style="width: 100px" />
                 </template>
@@ -750,10 +730,6 @@
               <el-input v-model="row.cable" placeholder="品牌/型号" :disabled="isDisabled">
                 <template #prepend>
                   <el-select v-model="row.cableTypeSelect" :disabled="isDisabled">
-                    <!-- <el-option label="我司推荐" value="1" />
-                    <el-option label="客户指定" value="2" />
-                    <el-option label="客户供应采购" value="3" />
-                    <el-option label="客户要求" value="4" /> -->
                     <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
                       :value="item.id" />
                   </el-select>
@@ -762,14 +738,13 @@
                   <el-input v-model="row.cablePrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.cableCurrency" @change="(val) => cableTypeChange(val, $index)"
+                      <el-select v-model="row.cableCurrency" @change="(val) => SensorChange(val, row, 'cableExchangeRate')"
                         :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <!-- <el-text class="mx-1">汇率:{{ row.cableExchangeRate }}</el-text> -->
                   <el-input v-model="row.cableExchangeRate" placeholder="汇率:" :disabled="isDisabled"
                     style="width: 100px" />
                 </template>
@@ -781,10 +756,6 @@
               <el-input v-model="row.other" placeholder="品牌/型号" :disabled="isDisabled">
                 <template #prepend>
                   <el-select v-model="row.otherTypeSelect" :disabled="isDisabled">
-                    <!-- <el-option label="我司推荐" value="1" />
-                    <el-option label="客户指定" value="2" />
-                    <el-option label="客户供应采购" value="3" />
-                    <el-option label="客户要求" value="4" /> -->
                     <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
                       :value="item.id" />
                   </el-select>
@@ -793,14 +764,13 @@
                   <el-input v-model="row.otherPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.otherCurrency" @change="(val) => ledTypeSelectChange(val, $index)"
+                      <el-select v-model="row.otherCurrency" @change="(val) => SensorChange(val, row, 'otherExchangeRate')"
                         :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <!-- <el-text class="mx-1">汇率:{{ row.otherExchangeRate }}</el-text> -->
                   <el-input v-model="row.otherExchangeRate" placeholder="汇率:" :disabled="isDisabled"
                     style="width: 100px" />
                 </template>
@@ -870,7 +840,7 @@
           </el-table-column>
           <el-table-column prop="报价币种" label="报价币种">
             <template #default="{ row, $index }">
-              <el-select v-model="row.currency" @change="(val) => cableTypeSelectChange(val, $index)"
+              <el-select v-model="row.currency" @change="(val) => cableTypeSelectChange(val, row, $index)"
                 :disabled="isDisabled">
                 <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
                   :value="item.id" />
@@ -983,7 +953,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="国家类型:" prop="countryType">
-              <el-input readonly :rows="10" v-model="state.quoteForm.countryType" />
+              <el-input  readonly :rows="10" :value="CountryTypeEnum[state.quoteForm.countryType]" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -1015,21 +985,18 @@ import { ref, reactive, onMounted, toRefs, watch, computed } from "vue"
 import { productTypeMap, YearListItem, updateFrequency } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
-// import { Search } from "@element-plus/icons-vue"
-
 import type { UploadProps, UploadUserFile } from "element-plus"
-
-import _, { uniq, map, debounce, cloneDeep } from "lodash"
+import _, { uniq, map, cloneDeep } from "lodash"
 import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
-// import { SearchPerson } from "@/components/SearchPerson"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
 import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
+import { CountryTypeEnum } from './common/util'
 
 //整个页面是否可以编辑
 const props = defineProps({
@@ -1811,8 +1778,7 @@ watch(
 watch(
   () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient, isFirstShow.value],
   (val) => {
-    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal] = val
-    console.log(kvList, moduleTableTotalData, isFirstShowVal, "kvList111")
+    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal]: any = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       let filterData: any = _.cloneDeep(kvList)
       filterData = filterData.map((item: any) => {
@@ -2198,7 +2164,7 @@ const setNumber = () => {
   quoteForm.number = number
 }
 
-const cableTypeSelectChange = (val: any, index: number) => {
+const cableTypeSelectChange = (val: any, row: any, index: number) => {
   state.ExchangeSelectOptions.forEach((item: any) => {
     try {
       const len = item.exchangeRateValue?.length
@@ -2220,9 +2186,9 @@ const cableTypeSelectChange = (val: any, index: number) => {
         } else {
           item.exchangeRateValue.forEach((yearItem: any, i: number) => {
             if (yearItem.year === Number(state.quoteForm.sopTime)) {
-              customerTargetPrice.value[index].exchangeRate = yearItem.value
+              row.exchangeRate = yearItem.value
             } else if (len - 1 === i) {
-              customerTargetPrice.value[index].exchangeRate = yearItem.value
+              row.exchangeRate = yearItem.value
             }
           })
         }
@@ -2233,67 +2199,20 @@ const cableTypeSelectChange = (val: any, index: number) => {
   })
 }
 
-const SensorChange = (val: any, index: number) => {
+const SensorChange = (val: any, row: any, key: string) => {
   state.ExchangeSelectOptions.forEach((item: any) => {
+    const len = item.exchangeRateValue?.length
     if (item.id === val) {
       item.exchangeRateValue.forEach((yearItem: any) => {
         if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          productTableData.value[index].sensorExchangeRate = yearItem.value
+          row[key] = yearItem.value
         }
       })
-    }
-  })
-}
-const LensChange = (val: any, index: number) => {
-  state.ExchangeSelectOptions.forEach((item: any) => {
-    if (item.id === val) {
-      item.exchangeRateValue.forEach((yearItem: any) => {
+      item.exchangeRateValue.forEach((yearItem: any, i: number) => {
         if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          productTableData.value[index].lensExchangeRate = yearItem.value
-        }
-      })
-    }
-  })
-}
-const ISPChange = (val: any, index: number) => {
-  state.ExchangeSelectOptions.forEach((item: any) => {
-    if (item.id === val) {
-      item.exchangeRateValue.forEach((yearItem: any) => {
-        if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          productTableData.value[index].ispExchangeRate = yearItem.value
-        }
-      })
-    }
-  })
-}
-const serialChipPriceChange = (val: any, index: number) => {
-  state.ExchangeSelectOptions.forEach((item: any) => {
-    if (item.id === val) {
-      item.exchangeRateValue.forEach((yearItem: any) => {
-        if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          productTableData.value[index].serialChipExchangeRate = yearItem.value
-        }
-      })
-    }
-  })
-}
-const cableTypeChange = (val: any, index: number) => {
-  state.ExchangeSelectOptions.forEach((item: any) => {
-    if (item.id === val) {
-      item.exchangeRateValue.forEach((yearItem: any) => {
-        if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          productTableData.value[index].cableExchangeRate = yearItem.value
-        }
-      })
-    }
-  })
-}
-const ledTypeSelectChange = (val: any, index: number) => {
-  state.ExchangeSelectOptions.forEach((item: any) => {
-    if (item.id === val) {
-      item.exchangeRateValue.forEach((yearItem: any) => {
-        if (yearItem.year === Number(state.quoteForm.sopTime)) {
-          productTableData.value[index].otherExchangeRate = yearItem.value
+          row[key] = yearItem.value = yearItem.value
+        } else if (len - 1 === i) {
+          row[key] = yearItem.value = yearItem.value
         }
       })
     }
@@ -2468,6 +2387,12 @@ const changeProjectName = async (val: string) => {
     state.quoteForm.quoteVersion = result
   }
   console.log(val)
+}
+
+const changeCode = (v: string, row: any) => {
+  const filterData = projectCodeOptions.value.find(item => item.subCode === v)
+  console.log(filterData, 'filterData')
+  row.product = filterData.subDescription
 }
 
 defineExpose({

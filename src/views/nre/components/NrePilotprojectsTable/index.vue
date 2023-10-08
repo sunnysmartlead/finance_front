@@ -110,7 +110,7 @@ import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 const route = useRoute()
 
-const { closeSelectedTag } = useJump()
+
 let { auditFlowId, productId } = getQuery()
 
 let Host = "NreInputEmc"
@@ -187,7 +187,6 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     if (!success) throw Error()
     ElMessage.success(`提交成功`)
-    closeSelectedTag(route.path)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

@@ -57,13 +57,15 @@
       >
         <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额"  :formatter="formatThousandths"/>
+        <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
         <el-table-column label="报价系数">
           <template #default="scope">
             <el-input-number
               v-model="scope.row.offerCoefficient"
               controls-position="right"
               @change="offerCoefficientChange(scope.row)"
+              :precision="2"
+              :min="0"
             />
           </template>
         </el-table-column>
@@ -369,6 +371,26 @@
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
       </div>
     </el-card>
+    <el-dialog v-model="dialogVisible" title="年份维度对比">
+      <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
+        <!-- <el-table-column label="梯度" prop="numk" />
+        <el-table-column label="产品" prop="prices" /> -->
+        <el-table-column type="expand" label="数量K">
+          <template #default="props">
+            <el-table :data="props.row.specifications" border>
+              <el-table-column label="年份" prop="year" />
+              <el-table-column label="值" prop="value" />
+            </el-table>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="dialogVisible = false">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -379,7 +401,14 @@ import * as echarts from "echarts"
 // import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
-import { calculateRate, PostStatementAnalysisBoardSecond, PostComparison, GetSolution } from "./service"
+import {
+  calculateRate,
+  PostStatementAnalysisBoardSecond,
+  PostComparison,
+  GetSolution,
+  PostDownloadMessageSecond,
+  PostSpreadSheetCalculate
+} from "./service"
 /**
  * 路由对象
  */
@@ -392,7 +421,7 @@ const router = useRouter()
 /**
  * 数据部分
  */
-let { auditFlowId, productId } = getQuery()
+let { auditFlowId, productId, nodeInstanceId } = getQuery()
 interface planListItem {
   value: string
   isOffer: boolean
@@ -401,7 +430,7 @@ const planList: Array<planListItem> = reactive([])
 const productStore = useProductStore()
 
 const fullscreenLoading = ref(false)
-
+const dialogVisible = ref(false)
 const data = reactive({
   //仅含样品
   sampleOnlyRes: {
@@ -1215,7 +1244,7 @@ const getSummaries = (param: { columns: any; data: any }) => {
 const addNewPlan = () => {
   planList.push({
     value: "",
-    isOffer: false
+    isOffer: true
   })
 }
 // 设置图表
@@ -1413,8 +1442,37 @@ const postOffer = (isOffer: number) => {
   console.log(isOffer)
 }
 
+//成本信息表
 const downLoad = async () => {
   console.log("downLoad")
+  let planMap = {}
+  let solutionTables: any[] = []
+  productStore.productList.forEach((item) => {
+    planMap[item.id as keyof Object] = item
+  })
+  planList.forEach((item) => {
+    if (planMap[item.value as keyof Object] && item.isOffer) {
+      solutionTables.push(planMap[item.value as keyof Object])
+    }
+  })
+  try {
+    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables })
+    const blob = res
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = "成本信息表"
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 //报价值change
 const offerCoefficientChange = (row: any) => {
@@ -1429,8 +1487,15 @@ const pcsChange = (row: any) => {
 }
 // 计算
 const calculateFullGrossMargin = async (row: any, index: any) => {
-  let { auditFlowId, gradientId, productId, solutionId } = row
-  let res = await calculateRate({ auditFlowId, gradientId, productId, solutionId })
+  let { gradientId, solutionId } = row
+  // let res = await calculateRate({ auditFlowId, gradientId, productId, solutionId })
+  debugger
+  let res = await PostSpreadSheetCalculate({
+    auditFlowId: auditFlowId,
+    gradientId: gradientId,
+    productId: productId,
+    solutionId: solutionId
+  })
   console.log(res, index)
 }
 

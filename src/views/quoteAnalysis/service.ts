@@ -68,12 +68,7 @@ export function PostIsOfferSave(data: any): any {
 }
 
 //计算毛利率
-export function PostSpreadSheetCalculate(data: {
-  auditFlowId: number
-  gradientId: number
-  productId: number
-  solutionId: number //方案
-}): any {
+export function PostSpreadSheetCalculate(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostSpreadSheetCalculate",
     method: "post",
@@ -198,5 +193,25 @@ export function getDownloadList(auditFlowId: number) {
     data: {
       auditFlowId
     }
+  })
+}
+
+//查看核心器件
+export function GetCoreComponentAndNreList(auditFlowId: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetCoreComponentAndNreList",
+    method: "get",
+    data: {
+      auditFlowId
+    }
+  })
+}
+//下载成本信息表
+export function PostDownloadMessageSecond(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostDownloadMessageSecond",
+    method: "post",
+    responseType: "blob",
+    data
   })
 }

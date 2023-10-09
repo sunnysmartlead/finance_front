@@ -359,13 +359,23 @@ const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowI
 }
 
 const submitFun = async (
-  record: ConstructionModel,
+  record: any,
   isSubmit: number,
   bomIndex: number,
   iginalCurrencyIndex: number
 ) => {
   const row = constructionBomList.value[bomIndex].structureMaterial[iginalCurrencyIndex]
   let { nodeInstanceId } = route.query
+  if (isSubmit) {
+    const isNotPass = record.systemiginalCurrency?.some((item: any) => {
+      return item.yearOrValueModes.some((c: any) => {
+        return c?.value
+      }) && !record?.remark
+    })
+    if (isNotPass) {
+      return ElMessage.warning('请填写备注再提交！')
+    }
+  }
   const { success } = await PostStructuralMemberEntering({
     isSubmit,
     structuralMaterialEntering: [{ ...row, productId }],

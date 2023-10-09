@@ -39,8 +39,8 @@
         :summary-method="getQaTestDepartmentsSummaries"
         show-summary
       >
-        <el-table-column type="index" label="序号" width="50" />
-        <el-table-column label="试验项目（根据与客户协定项目）" width="180">
+        <el-table-column align="center"  type="index" label="序号" width="80" />
+        <el-table-column align="center"  label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
             <!-- <el-input v-model="row.projectName" /> -->
             <span v-if="isVertify">{{ row.projectName }}</span>
@@ -52,7 +52,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="是否指定第三方" width="180">
+        <el-table-column align="center"  label="是否指定第三方" width="180">
           <template #default="{ row }">
             <el-select :disabled="isVertify" v-model="row.isThirdParty">
               <el-option :value="true" label="是" />
@@ -60,40 +60,40 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="单价" prop="unitPrice" width="175" />
-        <el-table-column label="调整系数" width="180">
+        <el-table-column align="center"  label="单价" prop="unitPrice" width="175" />
+        <el-table-column align="center"  label="调整系数" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
             <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
           </template>
         </el-table-column>
-        <el-table-column label="计价单位" prop="unit" width="180" />
-        <el-table-column label="时间-摸底" width="180">
+        <el-table-column align="center"  label="计价单位" prop="unit" width="180" />
+        <el-table-column align="center"  label="时间-摸底" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countBottomingOut }}</span>
             <el-input-number v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
           </template>
         </el-table-column>
-        <el-table-column label="时间-DV" width="180">
+        <el-table-column align="center"  label="时间-DV" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countDV }}</span>
             <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
           </template>
         </el-table-column>
-        <el-table-column label="时间-PV" width="180">
+        <el-table-column align="center"  label="时间-PV" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countPV }}</span>
             <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
           </template>
         </el-table-column>
-        <el-table-column label="总费用" prop="allCost" width="180" />
-        <el-table-column label="备注" width="180">
+        <el-table-column align="center"  label="总费用" prop="allCost" width="180" />
+        <el-table-column align="center"  label="备注">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.remark }}</span>
             <el-input v-else v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" v-if="!isVertify" fixed="right" width="85px">
+        <el-table-column align="center"  label="操作" v-if="!isVertify" fixed="right">
           <template #default="{ $index }">
             <el-button @click="deleteExperimentItemsData($index)" type="danger" v-havedone>删除</el-button>
           </template>

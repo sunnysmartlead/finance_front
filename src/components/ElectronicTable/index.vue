@@ -387,8 +387,18 @@ const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
   await submitFun(record, isSubmit, index)
 }
 
-const submitFun = async (record: ElectronicDto, isSubmit: number, index: number) => {
+const submitFun = async (record: any, isSubmit: number, index: number) => {
   let { nodeInstanceId } = route.query
+  if (isSubmit) {
+    const isNotPass = record.systemiginalCurrency?.some((item: any) => {
+      return item.yearOrValueModes.some((c: any) => {
+        return c?.value
+      }) && !record?.remark
+    })
+    if (isNotPass) {
+      return ElMessage.warning('请填写备注再提交！')
+    }
+  }
   const { success } = await PostElectronicMaterialEntering({
     isSubmit,
     electronicDtoList: [electronicBomList.value[index]],

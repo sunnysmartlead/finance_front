@@ -5,7 +5,7 @@
         <el-row justify-between>
           <span>bom成本</span>
           <el-row>
-            <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button>
+            <!-- <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button> -->
           </el-row>
         </el-row>
       </template>

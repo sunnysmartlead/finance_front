@@ -47,7 +47,7 @@
       </el-row>
     </el-card>
 
-    <div>
+    <el-card m="2">
       <!-- Bom成本  -->
       <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" />
@@ -66,7 +66,12 @@
       <!-- 其他成本  -->
       <otherCostTable :hideEdit="hideEdit" v-if="data.mode === '6'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" />
-    </div>
+        <el-descriptions :column="1" border m="2">
+          <el-descriptions-item label="总成本：">
+            {{ data.totalCost?.toFixed(2) }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-card>
     <el-card style="margin-top: 10px" m="2">
       <el-row>
         <el-col :span="12">
@@ -138,8 +143,9 @@ import {
   SetPriceEvaluationTableInputCount,
   CreatePriceEvaluationTable,
   GetIsTradeCompliance,
-  PriceEvaluationTableDownload
+  PriceEvaluationTableDownload,
 } from "../../service"
+import { getPriceEvaluationTable } from '../../../demandApply/service'
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus"
@@ -188,6 +194,7 @@ const data = reactive<any>({
   productInputs: 0,
   createVisible: false,
   compliance: false,
+  totalCost: 0,
   form: {
     year: "",
     projectCode: "",
@@ -210,6 +217,19 @@ const filterYearData = computed(() => {
     upDown: Number(filterYearItem[1])
   }
 })
+
+const getTotal = async () => {
+  const { result } = await getPriceEvaluationTable({
+    InputCount: data.productInputs,
+    Year: filterYearData.value.year,
+    AuditFlowId: auditFlowId,
+    SolutionId: productId,
+    UpDown: filterYearData.value.upDown,
+    GradientId: data.form.gradientId,
+  }) || {}
+  const { totalCost } = result
+  data.totalCost = totalCost
+}
 
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
   let response: any = await addPricingPanelTrProgrammeId(auditFlowId, res.result.fileId)
@@ -258,6 +278,7 @@ const init = async () => {
   if (!auditFlowId && isEmpty(filterYearData.value)) return false
   await initChart()
   await fetchOptionsData()
+  getTotal()
   if (!productId) return false
   await fetchAllData()
   await getGoTableChartData()

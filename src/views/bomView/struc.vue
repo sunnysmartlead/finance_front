@@ -1,5 +1,8 @@
 <template>
   <div class="bomView">
+    <div style="margin: 10px 0; float: right">
+        <ProcessVertifyBox :onSubmit="handleSetBomState" />
+      </div>
     <CustomerSpecificity />
     <div class="bomView__btn">
       <ProductInfo :auditFlowId="data.auditFlowId" m="2" />
@@ -27,9 +30,7 @@
         <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
         <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200" />
       </el-table>
-      <div style="margin: 10px 0; float: right">
-        <ProcessVertifyBox :onSubmit="handleSetBomState" />
-      </div>
+
     </el-card>
   </div>
 </template>
@@ -104,9 +105,7 @@ defineExpose({
 </script>
 <style scoped lang="scss">
 .bomView {
-  &__child {
-    margin: 20px 0;
-  }
+  margin: 20px 0;
   &__btn {
     display: flex;
   }

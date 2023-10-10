@@ -87,3 +87,15 @@ export function saveProcessLog(data:any){
   })
 }
 
+export function exportDownload(id: number | undefined) {
+  return request({
+    url: prefix+"/exportDownload",
+    method: "post",
+    responseType:'blob',
+    data: {
+      id
+    }
+  })
+}
+
+

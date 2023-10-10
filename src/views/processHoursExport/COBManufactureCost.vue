@@ -5,7 +5,7 @@
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
       <div class="u-m-5">
-        <el-button type="primary">查看BOM单价</el-button>
+        <el-button type="primary"  @click="BomProjectDialog" >查看BOM单价</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="showProjectDialog" >查看项目走量</el-button>
@@ -206,6 +206,15 @@
         </div>
       </el-scrollbar>
     </div>
+
+    <el-dialog v-model="open"  width="1400px">
+      <el-card header="结构BOM单价" class="m-2">
+        <ConstructionTable ref="constructionRef" />
+      </el-card>
+      <el-card header="电子料单价" class="m-2">
+        <ElectronicTable ref="electronicRef" />
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -215,11 +224,14 @@ import { ElMessage, ElMessageBox, genFileId } from "element-plus"
 import { GetListAll, getCOBUPH, update, create, handleSubmit, deleteItem, uploadAction } from "@/api/COB"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import router from "@/router";
+import ElectronicTable from "@/components/comTable/index.vue"
+import ConstructionTable from "@/components/cobconstructionVTable/index.vue"
 //路径上的参数
 const queryParam = ref({
   AuditFlowId: undefined,
   SolutionId: undefined
 })
+const open = ref(false)
 const { auditFlowId, productId }: any = getQuery()
 //COB-UPH
 const COBUPHData = ref<any>({
@@ -374,7 +386,9 @@ const saveTableData = () => {
     }
   })
 }
-
+const BomProjectDialog = () => {
+  open.value = true
+}
 //模组数据
 const showProjectDialog = () => {
   router.push({

@@ -35,6 +35,7 @@
                         <el-button type="info" size="small" @click="handleView(scope.$index, scope.row)">查看</el-button>
                         <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        <el-button type="info" size="small" @click="exportData(scope.$index, scope.row)">导出</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -143,7 +144,7 @@ import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox, genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from "@/utils";
-import { getListAll, getDetail, create, uploadAction, update, deleteProcess, getProcessLog, saveProcessLog } from "@/api/standardProcess";
+import { getListAll, getDetail, create, uploadAction, update, deleteProcess, getProcessLog, saveProcessLog,exportDownload } from "@/api/standardProcess";
 import customTableFormList from "@/components/processHoursExport/custom-table-form-list.vue"
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 const data = reactive({
@@ -384,6 +385,27 @@ const handleDelete = (index: number, row: any) => {
         .catch(() => { })
 }
 
+
+const exportData = (index: number, row: any) => {
+
+  exportDownload(row.id).then((response: any) => {
+    if (response) {
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"标准工艺库.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
+}
 const downLoadStandardProcess= async () => {
   const link = document.createElement('a')
   link.href = import.meta.env.VITE_BASE_API + "/Excel/标准工艺库导入.xlsx"

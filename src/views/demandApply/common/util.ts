@@ -4,3 +4,10 @@ export enum MODULE_REQUIRED_TEXT {
   productType = '产品大类',
   pixel = '像素',
 }
+
+export enum CountryTypeEnum {
+  '一级管制国家',
+  '二级管制国家',
+  '三级管制国家',
+  '四级管制国家',
+}

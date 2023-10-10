@@ -21,7 +21,7 @@
                 未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span>
             </div>
           </template>
-          <el-table :ref="setTableRefs" :data="item.structureMaterial" style="width: 100%" height="75vh"
+          <el-table :ref="setTableRefs" :data="item.structureMaterial" style="width: 100%" :height="item.structureMaterial.length > 5 ? '75vh' : '46vh'"
             @selection-change="selectionChange($event, bomIndex)">
             <el-table-column type="selection" width="55" v-if="isVertify" />
             <el-table-column type="index" label="序号" width="80" fixed="left" />
@@ -75,10 +75,11 @@
                 :class-name="`column-class-${i}`" :label="`${c.kv} K/Y`" :key="`inTheRate${i}`"
                 >
                 <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="100" :formatter="filterinTheRate">
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="150" :formatter="filterinTheRate">
                   <template #default="scope">
                     <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
                       type="number">
+                      <template #append> % </template>
                     </el-input>
                   </template>
                 </el-table-column>
@@ -413,7 +414,7 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 }
 
 const filterinTheRate = (record: any, _row: any, cellValue: any) => {
-  return `${(cellValue * 100 || 0).toFixed(2)} %`
+  return `${(cellValue || 0).toFixed(2)} %`
 }
 
 //selectionChange 当选择项发生变化时会触发该事件

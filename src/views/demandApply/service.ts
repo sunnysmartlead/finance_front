@@ -19,12 +19,7 @@ export function getExchangeRate(data: RatePage) {
 }
 
 // 获取项目核价表
-export function getPriceEvaluationTable(data: {
-  AuditFlowId: number
-  ModelCountId: number
-  InputCount: number
-  Year: number
-}) {
+export function getPriceEvaluationTable(data: any) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetPriceEvaluationTable",
     method: "get",

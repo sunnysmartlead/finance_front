@@ -118,7 +118,7 @@
 
                                     </div>
                                     <div class="u-width-200   u-border">
-                                        <el-input-number v-model="deviceItem.devicePrice" :min="1"
+                                        <el-input-number v-model="deviceItem.devicePrice" :min="0"
                                             :disabled="data.currentEditProcessIndex != dataIndex"  />
                                     </div>
                                     <div class="u-width-200   u-border">

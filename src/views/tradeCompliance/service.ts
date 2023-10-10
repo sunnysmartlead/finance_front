@@ -15,3 +15,10 @@ export function IsTradeComplianceCheck(data: any): any {
     data
   })
 }
+export function SubmitNode(data: any): any {
+  return request({
+    url: "/api/services/app/WorkflowInstance/SubmitNode",
+    method: "post",
+    data
+  })
+}

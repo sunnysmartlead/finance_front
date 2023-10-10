@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
-      <div class="u-flex u-row-left u-col-center" />
+      <div class="u-flex u-row-left u-col-center"/>
       <div>
-        <!-- <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button> -->
-        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
+<!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
+        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
@@ -22,7 +22,7 @@
         <el-button type="primary" @click="addPH()">新增工序</el-button>
       </div>
       <div class="u-m-5">
-        <ThreeDImage m="2" />
+        <ThreeDImage m="2"/>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="viewBOM">结构BOM查看</el-button>
@@ -35,12 +35,16 @@
       </div>
       <div class="u-m-5">
         <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="showUploadFile"
-          :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadActionUrl"
-          :limit="1">
+                   :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                   :action="uploadActionUrl"
+                   :limit="1">
           <template #trigger>
             <el-button type="primary">工序工时导入</el-button>
           </template>
         </el-upload>
+      </div>
+      <div class="u-m-5">
+        <el-button type="primary" @click="exportTemplate()">工序工时导出</el-button>
       </div>
       <div class="u-m-5">
         <el-button type="primary" @click="downloadTemplate()">工序工时模板下载</el-button>
@@ -65,9 +69,10 @@
           <div class="u-text-center" style="background-color: rgb(122, 154, 223)">
             <div class="u-text-center u-border u-p-t-5 u-p-b-5">设备部分</div>
             <div class="u-flex u-row-left u-col-center u-text-center">
-              <template v-if="dataArr.length > 0 && dataArr[0].deviceInfo && dataArr[0].deviceInfo.deviceArr?.length > 0">
+              <template
+                v-if="dataArr.length > 0 && dataArr[0].deviceInfo && dataArr[0].deviceInfo.deviceArr?.length > 0">
                 <div v-for="index in dataArr[0].deviceInfo.deviceArr.length" :key="index"
-                  class="u-flex u-row-left u-col-center u-text-center">
+                     class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>设备{{ index }}</span>
                   </div>
@@ -111,7 +116,7 @@
             <div class="u-flex u-row-left u-col-center u-text-center">
               <template v-if="dataArr.length > 0 && dataArr[0]?.developCostInfo?.hardwareInfo?.length > 0">
                 <div v-for="index in dataArr[0].developCostInfo.hardwareInfo.length" :key="index"
-                  class="u-flex u-row-left u-col-center u-text-center">
+                     class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>硬件设备{{ index }}</span>
                   </div>
@@ -164,7 +169,7 @@
             <div class="u-flex u-row-left u-col-center u-text-center">
               <template v-if="dataArr.length > 0 && dataArr[0]?.toolInfo?.zhiJuArr?.length > 0">
                 <div v-for="index in dataArr[0].toolInfo.zhiJuArr.length" :key="index"
-                  class="u-flex u-row-left u-col-center u-text-center">
+                     class="u-flex u-row-left u-col-center u-text-center">
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>治具{{ index }}名称</span>
                   </div>
@@ -263,7 +268,7 @@
         <!-- 数据区域 -->
         <template v-if="dataArr.length > 0">
           <div v-for="(dataItem, dataIndex) in dataArr" :key="dataIndex"
-            class="u-flex u-row-left u-col-center u-text-center">
+               class="u-flex u-row-left u-col-center u-text-center">
             <template v-if="dataIndex == dataArr.length - 1">
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <div class="u-width-750 u-border u-p-t-5 u-p-b-5 u-font-bold">
@@ -294,19 +299,20 @@
                 <!-- 工序序号 -->
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
-                    reserve-keyword :remote-method="remoteMethod" @change="processNumberChange($event, dataIndex)"
-                    :loading="processNumberloading">
+                             reserve-keyword :remote-method="remoteMethod"
+                             @change="processNumberChange($event, dataIndex)"
+                             :loading="processNumberloading">
                     <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
-                      :value="item.processNumber" />
+                               :value="item.processNumber"/>
                   </el-select>
                 </div>
                 <!-- 工序名称 -->
                 <div class="u-width-150 u-border">
                   <el-select v-model="dataItem.processName" :disabled="isDisable(dataIndex)" filterable remote
-                    reserve-keyword :remote-method="remoteMethodForProcessName"
-                    @change="processNameChange($event, dataIndex)" :loading="processNameLoading">
+                             reserve-keyword :remote-method="remoteMethodForProcessName"
+                             @change="processNameChange($event, dataIndex)" :loading="processNameLoading">
                     <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
-                      :value="item.processName" />
+                               :value="item.processName"/>
                   </el-select>
                 </div>
               </div>
@@ -315,7 +321,7 @@
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <template v-if="dataIndex == dataArr.length - 1">
                   <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
-                    class="u-flex u-row-left u-col-center u-text-center">
+                       class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
                     <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
                     <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
@@ -324,35 +330,38 @@
                 </template>
                 <template v-else>
                   <div v-for="(deviceItem, deviceIndex) in dataItem.deviceInfo.deviceArr" :key="deviceIndex"
-                    class="u-flex u-row-left u-col-center u-text-center">
+                       class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-150 u-border">
                       <el-select v-model="deviceItem.deviceName" :disabled="isDisable(dataIndex)" filterable remote
-                        reserve-keyword :remote-method="remoteMethodForDeviceName"
-                        @change="deviceNameChange($event, deviceIndex, dataIndex)" :loading="deviceNameLoading">
+                                 reserve-keyword :remote-method="remoteMethodForDeviceName"
+                                 @change="deviceNameChange($event, deviceIndex, dataIndex)"
+                                 :loading="deviceNameLoading">
                         <el-option v-for="item in deviceListOptions" :key="item.id" :label="item.deviceName"
-                          :value="item.deviceName" />
+                                   :value="item.deviceName"/>
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态" :disabled="isDisable(dataIndex)">
+                      <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"
+                                 :disabled="isDisable(dataIndex)">
                         <el-option v-for="item in deviceStatusEnmus" :key="item.code" :label="item.value"
-                          :value="item.value" />
+                                   :value="item.value"/>
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="deviceItem.deviceNumber" :min="1" :precision="2" :step="0.01"
-                        :disabled="isDisable(dataIndex)" @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
+                      <el-input-number v-model="deviceItem.deviceNumber" :min="0" :precision="2" :step="0.01"
+                                       :disabled="isDisable(dataIndex)"
+                                       @change="handleDeviceChange($event, dataIndex, deviceIndex)"/>
                     </div>
                     <div class="u-width-150 u-border">
                       <el-input-number v-model="deviceItem.devicePrice" :disabled="isDisable(dataIndex)"
-                        @change="handleDeviceChange($event, dataIndex, deviceIndex)" />
+                                       @change="handleDeviceChange($event, dataIndex, deviceIndex)"/>
                     </div>
                   </div>
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{ sumDeviceTotalCost() }}</span>
                   <span v-else>
-                    {{ dataItem.deviceInfo.deviceTotalCost ? dataItem.deviceInfo.deviceTotalCost.toFixed(0) : 0 }}
+                    {{ handleDeviceChange(null, dataIndex, null) }}
                   </span>
                 </div>
               </div>
@@ -362,7 +371,7 @@
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <template v-if="dataIndex == dataArr.length - 1">
                   <div v-for="(hardInfo, hardIndex) in dataItem.developCostInfo.hardwareInfo" :key="hardIndex"
-                    class="u-flex u-row-left u-col-center u-text-center">
+                       class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
                     <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
                     <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
@@ -370,27 +379,30 @@
                 </template>
                 <template v-else>
                   <div v-for="(hardInfo, hardIndex) in dataItem.developCostInfo.hardwareInfo" :key="hardIndex"
-                    class="u-flex u-row-left u-col-center u-text-center">
+                       class="u-flex u-row-left u-col-center u-text-center">
                     <div class="u-width-150 u-border">
-                      <el-select v-model="hardInfo.hardwareDeviceName" :disabled="isDisable(dataIndex)" filterable remote
-                        reserve-keyword :remote-method="remoteMethodForHardwareDeviceName"
-                        @change="hardWareNameChange($event, hardIndex, dataIndex)" :loading="hardwareDeviceNameLoading">
+                      <el-select v-model="hardInfo.hardwareDeviceName" :disabled="isDisable(dataIndex)" filterable
+                                 remote
+                                 reserve-keyword :remote-method="remoteMethodForHardwareDeviceName"
+                                 @change="hardWareNameChange($event, hardIndex, dataIndex)"
+                                 :loading="hardwareDeviceNameLoading">
                         <el-option v-for="item in hardwareDeviceNameOptions" :key="item.id" :label="item.hardwareName"
-                          :value="item.hardwareName" />
+                                   :value="item.hardwareName"/>
                       </el-select>
                     </div>
                     <div class="u-border u-width-150">
-                      <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="1" :step="1"
-                        :disabled="isDisable(dataIndex)"
-                        @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
+                      <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="0" :step="1"
+                                       :disabled="isDisable(dataIndex)"
+                                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)"/>
                     </div>
                     <div class="u-border u-width-150">
-                      <el-input-number v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)" @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)" />
+                      <el-input-number v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)"
+                                       @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)"/>
                     </div>
                   </div>
                 </template>
                 <template v-if="dataIndex == dataArr.length - 1">
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">-</div>
+                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">{{ sumHardWareTotalCost() }}</div>
                   <div class="u-width-150  u-border u-p-t-5 u-p-b-5">-</div>
                   <div class="u-width-150  u-border u-p-t-5 u-p-b-5">-</div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">-</div>
@@ -398,33 +410,36 @@
                 </template>
                 <template v-else>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    {{ dataItem.developCostInfo.hardwareTotalPrice.toFixed(0) }}
+                    {{ caclHardWareCost(dataIndex) }}
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" filterable remote reserve-keyword
+                    <!-- <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" filterable remote reserve-keyword
                       :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhuiSuSoft"
                       @change="zhuiSuSoftChange($event, dataIndex)" :loading="optionLoading">
                       <el-option v-for="item in zhuiSuSoftOptions" :key="item.id" :label="item.traceabilitySoftware"
                         :value="item.traceabilitySoftware" />
-                    </el-select>
+                    </el-select> -->
+                    <el-input v-model="dataItem.developCostInfo.traceabilitySoftware" :disabled="isDisable(dataIndex)"/>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost" :precision="2"
-                      :disabled="isDisable(dataIndex)" />
+                    <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost"
+                                     @change="handleHardwareDeviceChange($event, dataIndex,null)"
+                                     :disabled="isDisable(dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-input @change="kaiTuChange($event, dataIndex)"
-                      v-model="dataItem.developCostInfo.openDrawingSoftware" :precision="2"
-                      :disabled="isDisable(dataIndex)" />
+                              v-model="dataItem.developCostInfo.openDrawingSoftware"
+                              :disabled="isDisable(dataIndex)"/>
                   </div>
-                  <!--  @change="kaiTuChange($event, dataIndex)" -->
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice" :disabled="isDisable(dataIndex)" />
+                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice"
+                                     :disabled="isDisable(dataIndex)"
+                                     @change="handleHardwareDeviceChange($event, dataIndex,null)"/>
                   </div>
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{ sumHardwareDeviceTotalCost() }}</span>
-                  <span v-else>{{ dataItem.developCostInfo.hardwareDeviceTotalPrice }}</span>
+                  <span v-else>{{ handleHardwareDeviceChange(null, dataIndex, null) }}</span>
                 </div>
               </div>
             </div>
@@ -434,7 +449,7 @@
                 <template v-if="dataItem.toolInfo.zhiJuArr.length > 0">
                   <template v-if="dataIndex == dataArr.length - 1">
                     <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
-                      class="u-flex u-row-left u-col-center u-text-center">
+                         class="u-flex u-row-left u-col-center u-text-center">
                       <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
                       <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
                       <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">-</div>
@@ -442,22 +457,24 @@
                   </template>
                   <template v-else>
                     <div v-for="(zhiju, zhijuindex) in dataItem.toolInfo.zhiJuArr" :key="zhijuindex"
-                      class="u-flex u-row-left u-col-center u-text-center">
+                         class="u-flex u-row-left u-col-center u-text-center">
                       <div class="u-width-150 u-border">
                         <el-select v-model="zhiju.fixtureName" filterable remote reserve-keyword
-                          :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhiJuName"
-                          @change="fixtureNameChange($event, dataIndex, zhijuindex)" :loading="fixtureNameLoading">
+                                   :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForZhiJuName"
+                                   @change="fixtureNameChange($event, dataIndex, zhijuindex)"
+                                   :loading="fixtureNameLoading">
                           <el-option v-for="item in fixtureNameOptions" :key="item.id" :label="item.fixtureName"
-                            :value="item.fixtureName" />
+                                     :value="item.fixtureName"/>
                         </el-select>
                       </div>
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="zhiju.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
-                          @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
+                        <el-input-number v-model="zhiju.fixtureNumber" :min="0" :precision="2"
+                                         :disabled="isDisable(dataIndex)"
+                                         @change="handleZhiJuCountChange(dataIndex, zhijuindex)"/>
                       </div>
                       <div class="u-width-150 u-border">
                         <el-input-number v-model="zhiju.fixturePrice"
-                          @change="handleZhiJuCountChange(dataIndex, zhijuindex)" />
+                                         @change="handleZhiJuCountChange(dataIndex, zhijuindex)"/>
                       </div>
                     </div>
                   </template>
@@ -481,45 +498,46 @@
                 <template v-else>
                   <div class="u-width-150 u-border">
                     <el-select v-model="dataItem.toolInfo.fixtureName" filterable remote reserve-keyword
-                      :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForJianJuName"
-                      @change="jianJuNameChange($event, dataIndex)" :loading="jianJuNameLoading">
+                               :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForJianJuName"
+                               @change="jianJuNameChange($event, dataIndex)" :loading="jianJuNameLoading">
                       <el-option v-for="item in jianJuNameOptions" :key="item.id" :label="item.fixtureGaugeName"
-                        :value="item.fixtureGaugeName" />
+                                 :value="item.fixtureGaugeName"/>
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="1" :disabled="isDisable(dataIndex)"
-                      @change="handleJianJuCountChange($event, dataIndex)" />
+                    <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="handleJianJuCountChange($event, dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{ dataItem.toolInfo.fixturePrice }}</span>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-select v-model="dataItem.toolInfo.frockName" filterable remote reserve-keyword
-                      :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForGongZhuangName"
-                      @change="gongZhuangNameChange($event, dataIndex)" :loading="gongZhuangNameLoading">
+                               :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForGongZhuangName"
+                               @change="gongZhuangNameChange($event, dataIndex)" :loading="gongZhuangNameLoading">
                       <el-option v-for="item in gongZhuangNameOptions" :key="item.id" :label="item.installationName"
-                        :value="item.installationName" />
+                                 :value="item.installationName"/>
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="1" :disabled="isDisable(dataIndex)"
-                      @change="handleGongZhuangCountChange($event, dataIndex)" />
+                    <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{ dataItem.toolInfo.frockPrice }}</span>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-select v-model="dataItem.toolInfo.testLineName" filterable remote reserve-keyword
-                      :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForTestLineName"
-                      @change="testLineNameChange($event, dataIndex)" :loading="testLineNameLoading">
+                               :disabled="isDisable(dataIndex)" :remote-method="remoteMethodForTestLineName"
+                               @change="testLineNameChange($event, dataIndex)" :loading="testLineNameLoading">
                       <el-option v-for="item in testLineNameOptions" :key="item.id" :label="item.testName"
-                        :value="item.testName" />
+                                 :value="item.testName"/>
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="1" :disabled="isDisable(dataIndex)"
-                      @change="handleTestLineCountChange($event, dataIndex)" />
+                    <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="0"
+                                     :disabled="isDisable(dataIndex)"
+                                     @change="handleTestLineCountChange($event, dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{ dataItem.toolInfo.testLinePrice }}</span>
@@ -531,6 +549,7 @@
                 </div>
               </div>
             </div>
+
             <!-- 工时 -->
             <div class="u-text-center">
               <div class="u-flex u-row-left u-col-center">
@@ -538,32 +557,33 @@
                   <template v-if="dataIndex == dataArr.length - 1">
                     <div class="u-flex u-row-left u-col-center">
                       <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">
-                        {{ sumSopCost(1,sopIndex)}}
+                        {{ sumSopCost(1, sopIndex)}}
                       </div>
                       <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">
-                        {{ sumSopCost(2,sopIndex)}}
+                        {{ sumSopCost(2, sopIndex)}}
                       </div>
                       <div class="u-width-150 u-border  u-p-t-5 u-p-b-5">
-                        {{ sumSopCost(3,sopIndex)}}
+                        {{ sumSopCost(3, sopIndex)}}
                       </div>
                     </div>
                   </template>
                   <template v-else>
-                  <div class="u-flex u-row-left u-col-center">
-                    <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].laborHour" :min="1" :precision="2" :step="0.01"
-                        :disabled="isDisable(dataIndex)" />
+                    <div class="u-flex u-row-left u-col-center">
+                      <div class="u-width-150 u-border">
+                        <el-input-number v-model="scopItem.issues[0].laborHour" :min="0" :precision="2" :step="0.01"
+                                         :disabled="isDisable(dataIndex)"/>
+                      </div>
+                      <div class="u-width-150 u-border">
+                        <el-input-number v-model="scopItem.issues[0].machineHour" :min="0" :precision="2" :step="0.01"
+                                         :disabled="isDisable(dataIndex)"/>
+                      </div>
+                      <div class="u-width-150 u-border">
+                        <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="0" :precision="2"
+                                         :step="0.01"
+                                         :disabled="isDisable(dataIndex)"/>
+                      </div>
                     </div>
-                    <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].machineHour" :min="1" :precision="2" :step="0.01"
-                        :disabled="isDisable(dataIndex)" />
-                    </div>
-                    <div class="u-width-150 u-border">
-                      <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="1" :precision="2" :step="0.01"
-                        :disabled="isDisable(dataIndex)" />
-                    </div>
-                  </div>
-                </template>
+                  </template>
                 </div>
               </div>
             </div>
@@ -604,13 +624,13 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)" />
+              <el-input v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center" v-show="isCOB">
-              <el-input v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)" />
+              <el-input v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)" />
+              <el-input v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
           </div>
         </div>
@@ -639,10 +659,10 @@
               <span>{{ lineItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="lineItem.xtsl" />
+              <el-input v-model="lineItem.xtsl"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="lineItem.gxftl" class="u-text-center" />
+              <el-input v-model="lineItem.gxftl" class="u-text-center"/>
             </div>
           </div>
         </div>
@@ -668,11 +688,14 @@
                 <span>产品大类</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
-                v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
-                <span>{{ yearItem.year }}</span>
+                   v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
+
+                <span v-if="yearItem.upDown==1">{{ yearItem.year }}上半年</span>
+                <span v-if="yearItem.upDown==2">{{ yearItem.year }}下半年</span>
+                <span v-if="yearItem.upDown==0">{{ yearItem.year }}</span>
               </div>
             </div>
-            <div  class="u-flex u-row-left u-col-center">
+            <div class="u-flex u-row-left u-col-center">
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
                 <span>{{ project.order }}</span>
               </div>
@@ -683,7 +706,7 @@
                 <span>{{ project.code }}</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
-                v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
+                   v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
                 <span>{{ yearItem.quantity }}</span>
               </div>
             </div>
@@ -704,7 +727,7 @@
 
         <el-form-item label="标准工艺" label-width="150px">
           <el-select v-model="dialogForm" value-key="id" clearable placeholder="选择标准工艺">
-            <el-option v-for="item in standardProcessNameOptions" :key="item.id" :label="item.name" :value="item" />
+            <el-option v-for="item in standardProcessNameOptions" :key="item.id" :label="item.name" :value="item"/>
           </el-select>
         </el-form-item>
 
@@ -719,41 +742,41 @@
 
     <el-dialog v-model="panelPartDialogTableVisible" title="板部件及拼板数量" width="60%" :close-on-click-modal="false">
       <el-table :data="panelPartTableData" border>
-        <el-table-column property="boardName" label="板部件名称" align="center" />
-        <el-table-column property="boardLenth" label="板部件长(mm)" align="center" />
-        <el-table-column property="boardWidth" label="板部件宽(mm)" align="center" />
-        <el-table-column property="boardSquare" label="板部件面积(mm^)" align="center" />
-        <el-table-column property="stoneQuantity" label="拼板数量" align="center" />
+        <el-table-column property="boardName" label="板部件名称" align="center"/>
+        <el-table-column property="boardLenth" label="板部件长(mm)" align="center"/>
+        <el-table-column property="boardWidth" label="板部件宽(mm)" align="center"/>
+        <el-table-column property="boardSquare" label="板部件面积(mm^)" align="center"/>
+        <el-table-column property="stoneQuantity" label="拼板数量" align="center"/>
       </el-table>
     </el-dialog>
     <el-dialog v-model="structuralDataDialogTableVisible" title="结构bom查看" width="60%" :close-on-click-modal="false">
       <el-table :data="structuralData" border style="width: 100%" height="500">
-        <el-table-column prop="categoryName" label="物料大类" width="180" />
-        <el-table-column prop="typeName" label="物料种类" width="180" />
-        <el-table-column prop="isInvolveItem" label="是否涉及" width="180" />
-        <el-table-column prop="drawingNumName" label="图号名称" width="180" />
-        <el-table-column prop="sapItemNum" label="物料编号" width="180" />
-        <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="180" />
-        <el-table-column prop="materialName" label="材料名称" width="180" />
-        <el-table-column prop="weightNumber" label="重量" width="180" />
-        <el-table-column prop="moldingProcess" label="成型工艺" width="180" />
-        <el-table-column prop="isNewMouldProduct" label="是否新开模" width="180" />
-        <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="180" />
-        <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="180" />
-        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
-        <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200" />
+        <el-table-column prop="categoryName" label="物料大类" width="180"/>
+        <el-table-column prop="typeName" label="物料种类" width="180"/>
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="180"/>
+        <el-table-column prop="drawingNumName" label="图号名称" width="180"/>
+        <el-table-column prop="sapItemNum" label="物料编号" width="180"/>
+        <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="180"/>
+        <el-table-column prop="materialName" label="材料名称" width="180"/>
+        <el-table-column prop="weightNumber" label="重量" width="180"/>
+        <el-table-column prop="moldingProcess" label="成型工艺" width="180"/>
+        <el-table-column prop="isNewMouldProduct" label="是否新开模" width="180"/>
+        <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="180"/>
+        <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="180"/>
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="180"/>
+        <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200"/>
       </el-table>
     </el-dialog>
     <el-dialog v-model="FindElectronicBomByProcessOMDataDialogTableVisible" title="电子结构bom查看" width="60%"
-      :close-on-click-modal="false">
+               :close-on-click-modal="false">
       <el-table :data="electronicBomData" border style="width: 100%" height="500">
-        <el-table-column prop="categoryName" label="物料大类" width="180" />
-        <el-table-column prop="typeName" label="物料种类" width="180" />
-        <el-table-column prop="isInvolveItem" label="是否涉及" width="180" />
-        <el-table-column prop="sapItemNum" label="物料编号" width="180" />
-        <el-table-column prop="sapItemName" label="材料名称" width="180" />
-        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
-        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
+        <el-table-column prop="categoryName" label="物料大类" width="180"/>
+        <el-table-column prop="typeName" label="物料种类" width="180"/>
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="180"/>
+        <el-table-column prop="sapItemNum" label="物料编号" width="180"/>
+        <el-table-column prop="sapItemName" label="材料名称" width="180"/>
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="180"/>
+        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）"/>
       </el-table>
     </el-dialog>
   </div>
@@ -761,11 +784,11 @@
 
 <script lang="ts" setup>
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-import { onMounted, reactive, ref, toRefs } from "vue"
-import { ElMessage, ElMessageBox, genFileId } from "element-plus"
+import {onMounted, reactive, ref, toRefs} from "vue"
+import {ElMessage, ElMessageBox, genFileId} from "element-plus"
 import getQuery from "@/utils/getQuery"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
-import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
+import type {UploadInstance, UploadProps, UploadRawFile} from "element-plus"
 import {
   GetListAll,
   getProcessHourDetail,
@@ -787,22 +810,25 @@ import {
   getWorkClothsListForSelect,
   getJianJuListForSelect,
   getZhiJuListForSelect,
+  handelExport,
+  exportDownload,
   getHardWareListForSelect,
   GetEditorByProcessNumber,
   GetPriceEvaluationStartData,
 } from "@/api/processHoursEnter"
-import { GetListAll as queryProcessList } from "@/api/process"
-import { getListAllForQuery as getStandardProcessList } from "@/api/standardProcess"
+import {GetListAll as queryProcessList} from "@/api/process"
+import {getListAllForQuery as getStandardProcessList} from "@/api/standardProcess"
 import {
   getListAllForSelect as getDeviceListForSelect
 } from '@/api/foundationDeviceDto';
 import {
   getListAll as getDataFoundationHardwares
 } from '@/api/foundationHardware';
-import { random } from "lodash"
+import {random} from "lodash"
 import router from "@/router"
-import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
-import { CommonDownloadFile, GetStructionBom, GetElectronicBom } from "@/api/bom"
+import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service"
+import {CommonDownloadFile, GetStructionBom, GetElectronicBom} from "@/api/bom"
+
 const tempData: any = {
   id: 0,
   processName: "名称",
@@ -957,7 +983,7 @@ const addFlag = ref(false)
 
 const structuralDataDialogTableVisible = ref(false)
 const FindElectronicBomByProcessOMDataDialogTableVisible = ref(false)
-const { auditFlowId, productId }: any = getQuery()
+const {auditFlowId, productId}: any = getQuery()
 const UPHData = ref<any>([])
 const lineData = ref<any>([])
 const structuralData = ref<any>([])
@@ -969,9 +995,12 @@ onMounted(() => {
 })
 
 const initData = () => {
-  addFlag.value = false
-  currentEditIndex.value = -1
+  addFlag.value = false;
+  currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
+    dataArr.value = [];
+    UPHData.value = [];
+    lineData.value = [];
     getTableData()
     getUPHAndLineData()
     getDeviceStatuEnmu();
@@ -1051,10 +1080,14 @@ const getDeviceStatuEnmu = () => {
 
 //整个页面保存
 const handleSaveData = () => {
+  let pList = JSON.parse(JSON.stringify(dataArr.value));
+  if (pList.length > 0) {
+    pList.pop();
+  }
   let param = {
     auditFlowId: auditFlowId,
     solutionId: productId,
-    listItemDtos: JSON.parse(JSON.stringify(dataArr.value)),
+    listItemDtos: pList,
     processHoursEnterUphList: JSON.parse(JSON.stringify(UPHData.value)),
     processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
   }
@@ -1098,7 +1131,7 @@ const handleSaveData = () => {
 //   })
 // }
 
-const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
   handleSaveData().then((p: any) => {
     let param = {
       auditFlowId: auditFlowId,
@@ -1107,6 +1140,7 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
       opinion,
       nodeInstanceId
     }
+    console.log("提交参数", param);
     handleSubmitOption(param).then((response: any) => {
       console.log("提交响应", response)
       if (response.success) {
@@ -1217,15 +1251,50 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
 }
 //下载模板
 const downloadTemplate = () => {
-  const baseDomain = import.meta.env.VITE_BASE_API + "Excel/"
-  let href = baseDomain + "工时工序导入.xlsx";
-  console.log("下载模板===" + href);
-  const a = document.createElement('a');
-  a.href = href;
-  a.setAttribute('download', "工时工序导入模板.xlsx");
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  let param={
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+  }
+  handelExport(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"工时工序模板.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
+}
+const exportTemplate = () => {
+  let param={
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+  }
+  exportDownload(param).then((response: any) => {
+    if (response) {
+      const data = new Blob([response],{ type: 'application/octet-stream'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download',"工时工序.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '导出失败'
+      })
+    }
+  })
 }
 
 //新增工序(新增的时候旧的记录作为模板,需要将数据复原)
@@ -1301,7 +1370,7 @@ const cancalEdit = (index: number, row: any) => {
   currentEditIndex.value = -1
   if (addFlag.value == true) {
     console.log("取消新增")
-    dataArr.value.splice(index,1);
+    dataArr.value.splice(index, 1);
     addFlag.value = false
   } else {
     console.log("取消修改")
@@ -1360,6 +1429,7 @@ interface processNumberListItem {
   processName: String
   processNumber: String
 }
+
 const processNumberOptions = ref<processNumberListItem[]>([])
 const processNumberloading = ref(false)
 //模糊查询工序序号
@@ -1435,6 +1505,7 @@ interface processNameListItem {
   processName: String
   processNumber: String
 }
+
 const processNameOptions = ref<processNameListItem[]>([])
 const processNameLoading = ref(false)
 //模糊查询工序名称
@@ -1492,6 +1563,7 @@ interface deviceListItem {
   processHoursEnterId: number,
   id: number
 }
+
 const deviceListOptions = ref<deviceListItem[]>([])
 const deviceNameLoading = ref(false)
 //模糊查询设备名称
@@ -1554,14 +1626,13 @@ const deviceNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
 }
 //设备价格或数量变化
 const handleDeviceChange = (value: any, dataIndex: any, deviceIndex: any) => {
-  console.log("第" + dataIndex + "工序的第" + deviceIndex + "个的数量是" + value + "个")
   let deviceCost = 0.0
   dataArr.value[dataIndex].deviceInfo.deviceArr.forEach((item: any) => {
     deviceCost = deviceCost + item.deviceNumber * item.devicePrice
   })
-  console.log("设备总价", deviceCost)
   dataArr.value[dataIndex].deviceInfo.deviceTotalCost = Number(Number(deviceCost).toFixed(2))
   //sumDeviceTotalCost();
+  return Number(Number(deviceCost).toFixed(2));
 }
 //#endregion
 //-------------------------------------end----------------------------------
@@ -1577,6 +1648,7 @@ interface hardwareDeviceListItem {
   hardwareState: string,
   id: number
 }
+
 const hardwareDeviceNameOptions = ref<hardwareDeviceListItem[]>([])
 const hardwareDeviceNameLoading = ref(false)
 //模糊查询软件名称
@@ -1635,17 +1707,26 @@ const hardWareNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
   }
 }
 //软件设备数量和价格变化
-const handleHardwareDeviceChange = (value: any, dataIndex: any, hardwareDeviceIndex: any) => {
-  console.log("第" + dataIndex + "工序的第" + hardwareDeviceIndex + "个的数量是" + value + "个")
+const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDeviceIndex: any) => {
   let handleHardwareDeviceCost = 0.0
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceNumber * item.hardwareDevicePrice
   })
-  console.log("软件设备总价", handleHardwareDeviceCost)
   dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2));
   let kaituCost = dataArr.value[dataIndex].developCostInfo.softwarePrice ? dataArr.value[dataIndex].developCostInfo.softwarePrice : 0;
   let zhuiSuCost = dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost ? dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost : 0;
-  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = Number(handleHardwareDeviceCost) + Number(kaituCost) + Number(zhuiSuCost);
+  let hardwareDeviceTotalPrice = Number(handleHardwareDeviceCost) + Number(kaituCost) + Number(zhuiSuCost);
+  dataArr.value[dataIndex].developCostInfo.hardwareDeviceTotalPrice = hardwareDeviceTotalPrice;
+  return hardwareDeviceTotalPrice;
+}
+
+const caclHardWareCost = (dataIndex: any) => {
+  let handleHardwareDeviceCost = 0.0;
+  dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
+    handleHardwareDeviceCost = handleHardwareDeviceCost + (Number(item.hardwareDeviceNumber) * Number(item.hardwareDevicePrice))
+    console.log("计算硬件总价====", handleHardwareDeviceCost);
+  })
+  return handleHardwareDeviceCost;
 }
 //#endregion
 //-------------------------------------end-------------------------------
@@ -1659,6 +1740,7 @@ interface zhuiSuOptionListItem {
   traceabilitySoftware: String,
   traceabilitySoftwareCost: number
 }
+
 const optionLoading = ref(false)
 //异步请求loading
 const zhuiSuSoftOptions = ref<zhuiSuOptionListItem[]>([])
@@ -1745,6 +1827,7 @@ interface kaiTuNameListItem {
   label: string
   price: number
 }
+
 const kaiTuNameOptions = ref<kaiTuNameListItem[]>([])
 const kaiTuNameLoading = ref(false)
 //模糊查询开图工具名称
@@ -1761,16 +1844,17 @@ const remoteMethodForKaiTuName = (query: string) => {
 }
 const getKaiTuName = (keyWord: String) => {
   return [
-    { label: "开图软件" + keyWord, value: "aaaaa", price: 50000 },
-    { label: "开图软件" + keyWord, value: "bbbbb", price: 40000 },
-    { label: "开图软件" + keyWord, value: "ccccc", price: 30000 },
-    { label: "开图软件" + keyWord, value: "ddddd", price: 20000 }
+    {label: "开图软件" + keyWord, value: "aaaaa", price: 50000},
+    {label: "开图软件" + keyWord, value: "bbbbb", price: 40000},
+    {label: "开图软件" + keyWord, value: "ccccc", price: 30000},
+    {label: "开图软件" + keyWord, value: "ddddd", price: 20000}
   ]
 }
 //开图名称变化后,查询此开图的单价,并计算价格
 const kaiTuChange = (kaitu: any, dataIndex: number) => {
   console.log("第" + dataIndex + "工序的开图软件名称变化了" + kaitu)
-  dataArr.value[dataIndex].developCostInfo.softwarePrice = Number(random(50000))
+  //TODO 这里要根据开图软件名称获取到对应的单价  Number(random(50000))
+  dataArr.value[dataIndex].developCostInfo.softwarePrice = 0.00;
   //这里计算总价
   let hardwareTotalPrice = dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice;
   let softwarePrice = dataArr.value[dataIndex].developCostInfo.softwarePrice;
@@ -1792,6 +1876,7 @@ interface fixtureNameListItem {
   fixtureNumber: number,
   id: number
 }
+
 const fixtureNameOptions = ref<fixtureNameListItem[]>([])
 const fixtureNameLoading = ref(false)
 //模糊查询治具名称
@@ -1866,6 +1951,7 @@ interface jianJuNameListItem {
   fixtureGaugeNumber: number,
   id: number,
 }
+
 const jianJuNameOptions = ref<jianJuNameListItem[]>([])
 const jianJuNameLoading = ref(false)
 //模糊查询检具名称
@@ -1942,6 +2028,7 @@ interface gongZhuangNameListItem {
   testName: string,
   testPrice: number,
 }
+
 const gongZhuangNameOptions = ref<gongZhuangNameListItem[]>([])
 const gongZhuangNameLoading = ref(false)
 //模糊查询工装的名称
@@ -2019,6 +2106,7 @@ interface testLineNameListItem {
   testPrice: number,
   testNumber: number,
 }
+
 const testLineNameOptions = ref<testLineNameListItem[]>([])
 const testLineNameLoading = ref(false)
 //模糊查询测试线的名称
@@ -2132,7 +2220,7 @@ const viewElectronicBOM = async () => {
 const sorDownloadFile = async () => {
   if (auditFlowId) {
     try {
-      const { result }: any = (await getSorByAuditFlowId(auditFlowId)) || {}
+      const {result}: any = (await getSorByAuditFlowId(auditFlowId)) || {}
       let res: any = await CommonDownloadFile(result.sorFileId)
       const blob = res
       const reader = new FileReader()
@@ -2154,7 +2242,7 @@ const sorDownloadFile = async () => {
 }
 //模组数据
 const showProjectDialog = async () => {
-  await GetPriceEvaluationStartData({ auditFlowId: 152 }).then((response: any) => {
+  await GetPriceEvaluationStartData({auditFlowId: productId}).then((response: any) => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;
@@ -2287,11 +2375,13 @@ const dialogForm = ref({
   id: 0,
   processHoursEnterDtoList: []
 })
+
 interface standardProcessNameListItem {
   id: number
   name: string
   list: Array<any>
 }
+
 const standardProcessNameOptions = ref<standardProcessNameListItem[]>([])
 const standardProcessLoading = ref(false)
 //打开选择标准工艺的弹窗
@@ -2300,7 +2390,7 @@ const openStandardProcessDialogForm = async () => {
   dialogForm.value.name = "";
   dialogForm.value.id = 0;
   dialogForm.value.processHoursEnterDtoList = [];
-  await getStandardProcessList({ name: "" }).then((response: any) => {
+  await getStandardProcessList({name: ""}).then((response: any) => {
     if (response.success) {
       let data = response.result
       if (data.length > 0) {
@@ -2484,10 +2574,23 @@ const sumDeviceTotalCost = () => {
     let dataItem = dataArr.value[i];
     let subValItem = dataItem.deviceInfo.deviceTotalCost ? dataItem.deviceInfo.deviceTotalCost : 0;
     sumVal = sumVal + Number(subValItem);
-  };
+  }
+  ;
   console.log("设备总计求和", sumVal);
   return sumVal.toFixed(0);
 }
+
+const sumHardWareTotalCost=()=>{
+  let sumVal = 0;
+  for (let i = 0; i < dataArr.value.length - 1; i++) {
+    let dataItem = dataArr.value[i];
+    let hardwareTotalPrice = dataItem.developCostInfo.hardwareTotalPrice ? Number(dataItem.developCostInfo.hardwareTotalPrice) : 0;
+    sumVal = sumVal + Number(hardwareTotalPrice);
+  }
+  console.log("硬件总计求和", sumVal);
+  return sumVal.toFixed(0);
+}
+
 //软硬件总计求和
 const sumHardwareDeviceTotalCost = () => {
   let sumVal = 0;
@@ -2499,7 +2602,7 @@ const sumHardwareDeviceTotalCost = () => {
     sumVal = sumVal + Number(hardwareTotalPrice) + Number(softwarePrice) + Number(zhuiSuCost);
   }
   console.log("软硬件总计求和", sumVal);
-  return  sumVal.toFixed(0);
+  return sumVal.toFixed(0);
 }
 //工装治具列求和
 const sumToolTotalCost = () => {
@@ -2527,24 +2630,48 @@ const sumToolTotalCost = () => {
     sumVal = sumVal + developTotalPrice;
   }
   console.log("工装治具列求和", sumVal);
-  return  sumVal.toFixed(0);
+  return sumVal.toFixed(0);
 }
 //人工工时合计
-const sumSopCost=(type:number,sopIndex:number)=>{
+const sumSopCost = (type: number, sopIndex: number) => {
   let sumVal = 0;
   for (let i = 0; i < dataArr.value.length - 1; i++) {
     let dataItem = dataArr.value[i];
-    if(type==1){
-      sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].laborHour;
+    if (type == 1) {
+      if (null != dataItem.sopInfo[sopIndex] && undefined != dataItem.sopInfo[sopIndex]) {
+        if (null != dataItem.sopInfo[sopIndex].issues) {
+          sumVal = sumVal + dataItem.sopInfo[sopIndex].issues[0].laborHour;
+        } else {
+          sumVal = 0;
+        }
+      } else {
+        sumVal = 0;
+      }
     }
-    if(type==2){
-      sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].machineHour;
+    if (type == 2) {
+
+      if (null != dataItem.sopInfo[sopIndex] && undefined != dataItem.sopInfo[sopIndex]) {
+        if (null != dataItem.sopInfo[sopIndex].issues) {
+          sumVal = sumVal + dataItem.sopInfo[sopIndex].issues[0].machineHour;
+        } else {
+          sumVal = 0;
+        }
+      } else {
+        sumVal = 0;
+      }
     }
-    if(type==3){
-      sumVal=sumVal+dataItem.sopInfo[sopIndex].issues[0].personnelNumber;
+    if (type == 3) {
+      if (null != dataItem.sopInfo[sopIndex] && undefined != dataItem.sopInfo[sopIndex]) {
+        if (null != dataItem.sopInfo[sopIndex].issues) {
+          sumVal = sumVal + dataItem.sopInfo[sopIndex].issues[0].personnelNumber;
+        } else {
+          sumVal = 0;
+        }
+      } else {
+        sumVal = 0;
+      }
     }
   }
-  console.log("工时求和", sumVal);
   return sumVal.toFixed(2);
 }
 

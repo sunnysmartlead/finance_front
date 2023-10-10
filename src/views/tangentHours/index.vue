@@ -1,9 +1,8 @@
 <template>
   <div class="tangentHours" py-20px>
-    <div flex mb-20px>
-      <el-button type="primary" @click="handleCreate">新增</el-button>
-    </div>
-    <el-table :data="data.tableData" style="width: 100%">
+    <el-button type="primary" @click="handleCreate" float-right mb-20px>新增</el-button>
+
+    <el-table :data="data.tableData" height="280px">
       <el-table-column label="序号" type="index" />
       <el-table-column label="年份" prop="year" />
       <el-table-column label="人工工时" prop="laborHour" />

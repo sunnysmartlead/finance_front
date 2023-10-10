@@ -221,7 +221,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     await SaveBoard(params)
     loading.close()
     if (success) {
-      ElMessage.success("提交成功！")
+      ElMessage.success("请求成功！")
       jumpTodoCenter()
     }
   } catch (error) {

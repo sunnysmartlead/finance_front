@@ -214,7 +214,7 @@
               :key="`pcsTableData-${year}-${index}`" width="175" :prop="`pcsYearList[${index}].quantity`">
               <template #default="{ row }">
                 <el-input-number controls-position="right" v-model="row.pcsYearList[index].quantity"
-                  :disabled="isDisabled" />
+                  :disabled="isDisabled" :min="0" />
               </template>
             </el-table-column>
             <el-table-column prop="rowSum" label="合计">
@@ -519,12 +519,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="count" label="分摊数量" width="250">
-              <!-- <template #default="{ row, $index }">
-                <el-input-number @input="ChangeShareCount(row, $index)" controls-position="right" v-model="row.count"
-                  :disabled="isDisabled" />
-              </template> -->
-            </el-table-column>
+            <el-table-column prop="count" label="分摊数量" width="250" :formatter="formatThousandths" />
           </el-table>
         </div>
         <h6 />
@@ -1264,8 +1259,11 @@ let router = useRouter()
 // }
 
 const shareCountYears = computed(() => {
-  const yearsArr = map(state.yearCols, (_, index) => {
-    const value = state.quoteForm.updateFrequency === updateFrequency.HalfYear ? (index + 1) / 2 : index + 1
+  const len = state.yearCols.length
+  if (!len) return []
+  const arr = state.quoteForm.updateFrequency === updateFrequency.HalfYear ? new Array(len) : new Array(len * 2)
+  const yearsArr = map(arr, (_, index) => {
+    const value = (index + 1) / 2
     return {
       label: value + '年',
       value,
@@ -1285,8 +1283,10 @@ const changeShareCoutYears = (shareCountYear: number, row: any, index: number) =
       item.modelCountYearList?.forEach((yearItem: any, yearIndex: number) => {
         if (updateFrequencyVal === updateFrequency.HalfYear && ((yearIndex + 1) / 2) <= shareCountYear) {
           count += Number(yearItem.quantity?.toFixed(2))
-        } else if ((yearIndex + 1) <= shareCountYear) {
+        } else if ((yearIndex + 1) <= shareCountYear && (shareCountYear % 1 === 0)) {
           count += Number(yearItem.quantity?.toFixed(2))
+        } else if ((yearIndex + 1) <= shareCountYear * 2 && (shareCountYear % 1 !== 0)) {
+          count += (Number(yearItem.quantity?.toFixed(2)) / 2)
         }
       })
     }

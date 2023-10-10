@@ -1,5 +1,8 @@
 <template>
   <el-card class="" header="产品识别分析表">
+    <el-row justify="end">
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" />
+    </el-row>
     <el-descriptions :column="2" border>
       <el-descriptions-item label="产品名称"> {{ data.tradeComplianceCheck.productName }} </el-descriptions-item>
       <el-descriptions-item label="最终出口地国家"> {{ data.tradeComplianceCheck.country }} </el-descriptions-item>
@@ -40,11 +43,7 @@
       <el-descriptions-item label="做成/日期"> {{ data.tradeComplianceCheck.creationTime }} </el-descriptions-item>
       <!-- <el-descriptions-item label="审核/日期"> {{ data.tradeComplianceCheck.deletionTime }} </el-descriptions-item> -->
     </el-descriptions>
-    <div style="float: right; margin: 20px 0">
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" />
-      <!-- <el-button @click="agree(true)" v-havedone>退回</el-button>
-      <el-button type="primary" @click="agree(false)" v-havedone>归档</el-button> -->
-    </div>
+
   </el-card>
 </template>
 

@@ -294,7 +294,8 @@
               <el-table-column label="子项目代码" width="180">
                 <template #default="{ row }">
                   <el-select v-model="row.code" remote-show-suffix reserve-keyword filterable placeholder="Select"
-                    :disabled="isDisabled" remote :remote-method="getProjectCodeOptions" @change="(v) => changeCode(v, row)">
+                    :disabled="isDisabled" remote :remote-method="getProjectCodeOptions"
+                    @change="(v) => changeCode(v, row)">
                     <el-option v-for="item in projectCodeOptions" :key="item.subCode" :label="item.subCode"
                       :value="item.subCode" />
                   </el-select>
@@ -354,7 +355,7 @@
                   {{ formatThousandths(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
               </el-table-column>
-              <el-table-column label="模组总量" width="180" :formatter="formatThousandths">
+              <el-table-column label="模组总量" width="180">
                 <template #default="{ row }">
                   {{ price(row) }}
                 </template>
@@ -393,11 +394,9 @@
             <el-table-column label="模组搭载率" prop="moduleCarryingRate" width="180" />
             <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" /> -->
             <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-              :key="`moduleTableTotal-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`" />
+              :key="`moduleTableTotal-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`"
+              :formatter="formatThousandths" />
             <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="formatThousandths">
-              <!-- <template #default="{ row }">
-                {{ price(row) }}
-              </template> -->
             </el-table-column>
           </el-table>
           <h6 />
@@ -420,6 +419,12 @@
                   :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
               </template>
             </el-table-column>
+            <!-- <el-table-column prop="systermGradientValue" label="系统取梯度" width="250">
+              <template #default="{ row }">
+                <el-input-number controls-position="right" v-model="row.systermGradientValue"
+                  :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
+              </template>
+            </el-table-column> -->
             <el-table-column label="操作" fixed="right">
               <template #default="{ $index }" v-if="!isDisabled">
                 <el-button type="danger" :disabled="kvPricingData.length === 1"
@@ -635,8 +640,8 @@
                   <el-input v-model="row.sensorPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.sensorCurrency" @change="(val) => SensorChange(val, row, 'sensorExchangeRate')"
-                        :disabled="isDisabled">
+                      <el-select v-model="row.sensorCurrency"
+                        @change="(val) => SensorChange(val, row, 'sensorExchangeRate')" :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
@@ -712,8 +717,8 @@
                   <el-input v-model="row.serialChipPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.serialChipCurrency" @change="(val) => SensorChange(val, row, 'serialChipExchangeRate')"
-                        :disabled="isDisabled">
+                      <el-select v-model="row.serialChipCurrency"
+                        @change="(val) => SensorChange(val, row, 'serialChipExchangeRate')" :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
@@ -738,8 +743,8 @@
                   <el-input v-model="row.cablePrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.cableCurrency" @change="(val) => SensorChange(val, row, 'cableExchangeRate')"
-                        :disabled="isDisabled">
+                      <el-select v-model="row.cableCurrency"
+                        @change="(val) => SensorChange(val, row, 'cableExchangeRate')" :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
@@ -764,8 +769,8 @@
                   <el-input v-model="row.otherPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
                     :disabled="isDisabled">
                     <template #append>
-                      <el-select v-model="row.otherCurrency" @change="(val) => SensorChange(val, row, 'otherExchangeRate')"
-                        :disabled="isDisabled">
+                      <el-select v-model="row.otherCurrency"
+                        @change="(val) => SensorChange(val, row, 'otherExchangeRate')" :disabled="isDisabled">
                         <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
                           :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
@@ -953,7 +958,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="国家类型:" prop="countryType">
-              <el-input  readonly :rows="10" :value="CountryTypeEnum[state.quoteForm.countryType]" />
+              <el-input readonly :rows="10" :value="CountryTypeEnum[state.quoteForm.countryType]" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -1921,7 +1926,7 @@ const price = (row: any) => {
   row.modelCountYearList?.forEach((item: any) => {
     modelTotal += Number(item.quantity || 0)
   })
-  return modelTotal
+  return formatThousandths(null, null, modelTotal)
 }
 
 const productChange = (_value: string) => {

@@ -168,7 +168,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (success) {
-      ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+      ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
     }
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {

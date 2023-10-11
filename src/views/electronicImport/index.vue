@@ -188,7 +188,7 @@ const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
 
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -221,8 +221,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     await SaveBoard(params)
     loading.close()
     if (success) {
-      ElMessage.success("请求成功！")
-      jumpTodoCenter()
+      ElMessage.success(`${label} 成功！`)
     }
   } catch (error) {
     loading.close()

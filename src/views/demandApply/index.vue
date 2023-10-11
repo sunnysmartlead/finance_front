@@ -2350,7 +2350,7 @@ const handleChangekvPricingData = (type: string, index?: number) => {
   if (type === "add") {
     kvPricingData.value.push({ gradientValue: 0, index: 0 })
   } else {
-    kvPricingData.value = kvPricingData.value.splice(index, 1)
+    kvPricingData.value.splice(index, 1)
   }
 }
 

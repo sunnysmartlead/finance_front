@@ -380,6 +380,7 @@ const debounceHandleCalculation = debounce(async (row: any, index: number) => {
 // 根据汇率计算
 const handleCalculation = (row: any, index: number) => {
   row.loading = true
+  row.isEdited = true
   return debounceHandleCalculation(row, index)
 }
 
@@ -397,6 +398,8 @@ const submitFun = async (record: any, isSubmit: number, index: number) => {
     })
     if (isNotPass) {
       return ElMessage.warning('请填写备注再提交！')
+    } else if (record.isEdited && !record.peopleName) {
+      return ElMessage.warning('请先确认再提交！')
     }
   }
   const { success } = await PostElectronicMaterialEntering({
@@ -415,7 +418,7 @@ const handleEdit = (row: any, isEdit: boolean) => {
   row.isEdit = isEdit
 }
 
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   if (!opinion.includes("_Yes") && (!multipleSelection.value.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
@@ -424,7 +427,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     return
   }
   console.log(multipleSelection.value, "[电子料审核ids]")
-  await BomReview({
+  const { success } = await BomReview({
     auditFlowId,
     bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
     comment,
@@ -432,6 +435,9 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId,
     electronicsUnitPriceId: multipleSelection.value
   })
+  if (success) {
+    ElMessage.success(`${label} 成功！`)
+  }
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {

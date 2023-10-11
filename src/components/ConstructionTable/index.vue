@@ -351,6 +351,7 @@ const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, in
 // 根据汇率计算
 const handleCalculation = (row: any, bomIndex: number, index: number) => {
   row.loading = true
+  row.isEdited = true
   return debounceHandleCalculation(row, bomIndex, index)
 }
 
@@ -372,8 +373,10 @@ const submitFun = async (
         return c?.value
       }) && !record?.remark
     })
-    if (isNotPass) {
+    if (isNotPass && row.isEdited) {
       return ElMessage.warning('请填写备注再提交！')
+    } else if (row.isEdited && !row.peopleName) {
+      return ElMessage.warning('请先确认再提交！')
     }
   }
   const { success } = await PostStructuralMemberEntering({

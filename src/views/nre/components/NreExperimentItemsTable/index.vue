@@ -185,7 +185,7 @@ const addExperimentItemsData = () => {
     remark: "",
     unit: "",
     unitPrice: 0,
-    adjustmentCoefficient: 0
+    adjustmentCoefficient: 1
   })
 }
 
@@ -202,7 +202,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (!success) throw Error()
-    ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+    ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

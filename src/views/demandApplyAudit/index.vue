@@ -423,7 +423,7 @@ const checkDesignSolution = () => {
   }
 }
 
-const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   let { auditFlowId } = route.query
   let { quoteForm } = state
   let value = {
@@ -439,7 +439,6 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   value.designSolutionList = _.cloneDeep(designSolution.value)
   value.solutionTableList = _.cloneDeep(solutionTable.value)
 
-  console.log(value, "value")
   value.solutionTableList.forEach((item: any) => {
     if (!isNumeric(item.id)) {
       item.id = 0
@@ -450,9 +449,11 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
     if (res.success) {
       ElMessage({
         type: "success",
-        message: "保存成功"
+        message: `${label}成功！`
       })
-      closeSelectedTag(route.path)
+      if (opinion === 'YesOrNo_Yes') {
+        closeSelectedTag(route.path)
+      }
     }
   } catch (error) {
     console.log(error)

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <VertifyBox :onSubmit="handleSubmit" /> -->
     <ProcessVertifyBox :onSubmit="handleSubmit" v-havedone />
     <el-card class="pddAudit">
       <template #header>

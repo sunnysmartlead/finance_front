@@ -66,11 +66,13 @@ const props = defineProps({
 const route = useRoute()
 // const { closeSelectedTag } = useJump()
 const onSubmit = async () => {
+  const label = PROGRESSTYPE[props.processType]?.find((v: any) => v.val === data.opinion)?.label || ''
   let { nodeInstanceId } = route.query
   await props.onSubmit({
     comment: data.comment,
     opinion: data.opinion,
-    nodeInstanceId: nodeInstanceId
+    nodeInstanceId: nodeInstanceId,
+    label
   })
   // if (!['YesOrNo_Save', 'Save'].includes(data.opinion)) {
   //   closeSelectedTag(route.path)

@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <ProcessVertifyBox :onSubmit="isVertify ? NREToExamineFun : submit" v-havedone
       :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'" />
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
@@ -168,7 +168,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (success) {
-      ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
+      ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
     }
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {
@@ -196,6 +196,12 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
 // NRE实验费数据导出
 const handleFethNreTableDownload = async () => {
   try {
+    if (!data?.laboratoryFeeModels?.length) {
+      return ElMessage({
+        type: "warning",
+        message: "请填写数据后再进行数据导出！"
+      })
+    }
     const res: any = await GetExportOfProductDepartmentFeeForm({
       auditFlowId,
       solutionId: productId
@@ -209,12 +215,6 @@ const handleFethNreTableDownload = async () => {
 
 // NRE实验费模板下载
 const handleFethNreExcelDownload = async () => {
-  if (!data?.laboratoryFeeModels?.length) {
-    return ElMessage({
-      type: "warning",
-      message: "请填写数据后再进行数据导出！"
-    })
-  }
   try {
     const res: any = await PostProductDepartmentDownloadExcel({
       auditFlowId,

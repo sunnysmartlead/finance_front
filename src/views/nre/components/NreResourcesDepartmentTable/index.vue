@@ -168,7 +168,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     nreId: multipleSelection.value
   })
   if (success) {
-    ElMessage.success(`提交成功`)
+    ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
     removeSessionStorage('mouldInventorySelection')
   }
 }

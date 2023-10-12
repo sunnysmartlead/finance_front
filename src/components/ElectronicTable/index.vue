@@ -41,12 +41,12 @@
             :key="`systemiginalCurrency${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150">
-              <template #default="scope">
-                <el-input-number size="small" v-if="scope.row.isEdit"
-                  v-model="scope.row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
-                  :min="0" @change="handleCalculation(scope.row, scope.$index)" />
-                <span v-if="!scope.row.isEdit">{{
-                  scope.row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5)
+              <template #default="{ row, $index }">
+                <el-input-number size="small" v-if="row.isEdit"
+                  v-model="row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
+                  :min="0" @change="handleCalculation(row, $index)" />
+                <span v-if="!row.isEdit">{{
+                  row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5)
                 }}</span>
               </template>
             </el-table-column>
@@ -107,18 +107,18 @@
         </el-table-column>
         <el-table-column prop="peopleName" label="确认人" />
         <el-table-column label="操作" fixed="right" v-if="!isVertify" width="180">
-          <template #default="scope">
-            <el-button link :disabled="scope.row.isSubmit" :loading="scope.row.loading"
-              @click="handleSubmit(scope.row, 0, scope.$index)" type="danger" v-havedone>确认</el-button>
-            <el-button v-if="scope.row.isEntering" :loading="scope.row.loading" link :disabled="scope.row.isSubmit"
-              @click="handleSubmit(scope.row, 1, scope.$index)" type="warning" v-havedone>
+          <template #default="{ row, $index }">
+            <el-button link :disabled="row.isSubmit" :loading="row.loading"
+              @click="handleSubmit(row, 0, $index)" type="danger" v-havedone>确认</el-button>
+            <el-button v-if="row.isEntering" :loading="row.loading" link :disabled="row.isSubmit"
+              @click="handleSubmit(row, 1, $index)" type="warning" v-havedone>
               提交
             </el-button>
-            <el-button v-if="!scope.row.isEdit" :disabled="scope.row.isSubmit" link @click="handleEdit(scope.row, true)"
+            <el-button v-if="!row.isEdit" :disabled="row.isSubmit" link @click="handleEdit(row, true)"
               type="primary" v-havedone>
               修改
             </el-button>
-            <el-button v-if="scope.row.isEdit" link @click="handleEdit(scope.row, false)" v-havedone>取消</el-button>
+            <el-button v-if="row.isEdit" link @click="handleEdit(row, false)" v-havedone>取消</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -354,6 +354,7 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 // 提交电子料单价行数据
 const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: number) => {
   if (isSubmit) {
+    console.log(record, 'handleSubmit111111')
     //提交
     await submitFun(record, isSubmit, index)
   } else {
@@ -368,11 +369,12 @@ const debounceHandleCalculation = debounce(async (row: any, index: number) => {
     row.loading = true
     const { success, result } = await PosToriginalCurrencyCalculate(row)
     if (!success && !result.length) throw Error()
-    electronicBomList.value[index] = { ...(result || {}), isEdit: true }
+    electronicBomList.value[index] = { ...(result || {}), isEdit: true, isEdited: true }
     row.loading = false
   } catch (err) {
     console.log(err, "[根据原币计算 计算失败]")
     row.loading = false
+
     ElMessage.error("计算失败~")
   }
 }, 300)
@@ -387,8 +389,20 @@ const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
   await submitFun(record, isSubmit, index)
 }
 
-const submitFun = async (record: ElectronicDto, isSubmit: number, index: number) => {
+const submitFun = async (record: any, isSubmit: number, index: number) => {
   let { nodeInstanceId } = route.query
+  if (isSubmit) {
+    const isNotPass = record.systemiginalCurrency?.some((item: any) => {
+      return item.yearOrValueModes.some((c: any) => {
+        return c?.value
+      }) && !record?.remark
+    })
+    if (isNotPass && record.isEdited) {
+      return ElMessage.warning('请填写备注再提交！')
+    } else if (record.isEdited && !record.peopleName) {
+      return ElMessage.warning('请先确认再提交！')
+    }
+  }
   const { success } = await PostElectronicMaterialEntering({
     isSubmit,
     electronicDtoList: [electronicBomList.value[index]],
@@ -405,7 +419,7 @@ const handleEdit = (row: any, isEdit: boolean) => {
   row.isEdit = isEdit
 }
 
-const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   if (!opinion.includes("_Yes") && (!multipleSelection.value.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
@@ -414,7 +428,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     return
   }
   console.log(multipleSelection.value, "[电子料审核ids]")
-  await BomReview({
+  const { success } = await BomReview({
     auditFlowId,
     bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
     comment,
@@ -422,6 +436,9 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId,
     electronicsUnitPriceId: multipleSelection.value
   })
+  if (success) {
+    ElMessage.success(`${label} 成功！`)
+  }
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {

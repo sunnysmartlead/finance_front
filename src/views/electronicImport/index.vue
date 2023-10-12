@@ -15,9 +15,6 @@
         <el-form-item label="">
           <el-button type="primary" @click="data.setVisible = true">电子料模版下载</el-button>
         </el-form-item>
-        <!-- <el-form-item label="">
-          <ProductInfo :auditFlowId="data.auditFlowId" />
-        </el-form-item> -->
       </el-form>
     </div>
     <h5>电子料导入</h5>
@@ -47,7 +44,7 @@
         </el-table-column>
         <el-table-column prop="stoneQuantity" label="拼板数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.stoneQuantity" placeholder="请录入拼板数量" />
+            <el-input-number v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -188,7 +185,7 @@ const deletePlatePart = async (index: number) => {
   platePart.value.splice(index, 1)
 }
 
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -221,8 +218,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     await SaveBoard(params)
     loading.close()
     if (success) {
-      ElMessage.success("提交成功！")
-      jumpTodoCenter()
+      ElMessage.success(`${label} 成功！`)
     }
   } catch (error) {
     loading.close()

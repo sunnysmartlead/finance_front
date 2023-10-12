@@ -230,8 +230,8 @@
 
           <div class="u-text-center" style="background-color: rgb(223, 179, 122)">
             <div class="u-flex u-row-left u-col-center">
-              <template v-if="dataArr.length > 0 && dataArr[0]?.sopInfo != null && dataArr[0]?.sopInfo.length > 0">
-                <div v-for="(scopItem, sopIndex) in dataArr[0].sopInfo" :key="sopIndex" class="u-text-center">
+              <template v-if="yearList.length > 0">
+                <div v-for="(scopItem, sopIndex) in yearList" :key="sopIndex" class="u-text-center">
                   <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}</div>
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -351,17 +351,26 @@
                       <el-input-number v-model="deviceItem.deviceNumber" :min="0" :precision="2" :step="0.01"
                                        :disabled="isDisable(dataIndex)"
                                        @change="handleDeviceChange($event, dataIndex, deviceIndex)"/>
+
                     </div>
-                    <div class="u-width-150 u-border">
-                      <el-input-number v-model="deviceItem.devicePrice" :disabled="isDisable(dataIndex)"
+                    <div  v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                      <el-input-number v-model="deviceItem.devicePrice"
                                        @change="handleDeviceChange($event, dataIndex, deviceIndex)"/>
                     </div>
+
+                    <div v-if="isDisable(dataIndex)" class="u-width-150 u-border  u-p-t-5 u-p-b-5">
+                            <span>{{
+                                amoutInterval(deviceItem.devicePrice ,0)
+                              }}</span>
+                      </div>
                   </div>
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  <span v-if="dataIndex == dataArr.length - 1">{{ sumDeviceTotalCost() }}</span>
+                  <span v-if="dataIndex == dataArr.length - 1">{{ amoutInterval(sumDeviceTotalCost() ,0) }}</span>
                   <span v-else>
-                    {{ handleDeviceChange(null, dataIndex, null) }}
+                    {{
+                    amoutInterval(handleDeviceChange(null, dataIndex, null) ,0)
+                    }}
                   </span>
                 </div>
               </div>
@@ -395,14 +404,23 @@
                                        :disabled="isDisable(dataIndex)"
                                        @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)"/>
                     </div>
-                    <div class="u-border u-width-150">
+                    <div v-if="!isDisable(dataIndex)" class="u-border u-width-150">
                       <el-input-number v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)"
                                        @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)"/>
+                    </div>
+                    <div v-if="isDisable(dataIndex)" class="u-width-150 u-border  u-p-t-5 u-p-b-5">
+                            <span>{{
+                                amoutInterval(hardInfo.hardwareDevicePrice ,0)
+                              }}</span>
                     </div>
                   </div>
                 </template>
                 <template v-if="dataIndex == dataArr.length - 1">
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">{{ sumHardWareTotalCost() }}</div>
+                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">{{
+                    amoutInterval(sumHardWareTotalCost() ,0)
+                    }}
+
+                  </div>
                   <div class="u-width-150  u-border u-p-t-5 u-p-b-5">-</div>
                   <div class="u-width-150  u-border u-p-t-5 u-p-b-5">-</div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">-</div>
@@ -410,7 +428,9 @@
                 </template>
                 <template v-else>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    {{ caclHardWareCost(dataIndex) }}
+                    {{
+                    amoutInterval(caclHardWareCost(dataIndex) ,0)
+                    }}
                   </div>
                   <div class="u-width-150  u-border">
                     <!-- <el-select v-model="dataItem.developCostInfo.traceabilitySoftware" filterable remote reserve-keyword
@@ -431,15 +451,24 @@
                               v-model="dataItem.developCostInfo.openDrawingSoftware"
                               :disabled="isDisable(dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <el-input-number v-model="dataItem.developCostInfo.softwarePrice"
                                      :disabled="isDisable(dataIndex)"
                                      @change="handleHardwareDeviceChange($event, dataIndex,null)"/>
                   </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                    {{
+                      amoutInterval(dataItem.developCostInfo.softwarePrice ,0)
+                    }}
+                  </div>
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  <span v-if="dataIndex == dataArr.length - 1">{{ sumHardwareDeviceTotalCost() }}</span>
-                  <span v-else>{{ handleHardwareDeviceChange(null, dataIndex, null) }}</span>
+                  <span v-if="dataIndex == dataArr.length - 1">{{
+                      amoutInterval(sumHardwareDeviceTotalCost() ,0)
+                      }}</span>
+                  <span v-else>{{
+                      amoutInterval(handleHardwareDeviceChange(null, dataIndex, null)  ,0)
+                      }}</span>
                 </div>
               </div>
             </div>
@@ -472,9 +501,14 @@
                                          :disabled="isDisable(dataIndex)"
                                          @change="handleZhiJuCountChange(dataIndex, zhijuindex)"/>
                       </div>
-                      <div class="u-width-150 u-border">
+                      <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
                         <el-input-number v-model="zhiju.fixturePrice"
                                          @change="handleZhiJuCountChange(dataIndex, zhijuindex)"/>
+                      </div>
+                      <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                        {{
+                          amoutInterval(zhiju.fixturePrice ,0)
+                        }}
                       </div>
                     </div>
                   </template>
@@ -509,7 +543,9 @@
                                      @change="handleJianJuCountChange($event, dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <span>{{ dataItem.toolInfo.fixturePrice }}</span>
+                    <span>{{
+                      amoutInterval(dataItem.toolInfo.fixturePrice ,0)
+                      }}</span>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-select v-model="dataItem.toolInfo.frockName" filterable remote reserve-keyword
@@ -524,7 +560,9 @@
                                      @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <span>{{ dataItem.toolInfo.frockPrice }}</span>
+                    <span>{{
+                      amoutInterval(dataItem.toolInfo.frockPrice ,0)
+                      }}</span>
                   </div>
                   <div class="u-width-150 u-border">
                     <el-select v-model="dataItem.toolInfo.testLineName" filterable remote reserve-keyword
@@ -540,12 +578,14 @@
                                      @change="handleTestLineCountChange($event, dataIndex)"/>
                   </div>
                   <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <span>{{ dataItem.toolInfo.testLinePrice }}</span>
+                    <span>{{
+                      amoutInterval(dataItem.toolInfo.testLinePrice ,0)
+                      }}</span>
                   </div>
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                  <span v-if="dataIndex == dataArr.length - 1">{{ sumToolTotalCost() }}</span>
-                  <span v-else>{{ calToolTotalCost(dataIndex) }}</span>
+                  <span v-if="dataIndex == dataArr.length - 1">{{amoutInterval(sumToolTotalCost(),0)  }}</span>
+                  <span v-else>{{amoutInterval(calToolTotalCost(dataIndex) ,0) }}</span>
                 </div>
               </div>
             </div>
@@ -662,7 +702,9 @@
               <el-input v-model="lineItem.xtsl"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="lineItem.gxftl" class="u-text-center"/>
+              <el-input v-model="lineItem.gxftl" class="u-text-center">
+                <template v-slot:append>%</template>
+              </el-input>
             </div>
           </div>
         </div>
@@ -791,6 +833,7 @@ import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import type {UploadInstance, UploadProps, UploadRawFile} from "element-plus"
 import {
   GetListAll,
+  GetYear,
   getProcessHourDetail,
   handleCreate,
   getListUphOrLine,
@@ -828,6 +871,7 @@ import {random} from "lodash"
 import router from "@/router"
 import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service"
 import {CommonDownloadFile, GetStructionBom, GetElectronicBom} from "@/api/bom"
+import {round} from "lodash-es";
 
 const tempData: any = {
   id: 0,
@@ -988,6 +1032,7 @@ const UPHData = ref<any>([])
 const lineData = ref<any>([])
 const structuralData = ref<any>([])
 const electronicBomData = ref<any>([])
+const yearList = ref<any>([])
 const isCOB = ref(true)
 const uploadActionUrl = ref(uploadAction + "?AuditFlowId=" + auditFlowId + "&SolutionId=" + productId)
 onMounted(() => {
@@ -1001,12 +1046,30 @@ const initData = () => {
     dataArr.value = [];
     UPHData.value = [];
     lineData.value = [];
+    yearList.value =[]
+    getYearData()
     getTableData()
     getUPHAndLineData()
     getDeviceStatuEnmu();
   }
 }
-
+const getYearData = () => {
+  let param = {
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
+  }
+  GetYear(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result
+      yearList.value = data;
+    } else {
+      ElMessage({
+        type: "error",
+        message: "列表加载失败"
+      })
+    }
+  })
+}
 const getTableData = () => {
   let param = {
     AuditFlowId: auditFlowId,
@@ -1486,6 +1549,8 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       let data = response.result
       console.log("根据工序序号查询信息结果", data)
       dataArr.value[dataIndex] = data
+      dataArr.value[dataIndex].sopInfo = yearList
+      console.log("根据工序序号查询信息111结果", dataArr.value[dataIndex])
     } else {
       ElMessage({
         type: "error",
@@ -2631,6 +2696,27 @@ const sumToolTotalCost = () => {
   }
   console.log("工装治具列求和", sumVal);
   return sumVal.toFixed(0);
+}
+
+/**
+ * 数字格式化
+ * @param a 数字
+ * @param b 保留后几位
+ * @returns
+ */
+const amoutInterval = function (a: number, b: number) {
+  const amout = round(a, b).toLocaleString()
+  // 如果不需要保留后几位，直接返回
+  if (!b) {
+    return amout
+  }
+  // 如果小数点后几位不符合要求，则动态+0
+  if (amout.includes('.')) {
+    const num = amout.length - amout.indexOf('.') - 1
+    return num < b ? `${amout}${Array(b - num).fill(0).join('')}` : amout
+  }
+  //如是整数，则动态补0
+  return `${amout}.${Array(b).fill(0).join('')}`
 }
 //人工工时合计
 const sumSopCost = (type: number, sopIndex: number) => {

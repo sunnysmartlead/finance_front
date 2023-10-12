@@ -16,7 +16,13 @@ export function GetListAll(data: QueryParams) {
       data
     })
 }
-
+export function GetYear(data: QueryParams) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetYear",
+    method: "get",
+    data
+  })
+}
 //
 /** 获取设备状态枚举列表 */
 export function getDeviceStatus() {

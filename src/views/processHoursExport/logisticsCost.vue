@@ -381,7 +381,16 @@ const showSor=()=>{
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
-  saveTableData()
+
+  console.log(comment)
+  console.log(opinion)
+  console.log(nodeInstanceId)
+  if (opinion == 'Done') {
+    saveTableDataSubmit()
+  }else {
+    saveTableData()
+  }
+
   setTimeout(() => {
     submitData({ comment, opinion, nodeInstanceId })
   }, 1000)
@@ -509,6 +518,7 @@ const saveTableData = () => {
         type: "success",
         message: "保存成功"
       })
+
       getListData()
     } else {
       ElMessage({
@@ -518,7 +528,31 @@ const saveTableData = () => {
     }
   })
 }
+const saveTableDataSubmit  = () => {
+  console.log("保存数据", cardData.value)
+  let param = {
+    auditFlowId: queryParam.value.AuditFlowId,
+    solutionId: queryParam.value.SolutionId,
+    logisticscostList: JSON.parse(JSON.stringify(cardData.value))
+  }
+  createProcess(param).then((response: any) => {
+    console.log("新增响应", response)
+    if (response.success) {
+        ElMessage({
+          type: "success",
+          message: "提交成功"
+        })
 
+
+      getListData()
+    } else {
+      ElMessage({
+        type: "error",
+        message: "提交失败"
+      })
+    }
+  })
+}
 const submitData = ({ comment, opinion, nodeInstanceId }: any) => {
   let param = {
     auditFlowId: queryParam.value.AuditFlowId,

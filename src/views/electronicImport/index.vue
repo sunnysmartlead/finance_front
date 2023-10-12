@@ -15,9 +15,6 @@
         <el-form-item label="">
           <el-button type="primary" @click="data.setVisible = true">电子料模版下载</el-button>
         </el-form-item>
-        <!-- <el-form-item label="">
-          <ProductInfo :auditFlowId="data.auditFlowId" />
-        </el-form-item> -->
       </el-form>
     </div>
     <h5>电子料导入</h5>

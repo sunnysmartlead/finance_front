@@ -339,7 +339,7 @@ const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, in
       row.loading = false
       throw Error()
     }
-    const res = { ...(result || {}), isEdit: true }
+    const res = { ...(result || {}), isEdit: true, isEdited: true }
     constructionBomList.value[bomIndex].structureMaterial[index] = res
     row.loading = false
   } catch (err) {
@@ -351,7 +351,6 @@ const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, in
 // 根据汇率计算
 const handleCalculation = (row: any, bomIndex: number, index: number) => {
   row.loading = true
-  row.isEdited = true
   return debounceHandleCalculation(row, bomIndex, index)
 }
 

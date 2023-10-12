@@ -2257,7 +2257,7 @@ onMounted(async () => {
     // let quotationType: any = await getDictionaryAndDetail("QuotationType") //报价形式
     // state.quotationTypeOptions = quotationType.result.financeDictionaryDetailList
 
-    let productType: any = await getDictionaryAndDetail("ProductType") // 产品小类
+    let productType: any = await getDictionaryAndDetail("ProductType") // 产品大类
     state.productTypeOptions = productType.result.financeDictionaryDetailList
     // moduleTableDataV2.value[0].productType = state.productTypeOptions[0]?.id
 

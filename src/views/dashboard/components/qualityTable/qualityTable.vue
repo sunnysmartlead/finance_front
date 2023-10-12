@@ -5,7 +5,7 @@
         <el-input v-if="isEdit" v-model="row.qualityCost" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="costProportion" label="成本比例" :formatter="formatter">
+    <el-table-column align="center" prop="costProportion" label="成本比例" :formatter="formatter">
       <template #default="{ row }">
         <el-input v-model="row.costProportion" v-if="isEdit" type="number">
           <template #append>%</template>
@@ -47,7 +47,7 @@ const props = defineProps({
 })
 
 const formatter = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return `${val * 100} %`
+  if (typeof val === "number" && val > 0) return `${val} %`
   return val
 }
 

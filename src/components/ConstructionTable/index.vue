@@ -6,7 +6,7 @@
     <el-card>
       <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
       <el-row justify="end">
-        <el-button m="2" type="primary" @click="queryModlueNumber">查看项目走量</el-button>
+        <ModuleNumber m="2" />
         <ThreeDImage m="2" />
       </el-row>
       <div class="card-div" v-if="!isVertify">
@@ -187,6 +187,8 @@ import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 import { map } from "lodash"
+import ModuleNumber from '@/components/ModuleNumber/index.vue'
+
 const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
 const props = defineProps({

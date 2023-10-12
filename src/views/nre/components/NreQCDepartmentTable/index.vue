@@ -1,7 +1,7 @@
 <template>
   <div style="padding: 0 10px">
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
-    <el-button class="m-2" type="primary" @click="toModuleNumber">项目走量查看</el-button>
+    <ModuleNumber m="2" />
     <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
     <el-card class="margin-top">
       <template #header>
@@ -72,9 +72,11 @@ import { PostQADepartment, GetReturnQcGauge } from "../../common/request"
 import { ElMessage } from "element-plus"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
 import { CommonDownloadFile } from "@/api/bom"
-import router from "@/router"
+// import router from "@/router"
 import getQuery from "@/utils/getQuery"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
+import ModuleNumber from "@/components/ModuleNumber/index.vue"
+
 let Host = "NreInputGage"
 const { auditFlowId, productId }: any = getQuery()
 
@@ -99,16 +101,6 @@ const addQaqcDepartmentsData = () => {
     remark: "",
     unitPrice: "",
     useWorkstation: null
-  })
-}
-// 跳转查看项目走量
-const toModuleNumber = () => {
-  router.push({
-    path: "/resourcesDepartment/moduleNumber",
-    query: {
-      auditFlowId,
-      productId
-    }
   })
 }
 

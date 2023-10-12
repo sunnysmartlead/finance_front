@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card m="2" header="物流成本">
-      <logisticsTable :logisticsData="logisticsData" :hideEdit="hideEdit" />
+      <logisticsTable :logisticsData="logisticsData" :hideEdit="hideEdit" :on-edit="handleEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>

@@ -3,27 +3,27 @@
     <el-table-column align="center"  prop="year" label="年份" width="80" />
     <el-table-column align="center"  prop="freight" label="运费/月" width="180" :formatter="toFixedTwo" >
     </el-table-column>
-    <el-table-column align="center"  prop="monthEndDemand" label="月底需求量" width="180" >
+    <el-table-column align="center"  prop="monthEndDemand" label="月底需求量" >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.monthEndDemand" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="storageExpenses" label="仓储费用/元" width="175" :formatter="toFixedTwo" >
+    <el-table-column align="center"  prop="storageExpenses" label="仓储费用/元" :formatter="toFixedTwo" >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.storageExpenses" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="perPackagingPrice" label="单PCS包装价格/元" width="175" :formatter="toFixedTwo" >
+    <el-table-column align="center"  prop="perPackagingPrice" label="单PCS包装价格/元" :formatter="toFixedTwo" >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.perPackagingPrice" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="perFreight" label="单PCS运输费" width="175" :formatter="toFixedTwo" >
+    <el-table-column align="center"  prop="perFreight" label="单PCS运输费" :formatter="toFixedTwo" >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.perFreight" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="perTotalLogisticsCost" label="单PCS总物流料成本" width="180" :formatter="toFixedTwo" >
+    <el-table-column align="center"  prop="perTotalLogisticsCost" label="单PCS总物流料成本" :formatter="toFixedTwo" >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.perTotalLogisticsCost" />
       </template>

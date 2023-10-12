@@ -420,7 +420,7 @@ const handleEdit = (row: any, isEdit: boolean) => {
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: any) => {
-  if (!opinion.includes("_Yes") && (!multipleSelection.value.length)) {
+  if (!opinion.includes("_Yes") && (!multipleSelection?.value?.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"

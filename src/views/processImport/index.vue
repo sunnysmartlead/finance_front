@@ -20,7 +20,7 @@
             <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
             <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
             <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
-            <el-button class="m-2" type="primary" @click="toModuleNumber">项目走量查看</el-button>
+            <ModuleNumber m="2" />
             <el-button class="m-2" type="primary" @click="toBomVerifyConstruction">结构bom查看</el-button>
           </el-row>
         </el-row>
@@ -210,6 +210,7 @@ import { GetPicture3DByAuditFlowId } from "./service"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
 let Host: string = "ManHourImport"
 const { auditFlowId, productId }: any = getQuery()
+import ModuleNumber from "@/components/ModuleNumber/index.vue"
 
 const data = reactive<any>({
   tableData: [{"procedure":"11"}],
@@ -363,17 +364,6 @@ const downLoadSOR = async () => {
     a.click()
     a.remove() //将a标签移除
   }
-}
-
-// 跳转查看项目走量
-const toModuleNumber = () => {
-  router.push({
-    path: "/resourcesDepartment/moduleNumber",
-    query: {
-      auditFlowId,
-      productId
-    }
-  })
 }
 
 const toBomVerifyConstruction = () => {

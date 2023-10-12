@@ -74,6 +74,7 @@ const onSubmit = async () => {
     nodeInstanceId: nodeInstanceId,
     label
   })
+  data.dialogVisible = false
   // if (!['YesOrNo_Save', 'Save'].includes(data.opinion)) {
   //   closeSelectedTag(route.path)
   // }

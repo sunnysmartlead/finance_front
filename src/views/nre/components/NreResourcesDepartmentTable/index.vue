@@ -1,8 +1,7 @@
 <template>
   <div style="padding: 0 10px">
-    <!-- <VertifyBox v-if="isVertify" :onSubmit="handleSubmit" /> -->
     <el-row justify="end">
-      <ProcessVertifyBox :onSubmit="handleSubmit" />
+      <ProcessVertifyBox :onSubmit="handleSubmit"  :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'" />
       <ThreeDImage m="2" />
     </el-row>
     <el-card class="margin-top">

@@ -69,7 +69,7 @@ export const costChartData = {
   xAxis: {
     type: "category",
     splitLine: { show: false },
-    data: ["bom成本", "损耗成本", "制造成本", "物流成本", "质量成本", "利润"]
+    data: ["bom成本", "损耗成本", "制造成本", "物流成本", "质量成本", "其他成本","利润"]
   },
   yAxis: {
     type: "value"
@@ -89,7 +89,7 @@ export const costChartData = {
       backgroundStyle: {
         color: "rgba(180, 180, 180, 0.2)"
       },
-      data: [0, 0, 0, 0, 0, 0]
+      data: [0, 0, 0, 0, 0, 0, 0]
     }
   ]
 }

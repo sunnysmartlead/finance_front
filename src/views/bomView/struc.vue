@@ -1,7 +1,7 @@
 <template>
   <div class="bomView">
     <div style="margin: 10px 0; float: right">
-        <ProcessVertifyBox :onSubmit="handleSetBomState" />
+        <ProcessVertifyBox :onSubmit="handleSetBomState" processType="baseProcessType" />
       </div>
     <CustomerSpecificity />
     <div class="bomView__btn">

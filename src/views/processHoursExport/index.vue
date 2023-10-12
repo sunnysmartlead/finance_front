@@ -230,8 +230,8 @@
 
           <div class="u-text-center" style="background-color: rgb(223, 179, 122)">
             <div class="u-flex u-row-left u-col-center">
-              <template v-if="dataArr.length > 0 && dataArr[0]?.sopInfo != null && dataArr[0]?.sopInfo.length > 0">
-                <div v-for="(scopItem, sopIndex) in dataArr[0].sopInfo" :key="sopIndex" class="u-text-center">
+              <template v-if="yearList.length > 0">
+                <div v-for="(scopItem, sopIndex) in yearList" :key="sopIndex" class="u-text-center">
                   <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}</div>
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -833,6 +833,7 @@ import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import type {UploadInstance, UploadProps, UploadRawFile} from "element-plus"
 import {
   GetListAll,
+  GetYear,
   getProcessHourDetail,
   handleCreate,
   getListUphOrLine,
@@ -1031,6 +1032,7 @@ const UPHData = ref<any>([])
 const lineData = ref<any>([])
 const structuralData = ref<any>([])
 const electronicBomData = ref<any>([])
+const yearList = ref<any>([])
 const isCOB = ref(true)
 const uploadActionUrl = ref(uploadAction + "?AuditFlowId=" + auditFlowId + "&SolutionId=" + productId)
 onMounted(() => {
@@ -1044,12 +1046,30 @@ const initData = () => {
     dataArr.value = [];
     UPHData.value = [];
     lineData.value = [];
+    yearList.value =[]
+    getYearData()
     getTableData()
     getUPHAndLineData()
     getDeviceStatuEnmu();
   }
 }
-
+const getYearData = () => {
+  let param = {
+    AuditFlowId: auditFlowId,
+    SolutionId: productId
+  }
+  GetYear(param).then((response: any) => {
+    if (response.success) {
+      let data = response.result
+      yearList.value = data;
+    } else {
+      ElMessage({
+        type: "error",
+        message: "列表加载失败"
+      })
+    }
+  })
+}
 const getTableData = () => {
   let param = {
     AuditFlowId: auditFlowId,
@@ -1529,6 +1549,8 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       let data = response.result
       console.log("根据工序序号查询信息结果", data)
       dataArr.value[dataIndex] = data
+      dataArr.value[dataIndex].sopInfo = yearList
+      console.log("根据工序序号查询信息111结果", dataArr.value[dataIndex])
     } else {
       ElMessage({
         type: "error",

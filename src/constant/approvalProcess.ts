@@ -241,18 +241,6 @@ const priceEvaluationBoard = [
   },
 ]
 
-// 通用审核
-const normalProcessType = [
-  {
-    label: "不同意",
-    val: "YesOrNo_No"
-  },
-  {
-    label: "同意",
-    val: "YesOrNo_Yes"
-  },
-]
-
 const PROGRESSTYPE: any = {
   baseProcessType,
   confirmProcessType,
@@ -262,6 +250,5 @@ const PROGRESSTYPE: any = {
   structBomProcessType,
   bomCostProcessType,
   priceEvaluationBoard,
-  normalProcessType,
 }
 export default PROGRESSTYPE

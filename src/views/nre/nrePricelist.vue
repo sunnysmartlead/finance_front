@@ -721,7 +721,7 @@ const handleFethNreTableDownload = async () => {
     const res: any = await NreTableDownload({
       // Year: year,
       AuditFlowId: auditFlowId,
-      ModelCountId: productId
+      SolutionId: productId
     })
     downloadFileExcel(res, "NRE核价表")
     ElMessage.success("下载成功！")

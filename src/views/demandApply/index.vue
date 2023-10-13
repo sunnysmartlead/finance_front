@@ -419,12 +419,7 @@
                   :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="systermGradientValue" label="系统取梯度" width="250">
-              <template #default="{ row }">
-                <el-input-number controls-position="right" v-model="row.systermGradientValue"
-                  :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
-              </template>
-            </el-table-column> -->
+            <!-- <el-table-column prop="systermGradientValue" label="系统取梯度" width="250" /> -->
             <el-table-column label="操作" fixed="right">
               <template #default="{ $index }" v-if="!isDisabled">
                 <el-button type="danger" :disabled="kvPricingData.length === 1"
@@ -511,7 +506,7 @@
           <h6>分摊数量：</h6>
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
-            <el-table-column prop="year" label="分摊年量" width="250">
+            <el-table-column prop="yearCount" label="分摊年数" width="250">
               <template #default="{ row, $index }">
                 <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled"
                   @change="(val) => changeShareCoutYears(val, row, $index)">
@@ -1296,7 +1291,7 @@ const changeShareCoutYears = (shareCountYear: number, row: any, index: number) =
 }
 
 const checkShareCount = (countYear: number) => {
-  const total = shareCountTable.value?.reduce((a: any, b: { year: number }) => a + b.year, 0)
+  const total = shareCountTable.value?.reduce((a: any, b: { yearCount: number }) => a + b.yearCount, 0)
   console.log(total, countYear, "total")
   if (total > countYear) {
     ElMessage({
@@ -1840,6 +1835,7 @@ watch(
   () => moduleTableTotal.value,
   () => {
     shareCountTable.value = map(moduleTableTotal.value, (item, index: number) => ({
+      ...item,
       count: shareCountTable.value?.[index]?.count || 0,
       name: item.product
     })).filter((c) => !!c.name)

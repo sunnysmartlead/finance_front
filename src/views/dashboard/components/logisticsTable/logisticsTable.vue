@@ -23,7 +23,7 @@
         <el-input-number controls-position="right" :min="0" v-model="row.perFreight" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="perTotalLogisticsCost" label="单PCS总物流料成本" :formatter="toFixedTwo" >
+    <el-table-column align="center"  prop="perTotalLogisticsCost" label="单PCS总物流成本" :formatter="toFixedTwo" >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.perTotalLogisticsCost" />
       </template>

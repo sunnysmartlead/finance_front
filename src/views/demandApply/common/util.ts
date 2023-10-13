@@ -6,6 +6,7 @@ export enum MODULE_REQUIRED_TEXT {
 }
 
 export enum CountryTypeEnum {
+  '未知',
   '一级管制国家',
   '二级管制国家',
   '三级管制国家',

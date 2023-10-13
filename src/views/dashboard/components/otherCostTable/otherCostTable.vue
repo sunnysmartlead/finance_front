@@ -15,6 +15,12 @@
         <el-input v-if="isEdit" v-model="row.count" />
       </template>
     </el-table-column>
+    <el-table-column align="center"  prop="yearCount" label="分摊年数">
+      <template #default="{ row }">
+        <el-input v-if="isEdit" v-model="row.yearCount" />
+        <span v-else>{{  row.yearCount }} 年</span>
+      </template>
+    </el-table-column>
     <el-table-column align="center"  prop="cost" label="单颗成本">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.cost" />

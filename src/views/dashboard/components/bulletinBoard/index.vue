@@ -367,7 +367,7 @@ const handleFetchPriceEvaluationTableDownload = async () => {
   })
   try {
     const result: any = await PriceEvaluationTableDownload({
-      auditFlowId,
+      AuditFlowId: auditFlowId,
       SolutionId: productId,
       GradientId: data.form.gradientId,
     })

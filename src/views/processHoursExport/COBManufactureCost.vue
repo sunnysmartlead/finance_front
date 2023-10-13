@@ -215,6 +215,63 @@
         <ElectronicTable ref="electronicRef" />
       </el-card>
     </el-dialog>
+
+    <el-dialog v-model="dialogTableVisible" title="模组数量" :close-on-click-modal="false" width="60%">
+      <div>
+        <el-card v-for="(project, index) in dialogProData" :key="index" class="u-m-b-10">
+          <template #header>
+            <div style="font-weight: bold">{{ project.sumQuantity }}/KY</div>
+          </template>
+          <div>
+            <div class="u-flex u-row-left u-col-center">
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>客户零件号</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>子项目代码</span>
+              </div>
+              <div class="u-border u-text-center u-width-500 u-p-t-5 u-p-b-5">
+                <span>产品名称</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>产品大类</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>像素</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
+                   v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
+
+                <span v-if="yearItem.upDown==1">{{ yearItem.year }}上半年</span>
+                <span v-if="yearItem.upDown==2">{{ yearItem.year }}下半年</span>
+                <span v-if="yearItem.upDown==0">{{ yearItem.year }}</span>
+              </div>
+            </div>
+            <div class="u-flex u-row-left u-col-center">
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>{{ project.partNumber }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>{{ project.code }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-500 u-p-t-5 u-p-b-5">
+                <span>{{ project.product }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>{{ project.productTypeName }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>{{ project.pixel }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
+                   v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
+                <span>{{ yearItem.quantity }}</span>
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -226,6 +283,7 @@ import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import router from "@/router";
 import ElectronicTable from "@/components/comTable/index.vue"
 import ConstructionTable from "@/components/cobconstructionVTable/index.vue"
+import {GetPriceEvaluationStartData} from "@/api/processHoursEnter";
 //路径上的参数
 const queryParam = ref({
   AuditFlowId: undefined,
@@ -241,6 +299,9 @@ const COBUPHData = ref<any>({
 
 //表格数据
 const tableData = ref<any>([])
+const dialogTableVisible = ref(false)
+const dialogProData = ref([])
+
 let tempTableDataArr = [
   {
     classification: "500K",
@@ -390,14 +451,22 @@ const BomProjectDialog = () => {
   open.value = true
 }
 //模组数据
-const showProjectDialog = () => {
-  router.push({
-    path: "/resourcesDepartment/moduleNumber",
-    query: {
-      auditFlowId
+const showProjectDialog = async () => {
+
+  await GetPriceEvaluationStartData({auditFlowId: productId}).then((response: any) => {
+    console.log("项目走量数据", response);
+    if (response.success) {
+      let modelCounts = response.result.modelCount;
+      dialogProData.value = response.result.modelCount;
+      dialogTableVisible.value = true;
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "数据加载失败!"
+      })
+      return;
     }
   })
-  return;
 }
 //提交
 const submitData = ({ comment, opinion, nodeInstanceId }: any) => {

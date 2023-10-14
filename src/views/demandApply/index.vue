@@ -1425,7 +1425,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
   saveloading.value = true
   let { quoteForm } = state
   quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
-  if (quoteForm.isHasSample) {
+  if (quoteForm.isHasSample || quoteForm.priceEvalType == 'PriceEvalType_Sample') {
     quoteForm.sample = specimenData //样品
   }
   if (quoteForm.isHasNre) {

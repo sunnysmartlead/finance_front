@@ -106,6 +106,7 @@ const handleCreate = () => {
 }
 const handleEdit = (row: any) => {
   data.isEdit = true
+  row.id = row.dbId
   data.tangentForm = row
   data.dialogVisible = true
 }
@@ -115,8 +116,8 @@ const handleDelete = (index: number, row: any) => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
-    if (typeof row.id === "number") {
-      let res: any = await deleteFollowLineTangent(row.id)
+    if (typeof row.dbId === "number") {
+      let res: any = await deleteFollowLineTangent(row.dbId)
       if (res.success) {
         ElMessage({
           type: "success",

@@ -110,6 +110,7 @@ import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 const route = useRoute()
 
+const { closeSelectedTag } = useJump()
 
 let { auditFlowId, productId } = getQuery()
 
@@ -176,7 +177,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
   }
 }
 
-const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
+const NREToExamineFun = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   try {
     const { success } = await NREToExamine({
       auditFlowId,
@@ -186,7 +187,8 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (!success) throw Error()
-    ElMessage.success(`提交成功`)
+    closeSelectedTag(route.path)
+    ElMessage.success(`${label}成功！`)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

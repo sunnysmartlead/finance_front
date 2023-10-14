@@ -1,5 +1,6 @@
 <template>
-  <el-table :data="otherCostData" border height="675">
+  <el-table :data="otherCostData" border height="675" :span-method="objectSpanMethod">
+    <el-table-column align="center" prop="costType" label="费用大类" />
     <el-table-column align="center"  prop="itemName" label="成本项目">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.itemName" />
@@ -10,18 +11,18 @@
         <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="count" label="分摊数量">
-      <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.count" />
-      </template>
-    </el-table-column>
     <el-table-column align="center"  prop="yearCount" label="分摊年数">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.yearCount" />
         <span v-else>{{  row.yearCount }} 年</span>
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="cost" label="单颗成本">
+    <el-table-column align="center"  prop="count" label="分摊数量" :formatter="formatThousandthsNoFixed">
+      <template #default="{ row }">
+        <el-input v-if="isEdit" v-model="row.count" />
+      </template>
+    </el-table-column>
+    <el-table-column align="center"  prop="cost" label="单颗成本" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.cost" />
       </template>
@@ -50,7 +51,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from "vue"
-
+import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 const props = defineProps({
   otherCostData: {
     type: Array as PropType<any[]>
@@ -77,6 +78,31 @@ const options = [
     value: false
   }
 ]
+
+const objectSpanMethod = ({
+  row,
+  column,
+  rowIndex,
+  columnIndex,
+}: any) => {
+  let num = 1
+  // 根据columnIndex判断需要判断值是否相等的字段
+  if (columnIndex === 0) {
+    if (rowIndex === 0) {
+      num = 9
+    } else if (rowIndex === 9) {
+      num = 3
+    } else if (rowIndex === 12) {
+      num = 1
+    } else {
+      num = 0
+    }
+  }
+  return {
+    rowspan: num,
+    colspan: 1,
+  };
+}
 
 const formatter = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return `${val * 100} %`

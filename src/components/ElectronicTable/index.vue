@@ -125,7 +125,7 @@
       <div>
         <h5>本位币汇总：</h5>
         <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
-          <span class="descriptions-label">{{ `${c.kv} K/Y` }}</span>
+          <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} K/Y` }}</span>
           <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
             <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
               :label="yearItem.year + upDownEunm[yearItem.upDown]">
@@ -391,17 +391,15 @@ const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
 
 const submitFun = async (record: any, isSubmit: number, index: number) => {
   let { nodeInstanceId } = route.query
-  if (isSubmit) {
-    const isNotPass = record.systemiginalCurrency?.some((item: any) => {
-      return item.yearOrValueModes.some((c: any) => {
-        return c?.value
-      }) && !record?.remark
-    })
-    if (isNotPass && record.isEdited) {
-      return ElMessage.warning('请填写备注再提交！')
-    } else if (record.isEdited && !record.peopleName) {
-      return ElMessage.warning('请先确认再提交！')
-    }
+  const isNotPass = record.systemiginalCurrency?.some((item: any) => {
+    return item.yearOrValueModes.some((c: any) => {
+      return c?.value
+    }) && !record?.remark
+  })
+  if (isNotPass && record.isEdited) {
+    return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
+  } else if (record.isEdited && !record.peopleName) {
+    return ElMessage.warning('请先确认再提交！')
   }
   const { success } = await PostElectronicMaterialEntering({
     isSubmit,
@@ -478,15 +476,16 @@ defineExpose({
     align-items: center;
 
     .el-descriptions {
-      width: calc(100% - 200px);
+      width: calc(100% - 250px);
     }
   }
 
   &-label {
     display: block;
+    height: 80px;
     line-height: 80px;
     text-align: center;
-    width: 200px;
+    width: 250px;
     border: 1px solid #f5f5f5;
     background-color: #f5f7fa;
   }

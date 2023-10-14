@@ -41,7 +41,8 @@ export const percentageCostChartData = {
         { value: 0, name: "损耗成本" },
         { value: 0, name: "制造成本" },
         { value: 0, name: "物流成本" },
-        { value: 0, name: "质量成本" }
+        { value: 0, name: "质量成本" },
+        { value: 0, name: "其他成本" }
       ],
       emphasis: {
         itemStyle: {

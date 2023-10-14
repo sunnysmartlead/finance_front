@@ -189,7 +189,7 @@ const addExperimentItemsData = () => {
   })
 }
 
-const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   try {
     const isSubmit: boolean=true
     const { success } = await PostExperimentItems({
@@ -202,14 +202,14 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (!success) throw Error()
-    ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
+    ElMessage.success(`${label}成功`)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")
   }
 }
 
-const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
+const NREToExamineFun = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   try {
     const { success } = await NREToExamine({
       auditFlowId,
@@ -219,7 +219,7 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (!success) throw Error()
-    ElMessage.success(`提交成功`)
+    ElMessage.success(`${label}成功`)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

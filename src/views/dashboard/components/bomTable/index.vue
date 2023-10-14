@@ -5,16 +5,24 @@
         <el-row justify-between>
           <span>bom成本</span>
           <el-row>
-            <!-- <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button> -->
+            <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button>
           </el-row>
         </el-row>
       </template>
       <bomTable :bomData="bomData" :hideEdit="hideEdit" />
+      <el-descriptions :column="2" border>
+      <el-descriptions-item label="材料成本合计：">
+        {{ totalCount.totalMoneyCynNoCustomerSupply }}
+      </el-descriptions-item>
+      <el-descriptions-item label="电子料大类成本合计：">
+        {{ totalCount.electMoneyCynNoCustomerSupply }}
+      </el-descriptions-item>
+    </el-descriptions>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { PropType, ref, onMounted, watch } from "vue"
+import { PropType, ref, onMounted, watch, computed } from "vue"
 import { GetUpdateItemMaterial, GetBomCost } from "../../service"
 import bomTable from "./bomTable.vue"
 import getQuery from "@/utils/getQuery"
@@ -23,16 +31,29 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 const { auditFlowId, productId: solutionId } = getQuery()
+import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 
 const props = defineProps({
-  bomData: {
-    type: Array as PropType<any[]>
-  },
   yearData: {
     type: Object as PropType<any>
   },
   gradientId: String,
   hideEdit: Boolean
+})
+
+const totalCount = computed(() => {
+  let totalMoneyCynNoCustomerSupply = 0
+  let electMoneyCynNoCustomerSupply = 0
+  bomData.value.forEach((item) => {
+    totalMoneyCynNoCustomerSupply += item.totalMoneyCynNoCustomerSupply
+    if (item.superType === '电子料') {
+      electMoneyCynNoCustomerSupply += item.totalMoneyCynNoCustomerSupply
+    }
+  })
+  return {
+    totalMoneyCynNoCustomerSupply: formatThousandths(null, null, totalMoneyCynNoCustomerSupply),
+    electMoneyCynNoCustomerSupply: formatThousandths(null, null, electMoneyCynNoCustomerSupply)
+  }
 })
 
 // 获取 bom成本（含损耗）汇总表

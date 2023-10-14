@@ -16,7 +16,7 @@
         border
         height="300"
       >
-        <el-table-column type="index" width="50" />
+        <el-table-column type="index" width="80" label="序号" />
         <el-table-column label="零件名" width="150">
           <template #default="{ row }">
             <el-input v-model="row.partName" />
@@ -70,7 +70,7 @@
         show-summary
         :summary-method="getTravelCostSummaries"
       >
-        <el-table-column type="index" width="50" />
+        <el-table-column type="index" width="80" label="序号" />
         <el-table-column label="事由" width="150">
           <template #default="{ row }">
             <el-select v-model="row.reasonsId">
@@ -136,7 +136,7 @@
         show-summary
         height="300"
       >
-        <el-table-column type="index" width="50" />
+        <el-table-column type="index" width="80" label="序号" />
         <el-table-column label="费用名称">
           <template #default="{ row }">
             <el-input v-model="row.rroject" />
@@ -159,10 +159,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
-    <!-- <div style="float: right; margin: 20px 0">
-      <el-button type="primary" @click="submit" v-havedone>提交</el-button>
-    </div> -->
   </div>
 </template>
 
@@ -179,6 +175,7 @@ import { getDictionaryAndDetail } from "@/api/dictionary"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import { isEmpty } from "lodash"
 
 const { auditFlowId, productId }: any = getQuery()
 
@@ -220,8 +217,41 @@ const calculateCost = (row: TravelExpenseModel) => {
   row.cost = (row.costSky || 0) * (row.peopleCount || 0) * (row?.skyCount || 0)
 }
 
-const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
-  console.log('触发了')
+const checkData = () => {
+  let handPieceCostNotPass = false
+  let handPieceCostLabel = ''
+  handPieceCostNotPass = data.handPieceCost.some((item, index) => {
+    if (!item.partName) {
+      handPieceCostLabel = `手板件费用 第 ${index + 1}项的零件名没有填写！`
+      return true
+    }
+  })
+  if (handPieceCostNotPass) {
+    ElMessage.warning(handPieceCostLabel)
+    throw Error()
+  }
+
+  let restsCostNotPass = false
+  let restsCostLabel = ''
+  data.travelExpense.some((item, index) => {
+    if (!item.reasonsId) {
+      handPieceCostLabel = `差旅费用 第 ${index + 1}项的事由没有填写！`
+      return true
+    }
+  })
+  if (restsCostNotPass) {
+    ElMessage.warning(restsCostLabel)
+    throw Error()
+  }
+}
+
+const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
+  if (label === '提交') {
+    if (isEmpty(data.restsCost) || isEmpty(data.handPieceCost) || isEmpty(data.travelExpense)) {
+      return ElMessage.warning('请填写完整数据后提交！')
+    }
+    checkData()
+  }
   const { success } = await PostProjectManagement({
     projectManagement: {
       ...data,
@@ -239,7 +269,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId
   })
   if (success) {
-    ElMessage.success(`${opinion === 'Save' ? '保存' : '提交'}成功！`)
+    ElMessage.success(`${label}成功！`)
   }
 }
 

@@ -419,7 +419,7 @@
                   :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="systermGradientValue" label="系统取梯度" width="250" /> -->
+            <el-table-column prop="systermGradientValue" label="系统取梯度" width="250" />
             <el-table-column label="操作" fixed="right">
               <template #default="{ $index }" v-if="!isDisabled">
                 <el-button type="danger" :disabled="kvPricingData.length === 1"
@@ -1287,7 +1287,7 @@ const changeShareCoutYears = (shareCountYear: number, row: any, index: number) =
     }
   })
   row.count = count
-  checkShareCount(coutYear)
+  checkShareCount(coutYear * moduleTableTotal.value?.length)
 }
 
 const checkShareCount = (countYear: number) => {
@@ -1296,7 +1296,7 @@ const checkShareCount = (countYear: number) => {
   if (total > countYear) {
     ElMessage({
       type: "error",
-      message: "分摊年量不能大于总年量"
+      message: "分摊年数不能大于总年量"
     })
   }
 }
@@ -1776,23 +1776,30 @@ watch(
 )
 
 watch(
-  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient, isFirstShow.value],
+  () => [moduleTableTotal.value, kvPricingData.value, state.quoteForm.isHasGradient, isFirstShow.value, state.quoteForm.updateFrequency],
   (val) => {
-    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal]: any = val
+    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal, updateFrequencyData]: any = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
-      let filterData: any = _.cloneDeep(kvList)
+      kvPricingData.value.forEach((item: any) => {
+        if (updateFrequencyData === updateFrequency.HalfYear) {
+          item.systermGradientValue = item.gradientValue / 2
+        } else {
+          item.systermGradientValue = item.gradientValue
+        }
+      })
+      let filterData: any = _.cloneDeep(kvPricingData.value)
       filterData = filterData.map((item: any) => {
         return {
-          kv: item,
+          kv: item.gradientValue,
           children: map(moduleTableTotalData, (c, index: number) => ({
-            gradientValue: item,
+            gradientValue: item.systermGradientValue,
             index,
             name: c.product,
             number: c.partNumber || "-",
             code: c.code,
             type: c.productType,
             gradientModelYear: map(c.modelCountYearList, (m: any) => ({
-              count: isHasGradient ? item : m.quantity,
+              count: isHasGradient ? item.systermGradientValue : m.quantity,
               upDown: m.upDown,
               year: m.year
             }))
@@ -1803,17 +1810,17 @@ watch(
       console.log(kvList, moduleTableTotalData, isFirstShowVal, "kvList111")
       if (moduleTableTotalData?.length && kvList?.length && isFirstShowVal) {
         let arr: any = []
-        kvList.forEach((gradientValue: any) => {
+        kvList.forEach((c: any) => {
           moduleTableTotalData.forEach((item: any) => {
             const findItem = customerTargetPrice.value.find(c => c.product === item.product)
             if (findItem) {
               arr.push({
                 ...findItem,
-                kv: gradientValue,
+                kv: c.gradientValue,
               })
             } else {
               arr.push({
-                kv: gradientValue,
+                kv: c.gradientValue,
                 product: item.product,
                 targetPrice: 0,
                 currency: 0
@@ -1821,7 +1828,6 @@ watch(
             }
           })
         })
-        console.log(arr, "arrrrrr11111")
         customerTargetPrice.value = arr
       }
     }

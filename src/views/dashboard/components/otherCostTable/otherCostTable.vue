@@ -1,45 +1,46 @@
 <template>
-  <el-table :data="otherCostData" border height="675" :span-method="objectSpanMethod">
+  <el-table :data="otherCostData" border height="675" :span-method="objectSpanMethod"
+    :summary-method="(val: any) => getSummaries(val, '单颗成本', 'cost')" show-summary>
     <el-table-column align="center" prop="costType" label="费用大类" />
-    <el-table-column align="center"  prop="itemName" label="成本项目">
+    <el-table-column align="center" prop="itemName" label="成本项目">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.itemName" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="total" label="总费用">
+    <el-table-column align="center" prop="total" label="总费用">
       <template #default="{ row }">
         <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="yearCount" label="分摊年数">
+    <el-table-column align="center" prop="yearCount" label="分摊年数">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.yearCount" />
-        <span v-else>{{  row.yearCount }} 年</span>
+        <span v-else>{{ row.yearCount }} 年</span>
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="count" label="分摊数量" :formatter="formatThousandthsNoFixed">
+    <el-table-column align="center" prop="count" label="分摊数量" :formatter="formatThousandthsNoFixed">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.count" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="cost" label="单颗成本" :formatter="formatThousandths">
+    <el-table-column align="center" prop="cost" label="单颗成本" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.cost" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="note" label="备注">
+    <el-table-column align="center" prop="note" label="备注">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.note" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="isShare" label="是否分摊" :formatter="formatter">
+    <el-table-column align="center" prop="isShare" label="是否分摊" :formatter="formatter">
       <template #default="{ row }">
         <el-select v-model="row.isShare" placeholder="是否分摊">
           <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
         </el-select>
       </template>
     </el-table-column>
-    <el-table-column align="center"  label="操作" width="200" v-if="!hideEdit">
+    <el-table-column align="center" label="操作" width="120" v-if="!hideEdit">
       <template #default="{ row, $index }">
         <el-row>
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
@@ -52,6 +53,8 @@
 <script lang="ts" setup>
 import { PropType } from "vue"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { getSummaries } from "../../common/getSummaries"
+
 const props = defineProps({
   otherCostData: {
     type: Array as PropType<any[]>

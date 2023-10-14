@@ -398,7 +398,8 @@ const handleFethNreTableDownload = async () => {
       year: filterYearData.value.year,
       auditFlowId,
       productId,
-      upDown: filterYearData.value.upDown
+      upDown: filterYearData.value.upDown,
+      hideEdit: 1
     }
   })
 }

@@ -2,7 +2,13 @@
   <!-- 核心器件，nre拆分 -->
   <div>
     <el-card>
-      <el-table :data="data.productAndGradients" style="width: 100%" border height="500px">
+      <el-table
+        :data="data.productAndGradients"
+        :span-method="objectSpanMethod"
+        style="width: 100%"
+        border
+        height="500px"
+      >
         <el-table-column type="expand">
           <template v-slot="props">
             <el-descriptions
@@ -54,6 +60,14 @@
 <script lang="ts" setup>
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import { GetCoreComponentAndNreList } from "@/views/quoteAnalysis/service"
+
+import getQuery from "@/utils/getQuery"
+
+/**
+ * 数据部分
+ */
+let { auditFlowId, productId } = getQuery()
 /**
  * 路由对象
  */
@@ -62,6 +76,13 @@ const route = useRoute()
  * 路由实例
  */
 const router = useRouter()
+
+let gradientValueMaps: any = {}
+const objectSpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
+  if (columnIndex === 1) {
+    console.log(column)
+  }
+}
 //console.log('1-开始创建组件-setup')
 /**
  * 数据部分
@@ -470,8 +491,19 @@ const data = reactive({
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
-onMounted(() => {
+onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
+  if (auditFlowId) {
+    let { result }: any = await GetCoreComponentAndNreList(auditFlowId)
+    data.productAndGradients = result.productAndGradients
+    data.productAndGradients.forEach((item) => {
+      if (!gradientValueMaps[item.gradientValue]) {
+        gradientValueMaps[item.gradientValue] = []
+      }
+      gradientValueMaps[item.gradientValue].push(item)
+    })
+    data.nres = result.nres
+  }
 })
 watchEffect(() => {})
 // 使用toRefs解构

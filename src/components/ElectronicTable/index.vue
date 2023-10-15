@@ -199,25 +199,29 @@ const fetchOptionsData = async () => {
   exchangeSelectOptions.value = exchangeSelect.result.items || []
 }
 
+const safeParse = (val: any) => {
+  try {
+    return JSON.parse(val)
+  } catch {
+    return null
+  }
+}
+
 const toggleSelection = () => {
   nextTick(() => {
     const storageData = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
-    let parseData: any = null
-    console.log(storageData, 'storageData')
+    let parseData: any = safeParse(storageData)
     if (!storageData) return
-    try {
-      parseData = JSON.parse(storageData)
-    } catch (err) {
-      console.log(err, '[电子单价审核界面赋值浏览器缓存失败]')
-    }
     if (parseData) {
       const ids = parseData[productId]
-      ids.forEach((id: number) => {
-        const findItem = electronicBomList.value?.find(c => c.id === id)
+
+      ids?.forEach((id: number) => {
+        const findItem = electronicBomList.value?.find((c: any) => c.id === id)
         if (findItem) {
           multipleTableRef.value && multipleTableRef.value!.toggleRowSelection(findItem, true)
         }
       })
+      multipleSelection.value = map(parseData, v => ([...v]))?.flat(2) || []
     }
   })
 }
@@ -398,7 +402,7 @@ const submitFun = async (record: any, isSubmit: number, index: number) => {
   })
   if (isNotPass && record.isEdited) {
     return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
-  } else if (record.isEdited && !record.peopleName) {
+  } else if (record.isEdited && !record.peopleName && isSubmit) {
     return ElMessage.warning('请先确认再提交！')
   }
   const { success } = await PostElectronicMaterialEntering({
@@ -440,11 +444,14 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: an
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {
+  const oldStorage = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
   const ids = map(selection, v => v.id)
-  multipleSelection.value = ids
+  const oldStorageData = safeParse(oldStorage) || {}
   const storageData = {
+    ...oldStorageData,
     [productId]: ids
   }
+
   setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
 }
 

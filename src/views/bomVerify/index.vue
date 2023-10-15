@@ -33,11 +33,8 @@ const electronicRef = ref<any>()
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   const constructionSelection = constructionRef.value.getSelection()
   const electronicSelection = electronicRef.value.getSelection() || []
-  const constructionIds: any = []
-  map(constructionSelection, (val) => {
-    constructionIds.push(...val)
-  })
-  if (!opinion.includes("_Yes") && !constructionIds.length && electronicSelection.length) {
+
+  if (!opinion.includes("_Yes") && !constructionSelection.length && electronicSelection.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -50,7 +47,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: constructionIds,
+    structureUnitPriceId: constructionSelection,
     electronicsUnitPriceId: electronicSelection
   })
   if (success) closeSelectedTag(router.path)

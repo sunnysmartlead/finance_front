@@ -80,13 +80,14 @@ const getManufacturingCost = async () => {
 }
 
 const getModifyData = async () => {
-  const res = (await GetUpdateItemManufacturingCost({
+  const { result }: any = (await GetUpdateItemManufacturingCost({
     AuditFlowId: auditFlowId,
     GradientId: props.gradientId,
     SolutionId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
+  modifyData.value = result || []
 }
 
 const init = () => {
@@ -110,6 +111,7 @@ const handleSubmit = async () => {
     auditFlowId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
+    SolutionId,
     UpDown: props.yearData.upDown,
   })
   if (success) {

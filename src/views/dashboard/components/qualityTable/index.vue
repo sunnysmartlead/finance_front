@@ -70,7 +70,7 @@ const getQualityCost = async () => {
 }
 
 const getLogData = async () => {
-  const res = (await GetUpdateItemQualityCost({
+  const { result } = (await GetUpdateItemQualityCost({
     AuditFlowId: auditFlowId,
     ProductId: 532,
     GradientId: props.gradientId,
@@ -78,6 +78,7 @@ const getLogData = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
+  modifyData.value = result || []
 }
 
 const handleDelete = (index: number) => {
@@ -112,6 +113,7 @@ const handleSubmit = async () => {
   const { success } = await SetUpdateItemQualityCost({
     updateItem: modifyData.value,
     auditFlowId,
+    SolutionId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,

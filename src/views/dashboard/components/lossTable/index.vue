@@ -103,6 +103,7 @@ const handleSubmit = async () => {
     auditFlowId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
+    SolutionId: solutionId,
     UpDown: props.yearData.upDown,
   })
   if (success) {

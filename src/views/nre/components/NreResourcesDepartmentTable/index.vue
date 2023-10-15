@@ -1,7 +1,7 @@
 <template>
   <div style="padding: 0 10px">
     <el-row justify="end">
-      <ProcessVertifyBox :onSubmit="handleSubmit"  :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'" />
+      <ProcessVertifyBox :onSubmit="isVertify ? handleVertify : handleSubmit" :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'" />
       <ThreeDImage m="2" />
     </el-row>
     <el-card class="margin-top">
@@ -93,40 +93,43 @@ const initFetch = async () => {
     handleToggleSelection()
   }, 300)
 }
+
+const safeParse = (val: any) => {
+  try {
+    return JSON.parse(val)
+  } catch {
+    return null
+  }
+}
+
 const handleToggleSelection = () => {
   const selectionData = getSessionStorage('mouldInventorySelection')
   if (selectionData) {
-    let filterData: any = []
-    try {
-      filterData = JSON.parse(selectionData)
-    } catch (err) {
-      console.log(err, '赋值失败')
-    }
-    console.log(filterData, selectionData, "filterData")
+    let filterData: any = safeParse(selectionData)
     const selectionList = filterData?.[productId]
     if (selectionList?.length) {
       multipleSelection.value = selectionList
       selectionList.forEach((item: any) => {
         const findItem = mouldInventoryData.value.find((c: any) => c.id === item)
-        multipleTableRef.value!.toggleRowSelection(findItem, true)
+        if (findItem) {
+          multipleTableRef.value!.toggleRowSelection(findItem, true)
+        }
       })
     }
   }
 }
 
 const handleSelectionChange = (val: MouldInventoryModel[]) => {
-  console.log(val, "val")
+  const selectionData = getSessionStorage('mouldInventorySelection')
+  let filterData: any = safeParse(selectionData)
+  console.log(val, "[handleSelectionChange]")
   const ids = map(val, v => v.id)
   multipleSelection.value = ids
   setSessionStorage('mouldInventorySelection', JSON.stringify({
+    ...filterData,
     [productId]: ids
   }))
 }
-// const queryDoneData = async () => {
-//   const { result } = (await GetReturnInitialSalesDepartment(auditFlowId)) || {}
-//   console.log(result, "result")
-//   mouldInventoryData.value = result
-// }
 
 const submit = debounce(async (isSubmit: boolean, row: any) => {
   let { nodeInstanceId } = route.query
@@ -141,7 +144,6 @@ const submit = debounce(async (isSubmit: boolean, row: any) => {
   })
   if (success) {
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
-    // initFetch()
   }
 }, 300)
 
@@ -157,7 +159,25 @@ watch(
   }
 )
 
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const handleVertify = async ({ comment, opinion, nodeInstanceId, label }: any) => {
+  const selectionData = getSessionStorage('mouldInventorySelection')
+  let filterData: any = safeParse(selectionData)
+  const nreId = map(filterData, v => ([...v]))?.flat(2) || []
+  const { success } = await NREToExamine({
+    auditFlowId,
+    nreCheckType: 1,
+    opinionDescription: comment,
+    opinion,
+    nodeInstanceId,
+    nreId,
+  })
+  if (success) {
+    ElMessage.success(`${label}成功`)
+    removeSessionStorage('mouldInventorySelection')
+  }
+}
+
+const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   const { success } = await NREToExamine({
     auditFlowId,
     nreCheckType: 1,
@@ -167,7 +187,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     nreId: multipleSelection.value
   })
   if (success) {
-    ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
+    ElMessage.success(`${label}成功`)
     removeSessionStorage('mouldInventorySelection')
   }
 }

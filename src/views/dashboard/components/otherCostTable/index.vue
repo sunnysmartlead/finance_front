@@ -55,13 +55,14 @@ const editTotal = computed(() => {
 })
 
 const getModifyData = async () => {
-  const res = (await GetUpdateItemOtherCost({
+  const { result } = (await GetUpdateItemOtherCost({
     AuditFlowId: auditFlowId,
     GradientId: props.gradientId,
     SolutionId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
+  modifyData.value = result || []
 }
 
 const getOtherCost = async () => {
@@ -106,6 +107,7 @@ const handleSubmit = async () => {
     auditFlowId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
+    SolutionId,
     UpDown: props.yearData.upDown,
   })
   if (success) {

@@ -56,16 +56,16 @@
         :gradientId="data.form.gradientId" :on-refresh="init" />
       <!-- 制造成本  -->
       <manufactureTable :hideEdit="hideEdit" v-if="data.mode === '3'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" />
+        :gradientId="data.form.gradientId" :on-refresh="init" />
       <!-- 物流成本  -->
       <logisticsTable :hideEdit="hideEdit" v-if="data.mode === '4'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" />
+        :gradientId="data.form.gradientId" :on-refresh="init" />
       <!-- 质量成本  -->
       <qualityTable :hideEdit="hideEdit" v-if="data.mode === '5'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" />
+        :gradientId="data.form.gradientId" :on-refresh="init" />
       <!-- 其他成本  -->
       <otherCostTable :hideEdit="hideEdit" v-if="data.mode === '6'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" />
+        :gradientId="data.form.gradientId" :on-refresh="init" />
         <el-descriptions :column="1" border m="2">
           <el-descriptions-item label="总成本：">
             {{ data.totalCost?.toFixed(2) }}

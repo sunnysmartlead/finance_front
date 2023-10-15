@@ -188,6 +188,7 @@ import { useRoute } from "vue-router"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 import { map } from "lodash"
 import ModuleNumber from '@/components/ModuleNumber/index.vue'
+import { json } from "stream/consumers"
 
 const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
@@ -253,22 +254,17 @@ const setTableRefs = (el: any) => {
 const toggleSelection = () => {
   nextTick(() => {
     const storageData = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
-    let parseData: any = null
-    try {
-      parseData = JSON.parse(storageData)
-    } catch (err) {
-      console.log(err, '[结构bom单价审核界面赋值浏览器缓存失败]')
-    }
+    const parseData = safeParse(storageData)
+
     if (parseData) {
-      const productIdData = parseData[productId]
+      multipleSelection.value = map(parseData, (v, key) => (map(parseData[key], c => [...c])))?.flat(2) || []
+      console.log(multipleSelection.value, "[toggleSelection]")
+      const productIdData = parseData[productId] || []
       map(productIdData, (ids, index: number) => {
-        multipleSelection.value = {
-          [index]: ids
-        }
-        ids.forEach((id: number) => {
-          const findItem = constructionBomList.value[index]?.structureMaterial?.find(c => c.id === id)
+        ids?.forEach((id: number) => {
+          const findItem = constructionBomList.value[index]?.structureMaterial?.find((c: any) => c.id === id)
           if (findItem) {
-            multipleTableRef.value[index]!.toggleRowSelection(findItem, true)
+            multipleTableRef.value?.[index]?.toggleRowSelection?.(findItem, true)
           }
         })
       })
@@ -375,7 +371,7 @@ const submitFun = async (
   })
   if (isNotPass && row.isEdited) {
     return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
-  } else if (row.isEdited && !row.peopleName) {
+  } else if (row.isEdited && !row.peopleName && isSubmit) {
     return ElMessage.warning('请先确认再提交！')
   }
   const { success } = await PostStructuralMemberEntering({
@@ -429,16 +425,27 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
   return `${(cellValue || 0).toFixed(2)} %`
 }
 
+const safeParse = (val: any) => {
+  try {
+    return JSON.parse(val)
+  } catch {
+    return null
+  }
+}
+
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any, index: number) => {
-  console.log(selection, "selection123123")
+  const oldStorage = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
   const ids = map(selection, v => v.id)
   multipleSelection.value = {
-    [index]: ids
+    [`${index}`]: ids
   }
+  const oldStorageData = safeParse(oldStorage) || {}
   const storageData = {
+    ...oldStorageData,
     [productId]: {
-      [index]: ids
+      ...oldStorageData[productId],
+      [`${index}`]: ids
     }
   }
   setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
@@ -457,13 +464,8 @@ const fetchConstructionInitData = async () => {
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
-  console.log(multipleSelection.value, "multipleSelection.value123")
-  let idsData: any = []
-  map(multipleSelection.value, (val, index) => {
-    idsData.push(...val)
-  })
-  console.log(idsData, "[结构料审核ids]")
-  if (!opinion.includes("_Yes") && !idsData.length) {
+  console.log(multipleSelection.value, "[结构料审核ids]")
+  if (!opinion.includes("_Yes") && !multipleSelection.value.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -478,12 +480,12 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: idsData,
+    structureUnitPriceId: multipleSelection.value,
     // peopleId: data.peopleId
   })
 
   if (success) {
-     closeSelectedTag(route.path)
+    closeSelectedTag(route.path)
   }
 }
 defineExpose({

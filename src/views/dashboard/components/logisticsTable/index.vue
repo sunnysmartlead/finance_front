@@ -79,16 +79,14 @@ const getLogisticsCost = async () => {
 }
 
 const getModifyData = async () => {
-  const { success, result }: any = (await GetUpdateItemLogisticsCost({
+  const { result }: any = (await GetUpdateItemLogisticsCost({
     AuditFlowId: auditFlowId,
     GradientId: props.gradientId,
     solutionId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
-  if (success) {
-    modifyData.value = result || []
-  }
+  modifyData.value = result || []
 }
 
 const handleEdit = (row: any) => {
@@ -106,7 +104,7 @@ const handleSubmit = async () => {
   const { success } = await SetUpdateItemMaterial({
     updateItem: modifyData.value,
     auditFlowId,
-    modifyData,
+    SolutionId: solutionId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
@@ -116,6 +114,7 @@ const handleSubmit = async () => {
       type: 'success',
       message: '提交成功！'
     })
+    props.onRefresh()
   }
 }
 

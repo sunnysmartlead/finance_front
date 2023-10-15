@@ -939,7 +939,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="出口国家:" prop="country">
-              <el-select v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
+              <el-select filterable v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
                 :disabled="isDisabled">
                 <el-option v-for="item in state.countryOptions" :key="item.dbId" :label="item.country"
                   :value="item.country" />

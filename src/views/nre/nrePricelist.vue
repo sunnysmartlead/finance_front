@@ -200,10 +200,6 @@
       </el-table>
     </el-card>
     <el-card class="margin-top" header="工装费用">
-      <el-descriptions m="2" border>
-        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
-        <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
-      </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')">新增</el-button>
       </el-row>

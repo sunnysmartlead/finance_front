@@ -2,16 +2,16 @@
   <el-row class="m-2" justify="end" style="margin-top: 20px">
     <ProcessVertifyBox :onSubmit="handleSetBomState" processType="bomCostProcessType" />
   </el-row>
-  <el-card header="电子料单价" class="m-2">
-    <ElectronicTable ref="electronicRef" />
-  </el-card>
   <el-card header="结构BOM单价" class="m-2">
-    <ConstructionTable ref="constructionRef" />
+    <ConstructionTable isVertify isMergeVertify ref="constructionRef" />
+  </el-card>
+  <el-card header="电子料单价" class="m-2">
+    <ElectronicTable isVertify isMergeVertify ref="electronicRef" />
   </el-card>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import ElectronicTable from "@/components/ElectronicTable/index.vue"
 import ConstructionTable from "@/components/ConstructionTable/index.vue"
 import { ElMessage } from "element-plus" //  ElMessageBox,

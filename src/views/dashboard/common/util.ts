@@ -1,3 +1,6 @@
+import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { sortBy } from 'lodash'
+
 /**
  * @param value 数字值
  */
@@ -16,4 +19,19 @@ export function bigNumberTransform(val: any) {
   }
   if (val < 0) return "-" + newValue.join("")
   return newValue.join("")
+}
+
+export const getEditTotal = (originArr: any[], editArr: any[], key: string) => {
+  const originLen = originArr.length
+  if (!originLen) {
+    return 0
+  }
+  let total = 0
+  originArr.forEach((item: any) => {
+    const findData = editArr?.find(c => c.editId === item.editId)
+    if (findData) {
+      total += findData[key]
+    } else total += Number(item[key])
+  })
+  return formatThousandths(null,null,total)
 }

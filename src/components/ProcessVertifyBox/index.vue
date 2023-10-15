@@ -15,17 +15,18 @@
       <el-form>
         <el-form-item label="选择类型">
           <el-select v-model="data.opinion">
-            <el-option v-for="item in (PROGRESSTYPE[props.processType] || [])" :key="item.val" :label="item.label" :value="item.val" />
+            <el-option v-for="item in (PROGRESSTYPE[props.processType] || [])" :key="item.val" :label="item.label"
+              :value="item.val" />
           </el-select>
         </el-form-item>
         <el-form-item label="审批意见">
-          <el-input
-            v-model="data.comment"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            type="textarea"
-            placeholder="请输入审批意见"
-          />
+          <el-input v-model="data.comment" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" placeholder="请输入审批意见" />
         </el-form-item>
+        <!-- <el-form-item label="要退回的方案">
+          <el-checkbox-group v-model="data.solutionIds">
+            <el-checkbox v-for="item in solutionIdOptions" :key="item.id" :label="item.product" :value="item.id" />
+            </el-checkbox-group>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -38,17 +39,21 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, PropType } from "vue"
-// import { ElMessage } from "element-plus"
+import { reactive, PropType, computed } from "vue"
+
 import { useRoute } from "vue-router"
-// import useJump from "@/hook/useJump"
 import PROGRESSTYPE from "@/constant/approvalProcess"
+import { useProductStore } from "@/store/modules/productList"
+
+const productStore = useProductStore()
 
 const data: any = reactive({
   dialogVisible: false,
   comment: "",
   opinion: "",
+  solutionIds: []
 })
+
 
 const props = defineProps({
   onSubmit: {
@@ -63,8 +68,13 @@ const props = defineProps({
     default: 0
   }
 })
+
 const route = useRoute()
-// const { closeSelectedTag } = useJump()
+
+const solutionIdOptions = computed(() => {
+  return productStore?.productList || []
+})
+
 const onSubmit = async () => {
   const label = PROGRESSTYPE[props.processType]?.find((v: any) => v.val === data.opinion)?.label || ''
   let { nodeInstanceId } = route.query
@@ -72,11 +82,9 @@ const onSubmit = async () => {
     comment: data.comment,
     opinion: data.opinion,
     nodeInstanceId: nodeInstanceId,
-    label
+    label,
+    ids: data.solutionIds
   })
   data.dialogVisible = false
-  // if (!['YesOrNo_Save', 'Save'].includes(data.opinion)) {
-  //   closeSelectedTag(route.path)
-  // }
 }
 </script>

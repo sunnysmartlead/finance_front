@@ -1,44 +1,35 @@
 <template>
   <div>
-    <el-card m="2" header="其他成本">
-      <otherCostTable :otherCostData="otherCostData" :hideEdit="hideEdit" />
+    <el-card m="2" header="其他成本" v-loading="loading">
+      <otherCostTable :otherCostData="otherCostData" :hideEdit="hideEdit" :onEdit="handleEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>
           <el-row v-if="!hideEdit">
-            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
-            <el-upload
-              :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-              :on-success="handleSuccess"
-              show-file-list
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadError"
-              v-model:file-list="fileList"
-              :limit="1"
-            >
-              <el-button type="primary" m="2">上传佐证资料</el-button>
-            </el-upload>
           </el-row>
         </el-row>
       </template>
-      <otherCostTable :isEdit="!hideEdit" :manufactureData="modifyData" :on-delete="handleDelete" />
+      <otherCostTable :isEdit="!hideEdit" :otherCostData="modifyData" :on-delete="handleDelete" />
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="修改后合计：">
+          {{ editTotal }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { PropType, ref, onMounted, watch } from "vue"
+import { PropType, ref, onMounted, watch, computed } from "vue"
 import { GetUpdateItemOtherCost, SetUpdateItemOtherCost, GetOtherCostItem } from "../../service"
 import otherCostTable from "./otherCostTable.vue"
 import getQuery from "@/utils/getQuery"
-import { isEmpty } from "lodash"
-import type { UploadProps, UploadUserFile } from "element-plus"
-import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
-
+import { getEditTotal } from '../../common/util'
 const { auditFlowId, productId: SolutionId } = getQuery()
+import { cloneDeep, map, isEmpty } from 'lodash'
 
 const props = defineProps({
   manufactureData: {
@@ -48,12 +39,20 @@ const props = defineProps({
     type: Object as PropType<any>
   },
   gradientId:  String,
-  hideEdit: Boolean
+  hideEdit: Boolean,
+  onRefresh: {
+    type: Function as PropType<any>
+  }
 })
 
 const otherCostData = ref<any>([])
 const modifyData = ref<any>([])
-const fileList =ref<UploadUserFile[]>([])
+const loading = ref(false)
+
+const editTotal = computed(() => {
+  const total = getEditTotal(otherCostData.value || [], modifyData.value || [], 'cost')
+  return total
+})
 
 const getModifyData = async () => {
   const res = (await GetUpdateItemOtherCost({
@@ -67,6 +66,7 @@ const getModifyData = async () => {
 
 const getOtherCost = async () => {
   try {
+    loading.value = true
   const { yearData, gradientId } = props
     const { result, success }: any = await GetOtherCostItem({
       Year: yearData.year,
@@ -76,10 +76,12 @@ const getOtherCost = async () => {
       GradientId: gradientId,
     }) || {}
     if (success) {
-      otherCostData.value = result || []
+      otherCostData.value = map(result, (item, index) => ({ ...item, editId: item.editId || (index + 1) })) || []
     }
+    loading.value = false
     console.log(result, "获取其他成本")
   } catch (err: any) {
+    loading.value = false
     console.log(err, "[ 获取其他成本失败 ]")
   }
 }
@@ -92,14 +94,6 @@ const init = () => {
 }
 
 const handleSubmit = async () => {
-  const fileIds =  fileList.value.map((item: any) => item.response.result?.fileId) || []
-  if (!fileIds.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先上传佐证资料！'
-    })
-    return
-  }
   if (!modifyData.value.length) {
     ElMessage({
       type: 'error',
@@ -111,11 +105,11 @@ const handleSubmit = async () => {
     updateItem: modifyData.value,
     auditFlowId,
     gradientId: props.gradientId,
-    file: fileIds[0],
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
   if (success) {
+    props.onRefresh()
     ElMessage({
       type: 'success',
       message: '提交成功！'
@@ -123,20 +117,17 @@ const handleSubmit = async () => {
   }
 }
 
-const addEditList = () => {
-  modifyData.value.push({})
-}
 
 const handleDelete = (index: number) => {
   modifyData.value.splice(index, 1)
 }
 
-const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
-  if (res.success) {
-    ElMessage({
-      message: "上传成功",
-      type: "success"
-    })
+const handleEdit = (row: any) => {
+  const findData = modifyData.value.find((item: any) => item.editId === row.editId)
+
+  if (!findData) {
+    console.log(row, 'findData111')
+    modifyData.value.push(cloneDeep(row))
   }
 }
 

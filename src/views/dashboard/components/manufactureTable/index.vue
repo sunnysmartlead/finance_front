@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card m="2" header="制造成本">
+    <el-card m="2" header="制造成本" v-loading="loading">
       <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
@@ -8,29 +8,29 @@
         <el-row justify-between>
           <span>修改项：</span>
           <el-row v-if="!hideEdit">
-            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
-            <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
-              show-file-list :on-progress="handleGetUploadProgress" :on-error="handleUploadError"
-              v-model:file-list="fileList" :limit="1">
-              <el-button type="primary" m="2">上传佐证资料</el-button>
-            </el-upload>
           </el-row>
         </el-row>
       </template>
       <manufactureTable :isEdit="!hideEdit" :manufactureData="modifyData" :on-delete="handleDelete" />
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="修改后合计：">
+          {{ editTotal }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { PropType, ref, onMounted, watch } from "vue"
+import { PropType, ref, onMounted, watch, computed } from "vue"
 import { GetUpdateItemManufacturingCost, SetUpdateItemManufacturingCost, GetManufacturingCost } from "../../service"
 import manufactureTable from "./manufactureTable.vue"
 import getQuery from "@/utils/getQuery"
-import { cloneDeep, isEmpty } from "lodash"
+import { cloneDeep, isEmpty, map } from "lodash"
 import type { UploadProps, UploadUserFile } from "element-plus"
-import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
+import { getEditTotal } from '../../common/util'
+import { Loading } from "@element-plus/icons-vue"
 
 
 const { auditFlowId, productId: SolutionId } = getQuery()
@@ -43,16 +43,25 @@ const props = defineProps({
     type: Object as PropType<any>
   },
   gradientId: Number,
-  hideEdit: Boolean
+  hideEdit: Boolean,
+  onRefresh: {
+    type: Function as PropType<any>
+  }
 })
 
 const modifyData = ref<any>([])
 const manufactureData = ref<any>([])
-const fileList = ref<UploadUserFile[]>([])
+const loading = ref(false)
+
+const editTotal = computed(() => {
+  const total = getEditTotal(manufactureData.value || [], modifyData.value || [], 'subtotal')
+  return total
+})
 
 // 获取 制造成本汇总表
 const getManufacturingCost = async () => {
   try {
+    loading.value = true
     const { yearData, gradientId } = props
     const { result }: any = await GetManufacturingCost({
       Year: yearData.year,
@@ -61,9 +70,11 @@ const getManufacturingCost = async () => {
       UpDown: yearData.upDown,
       GradientId: gradientId,
     })
-    manufactureData.value = result
+    manufactureData.value = map(result, (item, index) => ({ ...item, editId: item.editId || (index + 1) })) || []
     console.log(result, "getManufacturingCost")
+    loading.value = false
   } catch (err: any) {
+    loading.value = false
     console.log(err, "[ 获取 制造成本汇总表据失败 ]")
   }
 }
@@ -85,25 +96,8 @@ const init = () => {
   }
 }
 
-const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
-  if (res.success) {
-    ElMessage({
-      message: "上传成功",
-      type: "success"
-    })
-  }
-}
-
 
 const handleSubmit = async () => {
-  const fileIds = fileList.value.map((item: any) => item.response.result?.fileId) || []
-  if (!fileIds.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先上传佐证资料！'
-    })
-    return
-  }
   if (!modifyData.value.length) {
     ElMessage({
       type: 'error',
@@ -115,7 +109,6 @@ const handleSubmit = async () => {
     updateItem: modifyData.value,
     auditFlowId,
     gradientId: props.gradientId,
-    file: fileIds[0],
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
@@ -124,34 +117,15 @@ const handleSubmit = async () => {
       type: 'success',
       message: '提交成功！'
     })
+    props.onRefresh()
   }
 }
 
 const handleEdit = (row: any) => {
-  console.log(row, "row123")
-  modifyData.value.push(cloneDeep(row))
-}
-
-const addEditList = () => {
-  modifyData.value.push({
-    costType: 0,
-    costItem: "",
-    gradientKy: 0,
-    manufacturingCostDirect: {
-      directLabor: 0,
-      equipmentDepreciation: 0,
-      lineChangeCost: 0,
-      manufacturingExpenses: 0,
-      subtotal: 0,
-    },
-    manufacturingCostIndirect: {
-      directLabor: 0,
-      equipmentDepreciation: 0,
-      manufacturingExpenses: 0,
-      subtotal: 0,
-    },
-    subtotal: 0,
-  })
+  const findData = modifyData.value.find((item: any) => item.editId === row.editId)
+  if (!findData) {
+    modifyData.value.push(cloneDeep(row))
+  }
 }
 
 watch(
@@ -191,8 +165,4 @@ watch(
 onMounted(() => {
   init()
 })
-const toFixedThree = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(3)
-  return val
-}
 </script>

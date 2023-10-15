@@ -53,7 +53,7 @@
         :gradientId="data.form.gradientId" />
       <!-- 损耗成本  -->
       <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" />
+        :gradientId="data.form.gradientId" :on-refresh="init" />
       <!-- 制造成本  -->
       <manufactureTable :hideEdit="hideEdit" v-if="data.mode === '3'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" />

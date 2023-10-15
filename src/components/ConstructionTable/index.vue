@@ -14,10 +14,10 @@
       </div>
       <div v-for="(item, bomIndex) in constructionBomList" :key="item.superTypeName">
         <el-card m="2" v-loading="item.loading">
-          <template #header v-if="!isVertify">
+          <template #header >
             <div class="card-header">
               <span>{{ item.superTypeName }}</span>
-              <span class="card-span">
+              <span class="card-span" v-if="!isVertify">
                 未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span>
             </div>
           </template>

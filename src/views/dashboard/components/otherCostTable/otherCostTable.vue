@@ -1,6 +1,6 @@
 <template>
-  <el-table :data="otherCostData" border height="675" :span-method="objectSpanMethod"
-    :summary-method="(val: any) => getSummaries(val, '单颗成本', 'cost')" show-summary>
+  <el-table :data="otherCostData" border :height="otherCostData.length > 12 ? 675 : 'auto'" :span-method="objectSpanMethod"
+    :summary-method="(val: any) => getSummaries(val, '单颗成本', 'cost')" :show-summary="!isEdit">
     <el-table-column align="center" prop="costType" label="费用大类" />
     <el-table-column align="center" prop="itemName" label="成本项目">
       <template #default="{ row }">
@@ -57,7 +57,8 @@ import { getSummaries } from "../../common/getSummaries"
 
 const props = defineProps({
   otherCostData: {
-    type: Array as PropType<any[]>
+    type: Array as PropType<any[]>,
+    default: []
   },
   isEdit: {
     type: Boolean

@@ -101,7 +101,7 @@ const init = () => {
 
 const goEdit = () => {
   router.push({
-    path: "/bomVerify/index",
+    path: "/bomVerify/edit",
     query: {
       auditFlowId,
       productId: solutionId

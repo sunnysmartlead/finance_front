@@ -72,6 +72,8 @@ import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/ut
 const route = useRoute()
 const { auditFlowId, right = 1, productId }: any = getQuery()
 
+const { closeSelectedTag } = useJump()
+
 import { ElTable } from 'element-plus'
 import { map } from "lodash"
 
@@ -173,6 +175,7 @@ const handleVertify = async ({ comment, opinion, nodeInstanceId, label }: any) =
   })
   if (success) {
     ElMessage.success(`${label}成功`)
+    closeSelectedTag(route.path)
     removeSessionStorage('mouldInventorySelection')
   }
 }
@@ -188,7 +191,6 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
   })
   if (success) {
     ElMessage.success(`${label}成功`)
-    removeSessionStorage('mouldInventorySelection')
   }
 }
 

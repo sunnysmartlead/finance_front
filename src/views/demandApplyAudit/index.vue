@@ -141,13 +141,13 @@
             <el-input v-model="row.rests" placeholder="请录入其他" />
           </template>
         </el-table-column>
-        <el-table-column prop="fileId" label="上传3D爆炸图" fixed="right" width="200">
+        <el-table-column prop="fileId" label="TR上传或3D爆炸图、原理框图上传" fixed="right" width="200">
           <template #default="{ row, $index }">
             <el-upload v-model:file-list="fileList[$index]" class="upload-demo"
               :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
               :on-success="(val) => handleSuccess3D(val, row.uuid, $index)" :on-change="handleFileChange3D"
               :on-progress="handleGetUploadProgress" :on-error="handleUploadTemplateError" show-file-list>
-              <el-button type="primary">点击上传3D爆炸图</el-button>
+              <el-button type="primary">上传</el-button>
             </el-upload>
           </template>
         </el-table-column>

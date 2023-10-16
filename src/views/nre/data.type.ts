@@ -79,7 +79,7 @@ export interface RestsCostModel {
   /**
    * 项目
    */
-  rroject?: null | string
+  constName?: null | string
 }
 
 /**

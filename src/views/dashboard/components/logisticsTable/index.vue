@@ -23,7 +23,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType, ref, onMounted, watch, computed } from "vue"
-import { GetLogisticsCost, SetUpdateItemMaterial, GetUpdateItemLogisticsCost } from "../../service"
+import { GetLogisticsCost, SetUpdateItemLogisticsCost, GetUpdateItemLogisticsCost } from "../../service"
 import logisticsTable from "./logisticsTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty, map } from "lodash"
@@ -101,7 +101,7 @@ const handleSubmit = async () => {
     })
     return
   }
-  const { success } = await SetUpdateItemMaterial({
+  const { success } = await SetUpdateItemLogisticsCost({
     updateItem: modifyData.value,
     auditFlowId,
     SolutionId: solutionId,

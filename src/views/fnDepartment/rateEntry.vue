@@ -10,65 +10,124 @@
       </el-row>
       <el-table :data="tableData" height="50vh" style="width: 100%; margin-top: 25px" border>
         <el-table-column label="年份" prop="year" />
-        <el-table-column label="直接其他费用作业价格">
-          <template #default="{ row }">
-            <el-input-number controls-position="right" :min="0" v-model="row.directManufacturingRate" />
-          </template>
-        </el-table-column>
-        <el-table-column label="间接人工作业价格">
-          <template #default="{ row }">
-            <el-input-number controls-position="right" :min="0" v-model="row.indirectLaborRate" />
-          </template>
-        </el-table-column>
-        <el-table-column label="间接折旧作业价格">
-          <template #default="{ row }">
-            <el-input-number controls-position="right" :min="0" v-model="row.indirectDepreciationRate" />
-          </template>
-        </el-table-column>
-        <el-table-column label="间接其他费用作业价格">
-          <template #default="{ row }">
-            <el-input-number controls-position="right" :min="0" v-model="row.indirectManufacturingRate" />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" fixed="right" width="100">
-          <template #default="{ $index }">
-            <el-button type="danger" @click="handleDelete($index)">删除</el-button>
+        <el-table-column label="直接其他费用作业价格" prop="directManufacturingRate" />
+        <el-table-column label="间接人工作业价格" prop="indirectLaborRate" />
+        <el-table-column label="间接折旧作业价格" prop="indirectDepreciationRate" />
+        <el-table-column label="间接其他费用作业价格" prop="indirectManufacturingRate" />
+        <el-table-column label="操作" fixed="right" width="180">
+          <template #default="{ $index, row }">
+            <el-button @click="handleEdit(row)">编辑</el-button>
+            <el-button type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
+    <el-dialog v-model="visible" title="作业价格" @close="handleCancel(formRef)">
+      <el-form ref="formRef" label-width="180px" inline :model="formData" status-icon>
+        <el-form-item label="年份" prop="year">
+          <el-input v-model="formData.year" readonly />
+        </el-form-item>
+        <el-form-item label="直接其他费用作业价格" prop="directManufacturingRate">
+          <el-input controls-position="right" v-model="formData.directManufacturingRate" />
+        </el-form-item>
+        <el-form-item label="间接人工作业价格" prop="indirectLaborRate">
+          <el-input-number controls-position="right" :min="0" v-model="formData.indirectLaborRate" />
+        </el-form-item>
+        <el-form-item label="间接折旧作业价格" prop="indirectDepreciationRate">
+          <el-input-number controls-position="right" :min="0" v-model="formData.indirectDepreciationRate" />
+        </el-form-item>
+        <el-form-item label="间接其他费用作业价格" prop="indirectManufacturingRate">
+          <el-input-number controls-position="right" :min="0" v-model="formData.indirectManufacturingRate" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-row justify="end">
+          <el-button @click="handleCancel(formRef)"> 取消 </el-button>
+          <el-button type="primary" @click="handleSubmit">确认</el-button>
+        </el-row>
+      </template>
+    </el-dialog>
     <LogList m="2" :type="16" ref="logListRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onBeforeMount, onMounted, watchEffect } from "vue"
-import { GetRateEntry, SaveRateEntryInput } from "./service"
+import { ref, onBeforeMount, onMounted, watchEffect, reactive } from "vue"
+import { GetRateEntry, SaveRateEntryInput, ModifyRateEntryInput, DelRateEntryInput } from "./service"
 import { RateEntryInfo } from "./data.type"
-import { ElMessage } from "element-plus"
+import { ElMessage, ElMessageBox } from "element-plus"
 import LogList, { LogListAPI } from "@/components/LogList/index.vue"
+import { map } from "lodash"
+import type { FormInstance } from 'element-plus'
+
+interface RuleForm {
+  directManufacturingRate: number
+  indirectLaborRate: number
+  indirectDepreciationRate: number
+  indirectManufacturingRate: number
+  year: number
+}
 
 /**
  * 数据部分
  */
 const tableData = ref<RateEntryInfo[]>([])
 const logListRef = ref<LogListAPI | null>(null)
+const visible = ref(false)
+const isEdit = ref(false)
+const formRef = ref<FormInstance>()
 
+const formData = reactive<RuleForm>({
+  directManufacturingRate: 0,
+  indirectLaborRate: 0,
+  indirectDepreciationRate: 0,
+  indirectManufacturingRate: 0,
+  year: 0
+})
+
+const handleCancel = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl?.resetFields()
+}
 
 // 新增年
 const handleAddYear = () => {
-  const len = tableData.value.length
-  let newYear = new Date().getFullYear()
- if (len) {
-    newYear = (tableData.value[len - 1].year || 0) + 1
- }
- tableData.value.push({
-    directManufacturingRate: 0,
-    indirectLaborRate: 0,
-    indirectDepreciationRate: 0,
-    indirectManufacturingRate: 0,
-    year: newYear
+  visible.value = true
+  isEdit.value = false
+  setTimeout(() => {
+    console.log(formRef?.value?.resetFields)
+    formRef?.value?.resetFields()
+    const len = tableData.value.length
+    let newYear = new Date().getFullYear()
+    if (len) {
+      newYear = (tableData.value[len - 1].year || 0) + 1
+    }
+    formData.year = newYear
+  }, 300)
+}
+
+const handleEdit = (row: any) => {
+  map(row, (val, key) => {
+    formData[key] = val
   })
+  isEdit.value = true
+  visible.value = true
+}
+
+const handleModify = async () => {
+  const { success } = await ModifyRateEntryInput({
+    ...formData
+  })
+  if (success) {
+    logListRef.value?.onRefresh()
+    initFetch()
+    visible.value = false
+    ElMessage.success('修改成功！')
+  }
+}
+
+const handleSubmit = () => {
+  isEdit ? handleModify() : submit()
 }
 
 onBeforeMount(() => {
@@ -79,8 +138,25 @@ onMounted(() => {
   initFetch()
 })
 
-const handleDelete = (index: number) => {
-  tableData.value.splice(index, 1)
+const handleDelete = async (id: number) => {
+  ElMessageBox.confirm(
+    '请确认要删除该项数据嘛?',
+    '请谨慎操作！',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      const { success } = await DelRateEntryInput({ id })
+      if (success) {
+        initFetch()
+        logListRef.value?.onRefresh()
+        ElMessage.success('删除成功！')
+      }
+    })
+
 }
 
 watchEffect(() => { })
@@ -89,8 +165,8 @@ const initFetch = async () => {
   try {
     const { success, result } = await GetRateEntry()
     if (!success) throw Error()
-    if (result.rateEntryInfos.length > 0) {
-      tableData.value = result.rateEntryInfos || []
+    if (result.length > 0) {
+      tableData.value = result || []
     } else {
       tableData.value.push({
         directManufacturingRate: 0,
@@ -107,11 +183,13 @@ const initFetch = async () => {
 
 const submit = async () => {
   const { success } = await SaveRateEntryInput({
-    rateEntryInfos: tableData.value
+    ...formData
   })
   if (success) {
+    initFetch()
     logListRef.value?.onRefresh()
-    ElMessage.success("提交成功")
+    ElMessage.success("新增成功")
+    visible.value = false
   }
 }
 </script>

@@ -168,7 +168,7 @@ const handleVertify = async ({ comment, opinion, nodeInstanceId, label }: any) =
   const { success } = await NREToExamine({
     auditFlowId,
     nreCheckType: 1,
-    opinionDescription: comment,
+    comment,
     opinion,
     nodeInstanceId,
     nreId,
@@ -184,7 +184,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
   const { success } = await NREToExamine({
     auditFlowId,
     nreCheckType: 1,
-    opinionDescription: comment,
+    comment,
     opinion,
     nodeInstanceId,
     nreId: multipleSelection.value

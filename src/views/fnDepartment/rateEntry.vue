@@ -22,7 +22,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog v-model="visible" title="作业价格" @close="handleCancel(formRef)">
+    <el-dialog v-model="visibleData" title="作业价格" @close="handleCancel(formRef)">
       <el-form ref="formRef" label-width="180px" inline :model="formData" status-icon>
         <el-form-item label="年份" prop="year">
           <el-input v-model="formData.year" readonly />
@@ -57,27 +57,19 @@ import { GetRateEntry, SaveRateEntryInput, ModifyRateEntryInput, DelRateEntryInp
 import { RateEntryInfo } from "./data.type"
 import { ElMessage, ElMessageBox } from "element-plus"
 import LogList, { LogListAPI } from "@/components/LogList/index.vue"
-import { map } from "lodash"
+import { cloneDeep, map } from "lodash"
 import type { FormInstance } from 'element-plus'
-
-interface RuleForm {
-  directManufacturingRate: number
-  indirectLaborRate: number
-  indirectDepreciationRate: number
-  indirectManufacturingRate: number
-  year: number
-}
 
 /**
  * 数据部分
  */
 const tableData = ref<RateEntryInfo[]>([])
 const logListRef = ref<LogListAPI | null>(null)
-const visible = ref(false)
+const visibleData = ref(false)
 const isEdit = ref(false)
 const formRef = ref<FormInstance>()
 
-const formData = reactive<RuleForm>({
+const formData = reactive<any>({
   directManufacturingRate: 0,
   indirectLaborRate: 0,
   indirectDepreciationRate: 0,
@@ -86,32 +78,32 @@ const formData = reactive<RuleForm>({
 })
 
 const handleCancel = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
   formEl?.resetFields()
+  visibleData.value = false
 }
 
 // 新增年
 const handleAddYear = () => {
-  visible.value = true
+  visibleData.value = true
   isEdit.value = false
+  const len = tableData.value.length
+  let newYear = new Date().getFullYear()
+  if (len) {
+    newYear = (tableData.value[len - 1].year || 0) + 1
+  }
   setTimeout(() => {
-    console.log(formRef?.value?.resetFields)
-    formRef?.value?.resetFields()
-    const len = tableData.value.length
-    let newYear = new Date().getFullYear()
-    if (len) {
-      newYear = (tableData.value[len - 1].year || 0) + 1
-    }
     formData.year = newYear
-  }, 300)
+  }, 50)
 }
 
 const handleEdit = (row: any) => {
-  map(row, (val, key) => {
-    formData[key] = val
-  })
   isEdit.value = true
-  visible.value = true
+  visibleData.value = true
+  setTimeout(() => {
+    map(cloneDeep(row), (val, key) => {
+      formData[key] = val
+    })
+  }, 50)
 }
 
 const handleModify = async () => {
@@ -121,7 +113,7 @@ const handleModify = async () => {
   if (success) {
     logListRef.value?.onRefresh()
     initFetch()
-    visible.value = false
+    visibleData.value = false
     ElMessage.success('修改成功！')
   }
 }
@@ -189,7 +181,7 @@ const submit = async () => {
     initFetch()
     logListRef.value?.onRefresh()
     ElMessage.success("新增成功")
-    visible.value = false
+    visibleData.value = false
   }
 }
 </script>

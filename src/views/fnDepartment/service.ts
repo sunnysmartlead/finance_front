@@ -115,10 +115,29 @@ export function GetRateEntry(): Promise<any> {
 }
 
 /** 保存费率录入 */
-export function SaveRateEntryInput(data: RateEntryDto): Promise<any> {
+export function SaveRateEntryInput(data: any): Promise<any> {
   return request({
     url: "/api/services/app/FinanceDepartmentInput/SaveRateEntryInput",
     method: "post",
+    data
+  })
+}
+
+
+/** 修改作业价格 */
+export function ModifyRateEntryInput(data: any): Promise<any> {
+  return request({
+    url: "/api/services/app/FinanceDepartmentInput/ModifyRateEntryInput",
+    method: "post",
+    data
+  })
+}
+
+/** 删除作业价格 */
+export function DelRateEntryInput(data: any): Promise<any> {
+  return request({
+    url: "/api/services/app/FinanceDepartmentInput/DelRateEntryInput",
+    method: "get",
     data
   })
 }

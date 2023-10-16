@@ -139,7 +139,7 @@
         <el-table-column type="index" width="80" label="序号" />
         <el-table-column label="费用名称">
           <template #default="{ row }">
-            <el-input v-model="row.rroject" />
+            <el-input v-model="row.constName" />
           </template>
         </el-table-column>
         <el-table-column label="费用">
@@ -206,7 +206,7 @@ const addHandboardCost = () => {
 }
 
 const addOtherCostData = () => {
-  data.restsCost.push({ rroject: "", cost: 0, remark: "" })
+  data.restsCost.push({ constName: "", cost: 0, remark: "" })
 }
 
 const addTravelCostData = () => {

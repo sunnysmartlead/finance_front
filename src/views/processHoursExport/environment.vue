@@ -156,7 +156,8 @@ const uploadAction = baseDomain + "api/services/app/Foundationreliable/UploadFou
 const data = reactive({
   queryParams: {
     name: undefined,
-    classification: undefined
+    classification: undefined,
+    type:1,
   },
 })
 const { queryParams } = toRefs(data)

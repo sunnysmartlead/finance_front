@@ -3,8 +3,8 @@
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center"/>
       <div>
-<!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
+        <el-button @click="handleSaveData" type="primary">保存</el-button>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>
         <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>
@@ -652,7 +652,7 @@
             <div class="u-border u-height-34 u-width-150">
               <span>SMT-UPH值</span>
             </div>
-            <div class="u-border u-height-34 u-width-150" v-show="isCOB">
+            <div class="u-border u-height-34 u-width-150" v-if="isCOB">
               <span>COB-UPH值</span>
             </div>
             <div class="u-border u-height-34 u-width-150">
@@ -666,7 +666,7 @@
             <div class="u-border u-width-150 u-text-center">
               <el-input v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
-            <div class="u-border u-width-150 u-text-center" v-show="isCOB">
+            <div class="u-border u-width-150 u-text-center" v-if="isCOB">
               <el-input v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
@@ -721,13 +721,19 @@
           <div>
             <div class="u-flex u-row-left u-col-center">
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                <span>序号</span>
+                <span>客户零件号</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>子项目代码</span>
+              </div>
+              <div class="u-border u-text-center u-width-500 u-p-t-5 u-p-b-5">
                 <span>产品名称</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
                 <span>产品大类</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>像素</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
                    v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
@@ -739,13 +745,19 @@
             </div>
             <div class="u-flex u-row-left u-col-center">
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                <span>{{ project.order }}</span>
-              </div>
-              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
-                <span>{{ project.product }}</span>
+                <span>{{ project.partNumber }}</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
                 <span>{{ project.code }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-500 u-p-t-5 u-p-b-5">
+                <span>{{ project.product }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>{{ project.productTypeName }}</span>
+              </div>
+              <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5">
+                <span>{{ project.pixel }}</span>
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
                    v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
@@ -1549,7 +1561,12 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       let data = response.result
       console.log("根据工序序号查询信息结果", data)
       dataArr.value[dataIndex] = data
-      dataArr.value[dataIndex].sopInfo = yearList
+      console.log(yearList)
+      console.log(yearList)
+      console.log(yearList)
+      if (data.sopInfo.value.length != yearList.value.length) {
+        dataArr.value[dataIndex].sopInfo = yearList
+      }
       console.log("根据工序序号查询信息111结果", dataArr.value[dataIndex])
     } else {
       ElMessage({
@@ -2325,111 +2342,7 @@ const showProjectDialog = async () => {
 }
 const dialogTableVisible = ref(false)
 const dialogProData = ref([
-  {
-    spec: "300K/Y",
-    data: [
-      {
-        groupIndex: "序号1",
-        prodName: "产品名称1",
-        prodBigCategory: "产品大类1",
-        years: [
-          {
-            year: "2023",
-            yearVal: "二零二三"
-          },
-          {
-            year: "2024",
-            yearVal: "二零二四"
-          }
-        ]
-      },
-      {
-        groupIndex: "序号",
-        prodName: "产品名称",
-        prodBigCategory: "产品大类",
-        years: [
-          {
-            year: "2023",
-            yearVal: "二零二三"
-          },
-          {
-            year: "2024",
-            yearVal: "二零二四"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    spec: "600K/Y",
-    data: [
-      {
-        groupIndex: "序号1",
-        prodName: "产品名称1",
-        prodBigCategory: "产品大类1",
-        years: [
-          {
-            year: "2023",
-            yearVal: "二零二三"
-          },
-          {
-            year: "2024",
-            yearVal: "二零二四"
-          }
-        ]
-      },
-      {
-        groupIndex: "序号",
-        prodName: "产品名称",
-        prodBigCategory: "产品大类",
-        years: [
-          {
-            year: "2023",
-            yearVal: "二零二三"
-          },
-          {
-            year: "2024",
-            yearVal: "二零二四"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    spec: "1200K/Y",
-    data: [
-      {
-        groupIndex: "序号1",
-        prodName: "产品名称1",
-        prodBigCategory: "产品大类1",
-        years: [
-          {
-            year: "2023",
-            yearVal: "二零二三"
-          },
-          {
-            year: "2024",
-            yearVal: "二零二四"
-          }
-        ]
-      },
-      {
-        groupIndex: "序号",
-        prodName: "产品名称",
-        prodBigCategory: "产品大类",
-        years: [
-          {
-            year: "2023",
-            yearVal: "二零二三"
-          },
-          {
-            year: "2024",
-            yearVal: "二零二四"
-          }
-        ]
-      }
-    ]
-  }
+
 ])
 
 //-----------------------------选择标准工艺名称代码块---------------------------------

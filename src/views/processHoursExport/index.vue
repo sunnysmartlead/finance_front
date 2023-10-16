@@ -652,7 +652,7 @@
             <div class="u-border u-height-34 u-width-150">
               <span>SMT-UPH值</span>
             </div>
-            <div class="u-border u-height-34 u-width-150" v-show="isCOB">
+            <div class="u-border u-height-34 u-width-150" v-if="isCOB">
               <span>COB-UPH值</span>
             </div>
             <div class="u-border u-height-34 u-width-150">
@@ -666,7 +666,7 @@
             <div class="u-border u-width-150 u-text-center">
               <el-input v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
-            <div class="u-border u-width-150 u-text-center" v-show="isCOB">
+            <div class="u-border u-width-150 u-text-center" v-if="isCOB">
               <el-input v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">

@@ -3,15 +3,15 @@
     <ProcessVertifyBox :onSubmit="handleSetBomState" processType="bomCostProcessType" />
   </el-row>
   <el-card header="结构BOM单价" class="m-2">
-    <ConstructionTable ref="constructionRef" />
+    <ConstructionTable isVertify isMergeVertify ref="constructionRef" />
   </el-card>
   <el-card header="电子料单价" class="m-2">
-    <ElectronicTable ref="electronicRef" />
+    <ElectronicTable isVertify isMergeVertify ref="electronicRef" />
   </el-card>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import ElectronicTable from "@/components/ElectronicTable/index.vue"
 import ConstructionTable from "@/components/ConstructionTable/index.vue"
 import { ElMessage } from "element-plus" //  ElMessageBox,
@@ -33,11 +33,8 @@ const electronicRef = ref<any>()
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   const constructionSelection = constructionRef.value.getSelection()
   const electronicSelection = electronicRef.value.getSelection() || []
-  const constructionIds: any = []
-  map(constructionSelection, (val) => {
-    constructionIds.push(...val)
-  })
-  if (!opinion.includes("_Yes") && !constructionIds.length && electronicSelection.length) {
+
+  if (!opinion.includes("_Yes") && !constructionSelection.length && electronicSelection.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -50,7 +47,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: constructionIds,
+    structureUnitPriceId: constructionSelection,
     electronicsUnitPriceId: electronicSelection
   })
   if (success) closeSelectedTag(router.path)

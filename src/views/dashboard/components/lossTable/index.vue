@@ -8,35 +8,28 @@
         <el-row justify-between>
           <span>修改项：</span>
           <el-row v-if="!hideEdit">
-            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
-            <el-upload
-              :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-              :on-success="handleSuccess"
-              show-file-list
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadError"
-              v-model:file-list="fileList"
-              :limit="1"
-            >
-              <el-button type="primary" m="2">上传佐证资料</el-button>
-            </el-upload>
           </el-row>
         </el-row>
       </template>
       <lossTable :isEdit="!hideEdit" :lossData="modifyData" :on-delete="handleDelete" />
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="修改后合计：">
+          {{ editTotal }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { PropType, ref, onMounted, watch } from "vue"
+import { PropType, ref, onMounted, watch, computed } from "vue"
 import { GetUpdateItemLossCost, SetUpdateItemLossCost, GetLossCost } from "../../service"
 import lossTable from "./lossTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty, cloneDeep } from "lodash"
-import type { UploadProps, UploadUserFile } from "element-plus"
-import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
+import { map } from 'lodash';
+import { getEditTotal } from '../../common/util'
 
 const { auditFlowId, productId: solutionId } = getQuery()
 
@@ -45,12 +38,19 @@ const props = defineProps({
     type: Object as PropType<any>
   },
   gradientId: Number,
-  hideEdit: Boolean
+  hideEdit: Boolean,
+  onRefresh: {
+    type: Function as PropType<any>
+  }
 })
 
 const lossData = ref<any>([])
 const modifyData = ref<any>([])
-const fileList = ref<any>([])
+
+const editTotal = computed(() => {
+  const total = getEditTotal(lossData.value || [], modifyData.value || [], 'wastageCost')
+  return total
+})
 
 // 获取损耗成本
 const getLossCost = async () => {
@@ -59,11 +59,11 @@ const getLossCost = async () => {
     const { result }: any = await GetLossCost({
       Year: yearData.year,
       AuditFlowId: auditFlowId,
-      solutionId,
+      SolutionId: solutionId,
       UpDown: yearData.upDown,
       GradientId: gradientId,
     })
-    lossData.value = result || []
+    lossData.value = map(result, (item, index) => ({ ...item, editId: item.editId || (index + 1) })) || []
     console.log(result, "获取损耗成本")
   } catch (err: any) {
     console.log(err, "[ 获取损耗成本数据失败 ]")
@@ -84,22 +84,13 @@ const getModifyData = async () => {
 }
 
 const handleEdit = (row: any) => {
-  modifyData.value.push(cloneDeep(row))
-}
-
-const addEditList = () => {
-  modifyData.value.push({})
+  const findData = modifyData.value.find((item: any) => item.editId === row.editId)
+  if (!findData) {
+    modifyData.value.push(cloneDeep(row))
+  }
 }
 
 const handleSubmit = async () => {
-  const fileIds =  fileList.value.map((item: any) => item.response.result?.fileId) || []
-  if (!fileIds.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先上传佐证资料！'
-    })
-    return
-  }
   if (!modifyData.value.length) {
     ElMessage({
       type: 'error',
@@ -111,8 +102,8 @@ const handleSubmit = async () => {
     updateItem: modifyData.value,
     auditFlowId,
     gradientId: props.gradientId,
-    file: fileIds[0],
     Year: props.yearData.year,
+    SolutionId: solutionId,
     UpDown: props.yearData.upDown,
   })
   if (success) {
@@ -120,6 +111,7 @@ const handleSubmit = async () => {
       type: 'success',
       message: '提交成功！'
     })
+    props.onRefresh()
   }
 }
 
@@ -128,15 +120,6 @@ const init = () => {
   if (props.gradientId && !isEmpty(props.yearData)) {
     getLossCost()
     getModifyData()
-  }
-}
-
-const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
-  if (res.success) {
-    ElMessage({
-      message: "上传成功",
-      type: "success"
-    })
   }
 }
 

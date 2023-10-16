@@ -125,7 +125,7 @@
       <div>
         <h5>本位币汇总：</h5>
         <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
-          <span class="descriptions-label">{{ `${c.kv} K/Y` }}</span>
+          <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} K/Y` }}</span>
           <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
             <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
               :label="yearItem.year + upDownEunm[yearItem.upDown]">
@@ -199,25 +199,29 @@ const fetchOptionsData = async () => {
   exchangeSelectOptions.value = exchangeSelect.result.items || []
 }
 
+const safeParse = (val: any) => {
+  try {
+    return JSON.parse(val)
+  } catch {
+    return null
+  }
+}
+
 const toggleSelection = () => {
   nextTick(() => {
     const storageData = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
-    let parseData: any = null
-    console.log(storageData, 'storageData')
+    let parseData: any = safeParse(storageData)
     if (!storageData) return
-    try {
-      parseData = JSON.parse(storageData)
-    } catch (err) {
-      console.log(err, '[电子单价审核界面赋值浏览器缓存失败]')
-    }
     if (parseData) {
       const ids = parseData[productId]
-      ids.forEach((id: number) => {
-        const findItem = electronicBomList.value?.find(c => c.id === id)
+
+      ids?.forEach((id: number) => {
+        const findItem = electronicBomList.value?.find((c: any) => c.id === id)
         if (findItem) {
           multipleTableRef.value && multipleTableRef.value!.toggleRowSelection(findItem, true)
         }
       })
+      multipleSelection.value = map(parseData, v => ([...v]))?.flat(2) || []
     }
   })
 }
@@ -391,17 +395,15 @@ const SubmitJudge = async (record: any, isSubmit: number, index: number) => {
 
 const submitFun = async (record: any, isSubmit: number, index: number) => {
   let { nodeInstanceId } = route.query
-  if (isSubmit) {
-    const isNotPass = record.systemiginalCurrency?.some((item: any) => {
-      return item.yearOrValueModes.some((c: any) => {
-        return c?.value
-      }) && !record?.remark
-    })
-    if (isNotPass && record.isEdited) {
-      return ElMessage.warning('请填写备注再提交！')
-    } else if (record.isEdited && !record.peopleName) {
-      return ElMessage.warning('请先确认再提交！')
-    }
+  const isNotPass = record.systemiginalCurrency?.some((item: any) => {
+    return item.yearOrValueModes.some((c: any) => {
+      return c?.value
+    }) && !record?.remark
+  })
+  if (isNotPass && record.isEdited) {
+    return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
+  } else if (record.isEdited && !record.peopleName && isSubmit) {
+    return ElMessage.warning('请先确认再提交！')
   }
   const { success } = await PostElectronicMaterialEntering({
     isSubmit,
@@ -420,7 +422,7 @@ const handleEdit = (row: any, isEdit: boolean) => {
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: any) => {
-  if (!opinion.includes("_Yes") && (!multipleSelection.value.length)) {
+  if (!opinion.includes("_Yes") && (!multipleSelection?.value?.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -442,11 +444,14 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: an
 }
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any) => {
+  const oldStorage = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
   const ids = map(selection, v => v.id)
-  multipleSelection.value = ids
+  const oldStorageData = safeParse(oldStorage) || {}
   const storageData = {
+    ...oldStorageData,
     [productId]: ids
   }
+
   setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
 }
 
@@ -478,15 +483,16 @@ defineExpose({
     align-items: center;
 
     .el-descriptions {
-      width: calc(100% - 200px);
+      width: calc(100% - 250px);
     }
   }
 
   &-label {
     display: block;
+    height: 80px;
     line-height: 80px;
     text-align: center;
-    width: 200px;
+    width: 250px;
     border: 1px solid #f5f5f5;
     background-color: #f5f7fa;
   }

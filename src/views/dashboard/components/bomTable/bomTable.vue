@@ -125,6 +125,7 @@ const props = defineProps({
   hideEdit: Boolean
 })
 
+
 const toFixedThree = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(3)
   return val

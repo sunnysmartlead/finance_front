@@ -8,35 +8,28 @@
         <el-row justify-between>
           <span>修改项：</span>
           <el-row v-if="!hideEdit">
-            <el-button type="primary" m="2" @click="addEditList">新增</el-button>
             <el-button type="primary" m="2" @click="handleSubmit">提交</el-button>
-            <el-upload
-              :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-              :on-success="handleSuccess"
-              show-file-list
-              :on-progress="handleGetUploadProgress"
-              :on-error="handleUploadError"
-              v-model:file-list="fileList"
-              :limit="1"
-            >
-              <el-button type="primary" m="2">上传佐证资料</el-button>
-            </el-upload>
           </el-row>
         </el-row>
       </template>
       <qualityTable :isEdit="!hideEdit" :qualityData="modifyData" :on-delete="handleDelete" />
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="修改后合计：">
+          {{ editTotal }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { PropType, ref, onMounted, watch } from "vue"
+import { PropType, ref, onMounted, watch, computed } from "vue"
 import { GetUpdateItemQualityCost, SetUpdateItemQualityCost, GetQualityCost } from "../../service"
 import qualityTable from "./qualityTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty, cloneDeep } from "lodash"
 import type { UploadProps, UploadUserFile } from "element-plus"
-import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { ElMessage } from "element-plus"
+import { getEditTotal } from '../../common/util'
 
 const { auditFlowId, productId: SolutionId } = getQuery()
 
@@ -45,11 +38,19 @@ const props = defineProps({
     type: Object as PropType<any>
   },
   gradientId: Number,
-  hideEdit: Boolean
+  hideEdit: Boolean,
+  onRefresh: {
+    type: Function as PropType<any>
+  }
 })
+
 const qualityData = ref<any>([])
 const modifyData = ref<any>([])
-const fileList = ref<UploadUserFile[]>([])
+
+const editTotal = computed(() => {
+  const total = getEditTotal(qualityData.value || [], modifyData.value || [], 'qualityCost')
+  return total
+})
 
 // 获取 质量成本
 const getQualityCost = async () => {
@@ -69,7 +70,7 @@ const getQualityCost = async () => {
 }
 
 const getLogData = async () => {
-  const res = (await GetUpdateItemQualityCost({
+  const { result } = (await GetUpdateItemQualityCost({
     AuditFlowId: auditFlowId,
     ProductId: 532,
     GradientId: props.gradientId,
@@ -77,6 +78,7 @@ const getLogData = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
+  modifyData.value = result || []
 }
 
 const handleDelete = (index: number) => {
@@ -100,19 +102,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   }
 }
 
-const addEditList = () => {
-  modifyData.value.push({})
-}
-
 const handleSubmit = async () => {
-  const fileIds =  fileList.value.map((item: any) => item.response.result?.fileId) || []
-  if (!fileIds.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先上传佐证资料！'
-    })
-    return
-  }
   if (!modifyData.value.length) {
     ElMessage({
       type: 'error',
@@ -123,8 +113,8 @@ const handleSubmit = async () => {
   const { success } = await SetUpdateItemQualityCost({
     updateItem: modifyData.value,
     auditFlowId,
+    SolutionId,
     gradientId: props.gradientId,
-    file: fileIds[0],
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })
@@ -133,12 +123,16 @@ const handleSubmit = async () => {
       type: 'success',
       message: '提交成功！'
     })
+    props.onRefresh()
   }
 }
 
+
 const handleEdit = (row: any) => {
-  console.log(row, "row123")
-  modifyData.value.push(cloneDeep(row))
+  const findData = modifyData.value.find((item: any) => item.editId === row.editId)
+  if (!findData) {
+    modifyData.value.push(cloneDeep(row))
+  }
 }
 
 watch(
@@ -154,9 +148,4 @@ watch(
 onMounted(() => {
   init()
 })
-
-const toFixedThree = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(3)
-  return val
-}
 </script>

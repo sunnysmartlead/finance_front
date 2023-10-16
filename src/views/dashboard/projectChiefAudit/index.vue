@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProcessVertifyBox  :onSubmit="handleSetBomState" processType="normalProcessType" />
+    <ProcessVertifyBox  :onSubmit="handleSetBomState" processType="baseProcessType" />
     <bulletinBoard hideEdit />
   </div>
 </template>

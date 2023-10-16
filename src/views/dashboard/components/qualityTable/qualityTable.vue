@@ -1,11 +1,12 @@
 <template>
-  <el-table :data="qualityData" border height="675">
+  <el-table :data="qualityData" border :height="qualityData.length > 12 ? 675 : 'auto'" :summary-method="(val: any) => getSummaries(val, '质量成本（MAX）', 'qualityCost')"
+    :show-summary="!isEdit">
     <el-table-column align="center"  prop="productCategory" label="产品类别">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.qualityCost" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="costProportion" label="成本比例" :formatter="formatter">
+    <el-table-column align="center" prop="costProportion" label="成本比例" :formatter="formatter">
       <template #default="{ row }">
         <el-input v-model="row.costProportion" v-if="isEdit" type="number">
           <template #append>%</template>
@@ -29,10 +30,12 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from "vue"
+import { getSummaries } from "../../common/getSummaries"
 
 const props = defineProps({
   qualityData: {
-    type: Array as PropType<any[]>
+    type: Array as PropType<any[]>,
+    default: []
   },
   isEdit: {
     type: Boolean
@@ -47,7 +50,7 @@ const props = defineProps({
 })
 
 const formatter = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return `${val * 100} %`
+  if (typeof val === "number" && val > 0) return `${val} %`
   return val
 }
 

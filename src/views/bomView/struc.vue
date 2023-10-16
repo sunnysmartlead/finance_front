@@ -1,7 +1,7 @@
 <template>
   <div class="bomView">
     <div style="margin: 10px 0; float: right">
-        <ProcessVertifyBox :onSubmit="handleSetBomState" />
+        <ProcessVertifyBox :onSubmit="handleSetBomState" processType="baseProcessType" />
       </div>
     <CustomerSpecificity />
     <div class="bomView__btn">
@@ -15,22 +15,21 @@
       <h4>结构料</h4>
       <!-- <el-button type="primary" @click="jumpToImport(2)" style="float: right; margin: 10px 0">结构料导入</el-button> -->
       <el-table :data="data.structuralData" border style="width: 100%" height="500">
-        <el-table-column prop="categoryName" label="物料大类" width="180" />
-        <el-table-column prop="typeName" label="物料种类" width="180" />
-        <el-table-column prop="isInvolveItem" label="是否涉及" width="180" />
-        <el-table-column prop="drawingNumName" label="图号名称" width="180" />
-        <el-table-column prop="sapItemNum" label="物料编号" width="180" />
-        <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="180" />
-        <el-table-column prop="materialName" label="材料名称" width="180" />
-        <el-table-column prop="weightNumber" label="重量" width="180" />
-        <el-table-column prop="moldingProcess" label="成型工艺" width="180" />
-        <el-table-column prop="isNewMouldProduct" label="是否新开模" width="180" />
-        <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="180" />
-        <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="180" />
-        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
+        <el-table-column prop="categoryName" label="物料大类" width="120"  fixed="left"  />
+        <el-table-column prop="typeName" label="物料种类" width="120"  fixed="left"  />
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="120"  fixed="left"  />
+        <el-table-column prop="drawingNumName" label="图号名称" width="120"  fixed="left"  />
+        <el-table-column prop="sapItemNum" label="物料编号" width="120"  fixed="left"  />
+        <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="120" />
+        <el-table-column prop="materialName" label="材料名称" width="120" />
+        <el-table-column prop="weightNumber" label="重量" width="120" />
+        <el-table-column prop="moldingProcess" label="成型工艺" width="120" />
+        <el-table-column prop="isNewMouldProduct" label="是否新开模" width="120" />
+        <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="120" />
+        <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="120" />
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="120" />
         <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200" />
       </el-table>
-
     </el-card>
   </div>
 </template>

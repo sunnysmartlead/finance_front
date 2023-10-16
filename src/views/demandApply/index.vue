@@ -419,12 +419,7 @@
                   :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="systermGradientValue" label="系统取梯度" width="250">
-              <template #default="{ row }">
-                <el-input-number controls-position="right" v-model="row.systermGradientValue"
-                  :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
-              </template>
-            </el-table-column> -->
+            <el-table-column prop="systermGradientValue" label="系统取梯度" width="250" />
             <el-table-column label="操作" fixed="right">
               <template #default="{ $index }" v-if="!isDisabled">
                 <el-button type="danger" :disabled="kvPricingData.length === 1"
@@ -511,7 +506,7 @@
           <h6>分摊数量：</h6>
           <el-table :data="shareCountTable">
             <el-table-column prop="name" label="产品名称" width="100" />
-            <el-table-column prop="year" label="分摊年量" width="250">
+            <el-table-column prop="yearCount" label="分摊年数" width="250">
               <template #default="{ row, $index }">
                 <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled"
                   @change="(val) => changeShareCoutYears(val, row, $index)">
@@ -944,7 +939,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="出口国家:" prop="country">
-              <el-select v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
+              <el-select filterable v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
                 :disabled="isDisabled">
                 <el-option v-for="item in state.countryOptions" :key="item.dbId" :label="item.country"
                   :value="item.country" />
@@ -1292,16 +1287,16 @@ const changeShareCoutYears = (shareCountYear: number, row: any, index: number) =
     }
   })
   row.count = count
-  checkShareCount(coutYear)
+  checkShareCount(coutYear * moduleTableTotal.value?.length)
 }
 
 const checkShareCount = (countYear: number) => {
-  const total = shareCountTable.value?.reduce((a: any, b: { year: number }) => a + b.year, 0)
+  const total = shareCountTable.value?.reduce((a: any, b: { yearCount: number }) => a + b.yearCount, 0)
   console.log(total, countYear, "total")
   if (total > countYear) {
     ElMessage({
       type: "error",
-      message: "分摊年量不能大于总年量"
+      message: "分摊年数不能大于总年量"
     })
   }
 }
@@ -1430,7 +1425,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
   saveloading.value = true
   let { quoteForm } = state
   quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
-  if (quoteForm.isHasSample) {
+  if (quoteForm.isHasSample || quoteForm.priceEvalType == 'PriceEvalType_Sample') {
     quoteForm.sample = specimenData //样品
   }
   if (quoteForm.isHasNre) {
@@ -1781,23 +1776,30 @@ watch(
 )
 
 watch(
-  () => [moduleTableTotal.value, map(kvPricingData.value, (v: any) => v.gradientValue), state.quoteForm.isHasGradient, isFirstShow.value],
+  () => [moduleTableTotal.value, kvPricingData.value, state.quoteForm.isHasGradient, isFirstShow.value, state.quoteForm.updateFrequency],
   (val) => {
-    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal]: any = val
+    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal, updateFrequencyData]: any = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
-      let filterData: any = _.cloneDeep(kvList)
+      kvPricingData.value.forEach((item: any) => {
+        if (updateFrequencyData === updateFrequency.HalfYear) {
+          item.systermGradientValue = item.gradientValue / 2
+        } else {
+          item.systermGradientValue = item.gradientValue
+        }
+      })
+      let filterData: any = _.cloneDeep(kvPricingData.value)
       filterData = filterData.map((item: any) => {
         return {
-          kv: item,
+          kv: item.gradientValue,
           children: map(moduleTableTotalData, (c, index: number) => ({
-            gradientValue: item,
+            gradientValue: item.systermGradientValue,
             index,
             name: c.product,
             number: c.partNumber || "-",
             code: c.code,
             type: c.productType,
             gradientModelYear: map(c.modelCountYearList, (m: any) => ({
-              count: isHasGradient ? item : m.quantity,
+              count: isHasGradient ? item.systermGradientValue : m.quantity,
               upDown: m.upDown,
               year: m.year
             }))
@@ -1808,17 +1810,17 @@ watch(
       console.log(kvList, moduleTableTotalData, isFirstShowVal, "kvList111")
       if (moduleTableTotalData?.length && kvList?.length && isFirstShowVal) {
         let arr: any = []
-        kvList.forEach((gradientValue: any) => {
+        kvList.forEach((c: any) => {
           moduleTableTotalData.forEach((item: any) => {
             const findItem = customerTargetPrice.value.find(c => c.product === item.product)
             if (findItem) {
               arr.push({
                 ...findItem,
-                kv: gradientValue,
+                kv: c.gradientValue,
               })
             } else {
               arr.push({
-                kv: gradientValue,
+                kv: c.gradientValue,
                 product: item.product,
                 targetPrice: 0,
                 currency: 0
@@ -1826,7 +1828,6 @@ watch(
             }
           })
         })
-        console.log(arr, "arrrrrr11111")
         customerTargetPrice.value = arr
       }
     }
@@ -1840,6 +1841,7 @@ watch(
   () => moduleTableTotal.value,
   () => {
     shareCountTable.value = map(moduleTableTotal.value, (item, index: number) => ({
+      ...item,
       count: shareCountTable.value?.[index]?.count || 0,
       name: item.product
     })).filter((c) => !!c.name)
@@ -2257,7 +2259,7 @@ onMounted(async () => {
     // let quotationType: any = await getDictionaryAndDetail("QuotationType") //报价形式
     // state.quotationTypeOptions = quotationType.result.financeDictionaryDetailList
 
-    let productType: any = await getDictionaryAndDetail("ProductType") // 产品小类
+    let productType: any = await getDictionaryAndDetail("ProductType") // 产品大类
     state.productTypeOptions = productType.result.financeDictionaryDetailList
     // moduleTableDataV2.value[0].productType = state.productTypeOptions[0]?.id
 

@@ -1,12 +1,11 @@
 <template>
-  <el-table :data="manufactureData" border height="675">
-    <!-- <el-table-column align="center"  prop="sapItemNum" label="项目" width="180" /> -->
+  <el-table :summary-method="(val: any) => getSummaries(val, '总', 'subtotal')"
+    :show-summary="!isEdit" :data="manufactureData" border :height="manufactureData.length > 10 ? 675 : 'auto'">
     <el-table-column align="center"  prop="costItem" label="成本项目" width="180">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.costItem" />
       </template>
     </el-table-column>
-    <!-- <el-table-column align="center"  prop="typeName" label="年份" width="180" /> -->
     <el-table-column align="center"  prop="manufacturingCostDirect" label="直接制造成本" :formatter="toFixedTwo">
       <el-table-column align="center"  prop="manufacturingCostDirect.directLabor" label="直接人工" width="175" :formatter="toFixedTwo">
         <template #default="{ row }">
@@ -57,14 +56,19 @@
             v-model="row.manufacturingCostIndirect.manufacturingExpenses" />
         </template>
       </el-table-column>
-      <el-table-column align="center"  prop="manufacturingCostIndirect.subtotal" label="小计" width="175" :formatter="toFixedTwo">
+      <el-table-column align="center"  prop="manufacturingCostIndirect.subtotal" label="小计" width="175" :formatter="formatThousandths">
         <template #default="{ row }">
           <el-input-number v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostIndirect.subtotal" />
         </template>
       </el-table-column>
     </el-table-column>
-    <el-table-column align="center"  label="合计" prop="subtotal" :formatter="toFixedTwo" />
+    <el-table-column align="center"  label="合计" prop="subtotal" :formatter="formatThousandths" />
+    <el-table-column align="center" v-if="isEdit" prop="editNotes" label="备注">
+      <template #default="{ row }" >
+        <el-input v-model="row.editNotes" />
+      </template>
+    </el-table-column>
     <el-table-column align="center"  label="操作" width="120" fixed="right" v-if="!hideEdit">
       <template #default="{ row, $index }">
         <el-row>
@@ -77,10 +81,13 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from "vue"
+import { getSummaries } from "../../common/getSummaries"
+import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 
 const props = defineProps({
   manufactureData: {
-    type: Array as PropType<any[]>
+    type: Array as PropType<any[]>,
+    default: []
   },
   isEdit: {
     type: Boolean

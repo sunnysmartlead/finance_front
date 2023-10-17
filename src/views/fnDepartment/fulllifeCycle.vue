@@ -146,6 +146,7 @@ const submit = async () => {
   if (res.success) {
     logListRef.value?.onRefresh()
     initFetch()
+    visible.value = false
     ElMessage({
       type: "success",
       message: "提交成功"
@@ -187,7 +188,7 @@ const handleModify = async () => {
 }
 
 const handleSubmit = () => {
-  isEdit ? handleModify() : submit()
+  isEdit.value ? handleModify() : submit()
 }
 
 const handleEdit = (row: any) => {

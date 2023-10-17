@@ -119,7 +119,7 @@ const handleModify = async () => {
 }
 
 const handleSubmit = () => {
-  isEdit ? handleModify() : submit()
+  isEdit.value ? handleModify() : submit()
 }
 
 onBeforeMount(() => {

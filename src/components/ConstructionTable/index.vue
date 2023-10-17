@@ -119,14 +119,18 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="备注" width="120">
+            <el-table-column label="备注" width="150">
               <template #default="{ row }">
-                <el-input v-if="row.isEdit" v-model="row.remark" />
+                <el-input type="textarea" v-if="row.isEdit" v-model="row.remark" />
                 <span v-if="!row.isEdit">{{ row.remark }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" />
-            <el-table-column prop="modificationComments" label="修改意见" v-if="isMergeEdit" />
+            <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit" >
+              <template #default="{ row }">
+                <el-input v-if="row.isEdit" type="textarea" v-model="row.modificationComments" />
+              </template>
+            </el-table-column>
             <el-table-column prop="peopleName" label="确认人" v-else />
             <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
               <template #default="{ row, $index }">
@@ -375,6 +379,8 @@ const submitFun = async (
     return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
   } else if (row.isEdited && !row.peopleName && isSubmit) {
     return ElMessage.warning('请先确认再提交！')
+  } else if (props.isMergeEdit && !record.modificationComments) {
+    return ElMessage.warning(`请填写修改意见再${isSubmit ? '提交' : '确认'}`)
   }
   let isSuccess = false
   if (props.isMergeEdit) {

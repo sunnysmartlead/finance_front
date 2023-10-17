@@ -236,7 +236,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: "/bomVerify/edit",
         component: () => import("@/views/bomVerify/edit.vue"),
-        name: "bomVerify",
+        name: "bomVerifyModify",
         meta: {
           title: "bom单价修改",
           hidden: true

@@ -91,13 +91,32 @@ export function saveQualityCost(data: any) {
 }
 
 /** 保存制造成本里计算字段参数维护*/
-export function saveManufacturingCost(data: ManufacturingCostsInfo) {
+export function saveManufacturingCost(data: any) {
   return request({
     url: "/api/services/app/FinanceDepartmentInput/SaveManufacturingCost",
     method: "post",
     data
   })
 }
+/** 保存制造成本里计算字段参数维护*/
+export function ModifyManufacturingCost(data: any) {
+  return request({
+    url: "/api/services/app/FinanceDepartmentInput/ModifyManufacturingCost",
+    method: "post",
+    data
+  })
+}
+
+/** 删除制造成本里计算字段参数维护*/
+export function DelManufacturingCost(data: any) {
+  return request({
+    url: "/api/services/app/FinanceDepartmentInput/DelManufacturingCost",
+    method: "get",
+    data
+  })
+}
+
+
 /** 获取制造成本里计算字段参数维护*/
 export function getManufacturingCost() {
   return request({
@@ -115,10 +134,29 @@ export function GetRateEntry(): Promise<any> {
 }
 
 /** 保存费率录入 */
-export function SaveRateEntryInput(data: RateEntryDto): Promise<any> {
+export function SaveRateEntryInput(data: any): Promise<any> {
   return request({
     url: "/api/services/app/FinanceDepartmentInput/SaveRateEntryInput",
     method: "post",
+    data
+  })
+}
+
+
+/** 修改作业价格 */
+export function ModifyRateEntryInput(data: any): Promise<any> {
+  return request({
+    url: "/api/services/app/FinanceDepartmentInput/ModifyRateEntryInput",
+    method: "post",
+    data
+  })
+}
+
+/** 删除作业价格 */
+export function DelRateEntryInput(data: any): Promise<any> {
+  return request({
+    url: "/api/services/app/FinanceDepartmentInput/DelRateEntryInput",
+    method: "get",
     data
   })
 }

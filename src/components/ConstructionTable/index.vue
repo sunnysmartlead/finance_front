@@ -258,7 +258,6 @@ const toggleSelection = () => {
 
     if (parseData) {
       multipleSelection.value = map(parseData, (v, key) => (map(parseData[key], c => [...c])))?.flat(2) || []
-      console.log(multipleSelection.value, "[toggleSelection]")
       const productIdData = parseData[productId] || []
       map(productIdData, (ids, index: number) => {
         ids?.forEach((id: number) => {

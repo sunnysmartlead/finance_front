@@ -109,12 +109,6 @@
                 </template>
               </el-table-column>
             </el-table-column>
-            <el-table-column label="备注" width="120">
-              <template #default="{ row }">
-                <el-input v-if="row.isEdit" v-model="row.remark" />
-                <span v-if="!row.isEdit">{{ row.remark }}</span>
-              </template>
-            </el-table-column>
             <el-table-column label="物料管制状态" width="130">
               <template #default="{ row }">
                 <el-select v-model="row.materialControlStatus" :disabled="row.isSubmit">
@@ -125,7 +119,15 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="peopleName" label="确认人" />
+            <el-table-column label="备注" width="120">
+              <template #default="{ row }">
+                <el-input v-if="row.isEdit" v-model="row.remark" />
+                <span v-if="!row.isEdit">{{ row.remark }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" />
+            <el-table-column prop="modificationComments" label="修改意见" v-if="isMergeEdit" />
+            <el-table-column prop="peopleName" label="确认人" v-else />
             <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
               <template #default="{ row, $index }">
                 <el-button link :disabled="row.isSubmit" @click="handleSubmit(row, 0, bomIndex, $index)" type="danger"
@@ -172,8 +174,9 @@ import {
   PostStructuralMemberEntering,
   GetBOMStructuralSingle,
   PostStructuralMaterialCalculate,
-  SetBomState,
-  BomReview
+  BomReview,
+  StructureUnitPriceCopyingInformationAcquisition,
+  PostStructuralMemberEnteringCopy,
 } from "../ElectronicTable/common/request"
 import { useRouter } from "vue-router"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
@@ -194,7 +197,8 @@ const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
-  isMergeVertify: Boolean
+  isMergeVertify: Boolean,
+  isMergeEdit: Boolean
 })
 
 enum upDownEnum {
@@ -283,7 +287,14 @@ const fetchOptionsData = async () => {
 const fetchInitData = async () => {
   try {
     tableLoading.value = true
-    const { result } = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
+    let result = []
+    if (props.isMergeEdit) {
+      const res = (await PostStructuralMemberEnteringCopy({ auditFlowId, solutionId: productId })) || {}
+      result = res.result
+    } else {
+      const res = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
+      result = res.result
+    }
     constructionBomList.value = result || []
     tableLoading.value = false
   } catch {
@@ -308,14 +319,6 @@ let SumCount = computed(() => {
   return count
 })
 
-const queryModlueNumber = () => {
-  router.push({
-    path: "/resourcesDepartment/moduleNumber",
-    query: {
-      auditFlowId
-    }
-  })
-}
 
 // 确认结构料单价行数据
 const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
@@ -368,19 +371,32 @@ const submitFun = async (
       return c?.value
     }) && !record?.remark
   })
-  if (isNotPass && row.isEdited) {
+  if (isNotPass && row.isEdited && row.isSystemiginal && !props.isMergeEdit) {
     return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
   } else if (row.isEdited && !row.peopleName && isSubmit) {
     return ElMessage.warning('请先确认再提交！')
   }
-  const { success } = await PostStructuralMemberEntering({
-    isSubmit,
-    structuralMaterialEntering: [{ ...row, productId }],
-    auditFlowId,
-    opinion: "Done",
-    nodeInstanceId
-  })
-  if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功！`)
+  let isSuccess = false
+  if (props.isMergeEdit) {
+    const { success } = await PostStructuralMemberEnteringCopy({
+      isSubmit,
+      structuralMaterialEntering: [{ ...row, productId }],
+      auditFlowId,
+      opinion: "Done",
+      nodeInstanceId
+    })
+    isSuccess = success
+  } else {
+    const { success } = await PostStructuralMemberEntering({
+      isSubmit,
+      structuralMaterialEntering: [{ ...row, productId }],
+      auditFlowId,
+      opinion: "Done",
+      nodeInstanceId
+    })
+    isSuccess = success
+  }
+  if (isSuccess) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功！`)
   fetchInitData()
   record.isEdit = false
 }

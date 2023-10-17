@@ -147,7 +147,9 @@ import {
   PostElectronicMaterialEntering,
   PosToriginalCurrencyCalculate,
   BomReview,
-  GetBOMElectronicSingle
+  GetBOMElectronicSingle,
+  ElectronicUnitPriceCopyingInformationAcquisition,
+  PostElectronicMaterialEnteringCopy
 } from "./common/request"
 import { useRoute } from "vue-router"
 import { getExchangeRate } from "@/views/demandApply/service"
@@ -166,7 +168,8 @@ const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
-  isMergeVertify: Boolean
+  isMergeVertify: Boolean,
+  isMergeEdit: Boolean
 })
 
 const STORAGE_KEY = "electronicVertify" // 浏览器缓存key
@@ -334,7 +337,14 @@ const fetchInitData = async () => {
 // 获取电子料初始化数据
 const fetchElectronicInitData = async () => {
   tableLoading.value = true
-  const { result } = await GetBOMElectronicSingle(auditFlowId, productId)
+  let result: any = {}
+  if (props.isMergeEdit) {
+    const res = await ElectronicUnitPriceCopyingInformationAcquisition(auditFlowId, productId)
+    result = res.result
+  } else {
+    const res = await GetBOMElectronicSingle(auditFlowId, productId)
+    result = res.result
+  }
   console.log(result, "获取初始化数据")
   const { electronicDtos } = result || {}
   // 初始化表头数据
@@ -400,19 +410,33 @@ const submitFun = async (record: any, isSubmit: number, index: number) => {
       return c?.value
     }) && !record?.remark
   })
-  if (isNotPass && record.isEdited) {
+  if (isNotPass && record.isEdited && record.isSystemiginal && !props.isMergeEdit) {
     return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
   } else if (record.isEdited && !record.peopleName && isSubmit) {
     return ElMessage.warning('请先确认再提交！')
   }
-  const { success } = await PostElectronicMaterialEntering({
-    isSubmit,
-    electronicDtoList: [electronicBomList.value[index]],
-    auditFlowId,
-    opinion: "Done",
-    nodeInstanceId
-  })
-  if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
+  let isSuccess = false
+  if (props.isMergeEdit) {
+    const { success } = await PostElectronicMaterialEnteringCopy({
+      isSubmit,
+      electronicDtoList: [electronicBomList.value[index]],
+      auditFlowId,
+      opinion: "Done",
+      nodeInstanceId
+    })
+    isSuccess = success
+  } else {
+    const { success } = await PostElectronicMaterialEntering({
+      isSubmit,
+      electronicDtoList: [electronicBomList.value[index]],
+      auditFlowId,
+      opinion: "Done",
+      nodeInstanceId
+    })
+    isSuccess = success
+  }
+
+  if (isSuccess) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
   fetchInitData()
 }
 

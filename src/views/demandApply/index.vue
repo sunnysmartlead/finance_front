@@ -1790,7 +1790,7 @@ watch(
       let filterData: any = _.cloneDeep(kvPricingData.value)
       filterData = filterData.map((item: any) => {
         return {
-          kv: item.gradientValue,
+          kv: item.systermGradientValue,
           children: map(moduleTableTotalData, (c, index: number) => ({
             gradientValue: item.systermGradientValue,
             index,
@@ -1816,11 +1816,11 @@ watch(
             if (findItem) {
               arr.push({
                 ...findItem,
-                kv: c.gradientValue,
+                kv: c.systermGradientValue,
               })
             } else {
               arr.push({
-                kv: c.gradientValue,
+                kv: c.systermGradientValue,
                 product: item.product,
                 targetPrice: 0,
                 currency: 0

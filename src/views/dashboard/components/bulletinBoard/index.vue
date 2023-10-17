@@ -219,6 +219,7 @@ const filterYearData = computed(() => {
 })
 
 const getTotal = async () => {
+  if (!filterYearData.value) return
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
     Year: filterYearData.value.year,

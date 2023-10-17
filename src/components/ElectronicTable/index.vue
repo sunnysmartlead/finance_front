@@ -280,16 +280,16 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 }
 
 onMounted(async () => {
-  if (!auditFlowId && !productId) return
-  if (props.isVertify) {
+  if (!auditFlowId || !productId) return
+  if (!props.isMergeEdit && !props.isVertify)  {
+    fetchInitData()
+  } else {
     window.sessionStorage.setItem("placePath", router.currentRoute.value.path)
     fetchElectronicInitData().then(() => {
       setTimeout(() => {
         toggleSelection()
       }, 500)
     })
-  } else {
-    fetchInitData()
   }
   fetchOptionsData()
 })
@@ -324,7 +324,10 @@ const handleDealWithColumn = (columns: any) => {
 const fetchInitData = async () => {
   tableLoading.value = true
   const { result } = await GetElectronic(auditFlowId, productId)
-  if (!result) return false
+  if (!result) {
+    tableLoading.value = false
+    return false
+  }
   console.log(result, "获取初始化数据")
 
   handleDealWithColumn(result[0])
@@ -339,7 +342,7 @@ const fetchElectronicInitData = async () => {
   tableLoading.value = true
   let result: any = {}
   if (props.isMergeEdit) {
-    const res = await ElectronicUnitPriceCopyingInformationAcquisition(auditFlowId, productId)
+    const res = await ElectronicUnitPriceCopyingInformationAcquisition(Number(auditFlowId), Number(productId))
     result = res.result
   } else {
     const res = await GetBOMElectronicSingle(auditFlowId, productId)
@@ -347,6 +350,7 @@ const fetchElectronicInitData = async () => {
   }
   console.log(result, "获取初始化数据")
   const { electronicDtos } = result || {}
+  tableLoading.value = false
   // 初始化表头数据
   handleDealWithColumn(electronicDtos[0] || [])
 

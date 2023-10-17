@@ -140,7 +140,7 @@ export function GetBOMStructuralSingle(auditFlowId: number, solutionId: number):
 export function ElectronicUnitPriceCopyingInformationAcquisition(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/ResourceEntering/ElectronicUnitPriceCopyingInformationAcquisition",
-    method: "post",
+    method: "get",
     data: {
       auditFlowId,
       solutionId,
@@ -161,7 +161,7 @@ export function PostElectronicMaterialEnteringCopy(data: any): any {
 export function StructureUnitPriceCopyingInformationAcquisition(auditFlowId: number, solutionId: number): any {
   return request({
     url: "/api/services/app/ResourceEntering/StructureUnitPriceCopyingInformationAcquisition",
-    method: "post",
+    method: "get",
     data: {
       auditFlowId,
       solutionId,

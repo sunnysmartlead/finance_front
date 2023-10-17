@@ -240,7 +240,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-  if (!auditFlowId && !productId) return
+  if (!auditFlowId || !productId) return
   if (props.isVertify) {
     await fetchConstructionInitData()
     toggleSelection() //数据反填
@@ -289,7 +289,7 @@ const fetchInitData = async () => {
     tableLoading.value = true
     let result = []
     if (props.isMergeEdit) {
-      const res = (await PostStructuralMemberEnteringCopy({ auditFlowId, solutionId: productId })) || {}
+      const res = (await StructureUnitPriceCopyingInformationAcquisition( auditFlowId, productId )) || {}
       result = res.result
     } else {
       const res = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
@@ -469,6 +469,7 @@ const selectionChange = async (selection: any, index: number) => {
 // 获取结构料初始化数据
 const fetchConstructionInitData = async () => {
   try {
+    if (!auditFlowId || !productId) return
     const { result } = await GetBOMStructuralSingle(auditFlowId, productId)
     constructionBomList.value = result.constructionDtos
     isAll.value = result.isAll

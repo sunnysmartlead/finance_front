@@ -8,10 +8,11 @@
       <template #header v-if="!isVertify">
         <div class="card-header">
           <span>电子料单价录入界面</span>
-          <span class="card-span"> 未提交的数量:{{ electronicBomList.filter((p) => !p.isSubmit).length }}</span>
+          <span class="card-span"> 未提交的数量:{{ electronicBomList?.filter((p) => !p.isSubmit)?.length }}</span>
         </div>
       </template>
-      <el-table :data="electronicBomList" :height="electronicBomList.length > 5 ? '75vh' : '46vh'" @selection-change="selectionChange" ref="multipleTableRef">
+      <el-table :data="electronicBomList" :height="electronicBomList?.length > 5 ? '75vh' : '46vh'"
+        @selection-change="selectionChange" ref="multipleTableRef">
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column prop="categoryName" label="物料大类" width="100" fixed="left" />
         <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
@@ -20,8 +21,8 @@
         <el-table-column prop="assemblyQuantity" label="装配数量" width="80" fixed="left" />
         <el-table-column prop="materialsUseCount" label="项目物料的使用量">
           <el-table-column align="center" :class-name="`column-class-${index}`"
-            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount"
-            :label="`${item.kv} K/Y`" :key="`materialsUseCount${index}`">
+            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount" :label="`${item.kv} K/Y`"
+            :key="`materialsUseCount${index}`">
             <el-table-column width="80" v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :prop="`materialsUseCount.${index}.yearOrValueModes.${iIndex}.value`"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" :formatter="formatDatas" />
@@ -59,8 +60,8 @@
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value"
-                  type="number">
+                <el-input size="small" v-if="scope.row.isEdit"
+                  v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value" type="number">
                   <template #append> % </template>
                 </el-input>
               </template>
@@ -82,18 +83,12 @@
         </el-table-column>
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
           <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} K/Y`"
-            width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`"
-            :formatter="formatThousandths">
+            width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`" :formatter="formatThousandths">
             <template #default="{ row }">
               <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
                 controls-position="right" :min="0" />
             </template>
           </el-table-column>
-        </el-table-column>
-        <el-table-column label="备注" prop="remark" width="100">
-          <template #default="{ row }">
-            <el-input v-if="row.isEdit" v-model="row.remark" />
-          </template>
         </el-table-column>
         <el-table-column label="物料管制状态" width="130">
           <template #default="{ row }">
@@ -105,17 +100,29 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="peopleName" label="确认人" />
+        <el-table-column label="备注" width="150">
+          <template #default="{ row }">
+            <el-input type="textarea" v-if="row.isEdit" v-model="row.remark" />
+            <span v-if="!row.isEdit">{{ row.remark }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" />
+        <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit">
+          <template #default="{ row }">
+            <el-input v-if="row.isEdit" type="textarea" v-model="row.modificationComments" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="peopleName" label="确认人" v-else />
         <el-table-column label="操作" fixed="right" v-if="!isVertify" width="180">
           <template #default="{ row, $index }">
-            <el-button link :disabled="row.isSubmit" :loading="row.loading"
-              @click="handleSubmit(row, 0, $index)" type="danger" v-havedone>确认</el-button>
-            <el-button v-if="row.isEntering" :loading="row.loading" link :disabled="row.isSubmit"
+            <el-button link :disabled="row.isSubmit" :loading="row.loading" @click="handleSubmit(row, 0, $index)"
+              type="danger" v-havedone>确认</el-button>
+            <el-button v-if="row.isEntering && !props.isMergeEdit" :loading="row.loading" link :disabled="row.isSubmit"
               @click="handleSubmit(row, 1, $index)" type="warning" v-havedone>
               提交
             </el-button>
-            <el-button v-if="!row.isEdit" :disabled="row.isSubmit" link @click="handleEdit(row, true)"
-              type="primary" v-havedone>
+            <el-button v-if="!row.isEdit" :disabled="row.isSubmit" link @click="handleEdit(row, true)" type="primary"
+              v-havedone>
               修改
             </el-button>
             <el-button v-if="row.isEdit" link @click="handleEdit(row, false)" v-havedone>取消</el-button>
@@ -147,7 +154,9 @@ import {
   PostElectronicMaterialEntering,
   PosToriginalCurrencyCalculate,
   BomReview,
-  GetBOMElectronicSingle
+  GetBOMElectronicSingle,
+  ElectronicUnitPriceCopyingInformationAcquisition,
+  PostElectronicMaterialEnteringCopy
 } from "./common/request"
 import { useRoute } from "vue-router"
 import { getExchangeRate } from "@/views/demandApply/service"
@@ -166,7 +175,8 @@ const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
 const props = defineProps({
   isVertify: Boolean,
-  isMergeVertify: Boolean
+  isMergeVertify: Boolean,
+  isMergeEdit: Boolean
 })
 
 const STORAGE_KEY = "electronicVertify" // 浏览器缓存key
@@ -277,16 +287,16 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 }
 
 onMounted(async () => {
-  if (!auditFlowId && !productId) return
-  if (props.isVertify) {
+  if (!auditFlowId || !productId) return
+  if (!props.isVertify) {
+    fetchInitData()
+  } else {
     window.sessionStorage.setItem("placePath", router.currentRoute.value.path)
     fetchElectronicInitData().then(() => {
       setTimeout(() => {
         toggleSelection()
       }, 500)
     })
-  } else {
-    fetchInitData()
   }
   fetchOptionsData()
 })
@@ -320,8 +330,27 @@ const handleDealWithColumn = (columns: any) => {
 // 获取初始化数据
 const fetchInitData = async () => {
   tableLoading.value = true
-  const { result } = await GetElectronic(auditFlowId, productId)
-  if (!result) return false
+  let result: any = []
+  if (props.isMergeEdit) {
+    const res = await ElectronicUnitPriceCopyingInformationAcquisition(Number(auditFlowId), Number(productId))
+    result = res.result
+    console.log(result, "获取电子料初始化数据")
+
+    // 初始化表头数据
+    handleDealWithColumn(result[0] || [])
+  } else {
+    const res = await GetElectronic(auditFlowId, productId)
+    const { electronicDtos } = res.result || {}
+    result = electronicDtos
+    console.log(result, "获取电子料初始化数据")
+    // 初始化表头数据
+    handleDealWithColumn(electronicDtos[0] || [])
+  }
+
+  if (!result) {
+    tableLoading.value = false
+    return false
+  }
   console.log(result, "获取初始化数据")
 
   handleDealWithColumn(result[0])
@@ -334,16 +363,18 @@ const fetchInitData = async () => {
 // 获取电子料初始化数据
 const fetchElectronicInitData = async () => {
   tableLoading.value = true
-  const { result } = await GetBOMElectronicSingle(auditFlowId, productId)
-  console.log(result, "获取初始化数据")
+  let result: any = {}
+  const res = await GetBOMElectronicSingle(auditFlowId, productId)
   const { electronicDtos } = result || {}
+  result = electronicDtos
+  console.log(result, "获取电子料初始化数据")
   // 初始化表头数据
   handleDealWithColumn(electronicDtos[0] || [])
 
   setTimeout(() => {
-    electronicBomList.value = result.electronicDtos
-    isAll.value = result.isAll
     tableLoading.value = false
+    electronicBomList.value = result
+    isAll.value = result.isAll
   }, 500)
 }
 
@@ -400,20 +431,38 @@ const submitFun = async (record: any, isSubmit: number, index: number) => {
       return c?.value
     }) && !record?.remark
   })
-  if (isNotPass && record.isEdited) {
+  if (isNotPass && record.isEdited && record.isSystemiginal && !props.isMergeEdit) {
     return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
   } else if (record.isEdited && !record.peopleName && isSubmit) {
     return ElMessage.warning('请先确认再提交！')
+  } else if (props.isMergeEdit && !record.modificationComments) {
+    return ElMessage.warning(`请填写修改意见再${isSubmit ? '提交' : '确认'}`)
   }
-  const { success } = await PostElectronicMaterialEntering({
-    isSubmit,
-    electronicDtoList: [electronicBomList.value[index]],
-    auditFlowId,
-    opinion: "Done",
-    nodeInstanceId
+  let isSuccess = false
+  if (props.isMergeEdit) {
+    const { success } = await PostElectronicMaterialEnteringCopy({
+      isSubmit,
+      electronicDtoList: [electronicBomList.value[index]],
+      auditFlowId,
+      opinion: "Done",
+      nodeInstanceId
+    })
+    isSuccess = success
+  } else {
+    const { success } = await PostElectronicMaterialEntering({
+      isSubmit,
+      electronicDtoList: [electronicBomList.value[index]],
+      auditFlowId,
+      opinion: "Done",
+      nodeInstanceId
+    })
+    isSuccess = success
+  }
+
+  if (isSuccess) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
+  setTimeout(() => {
+    fetchInitData()
   })
-  if (success) ElMessage.success(`${isSubmit ? "提交" : "确认"}成功`)
-  fetchInitData()
 }
 
 // 修改

@@ -39,11 +39,12 @@
 import { reactive, onBeforeMount, onMounted, ref } from "vue"
 import getQuery from "@/utils/getQuery"
 import { getPriceEvaluationStartData } from "@/views/demandApply/service"
-import { productTypeMap, YearListItem, updateFrequency } from "@/views/demandApply/data.type"
+import { updateFrequency } from "@/views/demandApply/data.type"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
 import { map, sortedUniq } from 'lodash'
 const { auditFlowId }: any = getQuery()
+
 //console.log('1-开始创建组件-setup')
 /**
  * 数据部分

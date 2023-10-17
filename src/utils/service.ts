@@ -153,6 +153,9 @@ function createRequestFunction(service: AxiosInstance) {
       config.params = Object.assign({}, config.data)
       delete config.data
     }
+    if (config.method === "post") {
+       if(config?.data?.comment)config.data.opinionDescription=config?.data?.comment
+    }
     return service(Object.assign(configDefault, config))
   }
 }

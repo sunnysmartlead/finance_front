@@ -117,7 +117,7 @@
           <template #default="{ row, $index }">
             <el-button link :disabled="row.isSubmit" :loading="row.loading" @click="handleSubmit(row, 0, $index)"
               type="danger" v-havedone>确认</el-button>
-            <el-button v-if="row.isEntering" :loading="row.loading" link :disabled="row.isSubmit"
+            <el-button v-if="row.isEntering && !props.isMergeEdit" :loading="row.loading" link :disabled="row.isSubmit"
               @click="handleSubmit(row, 1, $index)" type="warning" v-havedone>
               提交
             </el-button>

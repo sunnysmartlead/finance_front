@@ -11,7 +11,7 @@
     </el-descriptions>
     <el-card class="margin-top" header="手板件费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.handPieceCost" border
         :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary>
@@ -22,7 +22,7 @@
         <el-table-column prop="quantity" label="数量" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'handPieceCostModifyDtos')" type="primary">
               修改
@@ -60,7 +60,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAdditionOfCostModificationItemsForHandBoards(row)" type="primary">
               确认
@@ -71,7 +71,7 @@
     </el-card>
     <el-card class="margin-top" header="模具费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('mouldInventoryModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('mouldInventoryModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.mouldInventory" border :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
         show-summary>
@@ -82,7 +82,7 @@
         <el-table-column prop="count" label="数量" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'mouldInventoryModifyDtos')" type="primary">
               修改
@@ -120,7 +120,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddMoldCostModificationItem(row)" type="primary"> 确认 </el-button>
           </template>
@@ -129,7 +129,7 @@
     </el-card>
     <el-card class="margin-top" header="实验费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('experimentalExpensesModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('experimentalExpensesModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.laboratoryFeeModels" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
@@ -146,7 +146,7 @@
         <el-table-column label="计数-PV" prop="countPV" />
         <el-table-column prop="allCost" label="总费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'experimentalExpensesModifyDtos')" type="primary">
               修改
@@ -192,7 +192,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddExperimentalFeeModificationItem(row)" type="primary"> 确认 </el-button>
           </template>
@@ -201,7 +201,7 @@
     </el-card>
     <el-card class="margin-top" header="工装费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.toolingCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary>
@@ -211,7 +211,7 @@
         <el-table-column prop="unitPriceOfTooling" label="工装单价" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'toolingCostsModifyDtos')" type="primary"> 修改 </el-button>
           </template>
@@ -242,7 +242,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddToolingCostModificationItem(row)" type="primary"> 确认 </el-button>
           </template>
@@ -251,7 +251,7 @@
     </el-card>
     <el-card class="margin-top" header="治具费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.fixtureCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '治具费用', 'cost')" show-summary>
@@ -261,7 +261,7 @@
         <el-table-column prop="number" label="治具数量" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'fixtureCostsModifyDtos')" type="primary"> 修改 </el-button>
           </template>
@@ -292,7 +292,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAdditionOfFixtureCostModificationItem(row)" type="primary"> 确认 </el-button>
           </template>
@@ -305,7 +305,7 @@
         <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.qaqcDepartments" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')" show-summary>
@@ -315,7 +315,7 @@
         <el-table-column prop="count" label="检具数量" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'inspectionToolCostModifyDtos')" type="primary">
               修改
@@ -348,7 +348,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddInspectionToolCostModificationItem(row)" type="primary"> 确认 </el-button>
           </template>
@@ -361,7 +361,7 @@
         <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.productionEquipmentCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')" show-summary>
@@ -372,7 +372,7 @@
         <el-table-column prop="number" label="数量" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'productionEquipmentCostsModifyDtos')" type="primary">
               修改
@@ -405,7 +405,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddProductionEquipmentCostModificationItem(row)" type="primary">
               确认
@@ -416,7 +416,7 @@
     </el-card>
     <el-card class="margin-top" header="测试软件费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.softwareTestingCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')" show-summary>
@@ -426,7 +426,7 @@
         <el-table-column prop="hour" label="小时" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'testingSoftwareCostsModifyDtos')" type="primary">
               修改
@@ -459,7 +459,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddingModificationItemsForTestingSoftwareCosts(row)" type="primary">
               确认
@@ -470,7 +470,7 @@
     </el-card>
     <el-card class="margin-top" header="差旅费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('travelExpenseModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('travelExpenseModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.travelExpense" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '差旅费用', 'cost')" show-summary>
@@ -487,7 +487,7 @@
         <el-table-column prop="skyCount" label="天数" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'travelExpenseModifyDtos')" type="primary">
               修改
@@ -527,7 +527,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleAddTravelExpenseModificationItem(row)" type="primary"> 确认 </el-button>
           </template>
@@ -536,7 +536,7 @@
     </el-card>
     <el-card class="margin-top" header="其他费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('restsCostModifyDtos')" v-if="!hideEdit">新增</el-button>
+        <el-button type="primary" @click="addTableData('restsCostModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.restsCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '其他费用', 'cost')" show-summary>
@@ -544,7 +544,7 @@
         <el-table-column prop="constName" label="费用类型" />
         <el-table-column prop="cost" label="费用" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'restsCostModifyDtos')" type="primary"> 修改 </el-button>
           </template>
@@ -569,7 +569,7 @@
             <el-input v-model="row.partName" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
           <template #default="{ row }">
             <el-button link @click="handleOtherExpenseModificationItemsAdded(row)" type="primary"> 确认 </el-button>
           </template>
@@ -610,7 +610,7 @@ import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElMessage } from "element-plus"
 import { cloneDeep } from "lodash"
 
-const { auditFlowId, productId, year, hideBtn, hideEdit }: any = getQuery()
+const { auditFlowId, productId, hideBtn, hideEdit }: any = getQuery()
 
 const data = ref<any>({
   handPieceCost: [],

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card m="2" header="损耗成本">
+    <el-card m="2" header="损耗成本" v-loading="loading">
       <lossTable :lossData="lossData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
     <el-card m="2" v-if="!hideEdit">
@@ -46,6 +46,7 @@ const props = defineProps({
 
 const lossData = ref<any>([])
 const modifyData = ref<any>([])
+const loading = ref(false)
 
 const editTotal = computed(() => {
   const total = getEditTotal(lossData.value || [], modifyData.value || [], 'wastageCost')
@@ -55,6 +56,7 @@ const editTotal = computed(() => {
 // 获取损耗成本
 const getLossCost = async () => {
   try {
+    loading.value = true
     const { yearData, gradientId } = props
     const { result }: any = await GetLossCost({
       Year: yearData.year,
@@ -63,9 +65,11 @@ const getLossCost = async () => {
       UpDown: yearData.upDown,
       GradientId: gradientId,
     })
+    loading.value = false
     lossData.value = map(result, (item, index) => ({ ...item, editId: item.editId || (index + 1) })) || []
     console.log(result, "获取损耗成本")
   } catch (err: any) {
+    loading.value = false
     console.log(err, "[ 获取损耗成本数据失败 ]")
   }
 }

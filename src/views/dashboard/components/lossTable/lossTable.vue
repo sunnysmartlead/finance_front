@@ -2,7 +2,7 @@
   <el-table
     :data="lossData"
     :height="lossData?.length > 10 ? 675 : 'auto'"
-    :summary-method="(val: any) => getSummaries(val, '损耗成本', 'wastageCost')"
+    :summary-method="(val: any) => getSummaries(val, '损耗成本', 'wastageCost', 1)"
     :show-summary="!isEdit"
   >
     <el-table-column align="center"  type="index" width="50" />

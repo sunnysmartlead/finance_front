@@ -30,7 +30,7 @@ export const getEditTotal = (originArr: any[], editArr: any[], key: string) => {
   originArr.forEach((item: any) => {
     const findData = editArr?.find(c => c.editId === item.editId)
     if (findData) {
-      total += findData[key]
+      total += Number(findData[key])
     } else total += Number(item[key])
   })
   return formatThousandths(null,null,total)

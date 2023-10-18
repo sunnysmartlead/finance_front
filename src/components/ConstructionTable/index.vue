@@ -265,7 +265,7 @@ const toggleSelection = () => {
     const parseData = safeParse(storageData)
 
     if (parseData) {
-      multipleSelection.value = map(parseData, (v, key) => (map(parseData[key], c => [...c])))?.flat(2) || []
+      multipleSelection.value = parseData
       const productIdData = parseData[productId] || []
       map(productIdData, (ids, index: number) => {
         ids?.forEach((id: number) => {
@@ -458,9 +458,7 @@ const safeParse = (val: any) => {
 const selectionChange = async (selection: any, index: number) => {
   const oldStorage = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
   const ids = map(selection, v => v.id)
-  multipleSelection.value = {
-    [`${index}`]: ids
-  }
+
   const oldStorageData = safeParse(oldStorage) || {}
   const storageData = {
     ...oldStorageData,
@@ -469,6 +467,7 @@ const selectionChange = async (selection: any, index: number) => {
       [`${index}`]: ids
     }
   }
+  multipleSelection.value = storageData
   setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
 }
 
@@ -485,9 +484,14 @@ const fetchConstructionInitData = async () => {
   }
 }
 
+const filterMultipleSelectionValue = (idData: any) => {
+  return map(idData, (v, key) => (map(idData[key], c => [...c])))?.flat(2)
+}
+
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   console.log(multipleSelection.value, "[结构料审核ids]")
-  if (!opinion.includes("_Yes") && !multipleSelection.value.length) {
+  const structureUnitPriceId = filterMultipleSelectionValue(multipleSelection.value)
+  if (!opinion.includes("_Yes") && !structureUnitPriceId.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -502,7 +506,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId: multipleSelection.value,
+    structureUnitPriceId,
     // peopleId: data.peopleId
   })
 
@@ -511,7 +515,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   }
 }
 defineExpose({
-  getSelection: () => multipleSelection.value
+  getSelection: () => filterMultipleSelectionValue(multipleSelection.value)
 })
 watchEffect(() => { })
 </script>

@@ -217,6 +217,10 @@ const safeParse = (val: any) => {
   }
 }
 
+const filterMultipleSelectionValue = (idData: any) => {
+  return map(idData, v => ([...v]))?.flat(2) || []
+}
+
 const toggleSelection = () => {
   nextTick(() => {
     const storageData = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
@@ -224,14 +228,13 @@ const toggleSelection = () => {
     if (!storageData) return
     if (parseData) {
       const ids = parseData[productId]
-
+      multipleSelection.value = parseData
       ids?.forEach((id: number) => {
         const findItem = electronicBomList.value?.find((c: any) => c.id === id)
         if (findItem) {
           multipleTableRef.value && multipleTableRef.value!.toggleRowSelection(findItem, true)
         }
       })
-      multipleSelection.value = map(parseData, v => ([...v]))?.flat(2) || []
     }
   })
 }
@@ -335,16 +338,10 @@ const fetchInitData = async () => {
     const res = await ElectronicUnitPriceCopyingInformationAcquisition(Number(auditFlowId), Number(productId))
     result = res.result
     console.log(result, "获取电子料初始化数据")
-
-    // 初始化表头数据
-    handleDealWithColumn(result[0] || [])
   } else {
     const res = await GetElectronic(auditFlowId, productId)
-    const { electronicDtos } = res.result || {}
-    result = electronicDtos
+    result = res.result
     console.log(result, "获取电子料初始化数据")
-    // 初始化表头数据
-    //handleDealWithColumn(electronicDtos[0] || [])
   }
 
   if (!result) {
@@ -352,7 +349,7 @@ const fetchInitData = async () => {
     return false
   }
   console.log(result, "获取初始化数据")
-
+   // 初始化表头数据
   handleDealWithColumn(result[0])
   setTimeout(() => {
     electronicBomList.value = result
@@ -363,17 +360,15 @@ const fetchInitData = async () => {
 // 获取电子料初始化数据
 const fetchElectronicInitData = async () => {
   tableLoading.value = true
-  let result: any = {}
-  const res = await GetBOMElectronicSingle(auditFlowId, productId)
+  const { result } = await GetBOMElectronicSingle(auditFlowId, productId)
   const { electronicDtos } = result || {}
-  result = electronicDtos
-  console.log(result, "获取电子料初始化数据")
+  console.log(electronicDtos, "获取电子料初始化数据 fetchElectronicInitData")
   // 初始化表头数据
   handleDealWithColumn(electronicDtos[0] || [])
 
   setTimeout(() => {
     tableLoading.value = false
-    electronicBomList.value = result
+    electronicBomList.value = electronicDtos
     isAll.value = result.isAll
   }, 500)
 }
@@ -471,21 +466,22 @@ const handleEdit = (row: any, isEdit: boolean) => {
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: any) => {
-  if (!opinion.includes("_Yes") && (!multipleSelection?.value?.length)) {
+  const electronicsUnitPriceId = filterMultipleSelectionValue(multipleSelection.value)
+  if (!opinion.includes("_Yes") && (!electronicsUnitPriceId?.length)) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
     })
     return
   }
-  console.log(multipleSelection.value, "[电子料审核ids]")
+  console.log(electronicsUnitPriceId, "[电子料审核ids]")
   const { success } = await BomReview({
     auditFlowId,
     bomCheckType: 3, //3：“电子Bom单价审核”，4：“结构Bom单价审核”,5:"Bom单价审核"
     comment,
     opinion,
     nodeInstanceId,
-    electronicsUnitPriceId: multipleSelection.value
+    electronicsUnitPriceId,
   })
   if (success) {
     ElMessage.success(`${label === '同意' ? '同意' : '退回'} 成功！`)
@@ -496,16 +492,17 @@ const selectionChange = async (selection: any) => {
   const oldStorage = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
   const ids = map(selection, v => v.id)
   const oldStorageData = safeParse(oldStorage) || {}
+
   const storageData = {
     ...oldStorageData,
     [productId]: ids
   }
-
+  multipleSelection.value = storageData
   setSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY, JSON.stringify(storageData))
 }
 
 defineExpose({
-  getSelection: () => multipleSelection.value
+  getSelection: () => filterMultipleSelectionValue(multipleSelection.value)
 })
 </script>
 

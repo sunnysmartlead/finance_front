@@ -48,6 +48,7 @@ const urlMap = {
   FormulaOperationAddition: { path: "/processHoursExport/index", query: {} }, //工序工时导入
   CustomizedStructuralComponents: {}, //定制结构件
   TradeCompliance: { path: "/tradeCompliance/index", query: {} }, //贸易合规
+  NotTradeCompliance: { path: "/tradeCompliance/not", query: {} }, //贸易不合规
   COBManufacturingCostEntry: { path: "/processHoursExport/COBManufactureCost", query: {} }, //COM制造成本录入
   ElectronicUnitPriceEntry: { path: "/resourcesDepartment/electronic", query: {} }, //电子单价录入
   ElectronicUnitPriceEntryToExamine: { path: "/bomVerify/electronic", query: {} }, //电子单价录入审核

@@ -32,6 +32,7 @@ export const wahiteRotes: any[] = [
   "processImport", // 工序工时导入
   "manufacturingCost", //制造成本录入
   "tradeCompliance", // 贸易合规
+  "notTradeCompliance", // 不贸易合规
   "processHoursExport",
   //"processLib",
   "logisticsCost",

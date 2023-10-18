@@ -484,7 +484,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: an
     electronicsUnitPriceId,
   })
   if (success) {
-    ElMessage.success(`${label === '同意' ? '同意' : '退回'} 成功！`)
+    ElMessage.success(`${label} 成功！`)
   }
 }
 //selectionChange 当选择项发生变化时会触发该事件

@@ -1,6 +1,6 @@
 <template>
   <el-table :data="otherCostData" border :height="otherCostData.length > 12 ? 675 : 'auto'" :span-method="objectSpanMethod"
-    :summary-method="(val: any) => getSummaries(val, '单颗成本', 'cost')" :show-summary="!isEdit">
+    :summary-method="(val: any) => getSummaries(val, '单颗成本', 'cost', 4)" :show-summary="!isEdit">
     <el-table-column align="center" prop="costType" label="费用大类" />
     <el-table-column align="center" prop="itemName" label="成本项目">
       <template #default="{ row }">
@@ -23,11 +23,7 @@
         <el-input v-if="isEdit" v-model="row.count" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="cost" label="单颗成本" :formatter="formatThousandths">
-      <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.cost" />
-      </template>
-    </el-table-column>
+    <el-table-column align="center" prop="cost" label="单颗成本" :formatter="formatThousandths" />
     <el-table-column align="center" prop="note" label="备注">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.note" />

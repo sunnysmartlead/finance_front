@@ -10,3 +10,13 @@ export function GetSolutionContrast(data:any){
     data
   })
 }
+
+// 下载方案对比表
+export function GetSolutionContrastDonwload(data:any){
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetSolutionContrastDonwload",
+    method: "get",
+    data,
+    responseType: "blob",
+  })
+}

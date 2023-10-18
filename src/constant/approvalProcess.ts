@@ -139,7 +139,7 @@ const electronicBomProcessType = [
   },
   {
     val: "ElectronicBomEvalSelect_Dzbomppxg",
-    label: "电子BOM匹配修改"
+    label: "退回到【电子BOM匹配修改】"
   }
 ]
 

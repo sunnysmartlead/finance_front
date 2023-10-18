@@ -62,7 +62,7 @@ const getModifyData = async () => {
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
   })) || {}
-  modifyData.value = result || []
+  modifyData.value = map(result, (item, index) => ({ ...item, editId: item.editId || (index + 1) })) || []
 }
 
 const getOtherCost = async () => {
@@ -137,6 +137,18 @@ watch(
   () => [props.gradientId, props.yearData],
   (val) => {
     init()
+  },
+  {
+    deep: true
+  }
+)
+
+watch(
+  () => modifyData.value,
+  () => {
+    modifyData.value.forEach((item) => {
+      item.cost = (item.total || 0) / (item.count || 0)
+    })
   },
   {
     deep: true

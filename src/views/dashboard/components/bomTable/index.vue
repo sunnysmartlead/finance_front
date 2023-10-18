@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card m="2" header="bom成本">
+    <el-card m="2" header="bom成本" v-loading="loading">
       <template #header>
         <el-row justify-between>
           <span>bom成本</span>
@@ -41,6 +41,8 @@ const props = defineProps({
   hideEdit: Boolean
 })
 
+const loading = ref(false)
+
 const totalCount = computed(() => {
   let totalMoneyCynNoCustomerSupply = 0
   let electMoneyCynNoCustomerSupply = 0
@@ -59,6 +61,7 @@ const totalCount = computed(() => {
 // 获取 bom成本（含损耗）汇总表
 const getBomCost = async () => {
   try {
+    loading.value = true
     const { yearData, gradientId } = props
     if (!props.yearData) return
     const { result }: any = await GetBomCost({
@@ -71,8 +74,10 @@ const getBomCost = async () => {
     })
     bomData.value = result || []
     firstShow.value = false
+    loading.value = false
     console.log(result, "获取 bom成本（含损耗）汇总表")
   } catch (err: any) {
+    loading.value = false
     console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
     firstShow.value = false
   }

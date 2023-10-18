@@ -9,7 +9,7 @@
           <el-button type="primary" style="margin: 10px 10px 0 0;">TR方案上传</el-button>
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
-        <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
+        <el-button type="primary" class="m-2" @click="handlePathFethNreTable">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
@@ -220,7 +220,7 @@ const filterYearData = computed(() => {
 
 const getTotal = async () => {
   const { upDown, year } = filterYearData.value
-  if (!upDown || !year) return
+  if (!upDown || !year || !productId || !auditFlowId) return
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
     Year: filterYearData.value.year,
@@ -393,15 +393,15 @@ const handleFetchPriceEvaluationTableDownload = async () => {
 }
 
 // NRE核价表下载
-const handleFethNreTableDownload = async () => {
+const handlePathFethNreTable = async () => {
   router.push({
     path: "/nre/nrePricelist",
     query: {
-      year: filterYearData.value.year,
+      year: filterYearData?.value?.year,
       auditFlowId,
       productId,
-      upDown: filterYearData.value.upDown,
-      hideEdit: 1
+      upDown: filterYearData?.value?.upDown,
+      hideEdit: props.hideEdit ? 1 : 0
     }
   })
 }

@@ -344,7 +344,7 @@ const fetchInitData = async () => {
     result = electronicDtos
     console.log(result, "获取电子料初始化数据")
     // 初始化表头数据
-    handleDealWithColumn(electronicDtos[0] || [])
+    //handleDealWithColumn(electronicDtos[0] || [])
   }
 
   if (!result) {

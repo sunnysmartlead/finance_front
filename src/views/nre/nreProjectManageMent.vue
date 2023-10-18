@@ -246,12 +246,12 @@ const checkData = () => {
 }
 
 const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
-  if (label === '提交') {
-    if (isEmpty(data.restsCost) || isEmpty(data.handPieceCost) || isEmpty(data.travelExpense)) {
-      return ElMessage.warning('请填写完整数据后提交！')
-    }
-    checkData()
-  }
+  // if (label === '提交') {
+  //   if (isEmpty(data.restsCost) || isEmpty(data.handPieceCost) || isEmpty(data.travelExpense)) {
+  //     return ElMessage.warning('请填写完整数据后提交！')
+  //   }
+  //   checkData()
+  // }
   const { success } = await PostProjectManagement({
     projectManagement: {
       ...data,

@@ -155,6 +155,7 @@ function createRequestFunction(service: AxiosInstance) {
     }
     if (config.method === "post") {
        if(config?.data?.comment)config.data.opinionDescription=config?.data?.comment
+       if(config?.data?.opinionDescription)config.data.comment=config?.data?.opinionDescription
     }
     return service(Object.assign(configDefault, config))
   }

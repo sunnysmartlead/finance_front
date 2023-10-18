@@ -11,28 +11,28 @@
         </el-row>
       </template>
       <el-table :data="data.tableData" height="50vh" style="width: 100%; margin-top: 25px" border>
-        <el-table-column label="年份Sop" prop="year" width="180" />
-        <el-table-column label="月工作天数" width="180" prop="monthlyWorkingDays">
+        <el-table-column label="年份Sop" prop="year"  />
+        <el-table-column label="月工作天数"  prop="monthlyWorkingDays">
         </el-table-column>
-        <el-table-column label="人员平均工资" width="180" prop="averageWage">
+        <el-table-column label="人员平均工资"  prop="averageWage">
         </el-table-column>
-        <el-table-column label="每班正常工作时间" width="180" prop="workingHours">
+        <el-table-column label="每班正常工作时间"  prop="workingHours">
         </el-table-column>
-        <el-table-column label="嫁动率" width="180" prop="rateOfMobilization">
+        <el-table-column label="稼动率"  prop="rateOfMobilization" :formatter="showRate">
         </el-table-column>
-        <el-table-column label="折旧年限" width="180" prop="usefulLifeOfFixedAssets">
+        <el-table-column label="折旧年限"  prop="usefulLifeOfFixedAssets">
         </el-table-column>
-        <el-table-column label="每日班次" width="180" prop="dailyShift">
+        <el-table-column label="每日班次"  prop="dailyShift">
         </el-table-column>
-        <el-table-column label="增值税率" width="180" prop="vatRate">
+        <el-table-column label="增值税率"  prop="vatRate" :formatter="showRate">
         </el-table-column>
-        <el-table-column label="人均跟线数量" width="180" prop="traceLineOfPerson">
+        <el-table-column label="人均跟线数量"  prop="traceLineOfPerson">
         </el-table-column>
-        <el-table-column label="GP12工序成本(元/pcs)" width="180">
+        <el-table-column label="GP12工序成本(元/pcs)"  prop="processCost">
         </el-table-column>
-        <el-table-column label="产能利用率" width="180">
+        <el-table-column label="产能利用率"  prop="capacityUtilizationRate" :formatter="showRate">
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="180">
+        <el-table-column label="操作" width="180" fixed="right" >
           <template #default="{ row }">
             <el-button type="primary" @click="handleEdit(row)">编辑</el-button>
             <el-button type="danger" @click="handleDelete(row.id)">删除</el-button>
@@ -43,38 +43,46 @@
     <LogList :type="15" ref="logListRef" />
     <el-dialog v-model="visible" title="制造成本计算-参数" @close="handleCancel(formRef)">
       <el-form ref="formRef" inline :model="formData" status-icon>
-        <el-form-item label="年份Sop" prop="year" width="180" >
+        <el-form-item label="年份Sop" prop="year"  >
           <el-input-number readonly v-model="formData.year" />
         </el-form-item>
-        <el-form-item label="月工作天数" width="180" prop="monthlyWorkingDays">
+        <el-form-item label="月工作天数"  prop="monthlyWorkingDays">
           <el-input-number controls-position="right" v-model="formData.monthlyWorkingDays" />
         </el-form-item>
-        <el-form-item label="人员平均工资" width="180" prop="averageWage">
+        <el-form-item label="人员平均工资"  prop="averageWage">
           <el-input-number controls-position="right" v-model="formData.averageWage" />
         </el-form-item>
-        <el-form-item label="每班正常工作时间" width="180" prop="workingHours">
+        <el-form-item label="每班正常工作时间"  prop="workingHours">
           <el-input-number controls-position="right" v-model="formData.workingHours" />
         </el-form-item>
-        <el-form-item label="嫁动率" width="180" prop="rateOfMobilization">
+        <el-form-item label="稼动率"  prop="rateOfMobilization">
           <el-input type="number" v-model="formData.rateOfMobilization">
             <template #append>%</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="折旧年限" width="180" prop="usefulLifeOfFixedAssets">
+        <el-form-item label="折旧年限"  prop="usefulLifeOfFixedAssets">
           <el-input-number controls-position="right" :min="0" v-model="formData.usefulLifeOfFixedAssets" />
 
         </el-form-item>
-        <el-form-item label="每日班次" width="180" prop="dailyShift">
+        <el-form-item label="每日班次"  prop="dailyShift">
           <el-input-number controls-position="right" :min="0" v-model="formData.dailyShift" />
 
         </el-form-item>
-        <el-form-item label="增值税率" width="180" prop="vatRate">
+        <el-form-item label="增值税率"  prop="vatRate">
           <el-input type="number" v-model="formData.vatRate">
             <template #append>%</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="人均跟线数量" width="180" prop="traceLineOfPerson">
+        <el-form-item label="人均跟线数量"  prop="traceLineOfPerson">
           <el-input-number controls-position="right" :min="0" v-model="formData.traceLineOfPerson" />
+        </el-form-item>
+        <el-form-item label="GP12工序成本(元/pcs)"  prop="processCost">
+          <el-input-number controls-position="right" :min="0" v-model="formData.processCost" />
+        </el-form-item>
+        <el-form-item label="产能利用率"  prop="capacityUtilizationRate">
+          <el-input type="number" v-model="formData.capacityUtilizationRate">
+            <template #append>%</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -132,6 +140,9 @@ const handleAddYear = () => {
   }, 50)
 }
 
+const showRate = (_record: any, _column: any, val: any) => {
+  return `${val} %`
+}
 
 const handleCancel = (formEl: any) => {
   if (!formEl) return

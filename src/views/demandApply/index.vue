@@ -1384,9 +1384,7 @@ const checkModuleTableDataV2Data = () => {
 }
 
 const save = async (formEl: FormInstance | undefined, isSubmit: boolean) => {
-
-  if (isSubmit) {
-    const isPass = pcsTableData.value.some((item: any) => {
+  const isPass = pcsTableData.value.some((item: any) => {
       if (!item.carFactory || !item.carModel) return false
       return true
     })
@@ -1414,9 +1412,6 @@ const save = async (formEl: FormInstance | undefined, isSubmit: boolean) => {
         console.log(state.quoteForm, "quoteForm")
       }
     })
-  } else {
-    handleSubmitData(isSubmit)
-  }
 }
 
 const handleSubmitData = async (isSubmit: boolean) => {

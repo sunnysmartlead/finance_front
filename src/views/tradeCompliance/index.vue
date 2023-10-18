@@ -115,7 +115,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
     comment,
     nodeInstanceId,
     isAgree: opinion.includes("Done") ? true : false,
-    opinion: opinion
+    financeDictionaryDetailId: opinion
   })
   if (res.success) {
     ElMessage({

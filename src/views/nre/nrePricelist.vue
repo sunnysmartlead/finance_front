@@ -639,7 +639,7 @@ watch(
     // 手板件
     if (data.value.handPieceCostModifyDtos.length) {
       data.value.handPieceCostModifyDtos.forEach((item: any) => {
-        item.cost = item.unitPrice * item.quantity
+        item.cost = (item.unitPrice || 0) * (item.quantity || 0)
       })
     }
     // 模具

@@ -126,10 +126,11 @@ import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import { designScheme } from "@/views/demandApplyAudit"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import useJump from "@/hook/useJump"
+import { useRoute } from "vue-router"
 
-import { useRouter } from "vue-router"
-
-const route = useRouter()
+const { closeSelectedTag } = useJump()
+const route = useRoute()
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
@@ -220,8 +221,10 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId, label }: any)
     })
     if (!success) throw Error()
     ElMessage.success(`${label}成功`)
+    closeSelectedTag(route.path)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
+
     // ElMessage.error("提交失败")
   }
 }

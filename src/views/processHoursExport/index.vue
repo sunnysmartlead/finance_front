@@ -2325,7 +2325,7 @@ const sorDownloadFile = async () => {
 }
 //模组数据
 const showProjectDialog = async () => {
-  await GetPriceEvaluationStartData({auditFlowId: productId}).then((response: any) => {
+  await GetPriceEvaluationStartData({auditFlowId: auditFlowId}).then((response: any) => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;

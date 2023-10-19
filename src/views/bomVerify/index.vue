@@ -34,7 +34,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   const constructionSelection = constructionRef.value.getSelection()
   const electronicSelection = electronicRef.value.getSelection() || []
 
-  if (!opinion.includes("_Yes") && !constructionSelection.length && electronicSelection.length) {
+  if (!opinion.includes("_Yes") && !constructionSelection.length || !electronicSelection.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"

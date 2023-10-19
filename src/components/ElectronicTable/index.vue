@@ -21,7 +21,7 @@
         <el-table-column prop="assemblyQuantity" label="装配数量" width="80" fixed="left" />
         <el-table-column prop="materialsUseCount" label="项目物料的使用量">
           <el-table-column align="center" :class-name="`column-class-${index}`"
-            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount" :label="`${item.kv} K/Y`"
+            v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount" :label="`${item.kv} ${c?.yearOrValueModes === 0 ? '(K/Y)' : '(K/HY)'}`"
             :key="`materialsUseCount${index}`">
             <el-table-column width="80" v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :prop="`materialsUseCount.${index}.yearOrValueModes.${iIndex}.value`"
@@ -38,7 +38,7 @@
         </el-table-column>
         <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
           <el-table-column v-for="(item, index) in allColums?.systemiginalCurrencyYears" align="center"
-            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" width="150"
+            :class-name="`column-class-${index}`" :label="`${item.kv} ${c?.yearOrValueModes === 0 ? '(K/Y)' : '(K/HY)'}`" width="150"
             :key="`systemiginalCurrency${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150">
@@ -55,7 +55,7 @@
         </el-table-column>
         <el-table-column prop="inTheRate" label="年降率">
           <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
-            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" :key="`inTheRate${index}`">
+            :class-name="`column-class-${index}`" :label="`${item.kv} ${c?.yearOrValueModes === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`inTheRate${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
@@ -70,7 +70,7 @@
         </el-table-column>
         <el-table-column prop="standardMoney" label="本位币">
           <el-table-column v-for="(item, index) in allColums?.standardMoneyYears" align="center"
-            :class-name="`column-class-${index}`" :label="`${item.kv} K/Y`" :key="`standardMoney${index}`">
+            :class-name="`column-class-${index}`" :label="`${item.kv} ${c?.yearOrValueModes === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`standardMoney${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="100"
               :prop="`standardMoney.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterStandardMoney" />
@@ -132,7 +132,7 @@
       <div>
         <h5>本位币汇总：</h5>
         <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
-          <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} K/Y` }}</span>
+          <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} ${c?.yearOrValueModes === 0 ? '(K/Y)' : '(K/HY)'}` }}</span>
           <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
             <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
               :label="yearItem.year + upDownEunm[yearItem.upDown]">

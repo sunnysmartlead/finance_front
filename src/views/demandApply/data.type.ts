@@ -11,6 +11,7 @@ export const productTypeMap = {
   csupply: "TypeSelect_Supply", // 客户供应3
   cask:"TypeSelect_Ask" //客户要求
 }
+
 export const updateFrequency = {
   HalfYear: "UpdateFrequency_HalfYear", // 半年份
   Year: "UpdateFrequency_Year"

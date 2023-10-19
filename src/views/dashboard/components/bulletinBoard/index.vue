@@ -473,7 +473,7 @@ const getGoTableChartData = async () => {
     GradientId: data.form.gradientId,
   })
   const value = items.map((item: any) => item?.value?.toFixed(2) || 0) || []
-  const years = items.map((val: any) => val.year) || []
+  const years = items.map((val: any) => val.year + upDownEnum[val.upDown]) || []
   selectCostChart = initCharts("selectCostChart", {
     ...selectCostChartData,
     xAxis: {

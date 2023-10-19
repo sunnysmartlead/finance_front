@@ -44,7 +44,7 @@
         </el-table-column>
         <el-table-column prop="stoneQuantity" label="拼板数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
+            <el-input-number :min="0" v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">

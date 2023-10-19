@@ -220,13 +220,13 @@ const filterYearData = computed(() => {
 
 const getTotal = async () => {
   const { upDown, year } = filterYearData.value
-  if (!upDown || !year || !productId || !auditFlowId) return
+  if (!productId || !auditFlowId) return
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
-    Year: filterYearData.value.year,
+    Year: year,
     AuditFlowId: auditFlowId,
     SolutionId: productId,
-    UpDown: filterYearData.value.upDown,
+    UpDown: upDown,
     GradientId: data.form.gradientId,
   }) || {}
   const { totalCost } = result

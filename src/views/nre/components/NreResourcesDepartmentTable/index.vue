@@ -165,6 +165,9 @@ const handleVertify = async ({ comment, opinion, nodeInstanceId, label }: any) =
   const selectionData = getSessionStorage('mouldInventorySelection')
   let filterData: any = safeParse(selectionData)
   const nreId = map(filterData, v => ([...v]))?.flat(2) || []
+  if (!nreId.length) {
+    return ElMessage.warning('请选择要退回的数据！')
+  }
   const { success } = await NREToExamine({
     auditFlowId,
     nreCheckType: 1,

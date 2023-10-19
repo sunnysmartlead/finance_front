@@ -508,7 +508,7 @@
             <el-table-column prop="name" label="产品名称" width="100" />
             <el-table-column prop="yearCount" label="分摊年数" width="250">
               <template #default="{ row, $index }">
-                <el-select v-model="row.year" placeholder="Select" :disabled="isDisabled"
+                <el-select v-model="row.yearCount" placeholder="Select" :disabled="isDisabled"
                   @change="(val) => changeShareCoutYears(val, row, $index)">
                   <el-option v-for="item in shareCountYears" :value="item.value" :label="item.label" />
                 </el-select>

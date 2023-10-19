@@ -1465,7 +1465,7 @@ const downLoad = async () => {
       let a = document.createElement("a")
       document.body.appendChild(a) //此处增加了将创建的添加到body当中
       a.href = url
-      a.download = "成本信息表"
+      a.download = "成本信息表.xlsx"
       a.target = "_blank"
       a.click()
       a.remove() //将a标签移除

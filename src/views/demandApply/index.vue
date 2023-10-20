@@ -413,13 +413,13 @@
           <h6 />
           <el-table :data="kvPricingData" border style="width: 600px">
             <el-table-column type="index" label="梯度序号" width="100" />
-            <el-table-column prop="gradientValue" label="梯度" width="250">
+            <el-table-column prop="displayGradientValue" label="梯度" width="250">
               <template #default="{ row }">
-                <el-input-number controls-position="right" v-model="row.gradientValue"
+                <el-input-number controls-position="right" v-model="row.displayGradientValue"
                   :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
               </template>
             </el-table-column>
-            <el-table-column prop="systermGradientValue" label="系统取梯度" width="250" />
+            <el-table-column prop="gradientValue" label="系统取梯度" width="250" />
             <el-table-column label="操作" fixed="right">
               <template #default="{ $index }" v-if="!isDisabled">
                 <el-button type="danger" :disabled="kvPricingData.length === 1"
@@ -1762,7 +1762,8 @@ watch(
     if (!isHasGradient && !_.isEmpty(moduleTableTotalData) && rowOne) {
       const yearTotal = state.yearCols.length
       const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => a + (b.quantity || 0), 0)
-      kvPricingData.value = [{ gradientValue: Number((totalData / yearTotal).toFixed(2)) }]
+      const displayGradientValue = Number((totalData / yearTotal).toFixed(2))
+      kvPricingData.value = [{ gradientValue: displayGradientValue, displayGradientValue, }]
     }
   },
   {
@@ -1777,24 +1778,24 @@ watch(
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       kvPricingData.value.forEach((item: any) => {
         if (updateFrequencyData === updateFrequency.HalfYear) {
-          item.systermGradientValue = item.gradientValue / 2
+          item.gradientValue = item.displayGradientValue / 2
         } else {
-          item.systermGradientValue = item.gradientValue
+          item.gradientValue = item.displayGradientValue
         }
       })
       let filterData: any = _.cloneDeep(kvPricingData.value)
       filterData = filterData.map((item: any) => {
         return {
-          kv: item.systermGradientValue,
+          kv: item.gradientValue,
           children: map(moduleTableTotalData, (c, index: number) => ({
-            gradientValue: item.systermGradientValue,
+            gradientValue: item.gradientValue,
             index,
             name: c.product,
             number: c.partNumber || "-",
             code: c.code,
             type: c.productType,
             gradientModelYear: map(c.modelCountYearList, (m: any) => ({
-              count: isHasGradient ? item.systermGradientValue : m.quantity,
+              count: isHasGradient ? item.gradientValue : m.quantity,
               upDown: m.upDown,
               year: m.year
             }))
@@ -1811,11 +1812,11 @@ watch(
             if (findItem) {
               arr.push({
                 ...findItem,
-                kv: c.systermGradientValue,
+                kv: c.gradientValue,
               })
             } else {
               arr.push({
-                kv: c.systermGradientValue,
+                kv: c.gradientValue,
                 product: item.product,
                 targetPrice: 0,
                 currency: 0

@@ -1837,7 +1837,7 @@ watch(
   () => moduleTableTotal.value,
   () => {
     shareCountTable.value = map(moduleTableTotal.value, (item, index: number) => ({
-      yearCount: item.yearCount,
+      yearCount: shareCountTable.value?.[index]?.yearCount,
       count: shareCountTable.value?.[index]?.count || 0,
       name: item.product
     })).filter((c) => !!c.name)

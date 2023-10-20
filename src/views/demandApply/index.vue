@@ -1446,7 +1446,6 @@ const handleSubmitData = async (isSubmit: boolean) => {
     let res: any = await saveApplyInfo({
       ...quoteForm,
       // comment,
-      auditFlowId: null,
       opinion,
       gradient: kvPricingData.value,
       gradientModel: gradientModel,

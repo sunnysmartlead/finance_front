@@ -1763,7 +1763,7 @@ watch(
       const yearTotal = state.yearCols.length
       const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => a + (b.quantity || 0), 0)
       const displayGradientValue = Number((totalData / yearTotal).toFixed(2))
-      kvPricingData.value = [{ gradientValue: displayGradientValue, displayGradientValue, }]
+      kvPricingData.value = [{ gradientValue: displayGradientValue, displayGradientValue }]
     }
   },
   {
@@ -2346,7 +2346,7 @@ onMounted(async () => {
 
 const handleChangekvPricingData = (type: string, index?: number) => {
   if (type === "add") {
-    kvPricingData.value.push({ gradientValue: 0, index: 0 })
+    kvPricingData.value.push({ gradientValue: 0, displayGradientValue: 0, index: 0 })
   } else {
     kvPricingData.value.splice(index, 1)
   }

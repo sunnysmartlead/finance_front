@@ -2019,6 +2019,7 @@ const generateTitle = () => {
 const generateCustomTable = () => {
   specifyTableData.value.splice(0, specifyTableData.value.length) // 清空数据
   productTableData.value.forEach((item: any) => {
+    console.log(item.sensorTypeSelect, item.lensTypeSelect, item.ispTypeSelect, item.serialChipTypeSelect)
     if (item.sensorTypeSelect !== productTypeMap.recommend) {
       let price = item.sensorPrice
       let productName = item.name

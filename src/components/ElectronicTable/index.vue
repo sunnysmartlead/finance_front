@@ -167,8 +167,11 @@ import { useRouter } from "vue-router"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 import { map } from "lodash"
+import useJump from "@/hook/useJump"
 
 const router = useRouter()
+
+const { closeSelectedTag } = useJump()
 const Host = "ElectronicPriceInput"
 const { auditFlowId, productId }: any = getQuery()
 
@@ -484,6 +487,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId, label }: an
     electronicsUnitPriceId,
   })
   if (success) {
+    closeSelectedTag(route.path)
     ElMessage.success(`${label} 成功！`)
   }
 }

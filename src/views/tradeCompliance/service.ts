@@ -22,3 +22,11 @@ export function SubmitNode(data: any): any {
     data
   })
 }
+export function PostExportOfTradeForm(data: any): any {
+  return request({
+    url: "/api/services/app/TradeCompliance/PostExportOfTradeForm",
+    method: "post",
+    data,
+    responseType: 'blob'
+  })
+}

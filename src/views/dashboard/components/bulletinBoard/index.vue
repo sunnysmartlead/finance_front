@@ -220,13 +220,13 @@ const filterYearData = computed(() => {
 
 const getTotal = async () => {
   const { upDown, year } = filterYearData.value
-  if (!upDown || !year || !productId || !auditFlowId) return
+  if (!productId || !auditFlowId) return
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
-    Year: filterYearData.value.year,
+    Year: year,
     AuditFlowId: auditFlowId,
     SolutionId: productId,
-    UpDown: filterYearData.value.upDown,
+    UpDown: upDown,
     GradientId: data.form.gradientId,
   }) || {}
   const { totalCost } = result
@@ -473,7 +473,7 @@ const getGoTableChartData = async () => {
     GradientId: data.form.gradientId,
   })
   const value = items.map((item: any) => item?.value?.toFixed(2) || 0) || []
-  const years = items.map((val: any) => val.year) || []
+  const years = items.map((val: any) => val.year + upDownEnum[val.upDown]) || []
   selectCostChart = initCharts("selectCostChart", {
     ...selectCostChartData,
     xAxis: {

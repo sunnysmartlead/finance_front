@@ -61,9 +61,12 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAdditionOfCostModificationItemsForHandBoards(row)" type="primary">
               确认
+            </el-button>
+            <el-button type="danger" link @click="handleDelitionOfCostModificationItemsForHandBoards(row.id, $index)">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -71,7 +74,8 @@
     </el-card>
     <el-card class="margin-top" header="模具费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('mouldInventoryModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('mouldInventoryModifyDtos')"
+          v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.mouldInventory" border :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
         show-summary>
@@ -121,15 +125,19 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddMoldCostModificationItem(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelMoldCostModificationItem(row.id, $index)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
     <el-card class="margin-top" header="实验费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('experimentalExpensesModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('experimentalExpensesModifyDtos')"
+          v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.laboratoryFeeModels" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
@@ -193,8 +201,11 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddExperimentalFeeModificationItem(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelExperimentalFeeModificationItem(row.id, $index)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -243,8 +254,10 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddToolingCostModificationItem(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelToolingCostModificationItem(row.id, $index)"> 删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -293,8 +306,10 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAdditionOfFixtureCostModificationItem(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelitionOfFixtureCostModificationItem(row.id, $index)"> 删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -305,7 +320,8 @@
         <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')"
+          v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.qaqcDepartments" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')" show-summary>
@@ -349,8 +365,11 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddInspectionToolCostModificationItem(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelInspectionToolCostModificationItem(row.id, $index)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -361,7 +380,8 @@
         <el-descriptions-item label="共线分摊率">{{ uphAndValues.gxftl }}</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')"
+          v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.productionEquipmentCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')" show-summary>
@@ -406,9 +426,12 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddProductionEquipmentCostModificationItem(row)" type="primary">
               确认
+            </el-button>
+            <el-button type="danger" link @click="handleDelProductionEquipmentCostModificationItem(row.id, $index)">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -416,7 +439,8 @@
     </el-card>
     <el-card class="margin-top" header="测试软件费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')"
+          v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
       <el-table :data="data.softwareTestingCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')" show-summary>
@@ -460,9 +484,12 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddingModificationItemsForTestingSoftwareCosts(row)" type="primary">
               确认
+            </el-button>
+            <el-button type="danger" link @click="handleDelingModificationItemsForTestingSoftwareCosts(row.id, $index)">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -528,8 +555,11 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleAddTravelExpenseModificationItem(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelTravelExpenseModificationItem(row.id, $index)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -570,8 +600,11 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-button link @click="handleOtherExpenseModificationItemsAdded(row)" type="primary"> 确认 </el-button>
+            <el-button type="danger" link @click="handleDelOtherExpenseModificationItemsAdded(row.id, $index)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -601,13 +634,23 @@ import {
   AddExperimentalFeeModificationItem,
   AddingModificationItemsForTestingSoftwareCosts,
   AddTravelExpenseModificationItem,
-  OtherExpenseModificationItemsAdded
+  OtherExpenseModificationItemsAdded,
+  DelitionOfCostModificationItemsForHandBoards,
+  DelMoldCostModificationItem,
+  DelToolingCostModificationItem,
+  DelitionOfFixtureCostModificationItem,
+  DelInspectionToolCostModificationItem,
+  DelProductionEquipmentCostModificationItem,
+  DelExperimentalFeeModificationItem,
+  DelingModificationItemsForTestingSoftwareCosts,
+  DelTravelExpenseModificationItem,
+  DelOtherExpenseModificationItemsAdded,
 } from "./common/request"
 import { getMouldSummaries } from "./common/mouldSummaries"
 import getQuery from "@/utils/getQuery"
 import { formatDateTime, downloadFileExcel } from "@/utils"
 import { getDictionaryAndDetail } from "@/api/dictionary"
-import { ElMessage } from "element-plus"
+import { ElMessage, ElMessageBox } from "element-plus"
 import { cloneDeep } from "lodash"
 
 const { auditFlowId, productId, hideBtn, hideEdit }: any = getQuery()
@@ -730,7 +773,6 @@ const handleFethNreTableDownload = async () => {
 // 修改
 const handleEdit = (row: any, index: number, key: string) => {
   const findItemIndex = data.value[key]?.findIndex((item: any) => item.modifyId === row.id)
-  console.log(findItemIndex, "currentItem")
   if (!data.value[key]?.length || findItemIndex === -1) {
     const val = cloneDeep(row)
     data.value[key].push({
@@ -872,6 +914,143 @@ const handleOtherExpenseModificationItemsAdded = async (row: any) => {
   }
 }
 
+
+const handleDelitionOfCostModificationItemsForHandBoards = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } = await DelitionOfCostModificationItemsForHandBoards({
+      id
+    })
+    if (success) {
+      console.log(data.value.handPieceCostModifyDtos, "data.value.handPieceCostModifyDtos1")
+      data.value.handPieceCostModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelMoldCostModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } = await DelMoldCostModificationItem({
+      id
+    })
+    if (success) {
+      data.value.mouldInventoryModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelToolingCostModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelToolingCostModificationItem({
+        id
+      })) || {}
+    if (success) {
+      data.value.toolingCostsModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelitionOfFixtureCostModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelitionOfFixtureCostModificationItem({
+        id
+      })) || {}
+    if (success) {
+      data.value.fixtureCostsModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelInspectionToolCostModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelInspectionToolCostModificationItem({
+        id
+      })) || {}
+    if (success) {
+      data.value.inspectionToolCostModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelProductionEquipmentCostModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelProductionEquipmentCostModificationItem({
+       id
+      })) || {}
+    if (success) {
+      data.value.productionEquipmentCostsModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelExperimentalFeeModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelExperimentalFeeModificationItem({
+        id
+      })) || {}
+    if (success) {
+      data.value.experimentalExpensesModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelingModificationItemsForTestingSoftwareCosts = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelingModificationItemsForTestingSoftwareCosts({
+        id
+      })) || {}
+    if (success) {
+      data.value.testingSoftwareCostsModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
+
+const handleDelTravelExpenseModificationItem = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  const { success } =
+    (await DelTravelExpenseModificationItem({
+      id
+    })) || {}
+  if (success) {
+    data.value.travelExpenseModifyDtos.splice(index, 1)
+    ElMessage.success('删除成功～')
+  }
+}
+
+const handleDelOtherExpenseModificationItemsAdded = async (id: any, index: number) => {
+  if (!id) return !ElMessage.warning('请确认后删除～')
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelOtherExpenseModificationItemsAdded({
+        id
+      })) || {}
+    if (success) {
+      data.value.restsCostModifyDtos.splice(index, 1)
+      ElMessage.success('删除成功～')
+    }
+  })
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

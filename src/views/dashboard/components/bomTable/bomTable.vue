@@ -104,7 +104,7 @@
         <el-input v-model="row.remarks" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="modificationComments" label="审批意见" width="150" />
+    <el-table-column align="center" prop="modificationComments" label="修改意见" width="150" />
   </el-table>
 </template>
 <script lang="ts" setup>

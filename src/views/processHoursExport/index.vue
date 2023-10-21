@@ -3,8 +3,8 @@
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center"/>
       <div>
-        <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button>
+<!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
         <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>

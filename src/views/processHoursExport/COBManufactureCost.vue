@@ -1,6 +1,7 @@
 <template>
   <div class="u-p-20">
-    <div>
+      <div>
+
       <ProcessVertifyBox :onSubmit="submitData" processType="confirmProcessType" v-havedone />
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">

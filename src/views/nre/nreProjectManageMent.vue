@@ -233,25 +233,28 @@ const checkData = () => {
 
   let travelExpenseNotPass = false
   let travelExpenseLabel = ''
-  data.travelExpense.some((item, index) => {
+  travelExpenseNotPass = data.travelExpense.some((item, index) => {
     if (!item.reasonsId) {
       handPieceCostLabel = `差旅费用 第 ${index + 1}项的事由没有填写！`
       return true
     }
+    return false
   })
+
   if (travelExpenseNotPass  && data.travelExpense.length) {
-    ElMessage.warning(travelExpenseLabel)
+    ElMessage.warning(handPieceCostLabel)
     throw Error()
   }
 
   let restsCostNotPass = false
   let restsCostLabel = ''
-  data.restsCost.some((item, index) => {
-    if (!item.cost) {
-      handPieceCostLabel = `其他费用 第 ${index + 1}项的事由没有填写！`
+  restsCostNotPass = data.restsCost.some((item, index) => {
+    if (!item.constName) {
+      restsCostLabel = `其他费用 第 ${index + 1}项的费用名称没有填写！`
       return true
     }
   })
+
   if (restsCostNotPass && data.restsCost.length) {
     ElMessage.warning(restsCostLabel)
     throw Error()

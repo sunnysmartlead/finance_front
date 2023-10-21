@@ -33,7 +33,7 @@
         <el-input-number controls-position="right" :min="0" v-model="row.assemblyCount" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="materialPrice" label="材料单价（原币）" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="materialPrice" label="材料单价（原币）" width="175" :formatter="formatThousandths">
       <template #default="{ row }" v-if="isEdit">
         <el-input-number controls-position="right" :min="0" v-model="row.materialPrice" />
       </template>
@@ -43,53 +43,53 @@
         <el-input v-model="row.currencyText" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="exchangeRate" label="汇率" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="exchangeRate" label="汇率" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.exchangeRate" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="materialPriceCyn" label="材料单价（人民币）" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="materialPriceCyn" label="材料单价（人民币）" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.materialPriceCyn" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="totalMoneyCyn" label="合计金额（人民币）- bom成本" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="totalMoneyCyn" label="合计金额（人民币）- bom成本" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.totalMoneyCyn" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="totalMoneyCynNoCustomerSupply" label="合计金额（人民币）- 不含客供" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="totalMoneyCynNoCustomerSupply" label="合计金额（人民币）- 不含客供" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.totalMoneyCynNoCustomerSupply" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="loss" label="损耗" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="loss" label="损耗" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.loss" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="materialCost" label="材料成本（含损耗）" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="materialCost" label="材料成本（含损耗）" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.materialCost" v-if="isEdit" />
       </template>
     </el-table-column>
 
-    <el-table-column align="center"  prop="inputCount" label="投入量" width="175">
+    <el-table-column align="center"  prop="inputCount" label="投入量" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.inputCount" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="purchaseCount" label="采购量" width="175">
+    <el-table-column align="center"  prop="purchaseCount" label="采购量" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.purchaseCount" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="moqShareCount" label="MOQ分摊成本" width="175" :formatter="toFixedThree">
+    <el-table-column align="center"  prop="moqShareCount" label="MOQ分摊成本" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.moqShareCount" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="moq" label="MOQ" width="175">
+    <el-table-column align="center"  prop="moq" label="MOQ" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number controls-position="right" :min="0" v-model="row.moq" v-if="isEdit" />
       </template>
@@ -109,6 +109,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from "vue"
+import { formatThousandths } from '@/utils/number'
 
 const props = defineProps({
   bomData: {
@@ -125,12 +126,6 @@ const props = defineProps({
   },
   hideEdit: Boolean
 })
-
-
-const toFixedThree = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(3)
-  return val
-}
 
 const options = [
   {

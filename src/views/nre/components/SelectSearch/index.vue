@@ -41,15 +41,13 @@ const handleSearch = async (query: string) => {
   if (query) {
     const { result } = (await props.request({ Name: query })) || {}
     console.log(result, "result")
-    if (result?.length) {
-      data.options = map(result, (item) => {
-        return {
-          id: item.name,
-          displayName: item.name
-        }
-      })
-      data.searchDetail = result
-    }
+    data.options = map(result, (item) => {
+      return {
+        id: item.name,
+        displayName: item.name
+      }
+    })|| []
+    data.searchDetail = result || []
   }
 }
 

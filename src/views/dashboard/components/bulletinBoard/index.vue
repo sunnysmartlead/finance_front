@@ -544,7 +544,9 @@ const handleSetPriceEvaluationTableInputCount = debounce(async () => {
   getPriceEvaluationTableInputCount()
 }, 500)
 
-
+defineExpose({
+  getFileList: () => fileList.value
+})
 </script>
 
 <style lang="scss" scoped>

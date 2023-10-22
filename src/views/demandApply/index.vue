@@ -1755,14 +1755,15 @@ watch(
 )
 
 watch(
-  () => [state.quoteForm.isHasGradient, moduleTableTotal.value],
+  () => [state.quoteForm.isHasGradient, state.quoteForm.updateFrequency,moduleTableTotal.value],
   (val) => {
-    const [isHasGradient, moduleTableTotalData] = val
+    const [isHasGradient, updateFrequencyData, moduleTableTotalData] = val
     const rowOne = moduleTableTotal?.value?.[0]
     if (!isHasGradient && !_.isEmpty(moduleTableTotalData) && rowOne) {
       const yearTotal = state.yearCols.length
+      const yearTotalData = updateFrequencyData === updateFrequency.HalfYear ? yearTotal / 2 : yearTotal
       const totalData = rowOne.modelCountYearList?.reduce((a: any, b: any) => a + (b.quantity || 0), 0)
-      const displayGradientValue = Number((totalData / yearTotal).toFixed(2))
+      const displayGradientValue = Number((totalData / yearTotalData).toFixed(2))
       kvPricingData.value = [{ gradientValue: displayGradientValue, displayGradientValue }]
     }
   },

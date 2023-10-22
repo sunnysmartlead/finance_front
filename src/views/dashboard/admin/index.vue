@@ -1,21 +1,26 @@
 <template>
   <div>
     <ProcessVertifyBox :onSubmit="handleSetBomState" processType="priceEvaluationBoard" />
-    <bulletinBoard />
+    <bulletinBoard ref="bulletinBoardRef" />
   </div>
 </template>
 <script setup lang="ts">
-  import bulletinBoard from "../components/bulletinBoard/index.vue"
-  import { SetBomState } from "@/api/bom"
-  import getQuery from "@/utils/getQuery"
-  import useJump from "@/hook/useJump"
-  import { ElMessage } from "element-plus"
-  import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import { ref } from 'vue'
+import bulletinBoard from "../components/bulletinBoard/index.vue"
+import { SetBomState } from "@/api/bom"
+import getQuery from "@/utils/getQuery"
+import useJump from "@/hook/useJump"
+import { ElMessage } from "element-plus"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+const bulletinBoardRef = ref()
+const { auditFlowId, productId }: any = getQuery()
+const { jumpTodoCenter } = useJump()
 
-  const { auditFlowId, productId }: any = getQuery()
-  const { jumpTodoCenter } = useJump()
-
-  const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
+const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
+  const fileList = bulletinBoardRef.value.getFileList()
+  if (opinion === 'HjkbSelect_Yes' && !fileList.length) {
+    return ElMessage.warning('请先上传TR方案！')
+  }
   let res: any = await SetBomState({
     auditFlowId: auditFlowId,
     productId: productId,

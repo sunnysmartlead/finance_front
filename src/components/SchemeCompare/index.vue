@@ -166,7 +166,7 @@ const initFetch = async () => {
     upDown,
     year,
   } = props
-  if (auditFlowId && gradientId && upDown && year) {
+  if (auditFlowId && gradientId && year) {
     try {
       loading.value = true
       const { success, result }: any = (await GetSolutionContrast({

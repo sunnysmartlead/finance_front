@@ -36,6 +36,12 @@
       <el-button type="primary" my-20px float-right v-loading.fullscreen.lock="fullscreenLoading" @click="comfirmPlans"
         >确定</el-button
       >
+      <h4 mt-100px>方案组合</h4>
+      <el-radio-group v-model="planListArrVal" mt-20px @change="planListArrChange">
+        <el-radio :label="index" v-for="(item, index) in planListArr" size="large" border :key="index"
+          >方案{{ index + 1 }}</el-radio
+        >
+      </el-radio-group>
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
@@ -106,8 +112,12 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="grossMargin" label="毛利率" />
-        <el-table-column prop="salesRevenue" label="销售收入" />
+        <el-table-column prop="grossMargin" label="毛利率">
+          <template #default="scope"> {{ scope.row.grossMargin }}% </template>
+        </el-table-column>
+        <el-table-column prop="salesRevenue" label="销售收入">
+          <template #default="scope"> {{ scope.row.unitPrice * scope.row.pcs }} </template>
+        </el-table-column>
       </el-table>
     </el-card>
     <!-- sop -->
@@ -431,6 +441,8 @@ const productStore = useProductStore()
 
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
+const planListArr = reactive([])
+const planListArrVal = ref(null)
 const data = reactive({
   //仅含样品
   sampleOnlyRes: {
@@ -1149,7 +1161,19 @@ const data = reactive({
     message: "调用成功"
   }
 })
-
+const planListArrChange = async (val) => {
+  fullscreenLoading.value = true
+  try {
+    let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables: planListArr[val] })
+    console.log(res)
+    console.log(planList)
+    console.log(planListArr[val])
+    data.allRes = res.result
+    fullscreenLoading.value = false
+  } catch (error) {
+    fullscreenLoading.value = false
+  }
+}
 // 过滤相同梯度的数据
 interface stringKeyObj {
   [propName: string]: any
@@ -1500,7 +1524,7 @@ const calculateFullGrossMargin = async (row: any, index: any) => {
 }
 
 const comfirmPlans = async () => {
-  fullscreenLoading.value = true
+  // fullscreenLoading.value = true
   console.log(productStore.productList)
   let planMap = {}
   let solutionTables: any[] = []
@@ -1512,16 +1536,18 @@ const comfirmPlans = async () => {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })
-  try {
-    let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
-    console.log(res)
-    console.log(planList)
-    console.log(solutionTables)
-    data.allRes = res.result
-    fullscreenLoading.value = false
-  } catch (error) {
-    fullscreenLoading.value = false
-  }
+  planListArr.push(solutionTables)
+  debugger
+  // try {
+  //   let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
+  //   console.log(res)
+  //   console.log(planList)
+  //   console.log(solutionTables)
+  //   data.allRes = res.result
+  //   fullscreenLoading.value = false
+  // } catch (error) {
+  //   fullscreenLoading.value = false
+  // }
 }
 const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)

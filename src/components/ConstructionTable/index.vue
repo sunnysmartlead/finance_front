@@ -170,9 +170,7 @@
 
 <script lang="ts" setup>
 import { ref, onBeforeMount, onMounted, watchEffect, computed, shallowRef, reactive, nextTick, watch } from "vue"
-import { ConstructionModel } from "../ElectronicTable/data.type"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
-// import VertifyBox from "@/components/VertifyBox/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import {
   GetStructural,
@@ -196,7 +194,6 @@ import { useRoute } from "vue-router"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 import { map } from "lodash"
 import ModuleNumber from '@/components/ModuleNumber/index.vue'
-import { json } from "stream/consumers"
 
 const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()

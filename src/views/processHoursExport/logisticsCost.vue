@@ -133,7 +133,7 @@
               <el-table-column label="备注" align="center">
                 <template #default="scope">
                   <div>
-                    <el-input type="textarea" v-model="scope.row.remark" placeholder="请输入备注内容" />
+                    <el-input  v-model="scope.row.remark" placeholder="请输入备注内容" />
                   </div>
                 </template>
               </el-table-column>

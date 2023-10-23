@@ -3,8 +3,6 @@
     <div class="u-flex u-row-between u-col-center u-p-t-10 u-p-b-10 u-border-bottom">
       <div class="u-flex u-row-left u-col-center"/>
       <div>
-<!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
         <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>
@@ -542,9 +540,13 @@
                     <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleJianJuCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.fixturePrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="jianJuNameChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.fixturePrice ,0)
+                        amoutInterval(dataItem.toolInfo.fixturePrice ,0)
                       }}</span>
                   </div>
                   <div class="u-width-150 u-border">
@@ -559,9 +561,13 @@
                     <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.frockPrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="handleGongZhuangCountChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.frockPrice ,0)
+                        amoutInterval(dataItem.toolInfo.frockPrice ,0)
                       }}</span>
                   </div>
                   <div class="u-width-150 u-border">
@@ -577,9 +583,13 @@
                                      :disabled="isDisable(dataIndex)"
                                      @change="handleTestLineCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.testLinePrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="testLineNameChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.testLinePrice ,0)
+                        amoutInterval(dataItem.toolInfo.testLinePrice ,0)
                       }}</span>
                   </div>
                 </template>
@@ -2496,9 +2506,15 @@ const confirmSelectStandardProcess = () => {
         let yearIndex = oldItem.year;
         newSop.map(function (newItem: any, newIndex: number) {
           let newYearIndex = newItem.year ? newItem.year : '----';
+          console.log(newYearIndex)
+          console.log(yearIndex)
+
+
           if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
             oldItem.issues = newItem.issues;
           }
+          console.log(parseFloat(newYearIndex))
+          console.log(parseFloat(yearIndex))
         })
       })
       newExportItem.sopInfo = oldSop;

@@ -2,6 +2,7 @@
   <el-card class="" header="产品识别分析表">
     <el-row justify="end">
       <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" />
+      <el-button m="2" type="primary" @click="handleDownload">贸易合规下载</el-button>
     </el-row>
     <el-descriptions :column="2" border>
       <el-descriptions-item label="产品名称"> {{ data.tradeComplianceCheck.productName }} </el-descriptions-item>
@@ -49,10 +50,10 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
-import { GetTradeComplianceCheckFromDateBase, IsTradeComplianceCheck,SubmitNode } from "./service"
+import { GetTradeComplianceCheckFromDateBase, IsTradeComplianceCheck,SubmitNode, PostExportOfTradeForm } from "./service"
 import { TradeComplianceCheck } from "./data.type"
-import { ElMessage, ElMessageBox } from "element-plus"
-
+import { ElMessage, ElLoading } from "element-plus"
+import { downloadFileExcel } from "@/utils"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
@@ -88,26 +89,7 @@ const initFetch = async () => {
   data.tradeComplianceCheck = result.tradeComplianceCheck || {}
   console.log(result, "res")
 }
-// const agree = async (isAgree: boolean) => {
-//   ElMessageBox[isAgree ? "prompt" : "confirm"]("确定执行该操作吗", "请审核", {
-//     confirmButtonText: "确定",
-//     cancelButtonText: "取消",
-//     type: "warning"
-//   }).then(async (val) => {
-//     let res: any = await IsTradeComplianceCheck({
-//       AuditFlowId: auditFlowId,
-//       opinionDescription: isAgree ? val.value : "",
-//       isAgree
-//     })
-//     if (res.success) {
-//       ElMessage({
-//         type: "success",
-//         message: "操作成功"
-//       })
-//       jumpTodoCenter()
-//     }
-//   })
-// }
+
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await SubmitNode({
     AuditFlowId: auditFlowId,
@@ -125,6 +107,26 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
     jumpTodoCenter()
   }
 }
+
+
+const handleDownload = async () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在下载中..., 请稍等',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+  try {
+    const res = await PostExportOfTradeForm({
+      auditFlowId,
+      solutionId: productId
+    })
+    downloadFileExcel(res, "贸易合规")
+    loading.close()
+  } catch {
+    loading.close()
+  }
+}
+
 watchEffect(() => {})
 </script>
 <style scoped lang="scss">

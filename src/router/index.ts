@@ -605,7 +605,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/tradeCompliance/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: false,
+      title: "贸易合规"
     },
     children: [
       {

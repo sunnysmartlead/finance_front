@@ -40,12 +40,10 @@
         show-summary
       >
         <el-table-column align="center"  type="index" label="序号" width="80" />
-        <el-table-column align="center"  label="试验项目（根据与客户协定项目）" width="180">
+        <el-table-column align="center" prop="projectName"  label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
-            <!-- <el-input v-model="row.projectName" /> -->
-            <span v-if="isVertify">{{ row.projectName }}</span>
             <SelectSearch
-              v-else
+              v-if="!isVertify"
               :request="GetFoundationreliableList"
               :onChange="(record: any) => handleChangeData(record, $index)"
               v-model="row.projectName"

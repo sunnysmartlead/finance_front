@@ -467,7 +467,7 @@ export function DelTravelExpenseModificationItem(data: any): any {
 export function DelOtherExpenseModificationItemsAdded(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/DelOtherExpenseModificationItemsAdded",
-    method: "post",
+    method: "get",
     data,
   })
 }

@@ -143,7 +143,7 @@
                       </el-select>
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input-number v-model="deviceItem.hardwarePrice" :min="1"
+                      <el-input-number v-model="deviceItem.hardwarePrice" :min="0"
                         :disabled="data.currentEditProcessIndex != dataIndex"  />
                     </div>
                     <div class="u-width-200   u-border">
@@ -160,7 +160,7 @@
                             :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.traceabilitySoftwareCost" :min="1"
+                  <el-input-number v-model="dataItem.traceabilitySoftwareCost" :min="0"
                                    :disabled="data.currentEditProcessIndex != dataIndex"  />
                 </div>
                 <div class="u-width-150  u-border">

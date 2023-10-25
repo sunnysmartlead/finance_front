@@ -1557,18 +1557,38 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
     ProcessNumber: ProcessNumber
   }
   GetEditorByProcessNumber(param).then((response: any) => {
+    console.log("根据ID查询工序结果",response);
     if (response.success) {
       let data = response.result
-      console.log("根据工序序号查询信息结果", data)
-      dataArr.value[dataIndex] = data
-      console.log(yearList)
-      console.log(yearList)
-      console.log(data.sopInfo.length)
-      console.log(yearList.value.length )
-      if (data.sopInfo.length != yearList.value.length) {
-        dataArr.value[dataIndex].sopInfo = yearList
-      }
-      console.log("根据工序序号查询信息111结果", dataArr.value[dataIndex])
+      console.log("====data====",data);
+      //第一条记录作为末班
+      let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+      //获取的新的记录
+      let newSop = JSON.parse(JSON.stringify(data.sopInfo ? data.sopInfo : []));
+      //循环对比
+      oldSop.map(function (oldItem: any, index: number) {
+        oldItem.issues = [{
+          id: 0,
+          laborHour: 0,
+          machineHour: 0,
+          personnelNumber: 0,
+          modelCountYearId: 0,
+        }];
+        //年份
+        let yearIndex = oldItem.year;
+        //新的数据循环
+        newSop.map(function (newItem: any, newIndex: number) {
+          let newYearIndex = newItem.year ? newItem.year : '----';
+          //如果新的年份和老的年份对比一样,那么把旧的工时信息进行更新
+          if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+            oldItem.issues = newItem.issues;
+          }
+        })
+      })
+      //赋值
+      data.sopInfo = oldSop;
+      //更新
+      dataArr.value[dataIndex]=data
     } else {
       ElMessage({
         type: "error",
@@ -1621,6 +1641,9 @@ const getProcessName = async (keyWord: String) => {
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+  let processID= dataArr.value[dataIndex].processNumber;
+  getProcessInfoByID(processID, dataIndex);
+  return;
   if (processNameOptions.value.length > 0) {
     let options = processNameOptions.value;
     for (let i = 0; i < options.length; i++) {
@@ -2325,7 +2348,7 @@ const sorDownloadFile = async () => {
 }
 //模组数据
 const showProjectDialog = async () => {
-  await GetPriceEvaluationStartData({auditFlowId: productId}).then((response: any) => {
+  await GetPriceEvaluationStartData({auditFlowId: auditFlowId}).then((response: any) => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;
@@ -2374,6 +2397,7 @@ const openStandardProcessDialogForm = async () => {
       let data = response.result
       if (data.length > 0) {
         standardProcessNameOptions.value = data;
+        console.log("===========标准工艺下拉列表===========",standardProcessNameOptions.value);
         dialogFormVisible.value = true
       } else {
         ElMessage({

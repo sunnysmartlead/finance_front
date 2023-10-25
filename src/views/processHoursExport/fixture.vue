@@ -550,7 +550,9 @@ const saveEdit = async (index: number, row: any) => {
   if (row.id > 0) {
     console.log("编辑治置保存");
     tip = "修改治置";
-    result = await updateFoundationFixture(row);
+    result = await updateFoundationFixture(row).catch((error) => {
+      initData();
+    });;
   }
   //新增
   else if (row.id == -1) {
@@ -566,7 +568,9 @@ const saveEdit = async (index: number, row: any) => {
       "fixtureGaugeBusiness": row.fixtureGaugeBusiness
     }
 
-    result = await createFoundationFixture(a)
+    result = await createFoundationFixture(a).catch((error) => {
+      initData();
+    });
   }
   console.log("结果", result);
   if (result.success == true) {

@@ -427,7 +427,9 @@ const saveEdit = async (index: number, row: any) => {
   if (row.id > 0) {
     console.log("编辑工装保存",row);
     tip = "修改工装";
-    result = await updateFoundationProcedure(row);
+    result = await updateFoundationProcedure(row).catch((error) => {
+      initData();
+    });;
   }
   //新增
   else if (row.id == -1) {
@@ -443,7 +445,9 @@ const saveEdit = async (index: number, row: any) => {
     console.log("新增工装");
     tip = "新增工装";
     row.id = null
-    result = await createFoundationProcedure(a)
+    result = await createFoundationProcedure(a).catch((error) => {
+      initData();
+    });
   }
   console.log("结果", result);
   if (result.success == true) {

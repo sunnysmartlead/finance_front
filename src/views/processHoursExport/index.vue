@@ -1207,15 +1207,22 @@ const handleSaveData = () => {
 // }
 
 const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
-  handleSaveData().then((p: any) => {
-    let param = {
-      auditFlowId: auditFlowId,
-      solutionId: productId,
-      comment,
-      opinion,
-      nodeInstanceId
-    }
-    console.log("提交参数", param);
+  let param = {
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+    comment,
+    opinion,
+    nodeInstanceId
+  }
+  if (opinion !='Done'){
+    handleSaveData().then((p: any) => {
+
+      console.log("提交参数", param);
+
+    }) // 保存
+
+  }else {
+
     handleSubmitOption(param).then((response: any) => {
       console.log("提交响应", response)
       if (response.success) {
@@ -1223,7 +1230,6 @@ const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
           type: "success",
           message: response.result
         })
-        initData()
       } else {
         ElMessage({
           type: "error",
@@ -1231,7 +1237,8 @@ const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
         })
       }
     })
-  }) // 保存
+  }
+
 }
 
 const upload = ref<UploadInstance>()
@@ -1522,7 +1529,7 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
       if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
          newSopItem= newSop[newSop.length-1];
-      } 
+      }
       //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
       if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
          newSopItem=newSop[0];
@@ -2637,7 +2644,7 @@ const compareSopData=(newExportItem:any)=>{
     //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
     if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
       newSopItem= newSop[newSop.length-1];
-    } 
+    }
     //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
     if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
       newSopItem=newSop[0];

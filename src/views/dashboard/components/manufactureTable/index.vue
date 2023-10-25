@@ -99,13 +99,6 @@ const init = () => {
 
 
 const handleSubmit = async () => {
-  if (!modifyData.value.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先添加修改项数据再操作！'
-    })
-    return
-  }
   const { success } = await SetUpdateItemManufacturingCost({
     updateItem: modifyData.value,
     auditFlowId,

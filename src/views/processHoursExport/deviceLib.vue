@@ -551,7 +551,9 @@ const saveEdit = async (index: number, row: any) => {
     if (row.id > 0) {
         console.log("编辑设备保存");
         tip = "修改设备";
-        result = await updateFoundationDevice(row);
+        result = await updateFoundationDevice(row).catch((error) => {
+          initData();
+        });
     }
     //新增
     else if (row.id == -1) {
@@ -563,16 +565,21 @@ const saveEdit = async (index: number, row: any) => {
             "deviceList": row.deviceList
         }
 
-        result = await createFoundationDevice(a)
+        result = await createFoundationDevice(a).catch((error) => {
+          initData();
+        });
     }
+    console.log("结果", result);
     console.log("结果", result);
     if (result.success == true) {
         initData();
     } else {
+        initData();
         ElMessage({
             type: 'error',
-            message: tip + '失败',
+            message: tip + result.error.message,
         })
+
     }
 }
 

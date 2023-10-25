@@ -1246,7 +1246,8 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   if (response.success) {
     let exportListData = response.result ? response.result : []
-    console.log("导入工时工序", exportListData.length);
+    console.log("列表====", dataArr.value);
+    console.log("导入的工时工序", exportListData);
     //dataArr.value = exportData.concat(dataArr.value)
     if (exportListData == null || exportListData.length < 1) {
       ElMessage({
@@ -1258,51 +1259,51 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
       let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+      oldSop.sort((a:any,b:any)=>a.year-b.year);
       for (let k = 0; k < exportListData.length; k++) {
-        let newExportItem = exportListData[k];
+        let newExportItem =JSON.parse(JSON.stringify(exportListData[k]));
+        console.log("===========newExportItem===",newExportItem);
         let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
+        newSop.sort((a:any,b:any)=>a.year-b.year);
+        let newSopItem: { issues: any } | null=null;
+        //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
+        if(oldSop[0].year>newSop[newSop.length-1].year){
+          newSopItem= newSop[newSop.length-1];
+        } 
+        //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
+        if(newSop[0].year>oldSop[oldSop.length-1].year){
+          newSopItem=newSop[0];
+        }
         oldSop.map(function (oldItem: any, index: number) {
-          oldItem.issues = [{
-            id: 0,
-            laborHour: 0,
-            machineHour: 0,
-            personnelNumber: 0,
-            modelCountYearId: 0,
-          }];
-          let yearIndex = oldItem.year;
-          console.log(yearIndex)
-          newSop.map(function (newItem: any, newIndex: number) {
-            console.log(newItem)
-            let newYearIndex = newItem.year ? newItem.year : '----';
-            if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-              oldItem.issues = newItem.issues;
-            }
-          })
+          if(newSopItem!=null){
+           oldItem.issues = newSopItem.issues;
+          }else{
+            oldItem.issues = [{
+              id: 0,
+              laborHour: 0,
+              machineHour: 0,
+              personnelNumber: 0,
+              modelCountYearId: 0,
+            }];
+            let oldYearIndex = oldItem.year;
+            console.log("用来参考的第一行==工时年份===",oldYearIndex)
+            newSop.map(function (newItem: any, newIndex: number) {
+              console.log("导入的新的工时年份",newItem.year);
+              let newYearIndex = newItem.year ? newItem.year : '----';
+              if (newYearIndex.indexOf(oldYearIndex) != -1 || oldYearIndex.indexOf(newYearIndex) != -1) {
+                console.log("=======更新当前年份工时数据====");
+                oldItem.issues = newItem.issues;
+              }
+            })
+          }
         })
         newExportItem.sopInfo = oldSop;
-        dataArr.value.push(newExportItem);
+        dataArr.value.unshift(newExportItem);
       }
-      // let newSop = JSON.parse(JSON.stringify(exportListData[0].sopInfo ? exportListData[0].sopInfo : []));
-      // oldSop.map(function (item: any, index: number) {
-      //   item.issues = [{
-      //     id: 0,
-      //     laborHour: 0,
-      //     machineHour: 0,
-      //     personnelNumber: 0,
-      //   }];
-      //   let yearIndex = item.year;
-      //   newSop.map(function (newItem: any, newIndex: number) {
-      //     let newYearIndex = newItem.year ? newItem.year : '----';
-      //     if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-      //       item.issues = newItem.issues;
-      //     }
-      //   })
-      // })
-      // exportListData[0].sopInfo = oldSop;
-      // let newData: any = exportListData[0];
-      // dataArr.value.push(newData);
     } else {
       dataArr.value = exportListData;
+      let lastObj = dataArr.value[(dataArr.value.length - 1)];
+      dataArr.value.push(JSON.parse(JSON.stringify(lastObj)));
     }
     ElMessage({
       type: "success",
@@ -1462,8 +1463,7 @@ const handleEdit = (index: number, row: any) => {
 
 //删除
 const handleDel = (index: number, row: any) => {
-  console.log(index, row)
-  if (dataArr.value.length < 2) {
+  if (dataArr.value.length <=2){
     ElMessage({
       type: "warning",
       message: "至少保留一条记录"
@@ -1476,24 +1476,13 @@ const handleDel = (index: number, row: any) => {
     type: "warning"
   }).then(async () => {
     dataArr.value.splice(index, 1);
+    if(dataArr.value.length==1){
+      dataArr.value=[];
+    }
     ElMessage({
       type: "success",
       message: "删除成功,确认无误请保存!"
     })
-    // handleDelete(row.id).then((response: any) => {
-    //   if (response.success) {
-    //     ElMessage({
-    //       type: "success",
-    //       message: "删除成功"
-    //     })
-    //     initData()
-    //   } else {
-    //     ElMessage({
-    //       type: "error",
-    //       message: "删除失败"
-    //     })
-    //   }
-    // })
   })
 }
 
@@ -1563,27 +1552,42 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       console.log("====data====",data);
       //第一条记录作为末班
       let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+      oldSop.sort((a:any,b:any)=>a.year-b.year);
       //获取的新的记录
       let newSop = JSON.parse(JSON.stringify(data.sopInfo ? data.sopInfo : []));
-      //循环对比
+      newSop.sort((a:any,b:any)=>a.year-b.year);
+      let newSopItem: { issues: any } | null=null;
+      //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
+      if(oldSop[0].year>newSop[newSop.length-1].year){
+         newSopItem= newSop[newSop.length-1];
+      } 
+      //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
+      if(newSop[0].year>oldSop[oldSop.length-1].year){
+         newSopItem=newSop[0];
+      }
+      //循环对比;
       oldSop.map(function (oldItem: any, index: number) {
-        oldItem.issues = [{
-          id: 0,
-          laborHour: 0,
-          machineHour: 0,
-          personnelNumber: 0,
-          modelCountYearId: 0,
-        }];
-        //年份
-        let yearIndex = oldItem.year;
-        //新的数据循环
-        newSop.map(function (newItem: any, newIndex: number) {
-          let newYearIndex = newItem.year ? newItem.year : '----';
-          //如果新的年份和老的年份对比一样,那么把旧的工时信息进行更新
-          if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-            oldItem.issues = newItem.issues;
-          }
-        })
+        if(newSopItem!=null){
+           oldItem.issues = newSopItem.issues;
+        }else{
+            oldItem.issues = [{
+              id: 0,
+              laborHour: 0,
+              machineHour: 0,
+              personnelNumber: 0,
+              modelCountYearId: 0,
+            }];
+             //年份
+            let yearIndex = oldItem.year;
+            //新的数据循环
+            newSop.map(function (newItem: any, newIndex: number) {
+              let newYearIndex = newItem.year ? newItem.year : '----';
+              //如果新的年份和老的年份对比一样,那么把旧的工时信息进行更新
+              if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+                oldItem.issues = newItem.issues;
+              }
+            })
+        }
       })
       //赋值
       data.sopInfo = oldSop;
@@ -2472,7 +2476,6 @@ const confirmSelectStandardProcess = () => {
     return
   }
   let pList = dialogForm.value.processHoursEnterDtoList;
-  console.log("pList", pList);
   if (pList == null || pList.length < 1) {
     ElMessage({
       type: "error",
@@ -2483,48 +2486,49 @@ const confirmSelectStandardProcess = () => {
   standardProcessLoading.value = true;
   if (dataArr.value.length > 0) {
     let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+    console.log("====oldSop====",oldSop);
+    oldSop.sort((a:any,b:any)=>a.year-b.year);
     for (let k = 0; k < pList.length; k++) {
-      let newExportItem = pList[k];
-      let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-      oldSop.map(function (oldItem: any, index: number) {
-        oldItem.issues = [{
-          id: 0,
-          laborHour: 0,
-          machineHour: 0,
-          personnelNumber: 0,
-        }];
-        let yearIndex = oldItem.year;
-        newSop.map(function (newItem: any, newIndex: number) {
-          let newYearIndex = newItem.year ? newItem.year : '----';
-          if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-            oldItem.issues = newItem.issues;
+        let newExportItem =JSON.parse(JSON.stringify(pList[k]));
+        console.log("===========newExportItem===",newExportItem);
+        let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
+        newSop.sort((a:any,b:any)=>a.year-b.year);
+        let newSopItem: { issues: any } | null=null;
+        //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
+        if(oldSop[0].year>newSop[newSop.length-1].year){
+          newSopItem= newSop[newSop.length-1];
+        } 
+        //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
+        if(newSop[0].year>oldSop[oldSop.length-1].year){
+          newSopItem=newSop[0];
+        }
+        oldSop.map(function (oldItem: any, index: number) {
+          if(newSopItem!=null){
+            oldItem.issues = newSopItem.issues;
+          }else{
+            oldItem.issues = [{
+              id: 0,
+              laborHour: 0,
+              machineHour: 0,
+              personnelNumber: 0,
+            }];
+            let yearIndex = oldItem.year;
+            newSop.map(function (newItem: any, newIndex: number) {
+              let newYearIndex = newItem.year ? newItem.year : '----';
+              if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+                oldItem.issues = newItem.issues;
+              }
+            })
           }
         })
-      })
-      newExportItem.sopInfo = oldSop;
-      dataArr.value.push(newExportItem);
+        newExportItem.sopInfo = oldSop;
+        dataArr.value.unshift(newExportItem);
     }
-    // let newSop = JSON.parse(JSON.stringify(pList[0].sopInfo ? pList[0].sopInfo : []));
-    // oldSop.map(function (item: any, index: number) {
-    //   item.issues = [{
-    //     id: 0,
-    //     laborHour: 0,
-    //     machineHour: 0,
-    //     personnelNumber: 0,
-    //   }];
-    //   let yearIndex = item.year;
-    //   newSop.map(function (newItem: any, newIndex: number) {
-    //     let newYearIndex = newItem.year ? newItem.year : '----';
-    //     if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-    //       item.issues = newItem.issues;
-    //     }
-    //   })
-    // })
-    // pList[0].sopInfo = oldSop;
-    // let newData: any = pList[0];
-    // dataArr.value.push(newData);
   } else {
     dataArr.value = pList;
+    dataArr.value = exportListData;
+    let lastObj = dataArr.value[(dataArr.value.length - 1)];
+    dataArr.value.push(JSON.parse(JSON.stringify(lastObj)));
   }
   console.log("列表", dataArr.value);
   standardProcessLoading.value = false;

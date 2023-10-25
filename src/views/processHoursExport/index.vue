@@ -1258,47 +1258,9 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     }
     //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
-      let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
-      oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
       for (let k = 0; k < exportListData.length; k++) {
         let newExportItem =JSON.parse(JSON.stringify(exportListData[k]));
-        console.log("===========newExportItem===",newExportItem);
-        let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-        newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
-        let newSopItem: { issues: any } | null=null;
-        //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
-        if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
-          newSopItem= newSop[newSop.length-1];
-        } 
-        //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
-        if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
-          newSopItem=newSop[0];
-        }
-        oldSop.map(function (oldItem: any, index: number) {
-          if(newSopItem!=null){
-           oldItem.issues = newSopItem.issues;
-          }else{
-            oldItem.issues = [{
-              id: 0,
-              laborHour: 0,
-              machineHour: 0,
-              personnelNumber: 0,
-              modelCountYearId: 0,
-            }];
-            let oldYearIndex = oldItem.year;
-            console.log("用来参考的第一行==工时年份===",oldYearIndex)
-            newSop.map(function (newItem: any, newIndex: number) {
-              console.log("导入的新的工时年份",newItem.year);
-              let newYearIndex = newItem.year ? newItem.year : '----';
-              if (newYearIndex.indexOf(oldYearIndex) != -1 || oldYearIndex.indexOf(newYearIndex) != -1) {
-                console.log("=======更新当前年份工时数据====");
-                oldItem.issues = newItem.issues;
-              }
-            })
-          }
-        })
-        newExportItem.sopInfo = oldSop;
-        dataArr.value.unshift(newExportItem);
+        compareSopData(newExportItem);
       }
     } else {
       dataArr.value = exportListData;
@@ -1715,7 +1677,6 @@ const getDeviceList = async (keyWord: string) => {
 }
 
 const deviceNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
-
   if (deviceListOptions.value.length > 0) {
     let options = deviceListOptions.value;
     for (let i = 0; i < options.length; i++) {
@@ -1834,7 +1795,7 @@ const caclHardWareCost = (dataIndex: any) => {
   let handleHardwareDeviceCost = 0.0;
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + (Number(item.hardwareDeviceNumber) * Number(item.hardwareDevicePrice))
-    console.log("计算硬件总价====", handleHardwareDeviceCost);
+    //console.log("计算硬件总价====", handleHardwareDeviceCost);
   })
   return handleHardwareDeviceCost;
 }
@@ -2485,48 +2446,12 @@ const confirmSelectStandardProcess = () => {
   }
   standardProcessLoading.value = true;
   if (dataArr.value.length > 0) {
-    let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
-    console.log("====oldSop====",oldSop);
-    oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
     for (let k = 0; k < pList.length; k++) {
         let newExportItem =JSON.parse(JSON.stringify(pList[k]));
-        console.log("===========newExportItem===",newExportItem);
-        let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-        newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
-        let newSopItem: { issues: any } | null=null;
-        //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
-        if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
-          newSopItem= newSop[newSop.length-1];
-        } 
-        //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
-        if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
-          newSopItem=newSop[0];
-        }
-        oldSop.map(function (oldItem: any, index: number) {
-          if(newSopItem!=null){
-            oldItem.issues = newSopItem.issues;
-          }else{
-            oldItem.issues = [{
-              id: 0,
-              laborHour: 0,
-              machineHour: 0,
-              personnelNumber: 0,
-            }];
-            let yearIndex = oldItem.year;
-            newSop.map(function (newItem: any, newIndex: number) {
-              let newYearIndex = newItem.year ? newItem.year : '----';
-              if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-                oldItem.issues = newItem.issues;
-              }
-            })
-          }
-        })
-        newExportItem.sopInfo = oldSop;
-        dataArr.value.unshift(newExportItem);
+        compareSopData(newExportItem);
     }
   } else {
     dataArr.value = pList;
-    dataArr.value = exportListData;
     let lastObj = dataArr.value[(dataArr.value.length - 1)];
     dataArr.value.push(JSON.parse(JSON.stringify(lastObj)));
   }
@@ -2583,7 +2508,7 @@ const sumDeviceTotalCost = () => {
     sumVal = sumVal + Number(subValItem);
   }
   ;
-  console.log("设备总计求和", sumVal);
+  //console.log("设备总计求和", sumVal);
   return sumVal.toFixed(0);
 }
 
@@ -2594,7 +2519,7 @@ const sumHardWareTotalCost=()=>{
     let hardwareTotalPrice = dataItem.developCostInfo.hardwareTotalPrice ? Number(dataItem.developCostInfo.hardwareTotalPrice) : 0;
     sumVal = sumVal + Number(hardwareTotalPrice);
   }
-  console.log("硬件总计求和", sumVal);
+  //console.log("硬件总计求和", sumVal);
   return sumVal.toFixed(0);
 }
 
@@ -2608,7 +2533,7 @@ const sumHardwareDeviceTotalCost = () => {
     let zhuiSuCost = dataItem.developCostInfo.traceabilitySoftwareCost ? Number(dataItem.developCostInfo.traceabilitySoftwareCost) : 0;
     sumVal = sumVal + Number(hardwareTotalPrice) + Number(softwarePrice) + Number(zhuiSuCost);
   }
-  console.log("软硬件总计求和", sumVal);
+  //console.log("软硬件总计求和", sumVal);
   return sumVal.toFixed(0);
 }
 //工装治具列求和
@@ -2636,7 +2561,7 @@ const sumToolTotalCost = () => {
     developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost;
     sumVal = sumVal + developTotalPrice;
   }
-  console.log("工装治具列求和", sumVal);
+  //console.log("工装治具列求和", sumVal);
   return sumVal.toFixed(0);
 }
 
@@ -2702,6 +2627,50 @@ const sumSopCost = (type: number, sopIndex: number) => {
   }
   return sumVal.toFixed(2);
 }
+//导入或者选择标准工艺数据时比较填充工时数据
+const compareSopData=(newExportItem:any)=>{
+    let newSopItem=null;
+    let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+    oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
+    let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
+    newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
+    //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
+    if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
+      newSopItem= newSop[newSop.length-1];
+    } 
+    //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
+    if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
+      newSopItem=newSop[0];
+    }
+    for(let l=0;l<oldSop.length;l++){
+      let oldItem= oldSop[l];
+      if(newSopItem!=null){
+        //console.log("==========没有匹配到年份===================")
+        oldItem.issues = newSopItem.issues;
+      }else{
+        oldItem.issues = [{
+          id: 0,
+          laborHour: 0,
+          machineHour: 0,
+          personnelNumber: 0,
+        }];
+        let oldYearIndex = oldItem.yearInt;
+        //console.log("=====l==="+l+"=========oldYearIndex=="+oldYearIndex);
+        innerFor:for(let j=0;j<newSop.length;j++){
+          let newItem=newSop[j];
+          let newYearIndex = newItem.yearInt ? newItem.yearInt : '----';
+          //console.log("=====j==="+j+"=========newYearIndex=="+newYearIndex);
+          if (newYearIndex===oldYearIndex) {
+            oldItem.issues = newItem.issues;
+            break innerFor;
+          }
+        }
+      }
+    };
+    newExportItem.sopInfo = oldSop;
+    dataArr.value.unshift(newExportItem);
+}
+
 
 </script>
 

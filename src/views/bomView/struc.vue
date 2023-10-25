@@ -48,9 +48,9 @@ import { sortBy } from "lodash"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-import { useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 
-const router = useRouter()
+const route = useRoute()
 
 const { closeSelectedTag } = useJump()
 const { auditFlowId, productId }: any = getQuery()
@@ -75,7 +75,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }:any) => {
     nodeInstanceId
   })
   if (res.success) {
-    closeSelectedTag(router.path)
+    closeSelectedTag(route.path)
     ElMessage.success("操作成功")
   }
 }

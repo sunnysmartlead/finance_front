@@ -34,9 +34,9 @@ import ProductInfo from "@/components/ProductInfo/index.vue"
 import getQuery from "@/utils/getQuery"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { sortBy } from "lodash";
-import { useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import useJump from "@/hook/useJump"
-const route = useRouter()
+const route = useRoute()
 
 const { closeSelectedTag } = useJump()
 

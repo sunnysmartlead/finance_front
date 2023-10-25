@@ -184,6 +184,7 @@
                 @change="yearChange"
                 :min="0"
                 :disabled="isDisabled || right === '1'"
+                :max="20"
               />
             </el-form-item>
           </el-col>
@@ -1187,7 +1188,7 @@
               <el-input v-model="row.targetPrice" :disabled="isDisabled || right === '1'" />
             </template>
           </el-table-column>
-          <el-table-column prop="报价币种" label="报价币种">
+          <el-table-column prop="currency" label="报价币种">
             <template #default="{ row, $index }">
               <el-select
                 v-model="row.currency"
@@ -1823,15 +1824,15 @@ const checkModuleTableDataV2Data = () => {
 }
 
 const checkCustomerTargetPrice = () => {
-  let itemIndex = 0
   const notPass = customerTargetPrice.value.some((item: any, index: number) => {
-    if (item.exchangeRate === 0) {
-      itemIndex = index
+    if (!item.exchangeRate) {
+      return true
+    } else if (!item.currency) {
       return true
     }
   })
   if (notPass) {
-    ElMessage.warning(`客户目标价的汇率不能为0`)
+    ElMessage.warning(`客户目标价的报价币种或汇率不能为空！`)
     throw Error()
   }
 }
@@ -1845,8 +1846,8 @@ const save = debounce(async (formEl: FormInstance | undefined, isSubmit: boolean
     if (!item.carFactory || !item.carModel) return false
     return true
   })
+  checkModuleTableDataV2Data()
   if (isSubmit) {
-    checkModuleTableDataV2Data()
     checkCustomerTargetPrice()
   }
   if (!isPass || !isPassTwo) {
@@ -2230,11 +2231,10 @@ watch(
     moduleTableTotal.value,
     kvPricingData.value,
     state.quoteForm.isHasGradient,
-    isFirstShow.value,
     state.quoteForm.updateFrequency
   ],
   (val) => {
-    const [moduleTableTotalData, kvList, isHasGradient, isFirstShowVal, updateFrequencyData]: any = val
+    const [moduleTableTotalData, kvList, isHasGradient, updateFrequencyData]: any = val
     if (kvPricingData.value.length && !_.isEmpty(moduleTableTotalData)) {
       kvPricingData.value.forEach((item: any) => {
         if (updateFrequencyData === updateFrequency.HalfYear) {
@@ -2263,8 +2263,8 @@ watch(
         }
       })
       gradientModelTable.value = filterData
-      console.log(kvList, moduleTableTotalData, isFirstShowVal, "kvList111", customerTargetPrice)
-      if (moduleTableTotalData?.length && kvList?.length && isFirstShowVal) {
+      console.log(kvList, moduleTableTotalData, isFirstShow.value, "kvList111", )
+      if (moduleTableTotalData?.length && kvList?.length && isFirstShow.value) {
         let arr: any = []
         kvList.forEach((c: any) => {
           moduleTableTotalData.forEach((item: any) => {
@@ -2286,6 +2286,7 @@ watch(
             }
           })
         })
+        console.log('触发了')
         customerTargetPrice.value = arr
       }
     }
@@ -2763,6 +2764,7 @@ onMounted(async () => {
       state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
       pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
       yearChange(viewDataRes.result.projectCycle)
+      viewDataRes.result.projectCode && changeProjectName(viewDataRes.result.projectCode)
 
       productTableData.value = viewDataRes.result.productInformation
       shareCountTable.value = viewDataRes.result.shareCount
@@ -2796,15 +2798,16 @@ onMounted(async () => {
       kvPricingData.value = viewDataRes.result.gradient
       generateCustomTable()
     }
+    setTimeout(() => {
+      isFirstShow.value = true
+    }, 2000)
 
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
     }, 2000)
   }
-  setTimeout(() => {
-    isFirstShow.value = true
-  }, 2000)
+
   state.taebleLoading = false
 })
 

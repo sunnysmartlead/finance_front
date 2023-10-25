@@ -1291,6 +1291,9 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
         })
         newExportItem.sopInfo = oldSop;
         dataArr.value.push(newExportItem);
+        console.log(newExportItem)
+        console.log(newExportItem)
+        console.log(newExportItem)
       }
       // let newSop = JSON.parse(JSON.stringify(exportListData[0].sopInfo ? exportListData[0].sopInfo : []));
       // oldSop.map(function (item: any, index: number) {

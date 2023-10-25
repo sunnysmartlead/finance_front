@@ -232,7 +232,7 @@
             <div class="u-flex u-row-left u-col-center">
               <template v-if="yearList.length > 0">
                 <div v-for="(scopItem, sopIndex) in yearList" :key="sopIndex" class="u-text-center">
-                  <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}</div>
+                  <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}年</div>
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                       <span>标准人工工时</span>
@@ -1259,19 +1259,19 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
       let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
-      oldSop.sort((a:any,b:any)=>a.year-b.year);
+      oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
       for (let k = 0; k < exportListData.length; k++) {
         let newExportItem =JSON.parse(JSON.stringify(exportListData[k]));
         console.log("===========newExportItem===",newExportItem);
         let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-        newSop.sort((a:any,b:any)=>a.year-b.year);
+        newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
         let newSopItem: { issues: any } | null=null;
         //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
-        if(oldSop[0].year>newSop[newSop.length-1].year){
+        if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
           newSopItem= newSop[newSop.length-1];
         } 
         //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
-        if(newSop[0].year>oldSop[oldSop.length-1].year){
+        if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
           newSopItem=newSop[0];
         }
         oldSop.map(function (oldItem: any, index: number) {
@@ -1552,17 +1552,17 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       console.log("====data====",data);
       //第一条记录作为末班
       let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
-      oldSop.sort((a:any,b:any)=>a.year-b.year);
+      oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
       //获取的新的记录
       let newSop = JSON.parse(JSON.stringify(data.sopInfo ? data.sopInfo : []));
-      newSop.sort((a:any,b:any)=>a.year-b.year);
+      newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
       let newSopItem: { issues: any } | null=null;
       //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
-      if(oldSop[0].year>newSop[newSop.length-1].year){
+      if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
          newSopItem= newSop[newSop.length-1];
       } 
       //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
-      if(newSop[0].year>oldSop[oldSop.length-1].year){
+      if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
          newSopItem=newSop[0];
       }
       //循环对比;
@@ -2487,19 +2487,19 @@ const confirmSelectStandardProcess = () => {
   if (dataArr.value.length > 0) {
     let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
     console.log("====oldSop====",oldSop);
-    oldSop.sort((a:any,b:any)=>a.year-b.year);
+    oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
     for (let k = 0; k < pList.length; k++) {
         let newExportItem =JSON.parse(JSON.stringify(pList[k]));
         console.log("===========newExportItem===",newExportItem);
         let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-        newSop.sort((a:any,b:any)=>a.year-b.year);
+        newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
         let newSopItem: { issues: any } | null=null;
         //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
-        if(oldSop[0].year>newSop[newSop.length-1].year){
+        if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
           newSopItem= newSop[newSop.length-1];
         } 
         //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
-        if(newSop[0].year>oldSop[oldSop.length-1].year){
+        if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
           newSopItem=newSop[0];
         }
         oldSop.map(function (oldItem: any, index: number) {

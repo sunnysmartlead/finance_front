@@ -593,7 +593,9 @@ const saveEdit = async (index: number, row: any) => {
   if (row.id > 0) {
     console.log("编辑治置保存");
     tip = "修改治置";
-    result = await updateFoundationHardware(row);
+    result = await updateFoundationHardware(row).catch((error) => {
+      initData();
+    });
   }
   //新增
   else if (row.id == -1) {
@@ -608,7 +610,9 @@ const saveEdit = async (index: number, row: any) => {
       "SoftwareName": row.softwareName,
     }
 
-    result = await createFoundationHardware(a)
+    result = await createFoundationHardware(a).catch((error) => {
+      initData();
+    });
   }
   console.log("结果", result);
   if (result.success == true) {

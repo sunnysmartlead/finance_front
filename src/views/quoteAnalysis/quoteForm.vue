@@ -62,7 +62,6 @@
         </el-table>
       </el-card>
       <el-card style="margin-top: 10px;" header="NRE报价清单">
-
         <el-table :data="data.form.nreQuotationListDtos" style="width: 100%" border height="500px">
           <el-table-column type="index" label="序号" width="80" fixed="left" />
           <el-table-column type="index" label="序号" width="80" fixed="left" />
@@ -126,6 +125,12 @@ import {
 } from "./service"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
+import useJump from "@/hook/useJump"
+import { useRoute } from "vue-router"
+
+const { closeSelectedTag } = useJump()
+const route = useRoute()
+
 const { auditFlowId, productId }: any = getQuery()
 
 const data = reactive({
@@ -176,6 +181,7 @@ const submit = async () => {
   })
   if (success) {
     ElMessage.success('提交成功！')
+    closeSelectedTag(route.path)
   }
 }
 

@@ -31,7 +31,7 @@ export function GetLossCost(data: GetLossCostProps) {
 // 获取 质量成本
 export function GetQualityCost(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluation/NoChange",
+    url: "/api/services/app/PriceEvaluation/GetQualityCostNoChange",
     method: "get",
     data
   })

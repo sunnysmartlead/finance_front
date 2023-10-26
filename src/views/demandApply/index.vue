@@ -1789,7 +1789,7 @@ const handleDealWithModelCount = (arr: any) => {
 const checkModuleTableDataV2Data = () => {
   let text = ""
   let title = ""
-  const notPass = moduleTableDataV2.value.some((row: any, index: number) => {
+  const notPass = moduleTableDataV2?.value?.some((row: any, index: number) => {
     return row.some((prop: any, rowIndex: number) => {
       title = `${prop.carModel}-模组数量K下第${rowIndex + 1}行的`
       const modelCountYearListNotPass = prop.modelCountYearList.some((item: any, yearIndex: number) => {
@@ -1864,6 +1864,7 @@ const save = debounce(async (formEl: FormInstance | undefined, isSubmit: boolean
     } else {
       saveloading.value = false
       console.log("error submit!", fields)
+      ElMessage.warning('请填写完整的表单！')
       console.log(state.quoteForm, "quoteForm")
     }
   })
@@ -2246,9 +2247,9 @@ watch(
       let filterData: any = _.cloneDeep(kvPricingData.value)
       filterData = filterData.map((item: any) => {
         return {
-          kv: item.gradientValue,
+          kv: item.gradientValue || 0,
           children: map(moduleTableTotalData, (c, index: number) => ({
-            gradientValue: item.gradientValue,
+            gradientValue: item.gradientValue || 0,
             index,
             name: c.product,
             number: c.partNumber || "-",
@@ -2798,16 +2799,16 @@ onMounted(async () => {
       kvPricingData.value = viewDataRes.result.gradient
       generateCustomTable()
     }
-    setTimeout(() => {
-      isFirstShow.value = true
-    }, 2000)
+
 
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
     }, 2000)
   }
-
+  setTimeout(() => {
+    isFirstShow.value = true
+  }, 2000)
   state.taebleLoading = false
 })
 

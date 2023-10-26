@@ -344,7 +344,7 @@
                       <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"
                                  :disabled="isDisable(dataIndex)">
                         <el-option v-for="item in deviceStatusEnmus" :key="item.code" :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
@@ -1064,6 +1064,7 @@ onMounted(() => {
 })
 
 const initData = () => {
+  getDeviceStatuEnmu();
   addFlag.value = false;
   currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
@@ -1074,7 +1075,7 @@ const initData = () => {
     getYearData()
     getTableData()
     getUPHAndLineData()
-    getDeviceStatuEnmu();
+
   }
 }
 const getYearData = () => {

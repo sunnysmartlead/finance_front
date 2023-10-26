@@ -139,7 +139,7 @@
                         <el-option v-for="item in deviceStatusEnmus"
                                    :key="item.code"
                                    :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-200   u-border">
@@ -300,12 +300,12 @@ const getDeviceStatuEnmu = () => {
   })
 }
 const initData = async () => {
+  getDeviceStatuEnmu();
   let listResult: any = await getListAll(queryForm)
   if (listResult.success) {
     tableData.value = listResult.result
   }
   getDeviceOptionLog();
-  getDeviceStatuEnmu();
 }
 
 //下拉选项的数据类型定义

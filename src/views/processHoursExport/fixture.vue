@@ -135,7 +135,7 @@
                         <el-option v-for="item in deviceStatusEnmus"
                                    :key="item.code"
                                    :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-200   u-border">
@@ -162,7 +162,7 @@
                     <el-option v-for="item in deviceStatusEnmus"
                                :key="item.code"
                                :label="item.value"
-                               :value="item.value"/>
+                               :value="item.code"/>
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
@@ -344,6 +344,7 @@ onMounted(() => {
 })
 
 const initData = async () => {
+  getDeviceStatuEnmu();
   addFlag.value = false;
   data.currentEditProcessIndex = -1;
   let listResult: any = await getListAll(queryForm)
@@ -351,7 +352,7 @@ const initData = async () => {
     data.tableData = listResult.result
   }
   getDeviceOptionLog()
-  getDeviceStatuEnmu();
+
 }
 
 const addDevice = () => {

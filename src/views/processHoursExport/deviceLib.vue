@@ -113,7 +113,7 @@
                                             <el-option v-for="item in deviceStatusEnmus"
                                                         :key="item.code"
                                                         :label="item.value"
-                                                        :value="item.value"/>
+                                                        :value="item.code"/>
                                         </el-select>
 
                                     </div>
@@ -264,6 +264,7 @@ const queryForm = reactive({
     deviceName: ''
 })
 const initData = async () => {
+    getDeviceStatuEnmu();
     addFlag.value = false;
     data.currentEditProcessIndex = -1;
     let listResult: any = await getListAll({ DeviceName: data.queryForm.deviceName })
@@ -271,7 +272,6 @@ const initData = async () => {
         data.tableData = listResult.result;
         console.log("工装数据数量", data.tableData.value);
     }
-    getDeviceStatuEnmu();
     getDeviceOptionLog()
 }
 

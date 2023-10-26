@@ -446,8 +446,6 @@
         :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="softwareProject" label="软件项目" />
-        <el-table-column prop="costH" label="费用/H" :formatter="formatThousandths" />
-        <el-table-column prop="hour" label="小时" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -465,16 +463,6 @@
         <el-table-column prop="softwareProject" label="软件项目">
           <template #default="{ row }">
             <el-input v-model="row.softwareProject" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="costH" width="175" label="费用/H">
-          <template #default="{ row }">
-            <el-input-number v-model="row.costH" controls-position="right" :min="0" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="hour" width="175" label="小时">
-          <template #default="{ row }">
-            <el-input-number v-model="row.hour" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />

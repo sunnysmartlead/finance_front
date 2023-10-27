@@ -2,25 +2,27 @@
 <template>
   <div>
     <el-card>
-      <el-button type="primary" @click="submit" mb-20px float-right>提交</el-button>
-      <el-button type="primary" @click="downLoad" mb-20px float-right>下载报价单</el-button>
+      <el-row justify="end">
+        <el-button type="primary" @click="submit" m="2">提交</el-button>
+        <el-button type="primary" @click="downLoad" m="2">下载报价单</el-button>
+      </el-row>
       <el-descriptions >
-        <el-descriptions-item label="日期：">{{ data.form.creationTime }} </el-descriptions-item>
+        <el-descriptions-item label="日期：">{{ formatDateTime(data.form.creationTime) }} </el-descriptions-item>
         <el-descriptions-item label="记录编号：">{{  data.form.recordNo }}</el-descriptions-item>
         <el-descriptions-item  label="版本：">V{{data.form.numberOfQuotations }}</el-descriptions-item>
       </el-descriptions>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="客户名称">
-          {{ data.form.customerName }}
+          <el-input v-model="data.form.customerName" />
         </el-descriptions-item>
         <el-descriptions-item label="报价单位">
-          {{ data.form.quotationName }}
+          <el-input v-model="data.form.quotationName" />
         </el-descriptions-item>
         <el-descriptions-item label="客户地址">
-          {{ data.form.customerAdd }}
+          <el-input v-model="data.form.customerAdd" />
         </el-descriptions-item>
         <el-descriptions-item label="地址（报价单位）">
-          {{ data.form.quotationAdd }}
+          <el-input v-model="data.form.quotationAdd" />
         </el-descriptions-item>
         <el-descriptions-item label="联系人">
           <el-input v-model="data.form.customerLink" />
@@ -94,7 +96,7 @@
           {{ data.form.quotationName }}
         </el-descriptions-item>
         <el-descriptions-item label="户名">
-          {{ data.form.address }}
+          {{ data.form.accountName }}
         </el-descriptions-item>
         <el-descriptions-item label="税号">
           {{ data.form.quotationAdd }}
@@ -118,7 +120,6 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from "vue"
 import {
-  getDownloadMessage,
   GetExternalQuotation,
   SaveExternalQuotation,
   DownloadExternalQuotation,
@@ -127,11 +128,11 @@ import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
-
+import { formatDateTime } from "@/utils"
 const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId, productId }: any = getQuery()
+const { auditFlowId, productId, numberOfQuotations = 1 }: any = getQuery()
 
 const data = reactive({
   form: {
@@ -154,6 +155,7 @@ const data = reactive({
     creationTime: "",
     recordNo: "",
     numberOfQuotations: "",
+    accountName: "",
   },
   auditFlowId: 0
 })
@@ -162,7 +164,7 @@ const init = async () => {
   const { result } = await GetExternalQuotation({
     auditFlowId,
     solutionId: productId,
-    numberOfQuotations: 0
+    numberOfQuotations,
   }) || {}
   data.form = {
     ...result,
@@ -186,7 +188,11 @@ const submit = async () => {
 }
 
 const downLoad = async () => {
-  let res: any = await DownloadExternalQuotation(data.auditFlowId)
+  let res: any = await DownloadExternalQuotation({
+    auditFlowId,
+    solutionId: productId,
+    numberOfQuotations,
+  })
   const blob = res
   const reader = new FileReader()
   reader.readAsDataURL(blob)

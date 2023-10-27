@@ -283,7 +283,6 @@ const init = async () => {
   getTotal()
   if (!productId) return false
   await fetchAllData()
-  await getGoTableChartData()
 }
 
 const getIsTradeCompliance = async () => {
@@ -522,6 +521,7 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
 const fetchAllData = async () => {
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
+  await getGoTableChartData()
 }
 
 // 生成核价表

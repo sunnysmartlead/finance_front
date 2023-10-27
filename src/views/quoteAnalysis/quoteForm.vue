@@ -132,7 +132,7 @@ import { formatDateTime } from "@/utils"
 const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId, productId }: any = getQuery()
+const { auditFlowId, productId, numberOfQuotations = 1 }: any = getQuery()
 
 const data = reactive({
   form: {
@@ -164,7 +164,7 @@ const init = async () => {
   const { result } = await GetExternalQuotation({
     auditFlowId,
     solutionId: productId,
-    numberOfQuotations: 1
+    numberOfQuotations,
   }) || {}
   data.form = {
     ...result,
@@ -188,7 +188,11 @@ const submit = async () => {
 }
 
 const downLoad = async () => {
-  let res: any = await DownloadExternalQuotation(data.auditFlowId)
+  let res: any = await DownloadExternalQuotation({
+    auditFlowId,
+    solutionId: productId,
+    numberOfQuotations,
+  })
   const blob = res
   const reader = new FileReader()
   reader.readAsDataURL(blob)

@@ -280,8 +280,9 @@ const init = async () => {
   if (!auditFlowId && isEmpty(filterYearData.value)) return false
   await initChart()
   await fetchOptionsData()
-  getTotal()
+
   if (!productId) return false
+  getGoTableChartData()
   await fetchAllData()
 }
 
@@ -471,8 +472,10 @@ const getGoTableChartData = async () => {
     UpDown: filterYearData.value.upDown,
     GradientId: data.form.gradientId,
   })
+
   const value = items.map((item: any) => item?.value?.toFixed(2) || 0) || []
   const years = items.map((val: any) => val.year + upDownEnum[val.upDown]) || []
+  console.log('[获取推移图]', years, value)
   selectCostChart = initCharts("selectCostChart", {
     ...selectCostChartData,
     xAxis: {
@@ -486,6 +489,7 @@ const getGoTableChartData = async () => {
       }
     })
   })
+
 }
 
 // 同意该审核
@@ -519,9 +523,9 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
 }
 
 const fetchAllData = async () => {
+  getTotal()
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
-  await getGoTableChartData()
 }
 
 // 生成核价表

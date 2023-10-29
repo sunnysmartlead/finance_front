@@ -317,7 +317,7 @@
     <el-card class="margin-top" header="检具费用">
       <el-descriptions m="2" border>
         <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
-        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) * 100 }}%</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')"
@@ -377,7 +377,7 @@
     <el-card class="margin-top" header="生产设备费用">
       <el-descriptions m="2" border>
         <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
-        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) * 100 }}%</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')"

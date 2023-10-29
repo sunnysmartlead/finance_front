@@ -382,15 +382,14 @@
       </div>
     </el-card>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
-      <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
-        <!-- <el-table-column label="梯度" prop="numk" />
-        <el-table-column label="产品" prop="prices" /> -->
-        <el-table-column type="expand" label="数量K">
-          <template #default="props">
-            <el-table :data="props.row.specifications" border>
-              <el-table-column label="年份" prop="year" />
-              <el-table-column label="值" prop="value" />
-            </el-table>
+      <el-table :data="planList" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="是否报价">
+          <template #default="scope">
+            <el-select clearable v-model="scope.row.isOffer">
+              <el-option label="是" :value="true" />
+              <el-option label="否" :value="false" />
+            </el-select>
           </template>
         </el-table-column>
       </el-table>
@@ -417,7 +416,8 @@ import {
   PostComparison,
   GetSolution,
   PostDownloadMessageSecond,
-  PostSpreadSheetCalculate
+  PostSpreadSheetCalculate,
+  PostYearDimensionalityComparisonForGradient
 } from "./service"
 /**
  * 路由对象
@@ -1161,6 +1161,192 @@ const data = reactive({
     message: "调用成功"
   }
 })
+
+let res = {
+  result: {
+    numk: [
+      {
+        key: "2031",
+        value: 2664.9
+      },
+      {
+        key: "2031",
+        value: 2664.9
+      },
+      {
+        key: "2032",
+        value: 2664.9
+      },
+      {
+        key: "2032",
+        value: 2664.9
+      },
+      {
+        key: "总和",
+        value: 10659.6
+      }
+    ],
+    prices: [
+      {
+        key: "2031",
+        value: 448.9
+      },
+      {
+        key: "2031",
+        value: 439.922
+      },
+      {
+        key: "2032",
+        value: 444.411
+      },
+      {
+        key: "2032",
+        value: 444.411
+      },
+      {
+        key: "总和",
+        value: 436.6560841625
+      }
+    ],
+    sellingCost: [
+      {
+        key: "2031",
+        value: 1669950.5306498313080890918603
+      },
+      {
+        key: "2031",
+        value: 1663435.6140718451262985503755
+      },
+      {
+        key: "2032",
+        value: 1627994.6923073344924015441798
+      },
+      {
+        key: "2032",
+        value: 1590518.5197695582574396049064
+      },
+      {
+        key: "总和",
+        value: 6551899.356798569184228791322
+      }
+    ],
+    averageCost: [
+      {
+        key: "2031",
+        value: 626.64660236775537847164691371
+      },
+      {
+        key: "2031",
+        value: 624.20188902842325276691447166
+      },
+      {
+        key: "2032",
+        value: 610.902732675648051484687673
+      },
+      {
+        key: "2032",
+        value: 596.839851315080587429023568
+      },
+      {
+        key: "总和",
+        value: 614.64776884672681753806815659
+      }
+    ],
+    salesRevenue: [
+      {
+        key: "2031",
+        value: 1172467.765161
+      },
+      {
+        key: "2031",
+        value: 1154762.915733
+      },
+      {
+        key: "2032",
+        value: 1154880.748683585
+      },
+      {
+        key: "2032",
+        value: 1172467.765161
+      },
+      {
+        key: "总和",
+        value: 4654579.194738585
+      }
+    ],
+    salesMargin: [
+      {
+        key: "2031",
+        value: -521408.2376888313080890918603
+      },
+      {
+        key: "2031",
+        value: -532119.6610948451262985503755
+      },
+      {
+        key: "2032",
+        value: -496800.1611017494924015441798
+      },
+      {
+        key: "2032",
+        value: -441736.9720865582574396049064
+      },
+      {
+        key: "总和",
+        value: -1992065.031971984184228791322
+      }
+    ],
+    commission: [
+      {
+        key: "2031",
+        value: 23925.4722
+      },
+      {
+        key: "2031",
+        value: 23446.962756
+      },
+      {
+        key: "2032",
+        value: 23686.217478
+      },
+      {
+        key: "2032",
+        value: 23686.217478
+      },
+      {
+        key: "总和",
+        value: 9309158.38947717
+      }
+    ],
+    grossMargin: [
+      {
+        key: "2031",
+        value: -44.47100834514055784326109487
+      },
+      {
+        key: "2031",
+        value: -46.08042515437687136990954618
+      },
+      {
+        key: "2032",
+        value: -43.01744242148269914918104348
+      },
+      {
+        key: "2032",
+        value: -37.67583085969959862866579983
+      },
+      {
+        key: "总和",
+        value: -42.7979619344271244356746623
+      }
+    ]
+  },
+  targetUrl: null,
+  success: true,
+  error: null,
+  unAuthorizedRequest: false,
+  __abp: true
+}
 const planListArrChange = async (val) => {
   fullscreenLoading.value = true
   try {
@@ -1233,9 +1419,16 @@ const openDialog = async (row: any) => {
   // console.log(result, "res")
   // data.dialogTable = result
   // dialogVisible.value = true
-  const { result } = await PostComparison({
+  row.gradientId
+  row.quotedGrossMarginSimple.thisQuotation
+  row.solutionId
+  row.carModel
+  console.log(row)
+  const { result } = await PostYearDimensionalityComparisonForGradient({
     auditFlowId: auditFlowId,
-    productId
+    gradientId: row.gradientId,
+    unitPrice: row.quotedGrossMarginSimple.thisQuotation.price,
+    solutionId: row.solutionId
   })
   console.log(result)
 }
@@ -1532,6 +1725,7 @@ const comfirmPlans = async () => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
+    debugger
     if (planMap[item.value as keyof Object] && item.isOffer) {
       solutionTables.push(planMap[item.value as keyof Object])
     }

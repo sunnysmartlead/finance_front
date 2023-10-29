@@ -68,7 +68,13 @@ export function PostIsOfferSave(data: any): any {
 }
 
 //计算毛利率
-export function PostSpreadSheetCalculate(data: any): any {
+export function PostSpreadSheetCalculate(data: {
+  auditFlowId: number
+  productBoards: {
+    productId: number
+    unitPrice: number
+  }
+}): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostSpreadSheetCalculate",
     method: "post",
@@ -104,6 +110,16 @@ export function PostComparison(data: { auditFlowId: number; productId: number })
     data
   })
 }
+
+//查看年度对比（阶梯数量）
+export function PostYearDimensionalityComparisonForGradient(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostYearDimensionalityComparisonForGradient",
+    method: "post",
+    data
+  })
+}
+
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率

@@ -10,14 +10,14 @@
         <template #header>
           <div class="card-header">
             <span>{{ item }}</span>
-            <el-button type="primary" :style="'float:right'" @click="addScheme(schemeTableData(item))">新增</el-button>
+            <el-button v-havedone type="primary" :style="'float:right'" @click="addScheme(schemeTableData(item))">新增</el-button>
           </div>
         </template>
         <el-table :data="schemeTableData(item)" border>
           <el-table-column type="index" width="50" />
           <el-table-column prop="solutionName" label="方案">
             <template #default="{ row }">
-              <el-input v-model="row.solutionName" placeholder="请录入方案" @change="(val) => schemeChange(val, row.id)" />
+              <el-input v-havedone v-model="row.solutionName" placeholder="请录入方案" @change="(val) => schemeChange(val, row.id)" />
             </template>
           </el-table-column>
           <el-table-column prop="product" label="产品名称" />
@@ -53,7 +53,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template #default="{ row }">
-              <el-button type="danger" @click="deleteScheme(row.id)"
+              <el-button v-havedone type="danger" @click="deleteScheme(row.id)"
                 :disabled="schemeTableData(item)?.length == 1">删除</el-button>
             </template>
           </el-table-column>
@@ -65,12 +65,12 @@
       <template #header>
         <div class="card-header">
           <span>项目设计方案</span>
-          <el-button type="primary" :style="'float:right;margin:0 10px'" @click="DownloadTemplateClick()">下载模版</el-button>
+          <el-button type="primary" v-havedone :style="'float:right;margin:0 10px'" @click="DownloadTemplateClick()">下载模版</el-button>
           <el-upload :style="'float:right;margin:0 10px'" :v-model:file-list="[]" :show-file-list="false"
             :action="$baseUrl + 'api/services/app/DemandApplyAudit/ImportData'" :on-success="handleSuccess"
             :on-change="handleFileChange" name="fileName" :on-progress="handleGetUploadProgress"
             :on-error="handleUploadTemplateError">
-            <el-button>导入模版数据</el-button>
+            <el-button v-havedone>导入模版数据</el-button>
           </el-upload>
         </div>
       </template>
@@ -147,7 +147,7 @@
               :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
               :on-success="(val) => handleSuccess3D(val, row.uuid, $index)" :on-change="handleFileChange3D"
               :on-progress="handleGetUploadProgress" :on-error="handleUploadTemplateError" show-file-list>
-              <el-button type="primary">上传</el-button>
+              <el-button type="primary" v-havedone>上传</el-button>
             </el-upload>
           </template>
         </el-table-column>

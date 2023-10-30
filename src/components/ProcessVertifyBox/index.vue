@@ -9,7 +9,7 @@
 3、审批评论：Comment 由用户填写 -->
 
 <template>
-  <el-row justify="end">
+  <el-row justify="end" v-havedone>
     <el-button type="primary" m="2" @click="data.dialogVisible = true">流程确认</el-button>
     <el-dialog v-model="data.dialogVisible" title="流程确认" width="30%">
       <el-form>

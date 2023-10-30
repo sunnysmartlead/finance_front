@@ -232,7 +232,7 @@
             <div class="u-flex u-row-left u-col-center">
               <template v-if="yearList.length > 0">
                 <div v-for="(scopItem, sopIndex) in yearList" :key="sopIndex" class="u-text-center">
-                  <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}</div>
+                  <div class="u-p-t-5 u-p-b-5 u-border">SOP-{{ scopItem.year }}年</div>
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                       <span>标准人工工时</span>
@@ -344,7 +344,7 @@
                       <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"
                                  :disabled="isDisable(dataIndex)">
                         <el-option v-for="item in deviceStatusEnmus" :key="item.code" :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
@@ -542,9 +542,13 @@
                     <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleJianJuCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.fixturePrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="jianJuNameChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.fixturePrice ,0)
+                        amoutInterval(dataItem.toolInfo.fixturePrice ,0)
                       }}</span>
                   </div>
                   <div class="u-width-150 u-border">
@@ -559,9 +563,13 @@
                     <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.frockPrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="handleGongZhuangCountChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.frockPrice ,0)
+                        amoutInterval(dataItem.toolInfo.frockPrice ,0)
                       }}</span>
                   </div>
                   <div class="u-width-150 u-border">
@@ -577,9 +585,13 @@
                                      :disabled="isDisable(dataIndex)"
                                      @change="handleTestLineCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.testLinePrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="testLineNameChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.testLinePrice ,0)
+                        amoutInterval(dataItem.toolInfo.testLinePrice ,0)
                       }}</span>
                   </div>
                 </template>
@@ -1052,6 +1064,7 @@ onMounted(() => {
 })
 
 const initData = () => {
+  getDeviceStatuEnmu();
   addFlag.value = false;
   currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
@@ -1062,7 +1075,7 @@ const initData = () => {
     getYearData()
     getTableData()
     getUPHAndLineData()
-    getDeviceStatuEnmu();
+
   }
 }
 const getYearData = () => {
@@ -1207,15 +1220,22 @@ const handleSaveData = () => {
 // }
 
 const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
-  handleSaveData().then((p: any) => {
-    let param = {
-      auditFlowId: auditFlowId,
-      solutionId: productId,
-      comment,
-      opinion,
-      nodeInstanceId
-    }
-    console.log("提交参数", param);
+  let param = {
+    auditFlowId: auditFlowId,
+    solutionId: productId,
+    comment,
+    opinion,
+    nodeInstanceId
+  }
+  if (opinion !='Done'){
+    handleSaveData().then((p: any) => {
+
+      console.log("提交参数", param);
+
+    }) // 保存
+
+  }else {
+
     handleSubmitOption(param).then((response: any) => {
       console.log("提交响应", response)
       if (response.success) {
@@ -1223,7 +1243,6 @@ const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
           type: "success",
           message: response.result
         })
-        initData()
       } else {
         ElMessage({
           type: "error",
@@ -1231,7 +1250,8 @@ const handleSubmit = ({comment, opinion, nodeInstanceId}: any) => {
         })
       }
     })
-  }) // 保存
+  }
+
 }
 
 const upload = ref<UploadInstance>()
@@ -1246,7 +1266,8 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   if (response.success) {
     let exportListData = response.result ? response.result : []
-    console.log("导入工时工序", exportListData.length);
+    console.log("列表====", dataArr.value);
+    console.log("导入的工时工序", exportListData);
     //dataArr.value = exportData.concat(dataArr.value)
     if (exportListData == null || exportListData.length < 1) {
       ElMessage({
@@ -1257,52 +1278,14 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     }
     //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
-      let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
       for (let k = 0; k < exportListData.length; k++) {
-        let newExportItem = exportListData[k];
-        let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-        oldSop.map(function (oldItem: any, index: number) {
-          oldItem.issues = [{
-            id: 0,
-            laborHour: 0,
-            machineHour: 0,
-            personnelNumber: 0,
-            modelCountYearId: 0,
-          }];
-          let yearIndex = oldItem.year;
-          console.log(yearIndex)
-          newSop.map(function (newItem: any, newIndex: number) {
-            console.log(newItem)
-            let newYearIndex = newItem.year ? newItem.year : '----';
-            if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-              oldItem.issues = newItem.issues;
-            }
-          })
-        })
-        newExportItem.sopInfo = oldSop;
-        dataArr.value.push(newExportItem);
+        let newExportItem =JSON.parse(JSON.stringify(exportListData[k]));
+        compareSopData(newExportItem);
       }
-      // let newSop = JSON.parse(JSON.stringify(exportListData[0].sopInfo ? exportListData[0].sopInfo : []));
-      // oldSop.map(function (item: any, index: number) {
-      //   item.issues = [{
-      //     id: 0,
-      //     laborHour: 0,
-      //     machineHour: 0,
-      //     personnelNumber: 0,
-      //   }];
-      //   let yearIndex = item.year;
-      //   newSop.map(function (newItem: any, newIndex: number) {
-      //     let newYearIndex = newItem.year ? newItem.year : '----';
-      //     if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-      //       item.issues = newItem.issues;
-      //     }
-      //   })
-      // })
-      // exportListData[0].sopInfo = oldSop;
-      // let newData: any = exportListData[0];
-      // dataArr.value.push(newData);
     } else {
       dataArr.value = exportListData;
+      let lastObj = dataArr.value[(dataArr.value.length - 1)];
+      dataArr.value.push(JSON.parse(JSON.stringify(lastObj)));
     }
     ElMessage({
       type: "success",
@@ -1462,8 +1445,7 @@ const handleEdit = (index: number, row: any) => {
 
 //删除
 const handleDel = (index: number, row: any) => {
-  console.log(index, row)
-  if (dataArr.value.length < 2) {
+  if (dataArr.value.length <=2){
     ElMessage({
       type: "warning",
       message: "至少保留一条记录"
@@ -1476,24 +1458,13 @@ const handleDel = (index: number, row: any) => {
     type: "warning"
   }).then(async () => {
     dataArr.value.splice(index, 1);
+    if(dataArr.value.length==1){
+      dataArr.value=[];
+    }
     ElMessage({
       type: "success",
       message: "删除成功,确认无误请保存!"
     })
-    // handleDelete(row.id).then((response: any) => {
-    //   if (response.success) {
-    //     ElMessage({
-    //       type: "success",
-    //       message: "删除成功"
-    //     })
-    //     initData()
-    //   } else {
-    //     ElMessage({
-    //       type: "error",
-    //       message: "删除失败"
-    //     })
-    //   }
-    // })
   })
 }
 
@@ -1557,18 +1528,53 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
     ProcessNumber: ProcessNumber
   }
   GetEditorByProcessNumber(param).then((response: any) => {
+    console.log("根据ID查询工序结果",response);
     if (response.success) {
       let data = response.result
-      console.log("根据工序序号查询信息结果", data)
-      dataArr.value[dataIndex] = data
-      console.log(yearList)
-      console.log(yearList)
-      console.log(data.sopInfo.length)
-      console.log(yearList.value.length )
-      if (data.sopInfo.length != yearList.value.length) {
-        dataArr.value[dataIndex].sopInfo = yearList
+      console.log("====data====",data);
+      //第一条记录作为末班
+      let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+      oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
+      //获取的新的记录
+      let newSop = JSON.parse(JSON.stringify(data.sopInfo ? data.sopInfo : []));
+      newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
+      let newSopItem: { issues: any } | null=null;
+      //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
+      if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
+         newSopItem= newSop[newSop.length-1];
       }
-      console.log("根据工序序号查询信息111结果", dataArr.value[dataIndex])
+      //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
+      if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
+         newSopItem=newSop[0];
+      }
+      //循环对比;
+      oldSop.map(function (oldItem: any, index: number) {
+        if(newSopItem!=null){
+           oldItem.issues = newSopItem.issues;
+        }else{
+            oldItem.issues = [{
+              id: 0,
+              laborHour: 0,
+              machineHour: 0,
+              personnelNumber: 0,
+              modelCountYearId: 0,
+            }];
+             //年份
+            let yearIndex = oldItem.year;
+            //新的数据循环
+            newSop.map(function (newItem: any, newIndex: number) {
+              let newYearIndex = newItem.year ? newItem.year : '----';
+              //如果新的年份和老的年份对比一样,那么把旧的工时信息进行更新
+              if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
+                oldItem.issues = newItem.issues;
+              }
+            })
+        }
+      })
+      //赋值
+      data.sopInfo = oldSop;
+      //更新
+      dataArr.value[dataIndex]=data
     } else {
       ElMessage({
         type: "error",
@@ -1621,6 +1627,9 @@ const getProcessName = async (keyWord: String) => {
 //监听工序名称变化
 const processNameChange = (value: any, dataIndex: any) => {
   console.log(`第${dataIndex + 1}条的工序名称变化了${value}`);
+  let processID= dataArr.value[dataIndex].processNumber;
+  getProcessInfoByID(processID, dataIndex);
+  return;
   if (processNameOptions.value.length > 0) {
     let options = processNameOptions.value;
     for (let i = 0; i < options.length; i++) {
@@ -1688,7 +1697,6 @@ const getDeviceList = async (keyWord: string) => {
 }
 
 const deviceNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
-
   if (deviceListOptions.value.length > 0) {
     let options = deviceListOptions.value;
     for (let i = 0; i < options.length; i++) {
@@ -1807,7 +1815,7 @@ const caclHardWareCost = (dataIndex: any) => {
   let handleHardwareDeviceCost = 0.0;
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + (Number(item.hardwareDeviceNumber) * Number(item.hardwareDevicePrice))
-    console.log("计算硬件总价====", handleHardwareDeviceCost);
+    //console.log("计算硬件总价====", handleHardwareDeviceCost);
   })
   return handleHardwareDeviceCost;
 }
@@ -2325,7 +2333,7 @@ const sorDownloadFile = async () => {
 }
 //模组数据
 const showProjectDialog = async () => {
-  await GetPriceEvaluationStartData({auditFlowId: productId}).then((response: any) => {
+  await GetPriceEvaluationStartData({auditFlowId: auditFlowId}).then((response: any) => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;
@@ -2374,6 +2382,7 @@ const openStandardProcessDialogForm = async () => {
       let data = response.result
       if (data.length > 0) {
         standardProcessNameOptions.value = data;
+        console.log("===========标准工艺下拉列表===========",standardProcessNameOptions.value);
         dialogFormVisible.value = true
       } else {
         ElMessage({
@@ -2448,7 +2457,6 @@ const confirmSelectStandardProcess = () => {
     return
   }
   let pList = dialogForm.value.processHoursEnterDtoList;
-  console.log("pList", pList);
   if (pList == null || pList.length < 1) {
     ElMessage({
       type: "error",
@@ -2458,49 +2466,14 @@ const confirmSelectStandardProcess = () => {
   }
   standardProcessLoading.value = true;
   if (dataArr.value.length > 0) {
-    let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
     for (let k = 0; k < pList.length; k++) {
-      let newExportItem = pList[k];
-      let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
-      oldSop.map(function (oldItem: any, index: number) {
-        oldItem.issues = [{
-          id: 0,
-          laborHour: 0,
-          machineHour: 0,
-          personnelNumber: 0,
-        }];
-        let yearIndex = oldItem.year;
-        newSop.map(function (newItem: any, newIndex: number) {
-          let newYearIndex = newItem.year ? newItem.year : '----';
-          if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-            oldItem.issues = newItem.issues;
-          }
-        })
-      })
-      newExportItem.sopInfo = oldSop;
-      dataArr.value.push(newExportItem);
+        let newExportItem =JSON.parse(JSON.stringify(pList[k]));
+        compareSopData(newExportItem);
     }
-    // let newSop = JSON.parse(JSON.stringify(pList[0].sopInfo ? pList[0].sopInfo : []));
-    // oldSop.map(function (item: any, index: number) {
-    //   item.issues = [{
-    //     id: 0,
-    //     laborHour: 0,
-    //     machineHour: 0,
-    //     personnelNumber: 0,
-    //   }];
-    //   let yearIndex = item.year;
-    //   newSop.map(function (newItem: any, newIndex: number) {
-    //     let newYearIndex = newItem.year ? newItem.year : '----';
-    //     if (newYearIndex.indexOf(yearIndex) != -1 || yearIndex.indexOf(newYearIndex) != -1) {
-    //       item.issues = newItem.issues;
-    //     }
-    //   })
-    // })
-    // pList[0].sopInfo = oldSop;
-    // let newData: any = pList[0];
-    // dataArr.value.push(newData);
   } else {
     dataArr.value = pList;
+    let lastObj = dataArr.value[(dataArr.value.length - 1)];
+    dataArr.value.push(JSON.parse(JSON.stringify(lastObj)));
   }
   console.log("列表", dataArr.value);
   standardProcessLoading.value = false;
@@ -2555,7 +2528,7 @@ const sumDeviceTotalCost = () => {
     sumVal = sumVal + Number(subValItem);
   }
   ;
-  console.log("设备总计求和", sumVal);
+  //console.log("设备总计求和", sumVal);
   return sumVal.toFixed(0);
 }
 
@@ -2566,7 +2539,7 @@ const sumHardWareTotalCost=()=>{
     let hardwareTotalPrice = dataItem.developCostInfo.hardwareTotalPrice ? Number(dataItem.developCostInfo.hardwareTotalPrice) : 0;
     sumVal = sumVal + Number(hardwareTotalPrice);
   }
-  console.log("硬件总计求和", sumVal);
+  //console.log("硬件总计求和", sumVal);
   return sumVal.toFixed(0);
 }
 
@@ -2580,7 +2553,7 @@ const sumHardwareDeviceTotalCost = () => {
     let zhuiSuCost = dataItem.developCostInfo.traceabilitySoftwareCost ? Number(dataItem.developCostInfo.traceabilitySoftwareCost) : 0;
     sumVal = sumVal + Number(hardwareTotalPrice) + Number(softwarePrice) + Number(zhuiSuCost);
   }
-  console.log("软硬件总计求和", sumVal);
+  //console.log("软硬件总计求和", sumVal);
   return sumVal.toFixed(0);
 }
 //工装治具列求和
@@ -2608,7 +2581,7 @@ const sumToolTotalCost = () => {
     developTotalPrice = gzCost + tlCost + jzCost + zhiJuCost;
     sumVal = sumVal + developTotalPrice;
   }
-  console.log("工装治具列求和", sumVal);
+  //console.log("工装治具列求和", sumVal);
   return sumVal.toFixed(0);
 }
 
@@ -2674,6 +2647,50 @@ const sumSopCost = (type: number, sopIndex: number) => {
   }
   return sumVal.toFixed(2);
 }
+//导入或者选择标准工艺数据时比较填充工时数据
+const compareSopData=(newExportItem:any)=>{
+    let newSopItem=null;
+    let oldSop = JSON.parse(JSON.stringify(dataArr.value[0].sopInfo));
+    oldSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
+    let newSop = JSON.parse(JSON.stringify(newExportItem.sopInfo ? newExportItem.sopInfo : []));
+    newSop.sort((a:any,b:any)=>a.yearInt-b.yearInt);
+    //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
+    if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
+      newSopItem= newSop[newSop.length-1];
+    }
+    //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
+    if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
+      newSopItem=newSop[0];
+    }
+    for(let l=0;l<oldSop.length;l++){
+      let oldItem= oldSop[l];
+      if(newSopItem!=null){
+        //console.log("==========没有匹配到年份===================")
+        oldItem.issues = newSopItem.issues;
+      }else{
+        oldItem.issues = [{
+          id: 0,
+          laborHour: 0,
+          machineHour: 0,
+          personnelNumber: 0,
+        }];
+        let oldYearIndex = oldItem.yearInt;
+        //console.log("=====l==="+l+"=========oldYearIndex=="+oldYearIndex);
+        innerFor:for(let j=0;j<newSop.length;j++){
+          let newItem=newSop[j];
+          let newYearIndex = newItem.yearInt ? newItem.yearInt : '----';
+          //console.log("=====j==="+j+"=========newYearIndex=="+newYearIndex);
+          if (newYearIndex===oldYearIndex) {
+            oldItem.issues = newItem.issues;
+            break innerFor;
+          }
+        }
+      }
+    };
+    newExportItem.sopInfo = oldSop;
+    dataArr.value.unshift(newExportItem);
+}
+
 
 </script>
 

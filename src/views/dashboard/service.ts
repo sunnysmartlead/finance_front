@@ -22,7 +22,7 @@ export function GetPricingPanelTimeSelectList(data: { AuditFlowId: number }) {
 // 获取损耗成本
 export function GetLossCost(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetLossCost",
+    url: "/api/services/app/PriceEvaluation/GetLossCostNoChange",
     method: "get",
     data
   })
@@ -31,7 +31,7 @@ export function GetLossCost(data: GetLossCostProps) {
 // 获取 质量成本
 export function GetQualityCost(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetQualityCost",
+    url: "/api/services/app/PriceEvaluation/GetQualityCostNoChange",
     method: "get",
     data
   })
@@ -76,7 +76,7 @@ export function GetBomCost(data: any) {
 // 获取 物流成本汇总表
 export function GetLogisticsCost(data: any) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetLogisticsCost",
+    url: "/api/services/app/PriceEvaluation/GetLogisticsCostNoChange",
     method: "get",
     data
   })

@@ -40,12 +40,10 @@
         show-summary
       >
         <el-table-column align="center"  type="index" label="序号" width="80" />
-        <el-table-column align="center"  label="试验项目（根据与客户协定项目）" width="180">
+        <el-table-column align="center" prop="projectName"  label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
-            <!-- <el-input v-model="row.projectName" /> -->
-            <span v-if="isVertify">{{ row.projectName }}</span>
             <SelectSearch
-              v-else
+              v-if="!isVertify"
               :request="GetFoundationreliableList"
               :onChange="(record: any) => handleChangeData(record, $index)"
               v-model="row.projectName"
@@ -126,10 +124,11 @@ import SORDonwload from "@/components/SORDonwload/index.vue"
 import SelectSearch from "../SelectSearch/index.vue"
 import { designScheme } from "@/views/demandApplyAudit"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import useJump from "@/hook/useJump"
+import { useRoute } from "vue-router"
 
-import { useRouter } from "vue-router"
-
-const route = useRouter()
+const { closeSelectedTag } = useJump()
+const route = useRoute()
 
 let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
@@ -220,8 +219,10 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId, label }: any)
     })
     if (!success) throw Error()
     ElMessage.success(`${label}成功`)
+    closeSelectedTag(route.path)
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
+
     // ElMessage.error("提交失败")
   }
 }

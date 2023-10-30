@@ -135,11 +135,11 @@
                         <el-option v-for="item in deviceStatusEnmus"
                                    :key="item.code"
                                    :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input-number v-model="deviceItem.fixturePrice" :min="1"
+                      <el-input-number v-model="deviceItem.fixturePrice" :min="0"
                         :disabled="data.currentEditProcessIndex != dataIndex"  />
                     </div>
                     <div class="u-width-200   u-border">
@@ -162,7 +162,7 @@
                     <el-option v-for="item in deviceStatusEnmus"
                                :key="item.code"
                                :label="item.value"
-                               :value="item.value"/>
+                               :value="item.code"/>
                   </el-select>
                 </div>
                 <div class="u-width-150  u-border">
@@ -344,6 +344,7 @@ onMounted(() => {
 })
 
 const initData = async () => {
+  getDeviceStatuEnmu();
   addFlag.value = false;
   data.currentEditProcessIndex = -1;
   let listResult: any = await getListAll(queryForm)
@@ -351,7 +352,7 @@ const initData = async () => {
     data.tableData = listResult.result
   }
   getDeviceOptionLog()
-  getDeviceStatuEnmu();
+
 }
 
 const addDevice = () => {
@@ -550,7 +551,9 @@ const saveEdit = async (index: number, row: any) => {
   if (row.id > 0) {
     console.log("编辑治置保存");
     tip = "修改治置";
-    result = await updateFoundationFixture(row);
+    result = await updateFoundationFixture(row).catch((error) => {
+      initData();
+    });;
   }
   //新增
   else if (row.id == -1) {
@@ -566,7 +569,9 @@ const saveEdit = async (index: number, row: any) => {
       "fixtureGaugeBusiness": row.fixtureGaugeBusiness
     }
 
-    result = await createFoundationFixture(a)
+    result = await createFoundationFixture(a).catch((error) => {
+      initData();
+    });
   }
   console.log("结果", result);
   if (result.success == true) {

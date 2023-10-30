@@ -107,9 +107,10 @@
                 </template>
               </el-table-column>
               <el-table-column label="月需求量" align="center">
-                <template #default="scope" c>
+                <template #default="scope">
                   <div>
-                    <span v-if="scope.row.yearMountCount"  v-format="'#,##0.00'">{{  amoutInterval((scope.row.yearMountCount *1000 / scope.row.moon),0)}}
+                    <span v-if="null != scope.row.yearMountCount && undefined != scope.row.yearMountCount"
+                      >{{ amoutInterval(((scope.row.yearMountCount * 1000) / scope.row.moon).toFixed(0), 0) }}
                     </span>
                     <span v-else>--</span>
                   </div>
@@ -132,7 +133,7 @@
               <el-table-column label="备注" align="center">
                 <template #default="scope">
                   <div>
-                    <el-input type="textarea" v-model="scope.row.remark" placeholder="请输入备注内容" />
+                    <el-input  v-model="scope.row.remark" placeholder="请输入备注内容" />
                   </div>
                 </template>
               </el-table-column>

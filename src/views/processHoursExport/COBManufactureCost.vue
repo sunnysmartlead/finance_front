@@ -1,6 +1,7 @@
 <template>
   <div class="u-p-20">
-    <div>
+      <div>
+
       <ProcessVertifyBox :onSubmit="submitData" processType="confirmProcessType" v-havedone />
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
@@ -453,7 +454,7 @@ const BomProjectDialog = () => {
 //模组数据
 const showProjectDialog = async () => {
 
-  await GetPriceEvaluationStartData({auditFlowId: productId}).then((response: any) => {
+  await GetPriceEvaluationStartData({auditFlowId: auditFlowId}).then((response: any) => {
     console.log("项目走量数据", response);
     if (response.success) {
       let modelCounts = response.result.modelCount;

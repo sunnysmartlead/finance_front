@@ -225,3 +225,31 @@ export function PostDownloadMessageSecond(data: any) {
     data
   })
 }
+
+//对外报价单查询
+export function GetExternalQuotation(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetExternalQuotation",
+    method: "get",
+    data,
+  })
+}
+
+// 对外报价单保存/提交
+export function SaveExternalQuotation(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/SaveExternalQuotation",
+    method: "post",
+    data,
+  })
+}
+
+// 下载对外报价单
+export function DownloadExternalQuotation(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/DownloadExternalQuotation",
+    method: "get",
+    responseType: "blob",
+    data
+  })
+}

@@ -316,7 +316,9 @@ const handleSave = (index: number, row: processItem) => {
           message: '编辑保存失败'
         })
       }
-    })
+    }).catch((error) => {
+      initData();
+    });
   }
   //新增
   else {
@@ -334,7 +336,9 @@ const handleSave = (index: number, row: processItem) => {
           message: '新增失败'
         })
       }
-    })
+    }).catch((error) => {
+      initData();
+    });
   }
 }
 

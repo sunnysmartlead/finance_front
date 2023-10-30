@@ -2,11 +2,11 @@
   <el-row class="m-2" justify="end" style="margin-top: 20px">
     <ProcessVertifyBox :onSubmit="handleSetBomState" processType="bomCostProcessType" />
   </el-row>
-  <el-card header="结构BOM单价" class="m-2">
-    <ConstructionTable isVertify isMergeVertify ref="constructionRef" />
-  </el-card>
   <el-card header="电子料单价" class="m-2">
     <ElectronicTable isVertify isMergeVertify ref="electronicRef" />
+  </el-card>
+  <el-card header="结构BOM单价" class="m-2">
+    <ConstructionTable isVertify isMergeVertify ref="constructionRef" />
   </el-card>
 </template>
 
@@ -20,9 +20,9 @@ import { BomReview } from "@/components/ElectronicTable/common/request"
 import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import { map } from "lodash"
-import { useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 
-const router = useRouter()
+const route = useRoute()
 
 const { auditFlowId }: any = getQuery()
 const { closeSelectedTag } = useJump()
@@ -34,7 +34,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
   const constructionSelection = constructionRef.value.getSelection()
   const electronicSelection = electronicRef.value.getSelection() || []
 
-  if (!opinion.includes("_Yes") && !constructionSelection.length && electronicSelection.length) {
+  if (!opinion.includes("_Yes") && !constructionSelection.length && !electronicSelection.length) {
     ElMessage({
       message: "请选择要退回那些条数据!",
       type: "warning"
@@ -50,6 +50,6 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     structureUnitPriceId: constructionSelection,
     electronicsUnitPriceId: electronicSelection
   })
-  if (success) closeSelectedTag(router.path)
+  if (success) closeSelectedTag(route.path)
 }
 </script>

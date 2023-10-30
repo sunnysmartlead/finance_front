@@ -605,7 +605,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/tradeCompliance/index",
     component: Layout,
     meta: {
-      hidden: false
+      hidden: false,
+      title: "贸易合规"
     },
     children: [
       {
@@ -614,6 +615,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: "tradeCompliance",
         meta: {
           title: "贸易合规"
+        }
+      },
+      {
+        path: "/tradeCompliance/not",
+        component: () => import("@/views/tradeCompliance/notCompliance.vue"),
+        name: "notTradeCompliance",
+        meta: {
+          title: "贸易不合规"
         }
       }
     ]

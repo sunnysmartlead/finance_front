@@ -113,7 +113,7 @@
                                             <el-option v-for="item in deviceStatusEnmus"
                                                         :key="item.code"
                                                         :label="item.value"
-                                                        :value="item.value"/>
+                                                        :value="item.code"/>
                                         </el-select>
 
                                     </div>
@@ -264,6 +264,7 @@ const queryForm = reactive({
     deviceName: ''
 })
 const initData = async () => {
+    getDeviceStatuEnmu();
     addFlag.value = false;
     data.currentEditProcessIndex = -1;
     let listResult: any = await getListAll({ DeviceName: data.queryForm.deviceName })
@@ -271,7 +272,6 @@ const initData = async () => {
         data.tableData = listResult.result;
         console.log("工装数据数量", data.tableData.value);
     }
-    getDeviceStatuEnmu();
     getDeviceOptionLog()
 }
 
@@ -551,7 +551,9 @@ const saveEdit = async (index: number, row: any) => {
     if (row.id > 0) {
         console.log("编辑设备保存");
         tip = "修改设备";
-        result = await updateFoundationDevice(row);
+        result = await updateFoundationDevice(row).catch((error) => {
+          initData();
+        });
     }
     //新增
     else if (row.id == -1) {
@@ -563,16 +565,21 @@ const saveEdit = async (index: number, row: any) => {
             "deviceList": row.deviceList
         }
 
-        result = await createFoundationDevice(a)
+        result = await createFoundationDevice(a).catch((error) => {
+          initData();
+        });
     }
+    console.log("结果", result);
     console.log("结果", result);
     if (result.success == true) {
         initData();
     } else {
+        initData();
         ElMessage({
             type: 'error',
-            message: tip + '失败',
+            message: tip + result.error.message,
         })
+
     }
 }
 

@@ -2,19 +2,27 @@
 <template>
   <div>
     <el-card>
-      <el-button type="primary" @click="downLoad" mb-20px float-right>下载报价单</el-button>
+      <el-row justify="end">
+        <el-button type="primary" @click="submit" m="2">提交</el-button>
+        <el-button type="primary" @click="downLoad" m="2">下载报价单</el-button>
+      </el-row>
+      <el-descriptions >
+        <el-descriptions-item label="日期：">{{ formatDateTime(data.form.creationTime) }} </el-descriptions-item>
+        <el-descriptions-item label="记录编号：">{{  data.form.recordNo }}</el-descriptions-item>
+        <el-descriptions-item  label="版本：">V{{data.form.numberOfQuotations }}</el-descriptions-item>
+      </el-descriptions>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="客户名称">
-          {{ data.form.customerName }}
+          <el-input v-model="data.form.customerName" />
         </el-descriptions-item>
         <el-descriptions-item label="报价单位">
-          <!-- {{ data.form.customerAdd }} -->
+          <el-input v-model="data.form.quotationName" />
         </el-descriptions-item>
-        <el-descriptions-item label="地址">
-          {{ data.form.customerAdd }}
+        <el-descriptions-item label="客户地址">
+          <el-input v-model="data.form.customerAdd" />
         </el-descriptions-item>
         <el-descriptions-item label="地址（报价单位）">
-          {{ data.form.quotationAdd }}
+          <el-input v-model="data.form.quotationAdd" />
         </el-descriptions-item>
         <el-descriptions-item label="联系人">
           <el-input v-model="data.form.customerLink" />
@@ -40,85 +48,98 @@
         <el-descriptions-item label="报价币种">
           <el-input v-model="data.form.currency" />
         </el-descriptions-item>
-        <el-descriptions-item label="项目走量信息">
-          <el-table :data="data.form.sopls" style="width: 100%" border height="500px">
-            <el-table-column prop="year" label="年份" />
-            <el-table-column prop="value" label="走量" />
-            <el-table-column prop="sopValue" label="sop走量" />
-            <el-table-column prop="fullValue" label="全周期走量" />
-          </el-table>
+      </el-descriptions>
+      <el-card style="margin-top: 10px;" header="产品报价清单">
+        <el-table :data="data.form.productQuotationListDtos" style="width: 100%" border height="500px">
+          <el-table-column type="index" label="序号" width="80" fixed="left" />
+          <el-table-column prop="productName" label="产品名称" />
+          <el-table-column prop="year" label="年份" />
+          <el-table-column prop="travelVolume" label="走量" />
+          <el-table-column prop="unitPrice" label="单价（未税）" />
+          <el-table-column prop="remark" label="备注" >
+            <template #default="{ row }">
+              <el-input v-model="row.remark" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+      <el-card style="margin-top: 10px;" header="NRE报价清单">
+        <el-table :data="data.form.nreQuotationListDtos" style="width: 100%" border height="500px">
+          <el-table-column type="index" label="序号" width="80" fixed="left" />
+          <el-table-column type="index" label="序号" width="80" fixed="left" />
+          <el-table-column prop="productName" label="产品名称" />
+          <el-table-column prop="travelVolume" label="走量" />
+          <el-table-column prop="unitPrice" label="手板件费" />
+          <el-table-column prop="costOfToolingAndFixtures" label="模具费" />
+          <el-table-column prop="unitPrice" label="工装治具费" />
+          <el-table-column prop="unitPrice" label="实验费" />
+          <el-table-column prop="remark" label="备注" >
+            <template #default="{ row }">
+              <el-input v-model="row.remark" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+      <el-descriptions :column="2" border>
+        <el-descriptions-item label="备注">
+          {{ data.form.remark }}
         </el-descriptions-item>
-        <el-descriptions-item label="报价清单">
-          <el-table :data="data.form.mxs" style="width: 100%" border height="500px">
-            <el-table-column type="index" label="年份" />
-            <el-table-column prop="productName" label="产品名称" />
-            <el-table-column prop="year" label="年份" />
-            <el-table-column prop="amout" label="数量" />
-            <el-table-column prop="unitPrice" label="单价" />
-            <el-table-column prop="remark" label="备注" />
-          </el-table>
+        <el-descriptions-item label=" " :span="2">
+          * 无公司公章报价单为无效报价单
         </el-descriptions-item>
       </el-descriptions>
+      <el-descriptions style="margin-top: 20px;" title="开票资料" :column="2" border>
+        <el-descriptions-item label="制作">
+          {{ data.form.remark }}
+        </el-descriptions-item>
+        <el-descriptions-item label="审核">
+          {{ data.form.quotationName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="户名">
+          {{ data.form.accountName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="税号">
+          {{ data.form.quotationAdd }}
+        </el-descriptions-item>
+        <el-descriptions-item label="开户行">
+          <el-input v-model="data.form.customerLink" />
+        </el-descriptions-item>
+        <el-descriptions-item label="账号">
+          <el-input v-model="data.form.quotationLink" />
+        </el-descriptions-item>
+        <el-descriptions-item label="地址">
+          <el-input v-model="data.form.address" />
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-row style="margin-top: 20px;" justify="end">
+        表单编号：ZL-232-01-02
+      </el-row>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
-import { getDownloadMessage } from "./service"
+import { ref, reactive, onMounted } from "vue"
+import {
+  GetExternalQuotation,
+  SaveExternalQuotation,
+  DownloadExternalQuotation,
+} from "./service"
+import getQuery from "@/utils/getQuery"
+import { ElMessage } from "element-plus"
+import useJump from "@/hook/useJump"
+import { useRoute } from "vue-router"
+import { formatDateTime } from "@/utils"
+const { closeSelectedTag } = useJump()
+const route = useRoute()
+
+const { auditFlowId, productId, numberOfQuotations = 1 }: any = getQuery()
+
 const data = reactive({
   form: {
-    sopls: [
-      {
-        year: 2024,
-        value: 11,
-        sopValue: 0,
-        fullValue: 0
-      },
-      {
-        year: 2025,
-        value: 11,
-        sopValue: 0,
-        fullValue: 0
-      },
-      {
-        year: 2026,
-        value: 11,
-        sopValue: 0,
-        fullValue: 0
-      }
-    ],
-    mxs: [
-      {
-        productName: "后视",
-        year: "2024",
-        amout: 4,
-        unitPrice: 0,
-        remark: null
-      },
-      {
-        productName: "侧前",
-        year: "2024",
-        amout: 4,
-        unitPrice: 0,
-        remark: null
-      },
-      {
-        productName: "侧后",
-        year: "2024",
-        amout: 4,
-        unitPrice: 0,
-        remark: null
-      },
-      {
-        productName: "前视",
-        year: "2024",
-        amout: 4,
-        unitPrice: 0,
-        remark: null
-      }
-    ],
+    productQuotationListDtos: [],
+    nreQuotationListDtos: [],
     customerName: "理想",
-    customerAdd: null,
+    address: null,
     customerLink: null,
     customerNum: null,
     quotationName: null,
@@ -128,13 +149,50 @@ const data = reactive({
     projectCycle: 3,
     projectName: "流程测试OK，测试数据1",
     sopTime: 2024,
-    currency: 0
+    currency: 0,
+    remark: "",
+    customerAdd: "",
+    creationTime: "",
+    recordNo: "",
+    numberOfQuotations: "",
+    accountName: "",
   },
   auditFlowId: 0
 })
 
+const init = async () => {
+  const { result } = await GetExternalQuotation({
+    auditFlowId,
+    solutionId: productId,
+    numberOfQuotations,
+  }) || {}
+  data.form = {
+    ...result,
+    productQuotationListDtos: result.productQuotationListDtos || [],
+    nreQuotationListDtos: result.nreQuotationListDtos || [],
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+const submit = async () => {
+  const { success } = await SaveExternalQuotation({
+    ...data.form
+  })
+  if (success) {
+    ElMessage.success('提交成功！')
+    closeSelectedTag(route.path)
+  }
+}
+
 const downLoad = async () => {
-  let res: any = await getDownloadMessage(data.auditFlowId, "报价单")
+  let res: any = await DownloadExternalQuotation({
+    auditFlowId,
+    solutionId: productId,
+    numberOfQuotations,
+  })
   const blob = res
   const reader = new FileReader()
   reader.readAsDataURL(blob)

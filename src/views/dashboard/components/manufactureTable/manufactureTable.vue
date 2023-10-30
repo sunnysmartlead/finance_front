@@ -1,5 +1,5 @@
 <template>
-  <el-table :summary-method="(val: any) => getSummaries(val, '总', 'subtotal')"
+  <el-table :summary-method="(val: any) => getSummaries(val, '总', 'subtotal',9)"
     :show-summary="!isEdit" :data="manufactureData" border :height="manufactureData.length > 10 ? 675 : 'auto'">
     <el-table-column align="center"  prop="costItem" label="成本项目" width="180">
       <template #default="{ row }">

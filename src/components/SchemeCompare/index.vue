@@ -17,9 +17,10 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="startCompare">开始对比</el-button>
+          <el-button type="primary" @click="handleDownload">下载方案对比表</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" style="width: 100%" height="60vh">
+      <el-table :data="tableData" style="width: 100%" height="60vh" v-loading="loading">
         <el-table-column prop="itemName" label="项目" align="center" />
         <el-table-column :label="schemeNameObj.one" align="center">
           <el-table-column prop="price_1" label="单价" align="center" :formatter="formatValue" />
@@ -41,10 +42,11 @@
 
 <script lang="ts" setup>
 import { ref, reactive, computed } from 'vue'
-import { GetSolutionContrast } from "@/api/shemeCompare"
+import { GetSolutionContrast, GetSolutionContrastDonwload } from "@/api/shemeCompare"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
 import { ElMessage } from 'element-plus'
+import { CommonDownloadFile } from "@/api/bom"
 
 const { auditFlowId, productId: solutionId } = getQuery()
 
@@ -78,6 +80,7 @@ const solutionIdOptions = computed(() => {
 
 
 const visiable = ref(false)
+const loading = ref(false)
 
 const data = reactive<any>({
   solutionId1: solutionId,
@@ -122,23 +125,64 @@ const startCompare = () => {
   } else initFetch()
 }
 
+const handleDownload = async () => {
+  if (!data.solutionId1) {
+    return ElMessage.warning('请选择方案1再下载')
+  } else if (!data.solutionId2) {
+    return ElMessage.warning('请选择方案2再下载')
+  }
+  const {
+    gradientId,
+    upDown,
+    year,
+  } = props
+  ElMessage.info('正在下载中...，请稍等～')
+  let downRes: any = await GetSolutionContrastDonwload({
+    auditFlowId, solutionId,
+    solutionId_1: data.solutionId1,
+    solutionId_2: data.solutionId2,
+    gradientId,
+    upDown,
+    year,
+  })
+  const blob = downRes
+  const reader = new FileReader()
+  reader.readAsDataURL(blob)
+  reader.onload = function () {
+    let url = URL.createObjectURL(new Blob([blob]))
+    let a = document.createElement("a")
+    document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    a.href = url
+    a.download = '方案对比表.xlsx'
+    a.target = "_blank"
+    a.click()
+    a.remove() //将a标签移除
+  }
+}
+
 const initFetch = async () => {
   const {
     gradientId,
     upDown,
     year,
   } = props
-  if (auditFlowId && gradientId && upDown && year) {
-    const { success, result }: any = (await GetSolutionContrast({
-      auditFlowId,
-      gradientId,
-      solutionId_1: data.solutionId1,
-      solutionId_2: data.solutionId2,
-      upDown,
-      year,
-    })) || {}
-    if (success) {
-      tableData.value = result || []
+  if (auditFlowId && gradientId && year) {
+    try {
+      loading.value = true
+      const { success, result }: any = (await GetSolutionContrast({
+        auditFlowId,
+        gradientId,
+        solutionId_1: data.solutionId1,
+        solutionId_2: data.solutionId2,
+        upDown,
+        year,
+      })) || {}
+      loading.value = false
+      if (success) {
+        tableData.value = result || []
+      }
+    } catch {
+      loading.value = false
     }
   }
 }

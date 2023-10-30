@@ -139,11 +139,11 @@
                         <el-option v-for="item in deviceStatusEnmus"
                                    :key="item.code"
                                    :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-200   u-border">
-                      <el-input-number v-model="deviceItem.hardwarePrice" :min="1"
+                      <el-input-number v-model="deviceItem.hardwarePrice" :min="0"
                         :disabled="data.currentEditProcessIndex != dataIndex"  />
                     </div>
                     <div class="u-width-200   u-border">
@@ -160,7 +160,7 @@
                             :disabled="data.currentEditProcessIndex != dataIndex" />
                 </div>
                 <div class="u-width-150  u-border">
-                  <el-input-number v-model="dataItem.traceabilitySoftwareCost" :min="1"
+                  <el-input-number v-model="dataItem.traceabilitySoftwareCost" :min="0"
                                    :disabled="data.currentEditProcessIndex != dataIndex"  />
                 </div>
                 <div class="u-width-150  u-border">
@@ -300,12 +300,12 @@ const getDeviceStatuEnmu = () => {
   })
 }
 const initData = async () => {
+  getDeviceStatuEnmu();
   let listResult: any = await getListAll(queryForm)
   if (listResult.success) {
     tableData.value = listResult.result
   }
   getDeviceOptionLog();
-  getDeviceStatuEnmu();
 }
 
 //下拉选项的数据类型定义
@@ -593,7 +593,9 @@ const saveEdit = async (index: number, row: any) => {
   if (row.id > 0) {
     console.log("编辑治置保存");
     tip = "修改治置";
-    result = await updateFoundationHardware(row);
+    result = await updateFoundationHardware(row).catch((error) => {
+      initData();
+    });
   }
   //新增
   else if (row.id == -1) {
@@ -608,7 +610,9 @@ const saveEdit = async (index: number, row: any) => {
       "SoftwareName": row.softwareName,
     }
 
-    result = await createFoundationHardware(a)
+    result = await createFoundationHardware(a).catch((error) => {
+      initData();
+    });
   }
   console.log("结果", result);
   if (result.success == true) {

@@ -1,7 +1,8 @@
 <template>
   <div style="padding: 0 10px">
     <el-row justify="end">
-      <ProcessVertifyBox :onSubmit="isVertify ? handleVertify : handleSubmit" :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'" />
+      <ProcessVertifyBox v-if="isVertify" :onSubmit="handleVertify" :processType="'baseProcessType'" />
+      <ProcessVertifyBox v-if="!mouldInventoryData.length && !isVertify" :onSubmit="handleSubmit" processType="confirmProcessType" />
       <ThreeDImage m="2" />
     </el-row>
     <el-card class="margin-top">
@@ -12,41 +13,39 @@
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column type="index" label="序号" width="70" />
         <el-table-column label="模具费用" prop="modelName" width="180" />
-        <el-table-column label="模穴数" width="150">
+        <el-table-column label="模穴数" width="150" prop="moldCavityCount">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.moldCavityCount }}</span>
-            <el-input v-else :disabled="row.isSubmit" v-model="row.moldCavityCount" :min="0" controls-position="right" />
+            <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.moldCavityCount" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="模次数" width="150">
+        <el-table-column label="模次数" width="150" prop="modelNumber">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.modelNumber }}</span>
-            <el-input v-else :disabled="row.isSubmit" v-model="row.modelNumber" :min="0" controls-position="right" />
+            <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.modelNumber" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" width="180">
+        <el-table-column label="数量" width="180" prop="count">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.count }}</span>
-            <el-input-number v-else :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
+            <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="单价" width="180">
+        <el-table-column label="单价" width="180" prop="unitPrice">
           <template #default="{ row }">
-            <span v-if="isVertify">{{ row.unitPrice }}</span>
-            <el-input-number v-else :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
+            <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="金额" prop="cost" width="180" />
         <el-table-column label="备注" prop="remark" width="180">
           <template #default="{ row }">
-            <el-input v-if="!isVertify" v-model="row.remark" :disabled="row.isSubmit" />
+            <el-input v-if="!isVertify && row.isEdit" v-model="row.remark" :disabled="row.isSubmit" />
           </template>
         </el-table-column>
         <el-table-column label="提交人" prop="peopleName" width="180" />
         <el-table-column label="操作" v-if="!isVertify" fixed="right" width="160">
           <template #default="{ row }">
-            <el-button link v-if="!row.isSubmit" :disabled="row.isSubmit" @click="submit(false, row)"
-              type="danger">保存</el-button>
+            <el-button link v-if="!row.isSubmit && !row.isEdit" :disabled="row.isSubmit" @click="handleEdit(row)"
+              type="danger">修改</el-button>
+            <el-button link v-if="!row.isSubmit && row.isEdit" :disabled="row.isSubmit" @click="submit(false, row)"
+              type="danger">确认</el-button>
             <el-button v-if="!row.isSubmit" :disabled="row.isSubmit" link @click="submit(true, row)"
               type="warning">提交</el-button>
           </template>
@@ -121,6 +120,10 @@ const handleToggleSelection = () => {
   }
 }
 
+const handleEdit = (row: any) => {
+  row.isEdit = true
+}
+
 const handleSelectionChange = (val: MouldInventoryModel[]) => {
   const selectionData = getSessionStorage('mouldInventorySelection')
   let filterData: any = safeParse(selectionData)
@@ -145,6 +148,8 @@ const submit = debounce(async (isSubmit: boolean, row: any) => {
     opinion: "Done"
   })
   if (success) {
+    row.isEdit = false
+    initFetch()
     ElMessage.success(`${isSubmit ? "提交" : "保存"}成功`)
   }
 }, 300)
@@ -165,6 +170,9 @@ const handleVertify = async ({ comment, opinion, nodeInstanceId, label }: any) =
   const selectionData = getSessionStorage('mouldInventorySelection')
   let filterData: any = safeParse(selectionData)
   const nreId = map(filterData, v => ([...v]))?.flat(2) || []
+  if (!nreId.length && opinion === 'YesOrNo_No') {
+    return ElMessage.warning(`请选择要${label}的数据！`)
+  }
   const { success } = await NREToExamine({
     auditFlowId,
     nreCheckType: 1,

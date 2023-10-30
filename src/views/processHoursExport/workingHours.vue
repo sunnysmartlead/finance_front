@@ -98,8 +98,8 @@
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processNumber" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" 
-                            :remote-method="remoteMethodForProcessNumber" 
+                           :disabled="isDisable(dataIndex)"
+                            :remote-method="remoteMethodForProcessNumber"
                             @change="processNumberChange($event, dataIndex)"
                             :loading="optionLoading">
                   <el-option v-for="item in processNumberOptions" :key="item.id" :label="item.processNumber"
@@ -108,8 +108,8 @@
               </div>
               <div class="u-width-150 u-border">
                 <el-select v-model="dataItem.processName" filterable remote reserve-keyword
-                           :disabled="isDisable(dataIndex)" 
-                           :remote-method="remoteMethodForProcessName" 
+                           :disabled="isDisable(dataIndex)"
+                           :remote-method="remoteMethodForProcessName"
                            @change="processNameChange($event, dataIndex)"
                            :loading="optionLoading">
                   <el-option v-for="item in processNameOptions" :key="item.id" :label="item.processName"
@@ -527,7 +527,9 @@ const handleSave = (index: number, row: any) => {
           message: '编辑保存失败'
         })
       }
-    })
+    }).catch((error) => {
+      initData();
+    });
   }
   //新增
   else {
@@ -545,7 +547,9 @@ const handleSave = (index: number, row: any) => {
           message: '新增失败'
         })
       }
-    })
+    }).catch((error) => {
+      initData();
+    });
   }
 }
 const currentEditIndex = ref<number>()

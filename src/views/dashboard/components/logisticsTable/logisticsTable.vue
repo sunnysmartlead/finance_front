@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="logisticsData" border :height="logisticsData.length > 12 ? 675 : 'auto'"  :summary-method="(val: any) => getSummaries(val, '单PCS总物流成本', 'perTotalLogisticsCost')"
+  <el-table :data="logisticsData" border :height="logisticsData.length > 12 ? 675 : 'auto'"  :summary-method="(val: any) => getSummaries(val, '单PCS总物流成本', 'perTotalLogisticsCost', 5)"
     :show-summary="!isEdit">
     <el-table-column align="center"  prop="year" label="年份" width="80" />
     <el-table-column align="center"  prop="freight" label="运费/月" width="180" :formatter="formatThousandths" >

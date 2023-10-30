@@ -19,7 +19,7 @@
               <TrView />
               <el-button type="primary" @click="handleFethNreExcelDownload" m="2">NRE实验费模板下载</el-button>
               <el-button type="primary" @click="handleFethNreTableDownload" m="2" v-if="!isVertify">NRE实验费数据导出</el-button>
-              <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-havedone>新增</el-button>
+              <el-button type="primary" @click="addLaboratoryFeeModel" m="2" v-if="!isVertify" v-havedone>新增</el-button>
             </el-row>
           </el-row>
         </template>
@@ -156,7 +156,7 @@ const initFetch = async () => {
   data.isSubmit = isSubmit
 }
 
-const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   try {
     const isSubmit = true
     const { success } = await PostProductDepartment({
@@ -169,7 +169,7 @@ const submit = async ({ comment, opinion, nodeInstanceId }: any) => {
       nodeInstanceId
     })
     if (success) {
-      ElMessage.success(`${opinion !== 'Done' ? "提交" : "保存"}成功`)
+      ElMessage.success(`${label}成功`)
     }
     console.log(success, "[PostProductDepartment RES]")
   } catch (err) {

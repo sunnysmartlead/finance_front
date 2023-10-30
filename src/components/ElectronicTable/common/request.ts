@@ -135,3 +135,45 @@ export function GetBOMStructuralSingle(auditFlowId: number, solutionId: number):
     }
   })
 }
+
+// 电子单价复制信息获取接口
+export function ElectronicUnitPriceCopyingInformationAcquisition(auditFlowId: number, solutionId: number): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/ElectronicUnitPriceCopyingInformationAcquisition",
+    method: "get",
+    data: {
+      auditFlowId,
+      solutionId,
+    }
+  })
+}
+
+// 电子料单价复制信息录入确认/提交
+export function PostElectronicMaterialEnteringCopy(data: any): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/PostElectronicMaterialEnteringCopy",
+    method: "post",
+    data
+  })
+}
+
+// 结构单价复制信息获取接口
+export function StructureUnitPriceCopyingInformationAcquisition(auditFlowId: number, solutionId: number): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/StructureUnitPriceCopyingInformationAcquisition",
+    method: "get",
+    data: {
+      auditFlowId,
+      solutionId,
+    }
+  })
+}
+
+// 结构件单价复制信息录入确认/提交
+export function PostStructuralMemberEnteringCopy(data: any): any {
+  return request({
+    url: "/api/services/app/ResourceEntering/PostStructuralMemberEnteringCopy",
+    method: "post",
+    data
+  })
+}

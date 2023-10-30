@@ -3,10 +3,10 @@
     <el-button type="primary" @click="jumpToDashboard">返回核价看板</el-button>
   </el-row>
   <el-card header="电子料单价" class="m-2">
-    <ElectronicTable ref="electronicRef" />
+    <ElectronicTable isMergeEdit ref="electronicRef" />
   </el-card>
   <el-card header="结构BOM单价" class="m-2">
-    <ConstructionTable ref="constructionRef" />
+    <ConstructionTable isMergeEdit ref="constructionRef" />
   </el-card>
 </template>
 

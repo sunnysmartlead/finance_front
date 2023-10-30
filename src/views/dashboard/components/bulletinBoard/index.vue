@@ -9,7 +9,7 @@
           <el-button type="primary" style="margin: 10px 10px 0 0;">TR方案上传</el-button>
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
-        <el-button type="primary" class="m-2" @click="handleFethNreTableDownload">NRE核价表</el-button>
+        <el-button type="primary" class="m-2" @click="handlePathFethNreTable">NRE核价表</el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
@@ -219,12 +219,14 @@ const filterYearData = computed(() => {
 })
 
 const getTotal = async () => {
+  const { upDown, year } = filterYearData.value
+  if (!productId || !auditFlowId) return
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
-    Year: filterYearData.value.year,
+    Year: year,
     AuditFlowId: auditFlowId,
     SolutionId: productId,
-    UpDown: filterYearData.value.upDown,
+    UpDown: upDown,
     GradientId: data.form.gradientId,
   }) || {}
   const { totalCost } = result
@@ -278,10 +280,10 @@ const init = async () => {
   if (!auditFlowId && isEmpty(filterYearData.value)) return false
   await initChart()
   await fetchOptionsData()
-  getTotal()
+
   if (!productId) return false
+  getGoTableChartData()
   await fetchAllData()
-  await getGoTableChartData()
 }
 
 const getIsTradeCompliance = async () => {
@@ -391,15 +393,15 @@ const handleFetchPriceEvaluationTableDownload = async () => {
 }
 
 // NRE核价表下载
-const handleFethNreTableDownload = async () => {
+const handlePathFethNreTable = async () => {
   router.push({
     path: "/nre/nrePricelist",
     query: {
-      year: filterYearData.value.year,
+      year: filterYearData?.value?.year,
       auditFlowId,
       productId,
-      upDown: filterYearData.value.upDown,
-      hideEdit: 1
+      upDown: filterYearData?.value?.upDown,
+      hideEdit: props.hideEdit ? 1 : 0
     }
   })
 }
@@ -470,8 +472,10 @@ const getGoTableChartData = async () => {
     UpDown: filterYearData.value.upDown,
     GradientId: data.form.gradientId,
   })
+
   const value = items.map((item: any) => item?.value?.toFixed(2) || 0) || []
-  const years = items.map((val: any) => val.year) || []
+  const years = items.map((val: any) => val.year + upDownEnum[val.upDown]) || []
+  console.log('[获取推移图]', years, value)
   selectCostChart = initCharts("selectCostChart", {
     ...selectCostChartData,
     xAxis: {
@@ -485,6 +489,7 @@ const getGoTableChartData = async () => {
       }
     })
   })
+
 }
 
 // 同意该审核
@@ -518,6 +523,7 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
 }
 
 const fetchAllData = async () => {
+  getTotal()
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
 }
@@ -542,7 +548,9 @@ const handleSetPriceEvaluationTableInputCount = debounce(async () => {
   getPriceEvaluationTableInputCount()
 }, 500)
 
-
+defineExpose({
+  getFileList: () => fileList.value
+})
 </script>
 
 <style lang="scss" scoped>

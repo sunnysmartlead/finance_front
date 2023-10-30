@@ -7,12 +7,12 @@ export interface SummaryMethodProps<T = any> {
   data: T[]
 }
 
-export const getSummaries = (param: SummaryMethodProps, name?: string, key?: string | null) => {
+export const getSummaries = (param: SummaryMethodProps, name?: string, key?: string | null, zindex?: number) => {
   const { columns, data } = param
   const sums: string[] = []
 
   columns.forEach((_, index) => {
-    if (index === 1) {
+    if (index === (zindex || 1)) {
       sums[index] = `${name || "损耗成本"}合计`
       return
     }
@@ -22,7 +22,7 @@ export const getSummaries = (param: SummaryMethodProps, name?: string, key?: str
       values = data.map((item: any) => Number(item[key]?.toFixed(2)) || 0)
 
     }
-    if (!values.every((value) => Number.isNaN(value)) && index === 2) {
+    if (!values.every((value) => Number.isNaN(value)) && index === (zindex || 1) + 1) {
       const money = values.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {
           return prev + curr

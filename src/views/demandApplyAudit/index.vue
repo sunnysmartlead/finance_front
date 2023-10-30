@@ -433,9 +433,9 @@ const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   } as Response
   value.auditFlowId = auditFlowId as any
   value.pricingTeam = quoteForm as PricingTeamDto
-  if (opinion === 'YesOrNo_Yes') {
-    checkDesignSolution()
-  }
+  // if (opinion === 'YesOrNo_Yes') {
+  //   checkDesignSolution()
+  // }
   value.designSolutionList = _.cloneDeep(designSolution.value)
   value.solutionTableList = _.cloneDeep(solutionTable.value)
 

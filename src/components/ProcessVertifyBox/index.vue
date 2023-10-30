@@ -44,6 +44,7 @@ import { reactive, PropType, computed } from "vue"
 import { useRoute } from "vue-router"
 import PROGRESSTYPE from "@/constant/approvalProcess"
 import { useProductStore } from "@/store/modules/productList"
+import { debounce } from "lodash"
 
 const productStore = useProductStore()
 
@@ -75,7 +76,7 @@ const solutionIdOptions = computed(() => {
   return productStore?.productList || []
 })
 
-const onSubmit = async () => {
+const onSubmit = debounce(async () => {
   const label = PROGRESSTYPE[props.processType]?.find((v: any) => v.val === data.opinion)?.label || ''
   let { nodeInstanceId } = route.query
   await props.onSubmit({
@@ -86,5 +87,5 @@ const onSubmit = async () => {
     ids: data.solutionIds
   })
   data.dialogVisible = false
-}
+}, 350)
 </script>

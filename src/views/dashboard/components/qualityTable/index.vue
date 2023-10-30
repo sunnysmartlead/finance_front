@@ -103,13 +103,6 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 }
 
 const handleSubmit = async () => {
-  if (!modifyData.value.length) {
-    ElMessage({
-      type: 'error',
-      message: '请先添加修改项数据再操作！'
-    })
-    return
-  }
   const { success } = await SetUpdateItemQualityCost({
     updateItem: modifyData.value,
     auditFlowId,

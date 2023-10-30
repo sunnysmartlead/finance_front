@@ -226,20 +226,36 @@ const checkData = () => {
       return true
     }
   })
-  if (handPieceCostNotPass) {
+  if (handPieceCostNotPass && data.handPieceCost.length) {
+    ElMessage.warning(handPieceCostLabel)
+    throw Error()
+  }
+
+  let travelExpenseNotPass = false
+  let travelExpenseLabel = ''
+  travelExpenseNotPass = data.travelExpense.some((item, index) => {
+    if (!item.reasonsId) {
+      handPieceCostLabel = `差旅费用 第 ${index + 1}项的事由没有填写！`
+      return true
+    }
+    return false
+  })
+
+  if (travelExpenseNotPass  && data.travelExpense.length) {
     ElMessage.warning(handPieceCostLabel)
     throw Error()
   }
 
   let restsCostNotPass = false
   let restsCostLabel = ''
-  data.travelExpense.some((item, index) => {
-    if (!item.reasonsId) {
-      handPieceCostLabel = `差旅费用 第 ${index + 1}项的事由没有填写！`
+  restsCostNotPass = data.restsCost.some((item, index) => {
+    if (!item.constName) {
+      restsCostLabel = `其他费用 第 ${index + 1}项的费用名称没有填写！`
       return true
     }
   })
-  if (restsCostNotPass) {
+
+  if (restsCostNotPass && data.restsCost.length) {
     ElMessage.warning(restsCostLabel)
     throw Error()
   }
@@ -247,9 +263,6 @@ const checkData = () => {
 
 const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   if (label === '提交') {
-    if (isEmpty(data.restsCost) || isEmpty(data.handPieceCost) || isEmpty(data.travelExpense)) {
-      return ElMessage.warning('请填写完整数据后提交！')
-    }
     checkData()
   }
   const { success } = await PostProjectManagement({

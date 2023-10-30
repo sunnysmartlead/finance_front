@@ -44,7 +44,7 @@
         </el-table-column>
         <el-table-column prop="stoneQuantity" label="拼板数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
+            <el-input-number :min="0" v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -53,15 +53,17 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-upload
-        :action="$baseUrl + 'api/services/app/ElectronicBom/UploadExcel'"
-        :on-success="handleSuccess"
-        :on-error="handleUploadError"
-        show-file-list
-        :on-progress="handleGetUploadProgress"
-      >
-        <el-button :style="{ margin: '15px' }" type="primary">电子料上传</el-button>
-      </el-upload>
+      <el-row style="max-width: '350px'">
+        <el-upload
+          :action="$baseUrl + 'api/services/app/ElectronicBom/UploadExcel'"
+          :on-success="handleSuccess"
+          :on-error="handleUploadError"
+          show-file-list
+          :on-progress="handleGetUploadProgress"
+        >
+          <el-button :style="{ margin: '15px' }" type="primary">电子料上传</el-button>
+        </el-upload>
+      </el-row>
 
       <el-table :data="data.tableData" border style="width: 100%">
         <el-table-column prop="categoryName" label="物料大类" width="180" />

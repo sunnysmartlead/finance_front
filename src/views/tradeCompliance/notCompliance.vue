@@ -2,7 +2,7 @@
   <el-card class="" header="产品识别分析表">
     <el-row justify="end">
       <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" />
-      <el-button m="2" type="primary" @click="handleDownload">贸易合规下载</el-button>
+      <el-button type="primary" @click="handleDownload">贸易不合规下载</el-button>
     </el-row>
     <el-descriptions :column="2" border>
       <el-descriptions-item label="产品名称"> {{ data.tradeComplianceCheck.productName }} </el-descriptions-item>
@@ -89,7 +89,26 @@ const initFetch = async () => {
   data.tradeComplianceCheck = result.tradeComplianceCheck || {}
   console.log(result, "res")
 }
-
+// const agree = async (isAgree: boolean) => {
+//   ElMessageBox[isAgree ? "prompt" : "confirm"]("确定执行该操作吗", "请审核", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   }).then(async (val) => {
+//     let res: any = await IsTradeComplianceCheck({
+//       AuditFlowId: auditFlowId,
+//       opinionDescription: isAgree ? val.value : "",
+//       isAgree
+//     })
+//     if (res.success) {
+//       ElMessage({
+//         type: "success",
+//         message: "操作成功"
+//       })
+//       jumpTodoCenter()
+//     }
+//   })
+// }
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }:any) => {
   let res: any = await SubmitNode({
     AuditFlowId: auditFlowId,
@@ -120,7 +139,7 @@ const handleDownload = async () => {
       auditFlowId,
       solutionId: productId
     })
-    downloadFileExcel(res, "贸易合规")
+    downloadFileExcel(res, "贸易不合规")
     loading.close()
   } catch {
     loading.close()

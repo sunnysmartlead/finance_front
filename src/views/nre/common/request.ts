@@ -381,3 +381,93 @@ export function PostExperimentItemsSingleDownloadExcel(data: any): any {
     responseType: "blob"
   })
 }
+
+// 手板件费用修改项删除
+export function DelitionOfCostModificationItemsForHandBoards(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelitionOfCostModificationItemsForHandBoards",
+    method: "get",
+    data,
+  })
+}
+
+// 模具费用修改项删除
+export function DelMoldCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelMoldCostModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 工装费用修改项删除
+export function DelToolingCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelToolingCostModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 治具费用修改项删除
+export function DelitionOfFixtureCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelitionOfFixtureCostModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 检具费用修改项删除
+export function DelInspectionToolCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelInspectionToolCostModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 生产设备费用修改项删除
+export function DelProductionEquipmentCostModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelProductionEquipmentCostModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 实验费用修改项删除
+export function DelExperimentalFeeModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelExperimentalFeeModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 测试软件费用修改项删除
+export function DelingModificationItemsForTestingSoftwareCosts(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelingModificationItemsForTestingSoftwareCosts",
+    method: "get",
+    data,
+  })
+}
+
+// 差旅费用修改项删除
+export function DelTravelExpenseModificationItem(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelTravelExpenseModificationItem",
+    method: "get",
+    data,
+  })
+}
+
+// 其他费用修改项删除
+export function DelOtherExpenseModificationItemsAdded(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/DelOtherExpenseModificationItemsAdded",
+    method: "get",
+    data,
+  })
+}

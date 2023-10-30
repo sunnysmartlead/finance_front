@@ -68,13 +68,7 @@ export function PostIsOfferSave(data: any): any {
 }
 
 //计算毛利率
-export function PostSpreadSheetCalculate(data: {
-  auditFlowId: number
-  productBoards: {
-    productId: number
-    unitPrice: number
-  }
-}): any {
+export function PostSpreadSheetCalculate(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostSpreadSheetCalculate",
     method: "post",

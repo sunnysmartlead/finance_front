@@ -104,6 +104,16 @@ export function PostComparison(data: { auditFlowId: number; productId: number })
     data
   })
 }
+
+//查看年度对比（阶梯数量）
+export function PostYearDimensionalityComparisonForGradient(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostYearDimensionalityComparisonForGradient",
+    method: "post",
+    data
+  })
+}
+
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率

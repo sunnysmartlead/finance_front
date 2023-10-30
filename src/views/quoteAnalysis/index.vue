@@ -10,7 +10,7 @@
           <template #default="scope">
             <el-select clearable v-model="scope.row.value">
               <el-option
-                v-for="item in productStore.productList"
+                v-for="item in productList"
                 :label="item.product"
                 :value="item.id"
                 :key="item.id"
@@ -37,11 +37,22 @@
         >确定</el-button
       >
       <h4 mt-100px>方案组合</h4>
-      <el-radio-group v-model="planListArrVal" mt-20px @change="planListArrChange">
+      <!-- <el-radio-group v-model="planListArrVal" mt-20px @change="planListArrChange">
         <el-radio :label="index" v-for="(item, index) in planListArr" size="large" border :key="index"
           >方案{{ index + 1 }}</el-radio
         >
-      </el-radio-group>
+      </el-radio-group> -->
+      <div v-for="(plan, index) in planListArr" :key="index" mt="20px">
+        <el-descriptions :title="`方案${index + 1}`" :column="1" border>
+          <template #extra>
+            <el-button type="primary" @click="planListArrChange(index)">选择该方案</el-button>
+            <el-button type="danger" @click="deletePlanListArr(index)">删除方案</el-button>
+          </template>
+          <el-descriptions-item label="产品" v-for="item in plan" :key="item.id">
+            {{ item.product }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
@@ -485,6 +496,8 @@ import {
   PostSpreadSheetCalculate,
   PostYearDimensionalityComparisonForGradient
 } from "./service"
+import { getProductByAuditFlowId } from "@/views/productList/service"
+
 /**
  * 路由对象
  */
@@ -505,9 +518,10 @@ interface planListItem {
 const planList: Array<planListItem> = reactive([])
 const productStore = useProductStore()
 
+const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
-const planListArr = reactive([])
+const planListArr = reactive<any[]>([])
 const planListArrVal = ref(null)
 const yearDimension = ref({
   numk: [
@@ -1443,6 +1457,10 @@ const hasSelectPlans = computed(() => {
 const deletePlan = (index: number) => {
   planList.splice(index, 1)
 }
+const deletePlanListArr = (index: number) => {
+  planListArr.splice(index, 1)
+}
+
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -1698,7 +1716,7 @@ const downLoad = async () => {
   console.log("downLoad")
   let planMap = {}
   let solutionTables: any[] = []
-  productStore.productList.forEach((item) => {
+  productList.value.forEach((item: any) => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
@@ -1752,20 +1770,17 @@ const calculateFullGrossMargin = async (row: any, index: any) => {
 
 const comfirmPlans = async () => {
   // fullscreenLoading.value = true
-  console.log(productStore.productList)
   let planMap = {}
   let solutionTables: any[] = []
-  productStore.productList.forEach((item) => {
+  productList.value.forEach((item: any) => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
-    debugger
     if (planMap[item.value as keyof Object] && item.isOffer) {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })
   planListArr.push(solutionTables)
-  debugger
   // try {
   //   let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
   //   console.log(res)
@@ -1789,7 +1804,9 @@ onMounted(async () => {
 
   if (auditFlowId) {
     let res = await GetSolution(auditFlowId)
-    console.log(res)
+    const resp: any = await getProductByAuditFlowId(auditFlowId)
+    productList.value = resp.result
+    // await productStore.setProductList(Number(auditFlowId))
     // productStore.setProductList(auditFlowId)
     // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
     // console.log(res)

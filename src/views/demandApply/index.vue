@@ -1,6 +1,6 @@
 <template>
   <div class="demand-apply" v-loading="state.taebleLoading">
-    <el-row justify="end" v-if="!isDisabled">
+    <el-row justify="end" v-if="!isDisabled" v-havedone>
       <el-button @click="save(refForm, false)" type="primary">保存</el-button>
       <el-button @click="save(refForm, true)" type="primary">提交</el-button>
     </el-row>
@@ -232,7 +232,7 @@
         </el-row>
         <div v-if="state.quoteForm.isHasSample || state.quoteForm.priceEvalType == 'PriceEvalType_Sample'">
           <div class="demand-apply__btn-container" v-if="!isDisabled">
-            <el-button type="primary" class="demand-apply__add-btn" @click="addSpecimen" v-havedone>新增</el-button>
+            <el-button  type="primary" class="demand-apply__add-btn" @click="addSpecimen" v-havedone>新增</el-button>
           </div>
           <el-row>
             <el-table :data="specimenData" border style="width: 600px">

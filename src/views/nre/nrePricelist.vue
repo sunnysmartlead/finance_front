@@ -387,7 +387,7 @@
         :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="equipmentName" label="生产设备名" />
-        <el-table-column prop="deviceStatusName" label="生产设备状态" />
+        <el-table-column prop="deviceStatus" label="生产设备状态" />
         <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandths" />
         <el-table-column prop="number" label="数量" :formatter="formatThousandthsNoFixed" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />

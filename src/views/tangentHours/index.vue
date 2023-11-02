@@ -5,8 +5,8 @@
     <el-table :data="data.tableData" height="280px">
       <el-table-column label="序号" type="index" />
       <el-table-column label="年份" prop="year" />
-      <el-table-column label="人工工时" prop="laborHour" />
-      <el-table-column label="机器工时" prop="machineHour" />
+      <el-table-column label="人工工时(s)" prop="laborHour" />
+      <el-table-column label="机器工时(s)" prop="machineHour" />
       <el-table-column label="人均跟线数量" prop="perFollowUpQuantity" />
       <!-- <el-table-column label="比例" prop="rate">
         <template #default="scope"> {{ scope.row.rate + "%" }}</template>
@@ -167,7 +167,9 @@ const getList = async () => {
 
   let res: any = await getTangentHoursList(params)
   // console.log(res)
-  data.tableData = res.result.items
+  data.tableData = res.result.items.sort((a: { year: number }, b: { year: number }) => {
+    return a.year - b.year
+  })
   data.total = res.result.totalCount
   getOptionLog()
 }

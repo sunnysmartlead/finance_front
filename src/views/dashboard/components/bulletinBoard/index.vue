@@ -23,7 +23,7 @@
             <el-input v-model="data.form.projectCode" />
           </el-form-item> -->
           <el-form-item label="梯度:" prop="gradientId">
-            <el-select v-model="data.form.gradientId" placeholder="请选择梯度" @change="fetchAllData">
+            <el-select v-model="data.form.gradientId" placeholder="请选择梯度" @change="initGradientId">
               <el-option v-for="item in data.gradientList" :key="item.id" :label="`${item.gradientValue} (K/Y)`"
                 :value="item.id" />
             </el-select>
@@ -276,14 +276,27 @@ onMounted(() => {
   getIsTradeCompliance()
 })
 
+const initGradientId = async () => {
+  if (!productId) return false
+  const loading = ElLoading.service({
+    lock: true,
+    text: '加载中...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+  try {
+    await getGoTableChartData()
+    await fetchAllData()
+    loading.close()
+  } catch {
+    loading.close()
+  }
+}
+
 const init = async () => {
   if (!auditFlowId && isEmpty(filterYearData.value)) return false
   await initChart()
   await fetchOptionsData()
-
-  if (!productId) return false
-  getGoTableChartData()
-  await fetchAllData()
+  await initGradientId()
 }
 
 const getIsTradeCompliance = async () => {

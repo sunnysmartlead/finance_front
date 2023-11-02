@@ -344,7 +344,7 @@
                       <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"
                                  :disabled="isDisable(dataIndex)">
                         <el-option v-for="item in deviceStatusEnmus" :key="item.code" :label="item.value"
-                                   :value="item.value"/>
+                                   :value="item.code"/>
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
@@ -542,9 +542,13 @@
                     <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleJianJuCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.fixturePrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="jianJuNameChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.fixturePrice ,0)
+                        amoutInterval(dataItem.toolInfo.fixturePrice ,0)
                       }}</span>
                   </div>
                   <div class="u-width-150 u-border">
@@ -559,9 +563,13 @@
                     <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.frockPrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="handleGongZhuangCountChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.frockPrice ,0)
+                        amoutInterval(dataItem.toolInfo.frockPrice ,0)
                       }}</span>
                   </div>
                   <div class="u-width-150 u-border">
@@ -577,9 +585,13 @@
                                      :disabled="isDisable(dataIndex)"
                                      @change="handleTestLineCountChange($event, dataIndex)"/>
                   </div>
-                  <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                  <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
+                    <el-input-number v-model="dataItem.toolInfo.testLinePrice" :min="0" :disabled="isDisable(dataIndex)"
+                                     @change="testLineNameChange($event, dataIndex)"/>
+                  </div>
+                  <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
                     <span>{{
-                      amoutInterval(dataItem.toolInfo.testLinePrice ,0)
+                        amoutInterval(dataItem.toolInfo.testLinePrice ,0)
                       }}</span>
                   </div>
                 </template>
@@ -1052,6 +1064,7 @@ onMounted(() => {
 })
 
 const initData = () => {
+  getDeviceStatuEnmu();
   addFlag.value = false;
   currentEditIndex.value = -1;
   if (auditFlowId != undefined && productId != undefined) {
@@ -1062,7 +1075,7 @@ const initData = () => {
     getYearData()
     getTableData()
     getUPHAndLineData()
-    getDeviceStatuEnmu();
+
   }
 }
 const getYearData = () => {

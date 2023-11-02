@@ -5,12 +5,12 @@
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
       <el-table :data="planList" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="报价模组">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="报价模组" width="200" align="center">
           <template #default="scope">
             <el-select clearable v-model="scope.row.value">
               <el-option
-                v-for="item in productStore.productList"
+                v-for="item in productList"
                 :label="item.product"
                 :value="item.id"
                 :key="item.id"
@@ -19,7 +19,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="是否报价">
+        <el-table-column label="是否报价" width="200" align="center">
           <template #default="scope">
             <el-select clearable v-model="scope.row.isOffer">
               <el-option label="是" :value="true" />
@@ -37,11 +37,22 @@
         >确定</el-button
       >
       <h4 mt-100px>方案组合</h4>
-      <el-radio-group v-model="planListArrVal" mt-20px @change="planListArrChange">
+      <!-- <el-radio-group v-model="planListArrVal" mt-20px @change="planListArrChange">
         <el-radio :label="index" v-for="(item, index) in planListArr" size="large" border :key="index"
           >方案{{ index + 1 }}</el-radio
         >
-      </el-radio-group>
+      </el-radio-group> -->
+      <div v-for="(plan, index) in planListArr" :key="index" mt="20px">
+        <el-descriptions :title="`方案${index + 1}`" :column="1" border>
+          <template #extra>
+            <el-button type="primary" @click="planListArrChange(index)">选择该方案</el-button>
+            <el-button type="danger" @click="deletePlanListArr(index)">删除方案</el-button>
+          </template>
+          <el-descriptions-item label="产品" v-for="item in plan" :key="item.id">
+            {{ item.product }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
@@ -60,11 +71,18 @@
         max-height="400px"
         :summary-method="getSummaries"
         show-summary
+        table-layout="auto"
       >
-        <el-table-column label="序号" type="index" />
-        <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
-        <el-table-column label="报价系数">
+        <el-table-column label="序号" type="index" width="80" align="center" />
+        <el-table-column prop="formName" label="费用名称" width="200" align="center" />
+        <el-table-column
+          prop="pricingMoney"
+          label="核价金额"
+          :formatter="formatThousandths"
+          width="200"
+          align="center"
+        />
+        <el-table-column label="报价系数" width="200" align="center">
           <template #default="scope">
             <el-input-number
               v-model="scope.row.offerCoefficient"
@@ -75,34 +93,35 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="offerMoney" label="报价金额" />
-        <el-table-column label="备注">
+        <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" width="200" align="center" />
+        <el-table-column label="备注" align="center">
           <template #default="scope">
-            <el-input v-model="scope.row.remark" type="textarea" />
+            <el-input v-model="scope.row.remark" type="textarea" autosize />
           </template>
         </el-table-column>
       </el-table>
       <p>专用设备</p>
-      <el-table :data="nre.devices" style="width: 100%" border max-height="250px">
-        <el-table-column prop="deviceName" label="设备名称" />
-        <el-table-column prop="devicePrice" label="设备单价" />
-        <el-table-column prop="number" label="设备数量" />
-        <el-table-column prop="equipmentMoney" label="设备金额" />
+      <el-table :data="nre.devices" border max-height="250px">
+        <el-table-column prop="deviceName" label="设备名称" width="200" align="center" />
+        <el-table-column prop="devicePrice" label="设备单价" width="200" align="center" />
+        <el-table-column prop="number" label="设备数量" width="200" align="center" />
+        <el-table-column prop="equipmentMoney" label="设备金额" width="200" align="center" />
       </el-table>
     </el-card>
     <!-- 样品 -->
     <h3>样品报价</h3>
     <el-card v-for="sample in data.allRes.sampleOffer" :key="sample.solutionName">
       <p>{{ sample.solutionName }}</p>
-      <el-table :data="sample.onlySampleModels" style="width: 100%" border max-height="500px">
-        <el-table-column prop="name" label="样品阶段" />
-        <el-table-column prop="pcs" label="需求量（pcs）">
+      <el-table :data="sample.onlySampleModels" border max-height="500px">
+        <el-table-column label="序号" type="index" width="80" align="center" />
+        <el-table-column prop="name" label="样品阶段" width="200" align="center" />
+        <el-table-column prop="pcs" label="需求量（pcs）" width="200" align="center">
           <template #default="scope">
             <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="成本" :formatter="toFixedTwo" />
-        <el-table-column prop="unitPrice" label="单价">
+        <el-table-column prop="cost" label="成本" :formatter="toFixedTwo" width="200" align="center" />
+        <el-table-column prop="unitPrice" label="单价" width="200" align="center">
           <template #default="scope">
             <el-input-number
               v-model="scope.row.unitPrice"
@@ -112,25 +131,28 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="grossMargin" label="毛利率">
+        <el-table-column prop="grossMargin" label="毛利率" width="200" align="center">
           <template #default="scope"> {{ scope.row.grossMargin }}% </template>
         </el-table-column>
-        <el-table-column prop="salesRevenue" label="销售收入">
-          <template #default="scope"> {{ scope.row.unitPrice * scope.row.pcs }} </template>
+        <el-table-column prop="salesRevenue" label="销售收入" align="center">
+          <template #default="scope">
+            {{ formatThousandths(null, null, scope.row.unitPrice * scope.row.pcs) }}
+          </template>
         </el-table-column>
       </el-table>
     </el-card>
     <!-- sop -->
     <h3>单价表（sop年）</h3>
     <el-table :data="data.allRes.sops" style="width: 100%" border max-height="500px">
-      <el-table-column prop="gradientValue" label="梯度" />
-      <el-table-column prop="product" label="产品" />
+      <el-table-column prop="gradientValue" label="梯度" width="150" align="center"/>
+      <el-table-column prop="product" label="产品" width="150" align="center"/>
       <el-table-column
         :label="item.gross + '%'"
         v-for="(item, index) in data.allRes.sops[0].grossValues"
         :key="item.gross"
         :formatter="toFixedTwo"
-        width="180"
+        width="150"
+        align="center"
       >
         <template #default="scope">
           <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
@@ -140,12 +162,13 @@
     </el-table>
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border max-height="500px">
-      <el-table-column prop="projectName" label="项目名称" />
+      <el-table-column prop="projectName" label="项目名称" width="150" align="center"/>
       <el-table-column
         v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
         :label="item.grossMargin + '%'"
         :key="index"
-        width="180"
+        width="150"
+        align="center"
       >
         <template #default="scope">
           <div>
@@ -160,9 +183,6 @@
       </el-table-column>
     </el-table>
     <p>报价毛利率测算-阶梯数量</p>
-    <el-row justify="end" m="2">
-      <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
-    </el-row>
     <el-card class="card">
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
@@ -382,15 +402,83 @@
       </div>
     </el-card>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
-      <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
-        <!-- <el-table-column label="梯度" prop="numk" />
-        <el-table-column label="产品" prop="prices" /> -->
-        <el-table-column type="expand" label="数量K">
-          <template #default="props">
-            <el-table :data="props.row.specifications" border>
-              <el-table-column label="年份" prop="year" />
-              <el-table-column label="值" prop="value" />
-            </el-table>
+      <h4>数量K</h4>
+      <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>单价</h4>
+      <el-table :data="yearDimension.prices" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>销售成本</h4>
+      <el-table :data="yearDimension.sellingCost" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>单位平均成本</h4>
+      <el-table :data="yearDimension.averageCost" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>销售收入</h4>
+      <el-table :data="yearDimension.salesRevenue" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>销售毛利（千元）</h4>
+      <el-table :data="yearDimension.salesMargin" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>佣金</h4>
+      <el-table :data="yearDimension.commission" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <h4>毛利率</h4>
+      <el-table :data="yearDimension.grossMargin" style="width: 100%" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" />
+        <el-table-column label="年份" prop="key" />
+        <el-table-column label="值" prop="value">
+          <template #default="{ row }">
+            <div>{{ `${row.value.toFixed(2)}% ` }}</div>
           </template>
         </el-table-column>
       </el-table>
@@ -417,8 +505,11 @@ import {
   PostComparison,
   GetSolution,
   PostDownloadMessageSecond,
-  PostSpreadSheetCalculate
+  PostSpreadSheetCalculate,
+  PostYearDimensionalityComparisonForGradient
 } from "./service"
+import { getProductByAuditFlowId } from "@/views/productList/service"
+
 /**
  * 路由对象
  */
@@ -439,10 +530,189 @@ interface planListItem {
 const planList: Array<planListItem> = reactive([])
 const productStore = useProductStore()
 
+const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
-const planListArr = reactive([])
+const planListArr = reactive<any[]>([])
 const planListArrVal = ref(null)
+const yearDimension = ref({
+  numk: [
+    {
+      key: "2031",
+      value: 2664.9
+    },
+    {
+      key: "2031",
+      value: 2664.9
+    },
+    {
+      key: "2032",
+      value: 2664.9
+    },
+    {
+      key: "2032",
+      value: 2664.9
+    },
+    {
+      key: "总和",
+      value: 10659.6
+    }
+  ],
+  prices: [
+    {
+      key: "2031",
+      value: 448.9
+    },
+    {
+      key: "2031",
+      value: 439.922
+    },
+    {
+      key: "2032",
+      value: 444.411
+    },
+    {
+      key: "2032",
+      value: 444.411
+    },
+    {
+      key: "总和",
+      value: 436.6560841625
+    }
+  ],
+  sellingCost: [
+    {
+      key: "2031",
+      value: 1669950.5306498313080890918603
+    },
+    {
+      key: "2031",
+      value: 1663435.6140718451262985503755
+    },
+    {
+      key: "2032",
+      value: 1627994.6923073344924015441798
+    },
+    {
+      key: "2032",
+      value: 1590518.5197695582574396049064
+    },
+    {
+      key: "总和",
+      value: 6551899.356798569184228791322
+    }
+  ],
+  averageCost: [
+    {
+      key: "2031",
+      value: 626.64660236775537847164691371
+    },
+    {
+      key: "2031",
+      value: 624.20188902842325276691447166
+    },
+    {
+      key: "2032",
+      value: 610.902732675648051484687673
+    },
+    {
+      key: "2032",
+      value: 596.839851315080587429023568
+    },
+    {
+      key: "总和",
+      value: 614.64776884672681753806815659
+    }
+  ],
+  salesRevenue: [
+    {
+      key: "2031",
+      value: 1172467.765161
+    },
+    {
+      key: "2031",
+      value: 1154762.915733
+    },
+    {
+      key: "2032",
+      value: 1154880.748683585
+    },
+    {
+      key: "2032",
+      value: 1172467.765161
+    },
+    {
+      key: "总和",
+      value: 4654579.194738585
+    }
+  ],
+  salesMargin: [
+    {
+      key: "2031",
+      value: -521408.2376888313080890918603
+    },
+    {
+      key: "2031",
+      value: -532119.6610948451262985503755
+    },
+    {
+      key: "2032",
+      value: -496800.1611017494924015441798
+    },
+    {
+      key: "2032",
+      value: -441736.9720865582574396049064
+    },
+    {
+      key: "总和",
+      value: -1992065.031971984184228791322
+    }
+  ],
+  commission: [
+    {
+      key: "2031",
+      value: 23925.4722
+    },
+    {
+      key: "2031",
+      value: 23446.962756
+    },
+    {
+      key: "2032",
+      value: 23686.217478
+    },
+    {
+      key: "2032",
+      value: 23686.217478
+    },
+    {
+      key: "总和",
+      value: 9309158.38947717
+    }
+  ],
+  grossMargin: [
+    {
+      key: "2031",
+      value: -44.47100834514055784326109487
+    },
+    {
+      key: "2031",
+      value: -46.08042515437687136990954618
+    },
+    {
+      key: "2032",
+      value: -43.01744242148269914918104348
+    },
+    {
+      key: "2032",
+      value: -37.67583085969959862866579983
+    },
+    {
+      key: "总和",
+      value: -42.7979619344271244356746623
+    }
+  ]
+})
 const data = reactive({
   //仅含样品
   sampleOnlyRes: {
@@ -1198,6 +1468,10 @@ const hasSelectPlans = computed(() => {
 const deletePlan = (index: number) => {
   planList.splice(index, 1)
 }
+const deletePlanListArr = (index: number) => {
+  planListArr.splice(index, 1)
+}
+
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -1207,37 +1481,19 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 }
 // 报价分析看板 单价计算
 const openDialog = async (row: any) => {
-  // let productBoards: any = []
-  // if (!row) {
-  //   productBoards = data.productBoard.map((item: any) => {
-  //     console.log(item, "123123")
-  //     return {
-  //       modelCountId: item.modelCountId,
-  //       unitPrice: item.offerUnitPrice
-  //     }
-  //   })
-  // } else {
-  //   productBoards = [
-  //     {
-  //       modelCountId: row.modelCountId,
-  //       unitPrice: row.offerUnitPrice
-  //     }
-  //   ]
-  // }
-  // console.log(productBoards, "data.productBoard")
-  // const { result } = await PostYearDimensionalityComparison({
-  //   auditFlowId: data.auditFlowId,
-  //   grossMargin: 0,
-  //   productBoards
-  // })
-  // console.log(result, "res")
-  // data.dialogTable = result
-  // dialogVisible.value = true
-  const { result } = await PostComparison({
-    auditFlowId: auditFlowId,
-    productId
-  })
-  console.log(result)
+  dialogVisible.value = true
+  try {
+    const { result } = await PostYearDimensionalityComparisonForGradient({
+      auditFlowId: auditFlowId,
+      gradientId: row.gradientId,
+      unitPrice: row.quotedGrossMarginSimple.thisQuotation.price,
+      solutionId: row.solutionId
+    })
+    console.log(result)
+    yearDimension.value = result
+  } catch (error) {
+    console.log(error)
+  }
 }
 const getSummaries = (param: { columns: any; data: any }) => {
   const { columns, data } = param
@@ -1471,7 +1727,7 @@ const downLoad = async () => {
   console.log("downLoad")
   let planMap = {}
   let solutionTables: any[] = []
-  productStore.productList.forEach((item) => {
+  productList.value.forEach((item: any) => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
@@ -1511,24 +1767,23 @@ const pcsChange = (row: any) => {
 }
 // 计算
 const calculateFullGrossMargin = async (row: any, index: any) => {
-  let { gradientId, solutionId } = row
-  // let res = await calculateRate({ auditFlowId, gradientId, productId, solutionId })
-  debugger
-  let res = await PostSpreadSheetCalculate({
+  let { result } = await PostSpreadSheetCalculate({
     auditFlowId: auditFlowId,
-    gradientId: gradientId,
-    productId: productId,
-    solutionId: solutionId
+    productBoards: [
+      {
+        productId: productId,
+        unitPrice: row.quotedGrossMarginSimple.thisQuotation.price
+      }
+    ]
   })
-  console.log(res, index)
+  row.quotedGrossMarginSimple.client.grossMargin = result[0].value
 }
 
 const comfirmPlans = async () => {
   // fullscreenLoading.value = true
-  console.log(productStore.productList)
   let planMap = {}
   let solutionTables: any[] = []
-  productStore.productList.forEach((item) => {
+  productList.value.forEach((item: any) => {
     planMap[item.id as keyof Object] = item
   })
   planList.forEach((item) => {
@@ -1537,7 +1792,6 @@ const comfirmPlans = async () => {
     }
   })
   planListArr.push(solutionTables)
-  debugger
   // try {
   //   let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables })
   //   console.log(res)
@@ -1561,7 +1815,9 @@ onMounted(async () => {
 
   if (auditFlowId) {
     let res = await GetSolution(auditFlowId)
-    console.log(res)
+    const resp: any = await getProductByAuditFlowId(auditFlowId)
+    productList.value = resp.result
+    // await productStore.setProductList(Number(auditFlowId))
     // productStore.setProductList(auditFlowId)
     // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
     // console.log(res)

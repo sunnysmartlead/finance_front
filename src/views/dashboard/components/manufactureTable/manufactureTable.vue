@@ -1,10 +1,7 @@
 <template>
-  <el-table :summary-method="(val: any) => getSummaries(val, '总', 'subtotal',9)"
-    :show-summary="!isEdit" :data="manufactureData" border :height="manufactureData.length > 10 ? 675 : 'auto'">
+  <el-table
+    :data="manufactureData" border :height="manufactureData.length > 10 ? 675 : 'auto'">
     <el-table-column align="center"  prop="costItem" label="成本项目" width="180">
-      <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.costItem" />
-      </template>
     </el-table-column>
     <el-table-column align="center"  prop="manufacturingCostDirect" label="直接制造成本" :formatter="toFixedTwo">
       <el-table-column align="center"  prop="manufacturingCostDirect.directLabor" label="直接人工" width="175" :formatter="toFixedTwo">

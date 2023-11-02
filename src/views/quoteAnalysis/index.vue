@@ -5,8 +5,8 @@
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
       <el-table :data="planList" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="报价模组">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="报价模组" width="200" align="center">
           <template #default="scope">
             <el-select clearable v-model="scope.row.value">
               <el-option
@@ -19,7 +19,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="是否报价">
+        <el-table-column label="是否报价" width="200" align="center">
           <template #default="scope">
             <el-select clearable v-model="scope.row.isOffer">
               <el-option label="是" :value="true" />
@@ -71,11 +71,18 @@
         max-height="400px"
         :summary-method="getSummaries"
         show-summary
+        table-layout="auto"
       >
-        <el-table-column label="序号" type="index" />
-        <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
-        <el-table-column label="报价系数">
+        <el-table-column label="序号" type="index" width="80" align="center" />
+        <el-table-column prop="formName" label="费用名称" width="200" align="center" />
+        <el-table-column
+          prop="pricingMoney"
+          label="核价金额"
+          :formatter="formatThousandths"
+          width="200"
+          align="center"
+        />
+        <el-table-column label="报价系数" width="200" align="center">
           <template #default="scope">
             <el-input-number
               v-model="scope.row.offerCoefficient"
@@ -86,34 +93,35 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="offerMoney" label="报价金额" />
-        <el-table-column label="备注">
+        <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" width="200" align="center" />
+        <el-table-column label="备注" align="center">
           <template #default="scope">
-            <el-input v-model="scope.row.remark" type="textarea" />
+            <el-input v-model="scope.row.remark" type="textarea" autosize />
           </template>
         </el-table-column>
       </el-table>
       <p>专用设备</p>
-      <el-table :data="nre.devices" style="width: 100%" border max-height="250px">
-        <el-table-column prop="deviceName" label="设备名称" />
-        <el-table-column prop="devicePrice" label="设备单价" />
-        <el-table-column prop="number" label="设备数量" />
-        <el-table-column prop="equipmentMoney" label="设备金额" />
+      <el-table :data="nre.devices" border max-height="250px">
+        <el-table-column prop="deviceName" label="设备名称" width="200" align="center" />
+        <el-table-column prop="devicePrice" label="设备单价" width="200" align="center" />
+        <el-table-column prop="number" label="设备数量" width="200" align="center" />
+        <el-table-column prop="equipmentMoney" label="设备金额" width="200" align="center" />
       </el-table>
     </el-card>
     <!-- 样品 -->
     <h3>样品报价</h3>
     <el-card v-for="sample in data.allRes.sampleOffer" :key="sample.solutionName">
       <p>{{ sample.solutionName }}</p>
-      <el-table :data="sample.onlySampleModels" style="width: 100%" border max-height="500px">
-        <el-table-column prop="name" label="样品阶段" />
-        <el-table-column prop="pcs" label="需求量（pcs）">
+      <el-table :data="sample.onlySampleModels" border max-height="500px">
+        <el-table-column label="序号" type="index" width="80" align="center" />
+        <el-table-column prop="name" label="样品阶段" width="200" align="center" />
+        <el-table-column prop="pcs" label="需求量（pcs）" width="200" align="center">
           <template #default="scope">
             <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="成本" :formatter="toFixedTwo" />
-        <el-table-column prop="unitPrice" label="单价">
+        <el-table-column prop="cost" label="成本" :formatter="toFixedTwo" width="200" align="center" />
+        <el-table-column prop="unitPrice" label="单价" width="200" align="center">
           <template #default="scope">
             <el-input-number
               v-model="scope.row.unitPrice"
@@ -123,25 +131,28 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="grossMargin" label="毛利率">
+        <el-table-column prop="grossMargin" label="毛利率" width="200" align="center">
           <template #default="scope"> {{ scope.row.grossMargin }}% </template>
         </el-table-column>
-        <el-table-column prop="salesRevenue" label="销售收入">
-          <template #default="scope"> {{ scope.row.unitPrice * scope.row.pcs }} </template>
+        <el-table-column prop="salesRevenue" label="销售收入" align="center">
+          <template #default="scope">
+            {{ formatThousandths(null, null, scope.row.unitPrice * scope.row.pcs) }}
+          </template>
         </el-table-column>
       </el-table>
     </el-card>
     <!-- sop -->
     <h3>单价表（sop年）</h3>
     <el-table :data="data.allRes.sops" style="width: 100%" border max-height="500px">
-      <el-table-column prop="gradientValue" label="梯度" />
-      <el-table-column prop="product" label="产品" />
+      <el-table-column prop="gradientValue" label="梯度" width="150" align="center"/>
+      <el-table-column prop="product" label="产品" width="150" align="center"/>
       <el-table-column
         :label="item.gross + '%'"
         v-for="(item, index) in data.allRes.sops[0].grossValues"
         :key="item.gross"
         :formatter="toFixedTwo"
-        width="180"
+        width="150"
+        align="center"
       >
         <template #default="scope">
           <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
@@ -151,12 +162,13 @@
     </el-table>
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border max-height="500px">
-      <el-table-column prop="projectName" label="项目名称" />
+      <el-table-column prop="projectName" label="项目名称" width="150" align="center"/>
       <el-table-column
         v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
         :label="item.grossMargin + '%'"
         :key="index"
-        width="180"
+        width="150"
+        align="center"
       >
         <template #default="scope">
           <div>
@@ -466,7 +478,7 @@
         <el-table-column label="年份" prop="key" />
         <el-table-column label="值" prop="value">
           <template #default="{ row }">
-            <div>{{ `${row.value.toFixed(2)} ` }}</div>
+            <div>{{ `${row.value.toFixed(2)}% ` }}</div>
           </template>
         </el-table-column>
       </el-table>

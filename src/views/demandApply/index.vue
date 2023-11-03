@@ -1825,9 +1825,9 @@ const checkModuleTableDataV2Data = () => {
 
 const checkCustomerTargetPrice = () => {
   const notPass = customerTargetPrice.value.some((item: any, index: number) => {
-    if (!item.exchangeRate) {
+    if (!item.exchangeRate && item.targetPrice) {
       return true
-    } else if (!item.currency) {
+    } else if (!item.currency && item.targetPrice) {
       return true
     }
   })

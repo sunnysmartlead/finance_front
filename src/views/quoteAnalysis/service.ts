@@ -113,6 +113,31 @@ export function PostYearDimensionalityComparisonForGradient(data: any): any {
     data
   })
 }
+//计算毛利率（阶梯数量）
+export function PostGrossMarginForGradient(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostGrossMarginForGradient",
+    method: "post",
+    data
+  })
+}
+//计算毛利率（实际数量）
+export function PostGrossMarginForactual(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostGrossMarginForactual",
+    method: "post",
+    data
+  })
+}
+
+//查看年度对比（实际数量）
+export function PostYearDimensionalityComparisonForactual(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostYearDimensionalityComparisonForactual",
+    method: "post",
+    data
+  })
+}
 
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
@@ -231,7 +256,7 @@ export function GetExternalQuotation(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetExternalQuotation",
     method: "get",
-    data,
+    data
   })
 }
 
@@ -240,7 +265,7 @@ export function SaveExternalQuotation(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/SaveExternalQuotation",
     method: "post",
-    data,
+    data
   })
 }
 

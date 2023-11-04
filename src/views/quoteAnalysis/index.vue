@@ -4,8 +4,8 @@
     <el-card mb-20px>
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
-      <el-table :data="planList" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" align="center"/>
+      <el-table :data="planList" border max-height="300px">
+        <el-table-column label="序号" type="index" width="100" align="center" />
         <el-table-column label="报价模组" width="200" align="center">
           <template #default="scope">
             <el-select clearable v-model="scope.row.value">
@@ -80,7 +80,7 @@
           label="核价金额"
           :formatter="formatThousandths"
           width="200"
-          align="center"
+          align="right"
         />
         <el-table-column label="报价系数" width="200" align="center">
           <template #default="scope">
@@ -93,7 +93,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" width="200" align="center" />
+        <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" width="200" align="right" />
         <el-table-column label="备注" align="center">
           <template #default="scope">
             <el-input v-model="scope.row.remark" type="textarea" autosize />
@@ -103,9 +103,15 @@
       <p>专用设备</p>
       <el-table :data="nre.devices" border max-height="250px">
         <el-table-column prop="deviceName" label="设备名称" width="200" align="center" />
-        <el-table-column prop="devicePrice" label="设备单价" width="200" align="center" />
+        <el-table-column prop="devicePrice" label="设备单价" width="200" align="right" :formatter="formatThousandths" />
         <el-table-column prop="number" label="设备数量" width="200" align="center" />
-        <el-table-column prop="equipmentMoney" label="设备金额" width="200" align="center" />
+        <el-table-column
+          prop="equipmentMoney"
+          label="设备金额"
+          width="200"
+          align="right"
+          :formatter="formatThousandths"
+        />
       </el-table>
     </el-card>
     <!-- 样品 -->
@@ -120,7 +126,7 @@
             <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="成本" :formatter="toFixedTwo" width="200" align="center" />
+        <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="right" />
         <el-table-column prop="unitPrice" label="单价" width="200" align="center">
           <template #default="scope">
             <el-input-number
@@ -144,15 +150,15 @@
     <!-- sop -->
     <h3>单价表（sop年）</h3>
     <el-table :data="data.allRes.sops" style="width: 100%" border max-height="500px">
-      <el-table-column prop="gradientValue" label="梯度" width="150" align="center"/>
-      <el-table-column prop="product" label="产品" width="150" align="center"/>
+      <el-table-column prop="gradientValue" label="梯度" width="150" align="center" />
+      <el-table-column prop="product" label="产品" width="150" align="center" />
       <el-table-column
         :label="item.gross + '%'"
         v-for="(item, index) in data.allRes.sops[0].grossValues"
         :key="item.gross"
         :formatter="toFixedTwo"
         width="150"
-        align="center"
+        align="right"
       >
         <template #default="scope">
           <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
@@ -162,13 +168,13 @@
     </el-table>
     <p>项目全生命周期汇总分析表-实际数量</p>
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border max-height="500px">
-      <el-table-column prop="projectName" label="项目名称" width="150" align="center"/>
+      <el-table-column prop="projectName" label="项目名称" width="150" align="center" />
       <el-table-column
         v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
         :label="item.grossMargin + '%'"
         :key="index"
         width="150"
-        align="center"
+        align="right"
       >
         <template #default="scope">
           <div>
@@ -187,19 +193,18 @@
       <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
         <el-table-column label="梯度" prop="gradient" />
         <el-table-column label="产品" prop="product" />
-        <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
         <el-table-column label="目标价（内部）" width="300">
-          <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
-          <el-table-column label="毛利率" prop="quotedGrossMarginSimple.interior.grossMargin">
+          <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" />
+          <el-table-column label="毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.interiorGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price" width="150">
+          <el-table-column label="单价" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.quotedGrossMarginSimple.client.price" :precision="2">
+              <el-input v-model="scope.row.clientPrice" :precision="2">
                 <!-- <template #append>
                   <el-button @click="
                     calculateFullGrossMargin(
@@ -213,52 +218,74 @@
               </el-input>
             </template>
           </el-table-column>
-          <el-table-column label="毛利率" prop="quotedGrossMarginSimple.client.grossMargin">
+          <el-table-column label="毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.clientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="增加客供料毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.clientClientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="剔除分摊费用毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.clientNreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
           <el-table-column label="单价" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
+              <el-input v-model="scope.row.thisQuotationPrice">
                 <template #append>
-                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
+                  <el-button @click="calculateFullGrossMarginNew(scope.row, scope.$index)">计算</el-button>
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.thisQuotation.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.thisQuotationGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="增加客供料毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.thisQuotationClientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="剔除分摊费用毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.thisQuotationNreGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column label="上轮报价">
+          <el-table-column label="单价" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.lastRoundPrice" />
+            </template>
+          </el-table-column>
+          <el-table-column label="毛利率">
+            <template #default="{ row }">
+              {{ `${row.lastRoundGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.lastRoundClientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="剔除分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.lastRoundNreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
         <el-table-column width="140" label="操作">
           <template #default="{ row }">
             <el-row justify="end" m="2">
-              <el-button @click="openDialog(row)" type="primary">年份维度对比</el-button>
+              <el-button @click="openDialog(row,1)" type="primary">年份维度对比</el-button>
             </el-row>
           </template>
         </el-table-column>
@@ -268,96 +295,81 @@
     <el-card class="card" v-for="(item, index) in data.allRes.quotedGrossMargins" :key="index">
       <p>{{ item.project }}</p>
       <el-row justify="end" m="2">
-        <el-button @click="openDialog(null)" type="primary">年份维度对比</el-button>
+        <el-button type="primary">年份维度对比</el-button>
       </el-row>
-      <el-table :data="item.grossMargins" border>
+      <el-table :data="item.quotedGrossMarginActualList" border>
         <el-table-column label="产品" prop="product" />
         <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
         <el-table-column label="目标价（内部）" width="300">
-          <el-table-column label="单价" prop="quotedGrossMarginSimple.interior.price" :formatter="formatThousandths" />
+          <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.interior.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.interiorGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="增加客供料毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.interior.clientGrossMargin?.toFixed(2)} %` }}
+              {{ `${row.interiorClientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="毛利率剔除NRE分摊费用毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.interior.nreGrossMargin?.toFixed(2)} %` }}
+              {{ `${row.interiorNreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" prop="quotedGrossMarginSimple.client.price" width="150">
+          <el-table-column label="单价" prop="clientPrice" width="150">
             <template #default="scope">
-              <el-input-number
-                v-model="scope.row.quotedGrossMarginSimple.client.price"
-                :precision="2"
-                controls-position="right"
-              >
-                <!-- <template #append>
-                  <el-button @click="
-                    calculateFullGrossMargin(
-                      scope.row,
-                      scope.$index,
-                      'clientTargetUnitPrice',
-                      'clientTargetGrossMargin'
-                    )
-                    ">计算</el-button>
-                </template> -->
-              </el-input-number>
+              <el-input-number v-model="scope.row.clientPrice" :precision="2" controls-position="right" />
             </template>
           </el-table-column>
           <el-table-column label="毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.client.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.clientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="增加客供料毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.client.clientGrossMargin?.toFixed(2)} %` }}
+              {{ `${row.clientClientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="毛利率剔除NRE分摊费用毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.client.nreGrossMargin?.toFixed(2)} %` }}
+              {{ `${row.clientNreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
         <el-table-column label="本次报价">
           <el-table-column label="单价" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.quotedGrossMarginSimple.thisQuotation.price">
+              <el-input v-model="scope.row.thisQuotationPrice">
                 <template #append>
-                  <el-button @click="calculateFullGrossMargin(scope.row, scope.$index)">计算</el-button>
+                  <el-button @click="calculateFullGrossMarginNewSj(scope.row, scope.$index, index)">计算</el-button>
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.thisQuotation.grossMargin?.toFixed(2)} %` }}
+              {{ `${row.thisQuotationGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="增加客供料毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.thisQuotation.clientGrossMargin?.toFixed(2)} %` }}
+              {{ `${row.thisQuotationClientGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
           <el-table-column label="毛利率剔除NRE分摊费用毛利率">
             <template #default="{ row }">
-              {{ `${row.quotedGrossMarginSimple.thisQuotation.nreGrossMargin?.toFixed(2)} %` }}
+              {{ `${row.thisQuotationNreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
         </el-table-column>
         <el-table-column width="140" label="操作">
           <template #default="{ row }">
             <el-row justify="end" m="2">
-              <el-button @click="openDialog(row)" type="primary">年份维度对比</el-button>
+              <el-button @click="openDialog(row,2)" type="primary">年份维度对比</el-button>
             </el-row>
           </template>
         </el-table-column>
@@ -387,19 +399,59 @@
         </el-table>
       </div>
     </el-card> -->
+
     <el-card class="card">
-      <div v-for="(value, key) in gradientTableMap" :key="key">
+      <!-- projectBoard -->
+      <div v-for="item in data.allRes.projectBoard" :key="item.title">
+        <p>{{ item.title }}</p>
+        <el-table :data="item.projectBoardModels" border>
+          <el-table-column label="产品" prop="projectName" />
+          <el-table-column
+            label="目标价（内部）"
+            width="300"
+            prop="interiorTarget"
+            :formatter="formatThousandths"
+            align="right"
+          />
+          <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right" />
+          <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right" />
+          <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right" />
+        </el-table>
+      </div>
+
+      <!-- <div v-for="(value, key) in gradientTableMap" :key="key">
         <p>{{ key }}</p>
         <el-table :data="value" border>
           <el-table-column label="产品" prop="product" />
-          <el-table-column label="目标价（内部）" width="300" prop="quotedGrossMarginSimple.interior.price" />
-          <el-table-column label="目标价（客户）" prop="quotedGrossMarginSimple.client.price" />
-          <el-table-column label="本次报价" prop="quotedGrossMarginSimple.thisQuotation.price" />
-          <el-table-column label="上轮报价" prop="quotedGrossMarginSimple.astRound.price" />
+          <el-table-column
+            label="目标价（内部）"
+            width="300"
+            prop="quotedGrossMarginSimple.interior.price"
+            :formatter="formatThousandths"
+            align="right"
+          />
+          <el-table-column
+            label="目标价（客户）"
+            prop="quotedGrossMarginSimple.client.price"
+            :formatter="formatThousandths"
+            align="right"
+          />
+          <el-table-column
+            label="本次报价"
+            prop="quotedGrossMarginSimple.thisQuotation.price"
+            :formatter="formatThousandths"
+            align="right"
+          />
+          <el-table-column
+            label="上轮报价"
+            prop="quotedGrossMarginSimple.astRound.price"
+            :formatter="formatThousandths"
+            align="right"
+          />
         </el-table>
         <div :id="'unitpriceChart' + key" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
-      </div>
+      </div> -->
     </el-card>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
@@ -506,7 +558,10 @@ import {
   GetSolution,
   PostDownloadMessageSecond,
   PostSpreadSheetCalculate,
-  PostYearDimensionalityComparisonForGradient
+  PostYearDimensionalityComparisonForGradient,
+  PostGrossMarginForGradient,
+  PostGrossMarginForactual,
+  PostYearDimensionalityComparisonForactual
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 
@@ -1309,71 +1364,151 @@ const data = reactive({
     ],
     quotedGrossMargins: [
       {
-        project: "报价毛利率测算-实际数量-X01",
-        grossMargins: [
+        quotedGrossMarginActualList: [
           {
-            product: "AR0820",
-            productNumber: 1,
-            quotedGrossMarginSimple: {
-              interior: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 20
-              },
-              client: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 22,
-                nreGrossMargin: 25
-              },
-              thisQuotation: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 24,
-                nreGrossMargin: 25
-              },
-              lastRound: {
-                price: 1,
-                grossMargin: 20,
-                clientGrossMargin: 21,
-                nreGrossMargin: 25
-              }
-            }
+            carModel: "Y1",
+            solutionId: 0,
+            product: "延锋科技前装车内1M",
+            carNum: 2,
+            id: 0,
+            version: 0,
+            auditFlowId: 337,
+            interiorPrice: 0.0,
+            interiorGrossMargin: 0.0,
+            interiorClientGrossMargin: 0.0,
+            interiorNreGrossMargin: 0.0,
+            clientPrice: 0.0,
+            clientGrossMargin: 0.0,
+            clientClientGrossMargin: 0.0,
+            clientNreGrossMargin: 0.0,
+            thisQuotationPrice: 0.0,
+            thisQuotationGrossMargin: 0.0,
+            thisQuotationClientGrossMargin: 0.0,
+            thisQuotationNreGrossMargin: 0.0,
+            lastRoundPrice: 0.0,
+            lastRoundGrossMargin: 0.0,
+            lastRoundClientGrossMargin: 0.0,
+            lastRoundNreGrossMargin: 0.0
+          },
+          {
+            carModel: "Y1",
+            solutionId: 0,
+            product: "延锋科技-DMS-2M",
+            carNum: 1,
+            id: 0,
+            version: 0,
+            auditFlowId: 337,
+            interiorPrice: 0.0,
+            interiorGrossMargin: 0.0,
+            interiorClientGrossMargin: 0.0,
+            interiorNreGrossMargin: 0.0,
+            clientPrice: 0.0,
+            clientGrossMargin: 0.0,
+            clientClientGrossMargin: 0.0,
+            clientNreGrossMargin: 0.0,
+            thisQuotationPrice: 0.0,
+            thisQuotationGrossMargin: 0.0,
+            thisQuotationClientGrossMargin: 0.0,
+            thisQuotationNreGrossMargin: 0.0,
+            lastRoundPrice: 0.0,
+            lastRoundGrossMargin: 0.0,
+            lastRoundClientGrossMargin: 0.0,
+            lastRoundNreGrossMargin: 0.0
           }
-        ]
+        ],
+        project: "报价毛利率测算-实际数量-Y1"
       }
+      // {
+      //   project: "报价毛利率测算-实际数量-X01",
+      //   grossMargins: [
+      //     {
+      //       product: "AR0820",
+      //       productNumber: 1,
+      //       quotedGrossMarginSimple: {
+      //         interior: {
+      //           price: 1,
+      //           grossMargin: 20,
+      //           clientGrossMargin: 22,
+      //           nreGrossMargin: 20
+      //         },
+      //         client: {
+      //           price: 1,
+      //           grossMargin: 20,
+      //           clientGrossMargin: 22,
+      //           nreGrossMargin: 25
+      //         },
+      //         thisQuotation: {
+      //           price: 1,
+      //           grossMargin: 20,
+      //           clientGrossMargin: 24,
+      //           nreGrossMargin: 25
+      //         },
+      //         lastRound: {
+      //           price: 1,
+      //           grossMargin: 20,
+      //           clientGrossMargin: 21,
+      //           nreGrossMargin: 25
+      //         }
+      //       }
+      //     }
+      //   ]
+      // }
     ],
     gradientQuotedGrossMargins: [
+      // {
+      //   gradient: "25K/Y",
+      //   product: "AR0820",
+      //   quotedGrossMarginSimple: {
+      //     interior: {
+      //       price: 730,
+      //       grossMargin: 20,
+      //       clientGrossMargin: 22,
+      //       nreGrossMargin: 20
+      //     },
+      //     client: {
+      //       price: 730,
+      //       grossMargin: 20,
+      //       clientGrossMargin: 22,
+      //       nreGrossMargin: 25
+      //     },
+      //     thisQuotation: {
+      //       price: 730,
+      //       grossMargin: 20,
+      //       clientGrossMargin: 24,
+      //       nreGrossMargin: 25
+      //     },
+      //     lastRound: {
+      //       price: 730,
+      //       grossMargin: 20,
+      //       clientGrossMargin: 21,
+      //       nreGrossMargin: 25
+      //     }
+      //   }
+      // }
       {
-        gradient: "25K/Y",
-        product: "AR0820",
-        quotedGrossMarginSimple: {
-          interior: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 22,
-            nreGrossMargin: 20
-          },
-          client: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 22,
-            nreGrossMargin: 25
-          },
-          thisQuotation: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 24,
-            nreGrossMargin: 25
-          },
-          lastRound: {
-            price: 730,
-            grossMargin: 20,
-            clientGrossMargin: 21,
-            nreGrossMargin: 25
-          }
-        }
+        gradient: "2664.9k/y",
+        gradientId: 599,
+        solutionId: 664,
+        product: "延锋科技前装车内1M",
+        id: 0,
+        version: 0,
+        auditFlowId: 337,
+        interiorPrice: 783.3082529596942, //目标价（内部）单价
+        interiorGrossMargin: 20, // 目标价（内部）毛利率
+        interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
+        interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
+        clientPrice: 0, // 目标价（客户）单价
+        clientGrossMargin: 0, // 目标价（客户）毛利率
+        clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
+        clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
+        thisQuotationPrice: 0, /// 本次报价单价
+        thisQuotationGrossMargin: 0, // 本次报价毛利率
+        thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
+        thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
+        lastRoundPrice: 0, // 上轮报价单价
+        lastRoundGrossMargin: 0, // 上轮报价毛利率
+        lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
+        lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
       }
     ],
     fullLifeCycle: [
@@ -1427,6 +1562,178 @@ const data = reactive({
         ]
       }
     ],
+    projectBoard: [
+      {
+        title: "2664.9KV",
+        projectBoardModels: [
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "数量",
+            interiorTarget: 21319.2,
+            clientTarget: 21319.2,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "销售成本",
+            interiorTarget: 23570070.79,
+            clientTarget: 23570070.79,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "单位平均成本",
+            interiorTarget: 1105.58,
+            clientTarget: 1105.58,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "销售收入",
+            interiorTarget: 28985042.52,
+            clientTarget: 8438427.92,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "佣金",
+            interiorTarget: 590007.46,
+            clientTarget: 171769.13,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "平均单价",
+            interiorTarget: 6.01,
+            clientTarget: 395.81,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "销售毛利",
+            interiorTarget: 4824964.28,
+            clientTarget: -15303411.98,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "毛利率",
+            interiorTarget: 16.65,
+            clientTarget: -181.35,
+            offer: 0.0,
+            oldOffer: null
+          }
+        ]
+      },
+      {
+        title: "4000KV",
+        projectBoardModels: [
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "数量",
+            interiorTarget: 32000.0,
+            clientTarget: 32000.0,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "销售成本",
+            interiorTarget: 34679267.1,
+            clientTarget: 34679267.1,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "单位平均成本",
+            interiorTarget: 1083.73,
+            clientTarget: 1083.73,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "销售收入",
+            interiorTarget: 42282510.76,
+            clientTarget: 11533298.46,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "佣金",
+            interiorTarget: 860685.19,
+            clientTarget: 234767.02,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "平均单价",
+            interiorTarget: 6.27,
+            clientTarget: 360.42,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "销售毛利",
+            interiorTarget: 6742558.46,
+            clientTarget: -23380735.66,
+            offer: 0.0,
+            oldOffer: null
+          },
+          {
+            version: 0,
+            auditFlowId: 0,
+            id: 0,
+            projectName: "毛利率",
+            interiorTarget: 15.95,
+            clientTarget: -202.72,
+            offer: 0.0,
+            oldOffer: null
+          }
+        ]
+      }
+    ],
     isSuccess: true,
     message: "调用成功"
   }
@@ -1456,7 +1763,7 @@ const gradientTableMap = computed(() => {
     }
     gradientTableMap[item.gradient].push(item)
   })
-  setChartData(gradientTableMap)
+  // setChartData(gradientTableMap)
   return gradientTableMap
 })
 
@@ -1480,19 +1787,41 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   }
 }
 // 报价分析看板 单价计算
-const openDialog = async (row: any) => {
+const openDialog = async (row: any, type: number) => {
   dialogVisible.value = true
-  try {
-    const { result } = await PostYearDimensionalityComparisonForGradient({
-      auditFlowId: auditFlowId,
-      gradientId: row.gradientId,
-      unitPrice: row.quotedGrossMarginSimple.thisQuotation.price,
-      solutionId: row.solutionId
-    })
-    console.log(result)
-    yearDimension.value = result
-  } catch (error) {
-    console.log(error)
+  if (type === 1) {
+    try {
+      const { result } = await PostYearDimensionalityComparisonForGradient({
+        auditFlowId: auditFlowId,
+        gradientId: row.gradientId,
+        unitPrice: row.thisQuotationPrice,
+        solutionId: row.solutionId
+      })
+      console.log(result)
+      yearDimension.value = result
+    } catch (error) {
+      console.log(error)
+    }
+  } else {
+    try {
+      const { result } = await PostYearDimensionalityComparisonForactual({
+        auditFlowId: auditFlowId,
+        gradientId: row.gradientId,
+        unitPrice: row.thisQuotationPrice,
+        solutionId: row.solutionId,
+        soltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
+          return {
+            gradientId: item.gradientId,
+            unitPrice: item.thisQuotationPrice,
+            solutionId: item.solutionId
+          }
+        })
+      })
+      console.log(result)
+      yearDimension.value = result
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 const getSummaries = (param: { columns: any; data: any }) => {
@@ -1514,6 +1843,7 @@ const getSummaries = (param: { columns: any; data: any }) => {
             return prev
           }
         }, 0)}`
+        sums[index] = (Number(sums[index]).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
       } else {
         sums[index] = "N/A"
       }
@@ -1765,20 +2095,41 @@ const unitPriceChange = (row: any) => {
 const pcsChange = (row: any) => {
   row.salesRevenue = row.pcs * row.salesRevenue
 }
-// 计算
-const calculateFullGrossMargin = async (row: any, index: any) => {
-  let { result } = await PostSpreadSheetCalculate({
+
+const calculateFullGrossMarginNew = async (row: any, index: any) => {
+  let { result } = await PostGrossMarginForGradient({
     auditFlowId: auditFlowId,
-    productBoards: [
-      {
-        productId: productId,
-        unitPrice: row.quotedGrossMarginSimple.thisQuotation.price
-      }
-    ]
+    gradientId: row.gradientId,
+    unitPrice: row.thisQuotationPrice,
+    solutionId: row.solutionId
   })
-  row.quotedGrossMarginSimple.client.grossMargin = result[0].value
+  data.allRes.gradientQuotedGrossMargins[index].thisQuotationGrossMargin = result.grossMargin
+  data.allRes.gradientQuotedGrossMargins[index].thisQuotationClientGrossMargin = result.clientGrossMargin
+  data.allRes.gradientQuotedGrossMargins[index].thisQuotationNreGrossMargin = result.nreGrossMargin
 }
 
+const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number) => {
+  let { result } = await PostGrossMarginForactual({
+    auditFlowId: auditFlowId,
+    gradientId: row.gradientId,
+    unitPrice: row.thisQuotationPrice,
+    solutionId: row.solutionId,
+    carModel: row.carModel,
+    soltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
+      return {
+        gradientId: item.gradientId,
+        unitPrice: item.thisQuotationPrice,
+        solutionId: item.solutionId
+      }
+    })
+  })
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationGrossMargin =
+    result.grossMargin
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationClientGrossMargin =
+    result.clientGrossMargin
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationNreGrossMargin =
+    result.nreGrossMargin
+}
 const comfirmPlans = async () => {
   // fullscreenLoading.value = true
   let planMap = {}

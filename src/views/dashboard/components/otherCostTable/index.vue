@@ -140,7 +140,11 @@ watch(
   () => modifyData.value,
   () => {
     modifyData.value.forEach((item) => {
-      item.cost = (item.total || 0) / (item.count || 0)
+      if (!item.count) {
+        item.cost = 0
+      } else {
+        item.cost = (item.total || 0) / (item.count)
+      }
     })
   },
   {

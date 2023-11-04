@@ -220,7 +220,8 @@ const filterYearData = computed(() => {
 
 const getTotal = async () => {
   const { upDown, year } = filterYearData.value
-  if (!productId || !auditFlowId) return
+  if (!productId || !auditFlowId || !year || !upDown) return
+  console.log('运行了111')
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
     Year: year,
@@ -242,6 +243,7 @@ const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
 }
 
 const queryGradientList = async () => {
+  if (!auditFlowId) return
   const res: any = await GetGradient({
     auditFlowId
   })
@@ -270,7 +272,7 @@ const initCharts = (id: string, chartOption: any) => {
 onBeforeMount(() => { })
 
 onMounted(() => {
-  if (!auditFlowId && isEmpty(filterYearData.value)) return false
+  if (!auditFlowId) return false
   init()
   getPriceEvaluationTableInputCount()
   getIsTradeCompliance()
@@ -293,7 +295,7 @@ const initGradientId = async () => {
 }
 
 const init = async () => {
-  if (!auditFlowId && isEmpty(filterYearData.value)) return false
+  if (!auditFlowId) return false
   await initChart()
   await fetchOptionsData()
   await initGradientId()
@@ -423,11 +425,13 @@ const handlePathFethNreTable = async () => {
 // 核价看板-产品成本占比图
 const getPricingPanelProportionOfProductCost = async () => {
   try {
+    const { upDown, year } = filterYearData.value
+    if (!upDown || !year) return
     const { result }: any = await GetPricingPanelProportionOfProductCost({
-      Year: filterYearData.value.year,
+      Year: year,
       AuditFlowId: auditFlowId,
       SolutionId: productId,
-      UpDown: filterYearData.value.upDown,
+      UpDown: upDown,
       GradientId: data.form.gradientId,
     })
     const value = result?.items.map((val: any) => ({ value: val.proportion?.toFixed(2) || 0, name: val.name }))
@@ -449,11 +453,13 @@ const getPricingPanelProportionOfProductCost = async () => {
 // 核价看板-利润分布图
 const getPricingPanelProfit = async () => {
   try {
+    const { upDown, year } = filterYearData.value
+    if(!upDown || !year) return
     const { result }: any = await GetPricingPanelProfit({
-      Year: filterYearData.value.year,
+      Year: year,
       AuditFlowId: auditFlowId,
       SolutionId: productId,
-      UpDown: filterYearData.value.upDown,
+      UpDown: upDown,
       GradientId: data.form.gradientId,
     })
     const val = result?.items?.map((val: any) => val?.proportion?.toFixed(2) || 0)
@@ -475,14 +481,16 @@ const getPricingPanelProfit = async () => {
 
 // 获取推移图
 const getGoTableChartData = async () => {
+  const { year, upDown } = filterYearData.value
+  if (!year || !upDown) return
   const {
     result: { items = [] }
   }: any = await GetGoTable({
     InputCount: data.productInputs,
-    Year: filterYearData.value.year,
+    Year: year,
     AuditFlowId: auditFlowId,
     SolutionId: productId,
-    UpDown: filterYearData.value.upDown,
+    UpDown: upDown,
     GradientId: data.form.gradientId,
   })
 

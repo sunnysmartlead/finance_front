@@ -30,7 +30,7 @@ export interface GetLossCostProps {
   /**
    * 年份
    */
-  Year?: string
+  Year?: number
   UpDown?: number
   GradientId?: number
 }

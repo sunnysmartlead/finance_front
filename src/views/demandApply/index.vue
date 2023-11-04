@@ -803,9 +803,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="其他费用分摊:" prop="allocationOfEquipmentCost">
+            <el-form-item label="其他费用分摊:" prop="otherCost">
               <el-select
-                v-model="state.quoteForm.allocationOfEquipmentCost"
+                v-model="state.quoteForm.otherCost"
                 placeholder="Select"
                 :disabled="isDisabled || right === '1'"
               >

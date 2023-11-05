@@ -296,3 +296,11 @@ export function getProductDevelopmentInput(data: any) {
     data
   })
 }
+
+export function panelSubmitNode(data: any) {
+  return request({
+    url: "/api/services/app/WorkflowInstance/PanelSubmitNode",
+    method: "post",
+    data
+  })
+}

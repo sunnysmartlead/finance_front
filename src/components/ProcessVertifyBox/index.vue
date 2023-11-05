@@ -10,11 +10,11 @@
 
 <template>
   <el-row justify="end" v-havedone>
-    <el-button type="primary" m="2" @click="data.dialogVisible = true">流程确认</el-button>
+    <el-button type="primary" m="2" @click="data.dialogVisible = true">{{ title }}</el-button>
     <el-dialog v-model="data.dialogVisible" title="流程确认" width="30%">
       <el-form>
         <el-form-item label="选择类型">
-          <el-select v-model="data.opinion">
+          <el-select v-model="data.opinion" :disabled="processType === 'confirm'">
             <el-option v-for="item in (PROGRESSTYPE[props.processType] || [])" :key="item.val" :label="item.label"
               :value="item.val" />
           </el-select>
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, PropType, computed } from "vue"
+import { reactive, PropType, onMounted } from "vue"
 
 import { useRoute } from "vue-router"
 import PROGRESSTYPE from "@/constant/approvalProcess"
@@ -52,7 +52,7 @@ const data: any = reactive({
   dialogVisible: false,
   comment: "",
   opinion: "",
-  solutionIds: []
+  solutionIds: [],
 })
 
 
@@ -67,13 +67,21 @@ const props = defineProps({
   nodeInstanceId: {
     type: Number,
     default: 0
+  },
+  title: {
+    type: String,
+    default: "流程确认"
   }
 })
 
 const route = useRoute()
 
-const solutionIdOptions = computed(() => {
-  return productStore?.productList || []
+onMounted(() => {
+
+  if (props.processType === 'confirm') {
+    data.opinion = 'YesOrNo_Yes'
+    console.log(data.title, 'props')
+  }
 })
 
 const onSubmit = debounce(async () => {

@@ -178,13 +178,8 @@
       >
         <template #default="scope">
           <div>
-            {{ scope.row.grossMarginList[index].grossMarginNumber.toFixed(2) }}
+            {{ formatThousandths(null, null, scope.row.grossMarginList[index].grossMarginNumber) }}
           </div>
-          <!-- <el-input-number
-            v-model="scope.row.grossMarginList[index].grossMarginNumber"
-            controls-position="right"
-            :precision="2"
-          /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -285,7 +280,7 @@
         <el-table-column width="140" label="操作">
           <template #default="{ row }">
             <el-row justify="end" m="2">
-              <el-button @click="openDialog(row,1)" type="primary">年份维度对比</el-button>
+              <el-button @click="openDialog(row, 1)" type="primary">年份维度对比</el-button>
             </el-row>
           </template>
         </el-table-column>
@@ -294,12 +289,12 @@
 
     <el-card class="card" v-for="(item, index) in data.allRes.quotedGrossMargins" :key="index">
       <p>{{ item.project }}</p>
-      <el-row justify="end" m="2">
+      <!-- <el-row justify="end" m="2">
         <el-button type="primary">年份维度对比</el-button>
-      </el-row>
+      </el-row> -->
       <el-table :data="item.quotedGrossMarginActualList" border>
         <el-table-column label="产品" prop="product" />
-        <!-- <el-table-column label="单车产品数量" prop="productNumber" /> -->
+        <el-table-column label="单车产品数量" prop="carNum" />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
@@ -369,7 +364,7 @@
         <el-table-column width="140" label="操作">
           <template #default="{ row }">
             <el-row justify="end" m="2">
-              <el-button @click="openDialog(row,2)" type="primary">年份维度对比</el-button>
+              <el-button @click="openDialog(row, 2)" type="primary">年份维度对比</el-button>
             </el-row>
           </template>
         </el-table-column>
@@ -1809,6 +1804,7 @@ const openDialog = async (row: any, type: number) => {
         gradientId: row.gradientId,
         unitPrice: row.thisQuotationPrice,
         solutionId: row.solutionId,
+        carModel: row.carModel,
         soltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
           return {
             gradientId: item.gradientId,
@@ -2110,16 +2106,16 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
 
 const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number) => {
   let { result } = await PostGrossMarginForactual({
-    auditFlowId: auditFlowId,
+    AuditFlowId: auditFlowId,
     gradientId: row.gradientId,
-    unitPrice: row.thisQuotationPrice,
-    solutionId: row.solutionId,
-    carModel: row.carModel,
-    soltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
+    // unitPrice: row.thisQuotationPrice,
+    SolutionId: row.solutionId,
+    CarModel: row.carModel,
+    SoltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
       return {
-        gradientId: item.gradientId,
-        unitPrice: item.thisQuotationPrice,
-        solutionId: item.solutionId
+        Gradientid: item.gradientId,
+        UnitPrice: item.thisQuotationPrice,
+        SolutionId: item.solutionId
       }
     })
   })
@@ -2129,6 +2125,7 @@ const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: 
     result.clientGrossMargin
   data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationNreGrossMargin =
     result.nreGrossMargin
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationPrice = result.unitPrice
 }
 const comfirmPlans = async () => {
   // fullscreenLoading.value = true

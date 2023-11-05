@@ -160,10 +160,10 @@ import manufactureTable from "../manufactureTable/index.vue"
 import logisticsTable from "../logisticsTable/index.vue"
 import qualityTable from "../qualityTable/index.vue"
 import otherCostTable from "../otherCostTable/index.vue"
-import { isEmpty } from "lodash"
 import useJump from "@/hook/useJump"
 import SchemeCompare from "@/components/SchemeCompare/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
+import { formatThousandths } from '@/utils/number'
 
 enum upDownEnum {
   "全年",
@@ -220,7 +220,7 @@ const filterYearData = computed(() => {
 
 const getTotal = async () => {
   const { upDown, year } = filterYearData.value
-  if (!productId || !auditFlowId || !year || !upDown) return
+  if (!productId || !auditFlowId || !year) return
   console.log('运行了111')
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
@@ -428,7 +428,7 @@ const handlePathFethNreTable = async () => {
 const getPricingPanelProportionOfProductCost = async () => {
   try {
     const { upDown, year } = filterYearData.value
-    if (!upDown || !year) return
+    if (!year) return
     const { result }: any = await GetPricingPanelProportionOfProductCost({
       Year: year,
       AuditFlowId: auditFlowId,
@@ -456,7 +456,6 @@ const getPricingPanelProportionOfProductCost = async () => {
 const getPricingPanelProfit = async () => {
   try {
     const { upDown, year } = filterYearData.value
-    if(!upDown || !year) return
     const { result }: any = await GetPricingPanelProfit({
       Year: year,
       AuditFlowId: auditFlowId,
@@ -464,7 +463,7 @@ const getPricingPanelProfit = async () => {
       UpDown: upDown,
       GradientId: data.form.gradientId,
     })
-    const val = result?.items?.map((val: any) => val?.proportion?.toFixed(2) || 0)
+    const val = result?.items?.map((val: any) => formatThousandths(null,null, val?.proportion) || 0)
     console.log(val, "getPricingPanelProfit")
     costChart.setOption({
       ...costChartData,
@@ -484,7 +483,7 @@ const getPricingPanelProfit = async () => {
 // 获取推移图
 const getGoTableChartData = async () => {
   const { year, upDown } = filterYearData.value
-  if (!year || !upDown) return
+  if (!year) return
   const {
     result: { items = [] }
   }: any = await GetGoTable({

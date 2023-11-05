@@ -55,6 +55,14 @@ const baseProcessType = [
   }
 ]
 
+const confirm = [
+  //YesOrNo
+  {
+    label: "同意",
+    val: "YesOrNo_Yes"
+  },
+]
+
 const confirmProcessType = [
   //Done
   {
@@ -250,5 +258,6 @@ const PROGRESSTYPE: any = {
   structBomProcessType,
   bomCostProcessType,
   priceEvaluationBoard,
+  confirm,
 }
 export default PROGRESSTYPE

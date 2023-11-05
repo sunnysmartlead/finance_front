@@ -13,6 +13,11 @@
         </el-row>
       </template>
       <manufactureTable :isEdit="!hideEdit" :manufactureData="modifyData" :on-delete="handleDelete" />
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="修改后合计：">
+          {{ editTotal }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-card>
   </div>
 </template>
@@ -22,7 +27,11 @@ import { GetUpdateItemManufacturingCost, SetUpdateItemManufacturingCost, GetManu
 import manufactureTable from "./manufactureTable.vue"
 import getQuery from "@/utils/getQuery"
 import { cloneDeep, isEmpty, map } from "lodash"
+import type { UploadProps, UploadUserFile } from "element-plus"
 import { ElMessage } from "element-plus"
+import { getEditTotal } from '../../common/util'
+import { Loading } from "@element-plus/icons-vue"
+
 
 const { auditFlowId, productId: SolutionId } = getQuery()
 
@@ -43,6 +52,11 @@ const props = defineProps({
 const modifyData = ref<any>([])
 const manufactureData = ref<any>([])
 const loading = ref(false)
+
+const editTotal = computed(() => {
+  const total = getEditTotal(manufactureData.value || [], modifyData.value || [], 'subtotal')
+  return total
+})
 
 // 获取 制造成本汇总表
 const getManufacturingCost = async () => {
@@ -85,6 +99,13 @@ const init = () => {
 
 
 const handleSubmit = async () => {
+  if (!modifyData.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请先添加修改项数据再操作！'
+    })
+    return
+  }
   const { success } = await SetUpdateItemManufacturingCost({
     updateItem: modifyData.value,
     auditFlowId,

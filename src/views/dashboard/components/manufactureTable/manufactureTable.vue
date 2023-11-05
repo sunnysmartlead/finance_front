@@ -54,10 +54,6 @@
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostIndirect.subtotal" label="小计" width="175" :formatter="formatThousandths">
-        <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
-            v-model="row.manufacturingCostIndirect.subtotal" />
-        </template>
       </el-table-column>
     </el-table-column>
     <el-table-column align="center"  label="合计" prop="subtotal" :formatter="formatThousandths" />

@@ -85,7 +85,7 @@ export function GetLogisticsCost(data: any) {
 // 获取 制造成本汇总表
 export function GetManufacturingCost(data: GetLossCostProps) {
   return request({
-    url: "/api/services/app/PriceEvaluation/GetManufacturingCost",
+    url: "/api/services/app/PriceEvaluation/GetManufacturingCostNoChange",
     method: "get",
     data
   })

@@ -1,6 +1,6 @@
 <template>
   <div class="todo-center">
-    <el-card class="card" v-if="isProductManager">
+    <!-- <el-card class="card" v-if="isProductManager">
       <el-form :model="form" inline :rules="rules" ref="projectFormRef">
         <el-form-item label="项目名称" prop="quoteProjectName">
           <el-input v-model="form.quoteProjectName" />
@@ -16,7 +16,7 @@
         </el-form-item>
       </el-form>
       <el-button @click="saveNew(projectFormRef)" type="primary">新建</el-button>
-    </el-card>
+    </el-card> -->
     <el-card class="card">
       <el-tabs v-model="activeName" type="card">
         <el-tab-pane label="待办" name="upcoming">

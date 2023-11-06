@@ -211,6 +211,10 @@
       </el-table>
     </el-card>
     <el-card class="margin-top" header="工装费用">
+      <el-descriptions m="2" border>
+        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
+      </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
@@ -263,6 +267,10 @@
       </el-table>
     </el-card>
     <el-card class="margin-top" header="治具费用">
+      <el-descriptions m="2" border>
+        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
+      </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
       </el-row>
@@ -438,6 +446,10 @@
       </el-table>
     </el-card>
     <el-card class="margin-top" header="测试软件费用">
+      <el-descriptions m="2" border>
+        <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
+      </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')"
           v-if="!Number(hideEdit)">新增</el-button>
@@ -684,13 +696,13 @@ watch(
     // 工装
     if (data.value.toolingCostsModifyDtos.length) {
       data.value.toolingCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.toolingCount || 0) * (item.unitPriceOfTooling || 0)
+        item.cost = (item.toolingCount || 0) * (item.unitPriceOfTooling || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 治具
     if (data.value.fixtureCostsModifyDtos.length) {
       data.value.fixtureCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.number || 0) * (item.unitPrice || 0)
+        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 检具
@@ -714,7 +726,7 @@ watch(
     // 测试软件
     if (data.value.testingSoftwareCostsModifyDtos.length) {
       data.value.testingSoftwareCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.costH || 0) * (item.hour || 0)
+        item.cost = (item.costH || 0) * (item.hour || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 差旅费用修改项

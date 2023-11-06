@@ -340,7 +340,7 @@
             <template #default="scope">
               <el-input v-model="scope.row.thisQuotationPrice">
                 <template #append>
-                  <el-button @click="calculateFullGrossMarginNewSj(scope.row, scope.$index, index)">计算</el-button>
+                  <el-button @click="calculateFullGrossMarginNewSj(scope.row, scope.$index, index,item.quotedGrossMarginActualList)">计算</el-button>
                 </template>
               </el-input>
             </template>
@@ -364,7 +364,7 @@
         <el-table-column width="140" label="操作">
           <template #default="{ row }">
             <el-row justify="end" m="2">
-              <el-button @click="openDialog(row, 2)" type="primary">年份维度对比</el-button>
+              <el-button @click="openDialog(row, 2,item.quotedGrossMarginActualList)" type="primary">年份维度对比</el-button>
             </el-row>
           </template>
         </el-table-column>
@@ -448,6 +448,7 @@
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
       </div> -->
     </el-card>
+    <!-- <el-button @click="save">保存</el-button> -->
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -556,7 +557,9 @@ import {
   PostYearDimensionalityComparisonForGradient,
   PostGrossMarginForGradient,
   PostGrossMarginForactual,
-  PostYearDimensionalityComparisonForactual
+  PostYearDimensionalityComparisonForactual,
+  PostYearDimensionalityComparisonForactualQt,
+  PostGrossMarginForactualQt
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 
@@ -1782,8 +1785,36 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   }
 }
 // 报价分析看板 单价计算
-const openDialog = async (row: any, type: number) => {
+const openDialog = async (row: any, type: number, list: any) => {
   dialogVisible.value = true
+  if (row.product === "齐套") {
+    try {
+      const { result } = await PostYearDimensionalityComparisonForactualQt({
+        AuditFlowId: auditFlowId,
+        CarModel: row.carModel,
+        SoltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
+          return {
+            Gradientid: item.gradientId,
+            UnitPrice: item.thisQuotationPrice,
+            SolutionId: item.solutionId
+          }
+        }),
+        SolutionIdsAndcarNums: list
+          .map((item: any) => {
+            return {
+              carNum: item.carNum,
+              SolutionId: item.solutionId
+            }
+          })
+          .slice(0, list.length - 1)
+      })
+      console.log(result)
+      yearDimension.value = result
+    } catch (error) {
+      console.log(error)
+    }
+    return
+  }
   if (type === 1) {
     try {
       const { result } = await PostYearDimensionalityComparisonForGradient({
@@ -2104,7 +2135,43 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
   data.allRes.gradientQuotedGrossMargins[index].thisQuotationNreGrossMargin = result.nreGrossMargin
 }
 
-const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number) => {
+const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number, list: any) => {
+  if (row.product === "齐套") {
+    try {
+      const { result } = await PostGrossMarginForactualQt({
+        AuditFlowId: auditFlowId,
+        CarModel: row.carModel,
+        SoltionGradPrices: data.allRes.gradientQuotedGrossMargins.map((item) => {
+          return {
+            Gradientid: item.gradientId,
+            UnitPrice: item.thisQuotationPrice,
+            SolutionId: item.solutionId
+          }
+        }),
+        SolutionIdsAndcarNums: list
+          .map((item: any) => {
+            return {
+              carNum: item.carNum,
+              SolutionId: item.solutionId
+            }
+          })
+          .slice(0, list.length - 1)
+      })
+      console.log(result)
+      // yearDimension.value = result
+
+      data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationGrossMargin =
+        result.grossMargin
+      data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationClientGrossMargin =
+        result.clientGrossMargin
+      data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationNreGrossMargin =
+        result.nreGrossMargin
+      data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationPrice = result.unitPrice
+    } catch (error) {
+      console.log(error)
+    }
+    return
+  }
   let { result } = await PostGrossMarginForactual({
     AuditFlowId: auditFlowId,
     gradientId: row.gradientId,
@@ -2155,6 +2222,10 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
+// const save = () => {
+//   debugger
+//   console.log(productList, planListArr, data.allRes)
+// }
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

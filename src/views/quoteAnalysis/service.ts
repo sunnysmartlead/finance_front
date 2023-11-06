@@ -139,6 +139,24 @@ export function PostYearDimensionalityComparisonForactual(data: any): any {
   })
 }
 
+//查看年度对比（齐套）
+export function PostYearDimensionalityComparisonForactualQt(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostYearDimensionalityComparisonForactualQt",
+    method: "post",
+    data
+  })
+}
+
+//计算毛利率（齐套毛利率）
+export function PostGrossMarginForactualQt(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostGrossMarginForactualQt",
+    method: "post",
+    data
+  })
+}
+
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率

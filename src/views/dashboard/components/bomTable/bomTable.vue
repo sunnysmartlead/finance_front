@@ -11,8 +11,8 @@
       </template>
     </el-table-column>
     <el-table-column align="center"  prop="isCustomerSupply" label="是否客供" width="175">
-      <template #default="{ row }">
-        <el-select v-model="row.isCustomerSupply" :disabled="!hideEdit" placeholder="是否客供">
+      <template #default="{ row, $index }">
+        <el-select @change="v=> onChange(v, $index)" v-model="row.isCustomerSupply" placeholder="是否客供">
               <el-option v-for="item in options" :key="item.label" :label="item.label"
                 :value="item.value" />
             </el-select>
@@ -124,7 +124,10 @@ const props = defineProps({
   onDelete: {
     type: Function as PropType<any>
   },
-  hideEdit: Boolean
+  hideEdit: Boolean,
+  onChange: {
+    type: Function as PropType<any>
+  },
 })
 
 const options = [

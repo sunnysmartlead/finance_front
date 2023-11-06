@@ -6,10 +6,11 @@
           <span>bom成本</span>
           <el-row>
             <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button>
+            <el-button v-if="!hideEdit" type="primary" m="2" @click="handleSubmit">提交是否可控修改</el-button>
           </el-row>
         </el-row>
       </template>
-      <bomTable :bomData="bomData" :hideEdit="hideEdit" />
+      <bomTable :bomData="bomData" :hideEdit="hideEdit" :onChange="handleChange" />
       <el-descriptions :column="2" border>
       <el-descriptions-item label="材料成本合计：">
         {{ totalCount.totalMoneyCynNoCustomerSupply }}
@@ -23,7 +24,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType, ref, onMounted, watch, computed } from "vue"
-import { GetUpdateItemMaterial, GetBomCost } from "../../service"
+import { SetIsCustomerSupply, GetBomCost } from "../../service"
 import bomTable from "./bomTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
@@ -32,6 +33,7 @@ import { useRouter } from "vue-router"
 const router = useRouter()
 const { auditFlowId, productId: solutionId } = getQuery()
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { ElMessage } from "element-plus"
 
 const props = defineProps({
   yearData: {
@@ -83,7 +85,6 @@ const getBomCost = async () => {
   }
 }
 
-const bomModifyData = ref<any>([])
 const bomData = ref<any>([])
 const firstShow = ref(false)
 
@@ -100,7 +101,6 @@ watch(
 const init = () => {
   if (props.gradientId && !isEmpty(props.yearData)) {
     getBomCost()
-    getBomLogData()
   }
 }
 
@@ -118,21 +118,29 @@ onMounted(() => {
   init()
 })
 
-const getBomLogData = async () => {
-  const { success, result }: any = (await GetUpdateItemMaterial({
-    AuditFlowId: auditFlowId,
-    GradientId: props.gradientId,
-    solutionId,
-    Year: props.yearData.year,
-    UpDown: props.yearData.upDown,
-  })) || {}
-  if (success) {
-    bomModifyData.value = result || []
-  }
+const handleChange = (val: any, index: number) => {
+  console.log(val, index)
+  bomData.value.forEach((item: any, cIndex: number) => {
+    if (index === 0) {
+      item.isCustomerSupply = val
+    } else if (cIndex === index) {
+      item.isCustomerSupply = val
+    }
+  })
 }
 
-const handleEdit = (row: any) => {
-  bomModifyData.value.push(row)
+const handleSubmit = async () => {
+  const ids = bomData.value.map((item: any) => ({
+    id: item.id,
+    isCustomerSupply: item.isCustomerSupply,
+  }))
+  const { success } = await SetIsCustomerSupply({
+    auditFlowId,
+    bomIsCustomerSupplyList: ids
+  })
+  if (success) {
+    ElMessage.success('提交成功！')
+  }
 }
 
 </script>

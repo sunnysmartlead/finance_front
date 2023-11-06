@@ -2107,6 +2107,7 @@ watch(
         })
       })
     })
+    console.log(moduleTableDataV2.value, "moduleTableDataV2.value")
     // 要求表格动态加载行数
     requireTableData.value.splice(0, requireTableData.value.length)
     state.yearCols.forEach((year: any, index: number) => {
@@ -2256,15 +2257,13 @@ watch(
             code: c.code,
             type: c.productType,
             gradientModelYear: map(c.modelCountYearList, (m: any) => ({
+              ...m,
               count: isHasGradient ? item.gradientValue : m.quantity,
-              upDown: m.upDown,
-              year: m.year
             }))
           }))
         }
       })
       gradientModelTable.value = filterData
-      console.log(kvList, moduleTableTotalData, isFirstShow.value, "kvList111", )
       if (moduleTableTotalData?.length && kvList?.length && isFirstShow.value) {
         let arr: any = []
         kvList.forEach((c: any) => {

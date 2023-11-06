@@ -342,3 +342,12 @@ export function PriceEvaluationTableDownload(data: any) {
     responseType: "blob",
   })
 }
+
+// 设置是否客供
+export function SetIsCustomerSupply(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SetIsCustomerSupply",
+    method: "post",
+    data,
+  })
+}

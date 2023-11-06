@@ -192,64 +192,73 @@ const bomCostProcessType = [
 // 报价看板审核
 const priceEvaluationBoard = [
   {
-    val: "HjkbSelect_Yes",
-    label: "同意"
-  },
-  {
     val: "HjkbSelect_Scjgbom",
-    label: "上传结构BOM"
+    label: "上传结构BOM",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Dzjgj",
-    label: "定制结构件"
+    label: "定制结构件",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Jgbomppxg",
-    label: "结构BOM匹配修改"
+    label: "结构BOM匹配修改",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Scdzbom",
-    label: "上传电子BOM"
+    label: "上传电子BOM",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Dzbomppxg",
-    label: "电子BOM匹配修改"
+    label: "电子BOM匹配修改",
+    notHas: ['HjkbSelect_Input', 'HjkbSelect_Scdzbom']
   },
   {
     val: "HjkbSelect_Wlcblr",
-    label: "物流成本录入"
+    label: "物流成本录入",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Gsgxtj",
-    label: "工序工时添加"
+    label: "工序工时添加",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Cobzzcblr",
-    label: "COB制造成本录入"
+    label: "COB制造成本录入",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Nremjflr",
-    label: "NRE模具费录入"
+    label: "NRE模具费录入",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Nrekkxsyflr",
-    label: "NRE-可靠性实验费录入"
+    label: "NRE-可靠性实验费录入",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Nresbj",
-    label: "NRE手板件"
+    label: "NRE手板件",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Nreemcsyflr",
-    label: "NRE-EMC实验费录入"
+    label: "NRE-EMC实验费录入",
+    notHas: ['HjkbSelect_Input']
   },
   {
     val: "HjkbSelect_Input",
-    label: "核价需求录入"
+    label: "核价需求录入",
+    notHas: ['HjkbSelect_Input', 'HjkbSelect_Scdzbom', ]
   },
 ]
 
-const PROGRESSTYPE: any = {
+const PROGRESSTYPE = {
   baseProcessType,
   confirmProcessType,
   quoteFeedbackProcessType,

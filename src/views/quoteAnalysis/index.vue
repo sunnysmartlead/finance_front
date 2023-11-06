@@ -314,7 +314,7 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" prop="clientPrice" width="150">
+          <el-table-column label="单价" prop="clientPrice" width="180">
             <template #default="scope">
               <el-input-number v-model="scope.row.clientPrice" :precision="2" controls-position="right" />
             </template>
@@ -448,7 +448,7 @@
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
       </div> -->
     </el-card>
-    <!-- <el-button @click="save">保存</el-button> -->
+    <el-button @click="save">保存</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -2133,6 +2133,17 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
   data.allRes.gradientQuotedGrossMargins[index].thisQuotationGrossMargin = result.grossMargin
   data.allRes.gradientQuotedGrossMargins[index].thisQuotationClientGrossMargin = result.clientGrossMargin
   data.allRes.gradientQuotedGrossMargins[index].thisQuotationNreGrossMargin = result.nreGrossMargin
+  let grossMargins = data.allRes.gradientQuotedGrossMargins.filter((item) => item.thisQuotationGrossMargin)
+  // console.log(grossMargins, grossMargins.length)
+  // 当所有都计算完成时，触发报价毛利率测算-实际数量的联动
+
+  if (grossMargins.length === data.allRes.gradientQuotedGrossMargins.length) {
+    data.allRes.quotedGrossMargins.forEach((item, index) => {
+      item.quotedGrossMarginActualList.forEach(async (row, rowIndex) => {
+        await calculateFullGrossMarginNewSj(row, rowIndex, index, item.quotedGrossMarginActualList)
+      })
+    })
+  }
 }
 
 const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number, list: any) => {
@@ -2222,10 +2233,10 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
-// const save = () => {
-//   debugger
-//   console.log(productList, planListArr, data.allRes)
-// }
+const save = () => {
+  debugger
+  console.log(productList, planListArr, data.allRes)
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

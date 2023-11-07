@@ -7,7 +7,7 @@
     <bulletinBoard ref="bulletinBoardRef" />
     <el-dialog v-model="dialogVisible" title="退回选择">
       <el-checkbox-group v-model="checkList">
-        <el-checkbox v-for="item in PROGRESSTYPE.priceEvaluationBoard" :label="item.val" :disabled="checkList.some(v => item.notHas.includes(v))">{{ item.label }}</el-checkbox>
+        <el-checkbox v-for="item in PROGRESSTYPE.priceEvaluationBoard" :label="item.val" :disabled="checkList.some(v => item.notHas.includes(v) && v !== item.val)">{{ item.label }}</el-checkbox>
       </el-checkbox-group>
       <div>
         <div style="margin: 10px 0">拒绝理由：</div>
@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import bulletinBoard from "../components/bulletinBoard/index.vue"
 import { SetBomState, panelSubmitNode } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
@@ -42,6 +42,15 @@ const { closeSelectedTag } = useJump()
 const dialogVisible = ref(false)
 let checkList = ref([""])
 let opinionDescription = ref("")
+
+watch(
+  () => dialogVisible.value,
+  (val) => {
+    if (!val) {
+      checkList.value = []
+    }
+  }
+)
 const handleSetBomState = async ({ comment, opinion }: any) => {
   const fileList = bulletinBoardRef.value.getFileList()
   if (opinion === 'HjkbSelect_Yes' && !fileList.length) {

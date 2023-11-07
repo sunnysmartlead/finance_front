@@ -74,8 +74,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from "vue"
-import { getSummaries } from "../../common/getSummaries"
-import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { formatThousandths } from '@/utils/number'
 
 const props = defineProps({
   manufactureData: {

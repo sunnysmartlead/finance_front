@@ -27,11 +27,9 @@ import { GetUpdateItemManufacturingCost, SetUpdateItemManufacturingCost, GetManu
 import manufactureTable from "./manufactureTable.vue"
 import getQuery from "@/utils/getQuery"
 import { cloneDeep, isEmpty, map } from "lodash"
-import type { UploadProps, UploadUserFile } from "element-plus"
 import { ElMessage } from "element-plus"
 import { getEditTotal } from '../../common/util'
-import { Loading } from "@element-plus/icons-vue"
-
+import { formatThousandths } from '@/utils/number'
 
 const { auditFlowId, productId: SolutionId } = getQuery()
 
@@ -54,8 +52,19 @@ const manufactureData = ref<any>([])
 const loading = ref(false)
 
 const editTotal = computed(() => {
-  const total = getEditTotal(manufactureData.value || [], modifyData.value || [], 'subtotal')
-  return total
+  const originArr = manufactureData.value
+  const originLen = originArr.length
+  if (!originLen) {
+    return 0
+  }
+  let total = 0
+  originArr.forEach((item: any) => {
+    const findData = modifyData.value?.find(c => c.editId === item.editId && !c.costItem.includes('制造成本合计'))
+    if (findData) {
+      total += Number(findData.subtotal)
+    } else total += Number(item.subtotal)
+  })
+  return formatThousandths(null,null,total)
 })
 
 // 获取 制造成本汇总表

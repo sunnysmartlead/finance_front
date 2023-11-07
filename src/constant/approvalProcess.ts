@@ -199,22 +199,22 @@ const priceEvaluationBoard = [
   {
     val: "HjkbSelect_Jgbomppxg",
     label: "结构BOM匹配修改",
-    notHas: ["HjkbSelect_Input"]
-  },
-  {
-    val: "HjkbSelect_Scdzbom",
-    label: "上传电子BOM",
-    notHas: ["HjkbSelect_Input", "HjkbSelect_Gsgxtj", "HjkbSelect_Cobzzcblr"]
-  },
-  {
-    val: "HjkbSelect_Scjgbom",
-    label: "上传结构BOM",
-    notHas: ["HjkbSelect_Input",  "HjkbSelect_Nremjflr", "HjkbSelect_Gsgxtj", "HjkbSelect_Wlcblr", "HjkbSelect_Cobzzcblr"]
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom"]
   },
   {
     val: "HjkbSelect_Dzbomppxg",
     label: "电子BOM匹配修改",
     notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom"]
+  },
+  {
+    val: "HjkbSelect_Scdzbom",
+    label: "上传电子BOM",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Gsgxtj", "HjkbSelect_Cobzzcblr", "HjkbSelect_Dzbomppxg"]
+  },
+  {
+    val: "HjkbSelect_Scjgbom",
+    label: "上传结构BOM",
+    notHas: ["HjkbSelect_Input",  "HjkbSelect_Nremjflr", "HjkbSelect_Gsgxtj", "HjkbSelect_Wlcblr", "HjkbSelect_Jgbomppxg"]
   },
   {
     val: "HjkbSelect_Wlcblr",
@@ -229,7 +229,7 @@ const priceEvaluationBoard = [
   {
     val: "HjkbSelect_Cobzzcblr",
     label: "COB制造成本录入",
-    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom", "HjkbSelect_Scjgbom", "HjkbSelect_Gsgxtj"]
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom", "HjkbSelect_Scjgbom", "HjkbSelect_Gsgxtj", "HjkbSelect_Dzbomppxg", "HjkbSelect_Jgbomppxg"]
   },
   {
     val: "HjkbSelect_Nremjflr",

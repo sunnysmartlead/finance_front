@@ -340,7 +340,12 @@
             <template #default="scope">
               <el-input v-model="scope.row.thisQuotationPrice">
                 <template #append>
-                  <el-button @click="calculateFullGrossMarginNewSj(scope.row, scope.$index, index,item.quotedGrossMarginActualList)">计算</el-button>
+                  <el-button
+                    @click="
+                      calculateFullGrossMarginNewSj(scope.row, scope.$index, index, item.quotedGrossMarginActualList)
+                    "
+                    >计算</el-button
+                  >
                 </template>
               </el-input>
             </template>
@@ -364,7 +369,9 @@
         <el-table-column width="140" label="操作">
           <template #default="{ row }">
             <el-row justify="end" m="2">
-              <el-button @click="openDialog(row, 2,item.quotedGrossMarginActualList)" type="primary">年份维度对比</el-button>
+              <el-button @click="openDialog(row, 2, item.quotedGrossMarginActualList)" type="primary"
+                >年份维度对比</el-button
+              >
             </el-row>
           </template>
         </el-table-column>
@@ -589,182 +596,14 @@ const dialogVisible = ref(false)
 const planListArr = reactive<any[]>([])
 const planListArrVal = ref(null)
 const yearDimension = ref({
-  numk: [
-    {
-      key: "2031",
-      value: 2664.9
-    },
-    {
-      key: "2031",
-      value: 2664.9
-    },
-    {
-      key: "2032",
-      value: 2664.9
-    },
-    {
-      key: "2032",
-      value: 2664.9
-    },
-    {
-      key: "总和",
-      value: 10659.6
-    }
-  ],
-  prices: [
-    {
-      key: "2031",
-      value: 448.9
-    },
-    {
-      key: "2031",
-      value: 439.922
-    },
-    {
-      key: "2032",
-      value: 444.411
-    },
-    {
-      key: "2032",
-      value: 444.411
-    },
-    {
-      key: "总和",
-      value: 436.6560841625
-    }
-  ],
-  sellingCost: [
-    {
-      key: "2031",
-      value: 1669950.5306498313080890918603
-    },
-    {
-      key: "2031",
-      value: 1663435.6140718451262985503755
-    },
-    {
-      key: "2032",
-      value: 1627994.6923073344924015441798
-    },
-    {
-      key: "2032",
-      value: 1590518.5197695582574396049064
-    },
-    {
-      key: "总和",
-      value: 6551899.356798569184228791322
-    }
-  ],
-  averageCost: [
-    {
-      key: "2031",
-      value: 626.64660236775537847164691371
-    },
-    {
-      key: "2031",
-      value: 624.20188902842325276691447166
-    },
-    {
-      key: "2032",
-      value: 610.902732675648051484687673
-    },
-    {
-      key: "2032",
-      value: 596.839851315080587429023568
-    },
-    {
-      key: "总和",
-      value: 614.64776884672681753806815659
-    }
-  ],
-  salesRevenue: [
-    {
-      key: "2031",
-      value: 1172467.765161
-    },
-    {
-      key: "2031",
-      value: 1154762.915733
-    },
-    {
-      key: "2032",
-      value: 1154880.748683585
-    },
-    {
-      key: "2032",
-      value: 1172467.765161
-    },
-    {
-      key: "总和",
-      value: 4654579.194738585
-    }
-  ],
-  salesMargin: [
-    {
-      key: "2031",
-      value: -521408.2376888313080890918603
-    },
-    {
-      key: "2031",
-      value: -532119.6610948451262985503755
-    },
-    {
-      key: "2032",
-      value: -496800.1611017494924015441798
-    },
-    {
-      key: "2032",
-      value: -441736.9720865582574396049064
-    },
-    {
-      key: "总和",
-      value: -1992065.031971984184228791322
-    }
-  ],
-  commission: [
-    {
-      key: "2031",
-      value: 23925.4722
-    },
-    {
-      key: "2031",
-      value: 23446.962756
-    },
-    {
-      key: "2032",
-      value: 23686.217478
-    },
-    {
-      key: "2032",
-      value: 23686.217478
-    },
-    {
-      key: "总和",
-      value: 9309158.38947717
-    }
-  ],
-  grossMargin: [
-    {
-      key: "2031",
-      value: -44.47100834514055784326109487
-    },
-    {
-      key: "2031",
-      value: -46.08042515437687136990954618
-    },
-    {
-      key: "2032",
-      value: -43.01744242148269914918104348
-    },
-    {
-      key: "2032",
-      value: -37.67583085969959862866579983
-    },
-    {
-      key: "总和",
-      value: -42.7979619344271244356746623
-    }
-  ]
+  numk: [],
+  prices: [],
+  sellingCost: [],
+  averageCost: [],
+  salesRevenue: [],
+  salesMargin: [],
+  commission: [],
+  grossMargin: []
 })
 const data = reactive({
   //仅含样品
@@ -1453,36 +1292,6 @@ const data = reactive({
       // }
     ],
     gradientQuotedGrossMargins: [
-      // {
-      //   gradient: "25K/Y",
-      //   product: "AR0820",
-      //   quotedGrossMarginSimple: {
-      //     interior: {
-      //       price: 730,
-      //       grossMargin: 20,
-      //       clientGrossMargin: 22,
-      //       nreGrossMargin: 20
-      //     },
-      //     client: {
-      //       price: 730,
-      //       grossMargin: 20,
-      //       clientGrossMargin: 22,
-      //       nreGrossMargin: 25
-      //     },
-      //     thisQuotation: {
-      //       price: 730,
-      //       grossMargin: 20,
-      //       clientGrossMargin: 24,
-      //       nreGrossMargin: 25
-      //     },
-      //     lastRound: {
-      //       price: 730,
-      //       grossMargin: 20,
-      //       clientGrossMargin: 21,
-      //       nreGrossMargin: 25
-      //     }
-      //   }
-      // }
       {
         gradient: "2664.9k/y",
         gradientId: 599,
@@ -1652,6 +1461,7 @@ const data = reactive({
           {
             version: 0,
             auditFlowId: 0,
+            gradientId: 1,
             id: 0,
             projectName: "数量",
             interiorTarget: 32000.0,
@@ -1663,69 +1473,10 @@ const data = reactive({
             version: 0,
             auditFlowId: 0,
             id: 0,
+            gradientId: 2,
             projectName: "销售成本",
             interiorTarget: 34679267.1,
             clientTarget: 34679267.1,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "单位平均成本",
-            interiorTarget: 1083.73,
-            clientTarget: 1083.73,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "销售收入",
-            interiorTarget: 42282510.76,
-            clientTarget: 11533298.46,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "佣金",
-            interiorTarget: 860685.19,
-            clientTarget: 234767.02,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "平均单价",
-            interiorTarget: 6.27,
-            clientTarget: 360.42,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "销售毛利",
-            interiorTarget: 6742558.46,
-            clientTarget: -23380735.66,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "毛利率",
-            interiorTarget: 15.95,
-            clientTarget: -202.72,
             offer: 0.0,
             oldOffer: null
           }
@@ -1753,18 +1504,29 @@ const planListArrChange = async (val) => {
 interface stringKeyObj {
   [propName: string]: any
 }
+// const gradientTableMap = computed(() => {
+//   let gradientTableMap: stringKeyObj = {}
+//   data.allRes.gradientQuotedGrossMargins.forEach((item) => {
+//     if (!gradientTableMap[item.gradient]) {
+//       gradientTableMap[item.gradient] = []
+//     }
+//     gradientTableMap[item.gradient].push(item)
+//   })
+//   // setChartData(gradientTableMap)
+//   return gradientTableMap
+// })
 const gradientTableMap = computed(() => {
   let gradientTableMap: stringKeyObj = {}
   data.allRes.gradientQuotedGrossMargins.forEach((item) => {
-    if (!gradientTableMap[item.gradient]) {
-      gradientTableMap[item.gradient] = []
+    if (!gradientTableMap[item.gradientId]) {
+      gradientTableMap[item.gradientId] = []
     }
-    gradientTableMap[item.gradient].push(item)
+    gradientTableMap[item.gradientId].push(item)
   })
   // setChartData(gradientTableMap)
   return gradientTableMap
 })
-
+let gradientTableMapResult = ref([])
 const hasSelectPlans = computed(() => {
   let ids = planList.map((item) => item.value)
   return ids
@@ -2135,12 +1897,59 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
   data.allRes.gradientQuotedGrossMargins[index].thisQuotationNreGrossMargin = result.nreGrossMargin
   let grossMargins = data.allRes.gradientQuotedGrossMargins.filter((item) => item.thisQuotationGrossMargin)
   // console.log(grossMargins, grossMargins.length)
-  // 当所有都计算完成时，触发报价毛利率测算-实际数量的联动
 
+  let { sl, unitPrice, xscb, xsml, xssr, yj } = result
+  data.allRes.gradientQuotedGrossMargins[index].sl = sl // 数量
+  data.allRes.gradientQuotedGrossMargins[index].xscb = xscb // 销售成本
+  data.allRes.gradientQuotedGrossMargins[index].xsml = xsml // 销售毛利
+  data.allRes.gradientQuotedGrossMargins[index].xssr = xssr // 销售收入
+  data.allRes.gradientQuotedGrossMargins[index].yj = yj // 佣金
+
+  console.log(gradientTableMap)
+  // 当所有都计算完成时，触发报价毛利率测算-实际数量的联动
   if (grossMargins.length === data.allRes.gradientQuotedGrossMargins.length) {
     data.allRes.quotedGrossMargins.forEach((item, index) => {
       item.quotedGrossMarginActualList.forEach(async (row, rowIndex) => {
         await calculateFullGrossMarginNewSj(row, rowIndex, index, item.quotedGrossMarginActualList)
+      })
+    })
+    gradientTableMapResult.value = []
+    data.allRes.projectBoard.forEach((item) => {
+      if (gradientTableMap.value[item.gradientId]) {
+        let result = gradientTableMap.value[item.gradientId].reduce((pre, cur) => {
+          return {
+            sl: pre.sl + cur.sl,
+            xscb: pre.xscb + cur.xscb,
+            yj: pre.yj + cur.yj,
+            xssr: pre.xssr + cur.xssr,
+            gradientId: item.gradientId
+          }
+        })
+        gradientTableMapResult.value.push(result)
+        console.log(result, "result", gradientTableMap.value[item.gradientId])
+      }
+    })
+    data.allRes.projectBoard.forEach((item) => {
+      gradientTableMapResult.value.forEach((ritem) => {
+        if (item.gradientId === ritem.gradientId) {
+          item.projectBoardModels.forEach((row) => {
+            if (row.projectName === "数量") {
+              row.offer = ritem.sl
+            }
+            if (row.projectName === "销售成本") {
+              row.offer = ritem.xscb
+            }
+            if (row.projectName === "销售收入") {
+              row.offer = ritem.xssr
+            }
+            if (row.projectName === "单位平均成本") {
+              row.offer = ritem.xssr / ritem.sl
+            }
+            if (row.projectName === "佣金") {
+              row.offer = ritem.yj
+            }
+          })
+        }
       })
     })
   }

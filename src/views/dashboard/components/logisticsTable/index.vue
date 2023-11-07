@@ -26,7 +26,7 @@ import { PropType, ref, onMounted, watch, computed } from "vue"
 import { GetLogisticsCost, SetUpdateItemLogisticsCost, GetUpdateItemLogisticsCost } from "../../service"
 import logisticsTable from "./logisticsTable.vue"
 import getQuery from "@/utils/getQuery"
-import { isEmpty, map } from "lodash"
+import { cloneDeep, isEmpty, map } from "lodash"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { ElMessage } from "element-plus"
 import { getEditTotal } from '../../common/util'
@@ -90,7 +90,7 @@ const getModifyData = async () => {
 }
 
 const handleEdit = (row: any) => {
-  modifyData.value.push(row)
+  modifyData.value.push(cloneDeep(row))
 }
 
 const handleSubmit = async () => {

@@ -676,13 +676,13 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
+              <el-input-number  v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center" v-if="isCOB">
-              <el-input v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number  v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number  v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
           </div>
         </div>
@@ -1800,9 +1800,11 @@ const hardWareNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
 //软件设备数量和价格变化
 const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDeviceIndex: any) => {
   let handleHardwareDeviceCost = 0.0
+  if (null != dataArr.value[dataIndex].developCostInfo.hardwareInfo){
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceNumber * item.hardwareDevicePrice
   })
+  }
   dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2));
   let kaituCost = dataArr.value[dataIndex].developCostInfo.softwarePrice ? dataArr.value[dataIndex].developCostInfo.softwarePrice : 0;
   let zhuiSuCost = dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost ? dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost : 0;
@@ -1813,10 +1815,12 @@ const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDev
 
 const caclHardWareCost = (dataIndex: any) => {
   let handleHardwareDeviceCost = 0.0;
+  if (null != dataArr.value[dataIndex].developCostInfo.hardwareInfo){
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + (Number(item.hardwareDeviceNumber) * Number(item.hardwareDevicePrice))
     //console.log("计算硬件总价====", handleHardwareDeviceCost);
   })
+  }
   return handleHardwareDeviceCost;
 }
 //#endregion

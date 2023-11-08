@@ -1943,7 +1943,16 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
               row.offer = ritem.xssr
             }
             if (row.projectName === "单位平均成本") {
+              row.offer = ritem.xscb / ritem.sl
+            }
+            if (row.projectName === "平均单价") {
               row.offer = ritem.xssr / ritem.sl
+            }
+            if (row.projectName === "销售毛利") {
+              row.offer = ritem.xssr - ritem.xscb
+            }
+            if (row.projectName === "毛利率") {
+              row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
             }
             if (row.projectName === "佣金") {
               row.offer = ritem.yj

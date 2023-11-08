@@ -49,7 +49,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template #default="{ $index }">
-            <el-button type="danger" @click="deletePlatePart($index)" :disabled="platePart.length == 1">删除</el-button>
+            <el-button type="danger" @click="deletePlatePart($index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -133,7 +133,7 @@ const data = reactive({
   tableData: [],
   setVisible: false,
   downloadSetForm: {
-    number: 0
+    number: 1
   },
   auditFlowId: null as any
 })

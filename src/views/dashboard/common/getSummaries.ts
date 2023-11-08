@@ -19,8 +19,7 @@ export const getSummaries = (param: SummaryMethodProps, name?: string, key?: str
     let values: any[] = []
     console.log(values, "getSummaries111")
     if (key) {
-      values = data.map((item: any) => Number(item[key]?.toFixed(2)) || 0)
-
+      values = data.map((item: any) => Number(item[key]) || 0)
     }
     if (!values.every((value) => Number.isNaN(value)) && index === (zindex || 1) + 1) {
       const money = values.reduce((prev, curr) => {

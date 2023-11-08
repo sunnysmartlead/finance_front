@@ -1,10 +1,7 @@
 <template>
-  <el-table :summary-method="(val: any) => getSummaries(val, '总', 'subtotal',9)"
-    :show-summary="!isEdit" :data="manufactureData" border :height="manufactureData.length > 10 ? 675 : 'auto'">
+  <el-table
+    :data="manufactureData" border :height="manufactureData.length > 10 ? 675 : 'auto'">
     <el-table-column align="center"  prop="costItem" label="成本项目" width="180">
-      <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.costItem" />
-      </template>
     </el-table-column>
     <el-table-column align="center"  prop="manufacturingCostDirect" label="直接制造成本" :formatter="toFixedTwo">
       <el-table-column align="center"  prop="manufacturingCostDirect.directLabor" label="直接人工" width="175" :formatter="toFixedTwo">
@@ -57,10 +54,6 @@
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostIndirect.subtotal" label="小计" width="175" :formatter="formatThousandths">
-        <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
-            v-model="row.manufacturingCostIndirect.subtotal" />
-        </template>
       </el-table-column>
     </el-table-column>
     <el-table-column align="center"  label="合计" prop="subtotal" :formatter="formatThousandths" />
@@ -71,7 +64,7 @@
     </el-table-column>
     <el-table-column align="center"  label="操作" width="120" fixed="right" v-if="!hideEdit">
       <template #default="{ row, $index }">
-        <el-row>
+        <el-row v-if="!row.costItem.includes('制造成本合计')">
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
           <el-button type="primary" v-if="isEdit" @click="onDelete($index)" link>删除</el-button>
         </el-row>
@@ -81,8 +74,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from "vue"
-import { getSummaries } from "../../common/getSummaries"
-import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { formatThousandths } from '@/utils/number'
 
 const props = defineProps({
   manufactureData: {

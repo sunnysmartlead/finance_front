@@ -55,6 +55,14 @@ const baseProcessType = [
   }
 ]
 
+const confirm = [
+  //YesOrNo
+  {
+    label: "同意",
+    val: "YesOrNo_Yes"
+  }
+]
+
 const confirmProcessType = [
   //Done
   {
@@ -113,16 +121,16 @@ const complianceProcessType = [
     label: "上传电子BOM"
   },
   {
+    val: "MybhgSelect_Scjgbom",
+    label: "上传结构BOM"
+  },
+  {
     val: "MybhgSelect_Jgbomppxg",
     label: "结构BOM匹配修改"
   },
   {
     val: "MybhgSelect_Dzjgj",
     label: "定制结构件"
-  },
-  {
-    val: "MybhgSelect_Scjgbom",
-    label: "上传结构BOM"
   },
   {
     val: "MybhgSelect_No",
@@ -184,64 +192,90 @@ const bomCostProcessType = [
 // 报价看板审核
 const priceEvaluationBoard = [
   {
-    val: "HjkbSelect_Yes",
-    label: "同意"
-  },
-  {
-    val: "HjkbSelect_Scjgbom",
-    label: "上传结构BOM"
-  },
-  {
     val: "HjkbSelect_Dzjgj",
-    label: "定制结构件"
+    label: "定制结构件",
+    notHas: ["HjkbSelect_Input"]
   },
   {
     val: "HjkbSelect_Jgbomppxg",
-    label: "结构BOM匹配修改"
-  },
-  {
-    val: "HjkbSelect_Scdzbom",
-    label: "上传电子BOM"
+    label: "结构BOM匹配修改",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom"]
   },
   {
     val: "HjkbSelect_Dzbomppxg",
-    label: "电子BOM匹配修改"
+    label: "电子BOM匹配修改",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom"]
+  },
+  {
+    val: "HjkbSelect_Scdzbom",
+    label: "上传电子BOM",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Gsgxtj", "HjkbSelect_Cobzzcblr", "HjkbSelect_Dzbomppxg"]
+  },
+  {
+    val: "HjkbSelect_Scjgbom",
+    label: "上传结构BOM",
+    notHas: ["HjkbSelect_Input",  "HjkbSelect_Nremjflr", "HjkbSelect_Gsgxtj", "HjkbSelect_Wlcblr", "HjkbSelect_Jgbomppxg"]
   },
   {
     val: "HjkbSelect_Wlcblr",
-    label: "物流成本录入"
+    label: "物流成本录入",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom"]
   },
   {
     val: "HjkbSelect_Gsgxtj",
-    label: "工序工时添加"
+    label: "工序工时添加",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom", "HjkbSelect_Scjgbom", "HjkbSelect_Cobzzcblr"]
   },
   {
     val: "HjkbSelect_Cobzzcblr",
-    label: "COB制造成本录入"
+    label: "COB制造成本录入",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom", "HjkbSelect_Scjgbom", "HjkbSelect_Gsgxtj", "HjkbSelect_Dzbomppxg", "HjkbSelect_Jgbomppxg"]
   },
   {
     val: "HjkbSelect_Nremjflr",
-    label: "NRE模具费录入"
+    label: "NRE模具费录入",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom"]
   },
   {
     val: "HjkbSelect_Nrekkxsyflr",
-    label: "NRE-可靠性实验费录入"
+    label: "NRE-可靠性实验费录入",
+    notHas: ["HjkbSelect_Input"]
   },
   {
     val: "HjkbSelect_Nresbj",
-    label: "NRE手板件"
+    label: "NRE手板件",
+    notHas: ["HjkbSelect_Input"]
   },
   {
     val: "HjkbSelect_Nreemcsyflr",
-    label: "NRE-EMC实验费录入"
+    label: "NRE-EMC实验费录入",
+    notHas: ["HjkbSelect_Input"]
   },
   {
     val: "HjkbSelect_Input",
-    label: "核价需求录入"
-  },
+    label: "核价需求录入",
+    notHas: [
+      "HjkbSelect_Input",
+      "HjkbSelect_Scdzbom",
+      "HjkbSelect_Input",
+      "HjkbSelect_Nresbj",
+      "HjkbSelect_Nrekkxsyflr",
+      "HjkbSelect_Nremjflr",
+      "HjkbSelect_Scjgbom",
+      "HjkbSelect_Dzjgj",
+      "HjkbSelect_Jgbomppxg",
+      "HjkbSelect_Dzbomppxg",
+      "HjkbSelect_Wlcblr",
+      "HjkbSelect_Gsgxtj",
+      "HjkbSelect_Cobzzcblr",
+      "HjkbSelect_Nremjflr",
+      "HjkbSelect_Nrekkxsyflr",
+      "HjkbSelect_Nreemcsyflr",
+    ]
+  }
 ]
 
-const PROGRESSTYPE: any = {
+const PROGRESSTYPE = {
   baseProcessType,
   confirmProcessType,
   quoteFeedbackProcessType,
@@ -250,5 +284,6 @@ const PROGRESSTYPE: any = {
   structBomProcessType,
   bomCostProcessType,
   priceEvaluationBoard,
+  confirm
 }
 export default PROGRESSTYPE

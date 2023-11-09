@@ -1187,6 +1187,19 @@ const setChartData = (gradientTableMap: any) => {
     //   data: [Number(item.interiorGrossMargin).toFixed(2), Number(2222).toFixed(2), Number(2222).toFixed(2) || 0]
     // })
 
+    // gradientTableMap[key].forEach((item: any) => {
+    //   ProjectUnitPrice[key].series.push({
+    //     yAxisIndex: 1,
+    //     name: "整体毛利率",
+    //     type: "line",
+    //     tooltip: {
+    //       formatter: "{a}{b}{c}%"
+    //     },
+    //     // 临时造的数据没有看到该字段
+    //     data: [item.interiorGrossMargin, item.clientGrossMargin, item.thisQuotationGrossMargin]
+    //   })
+    // })
+
     RevenueGrossMargin[key] = {
       title: {
         text: "收入和毛利率对比"
@@ -1441,7 +1454,7 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
               row.offer = ritem.xssr - ritem.xscb - ritem.yj
             }
             if (row.projectName === "毛利率") {
-              row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
+              row.offer = ((ritem.xssr - ritem.xscb - ritem.yj) / ritem.xssr) * 100
             }
             if (row.projectName === "佣金") {
               row.offer = ritem.yj
@@ -1523,44 +1536,49 @@ const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: 
     data.allRes.quotedGrossMargins.length === index + 1 &&
     data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length === rowIndex + 1
   ) {
-    let ritem = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.reduce((pre, cur) => {
-      return {
-        sl: pre.sl + cur.sl,
-        xscb: pre.xscb + cur.xscb,
-        yj: pre.yj + cur.yj,
-        xssr: pre.xssr + cur.xssr
-      }
-    })
-    data.allRes.projectBoard.forEach((item) => {
-      if (!item.gradientId) {
-        item.projectBoardModels.forEach((row) => {
-          if (row.projectName === "数量") {
-            row.offer = ritem.sl
-          }
-          if (row.projectName === "销售成本") {
-            row.offer = ritem.xscb
-          }
-          if (row.projectName === "销售收入") {
-            row.offer = ritem.xssr
-          }
-          if (row.projectName === "单位平均成本") {
-            row.offer = ritem.xscb / ritem.sl
-          }
-          if (row.projectName === "平均单价") {
-            row.offer = ritem.xssr / ritem.sl
-          }
-          if (row.projectName === "销售毛利") {
-            row.offer = ritem.xssr - ritem.xscb - ritem.yj
-          }
-          if (row.projectName === "毛利率") {
-            row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
-          }
-          if (row.projectName === "佣金") {
-            row.offer = ritem.yj
-          }
-        })
-      }
-    })
+    debugger
+    let slLenth = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.filter((item) => item.sl)
+    if (slLenth.length === data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length) {
+      let ritem = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.reduce((pre, cur) => {
+        return {
+          sl: pre.sl + cur.sl,
+          xscb: pre.xscb + cur.xscb,
+          yj: pre.yj + cur.yj,
+          xssr: pre.xssr + cur.xssr
+        }
+      })
+
+      data.allRes.projectBoard.forEach((item) => {
+        if (!item.gradientId) {
+          item.projectBoardModels.forEach((row) => {
+            if (row.projectName === "数量") {
+              row.offer = ritem.sl
+            }
+            if (row.projectName === "销售成本") {
+              row.offer = ritem.xscb
+            }
+            if (row.projectName === "销售收入") {
+              row.offer = ritem.xssr
+            }
+            if (row.projectName === "单位平均成本") {
+              row.offer = ritem.xscb / ritem.sl
+            }
+            if (row.projectName === "平均单价") {
+              row.offer = ritem.xssr / ritem.sl
+            }
+            if (row.projectName === "销售毛利") {
+              row.offer = ritem.xssr - ritem.xscb - ritem.yj
+            }
+            if (row.projectName === "毛利率") {
+              row.offer = ((ritem.xssr - ritem.xscb - ritem.yj) / ritem.xssr) * 100
+            }
+            if (row.projectName === "佣金") {
+              row.offer = ritem.yj
+            }
+          })
+        }
+      })
+    }
   }
 }
 const comfirmPlans = async () => {

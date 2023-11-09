@@ -16,7 +16,7 @@
         <el-form-item label="选择类型">
           <el-select v-model="data.opinion" :disabled="processType === 'confirm'">
             <el-option v-for="item in (PROGRESSTYPE[props.processType] || [])" :key="item.val" :label="item.label"
-              :value="item.val" />
+              :value="item.val"  :disabled="item.disabled" />
           </el-select>
         </el-form-item>
         <el-form-item label="审批意见">

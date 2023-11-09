@@ -160,7 +160,8 @@ const structBomProcessType = [
   },
   {
     val: "StructBomEvalSelect_Dzjgj",
-    label: "退回到【定制结构件】"
+    label: "退回到【定制结构件】",
+    disabled: true
   },
   {
     val: "StructBomEvalSelect_Yes",
@@ -199,22 +200,45 @@ const priceEvaluationBoard = [
   {
     val: "HjkbSelect_Jgbomppxg",
     label: "结构BOM匹配修改",
-    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom"]
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom", "HjkbSelect_Jgbomdjsh"]
   },
   {
     val: "HjkbSelect_Dzbomppxg",
     label: "电子BOM匹配修改",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom", "HjkbSelect_Dzbomdjsh"]
+  },
+  {
+    val: "HjkbSelect_Jgbomdjsh",
+    label: "结构BOM单价审核",
+    notHas: ["HjkbSelect_Input", "HjkbSelect_Scjgbom"]
+  },
+  {
+    val: "HjkbSelect_Dzbomdjsh",
+    label: "电子BOM单价审核",
     notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom"]
   },
   {
     val: "HjkbSelect_Scdzbom",
     label: "上传电子BOM",
-    notHas: ["HjkbSelect_Input", "HjkbSelect_Gsgxtj", "HjkbSelect_Cobzzcblr", "HjkbSelect_Dzbomppxg"]
+    notHas: [
+      "HjkbSelect_Input",
+      "HjkbSelect_Gsgxtj",
+      "HjkbSelect_Cobzzcblr",
+      "HjkbSelect_Dzbomppxg",
+      "HjkbSelect_Dzbomdjsh"
+    ]
   },
   {
     val: "HjkbSelect_Scjgbom",
     label: "上传结构BOM",
-    notHas: ["HjkbSelect_Input",  "HjkbSelect_Nremjflr", "HjkbSelect_Gsgxtj", "HjkbSelect_Wlcblr", "HjkbSelect_Jgbomppxg"]
+    notHas: [
+      "HjkbSelect_Input",
+      "HjkbSelect_Nremjflr",
+      "HjkbSelect_Gsgxtj",
+      "HjkbSelect_Wlcblr",
+      "HjkbSelect_Jgbomppxg",
+      "HjkbSelect_Jgbomdjsh"
+    ]
   },
   {
     val: "HjkbSelect_Wlcblr",
@@ -229,7 +253,16 @@ const priceEvaluationBoard = [
   {
     val: "HjkbSelect_Cobzzcblr",
     label: "COB制造成本录入",
-    notHas: ["HjkbSelect_Input", "HjkbSelect_Scdzbom", "HjkbSelect_Scjgbom", "HjkbSelect_Gsgxtj", "HjkbSelect_Dzbomppxg", "HjkbSelect_Jgbomppxg"]
+    notHas: [
+      "HjkbSelect_Input",
+      "HjkbSelect_Scdzbom",
+      "HjkbSelect_Scjgbom",
+      "HjkbSelect_Gsgxtj",
+      "HjkbSelect_Dzbomppxg",
+      "HjkbSelect_Jgbomppxg",
+      "HjkbSelect_Jgbomdjsh",
+      "HjkbSelect_Dzbomdjsh"
+    ]
   },
   {
     val: "HjkbSelect_Nremjflr",
@@ -271,6 +304,8 @@ const priceEvaluationBoard = [
       "HjkbSelect_Nremjflr",
       "HjkbSelect_Nrekkxsyflr",
       "HjkbSelect_Nreemcsyflr",
+      "HjkbSelect_Jgbomdjsh",
+      "HjkbSelect_Dzbomdjsh"
     ]
   }
 ]

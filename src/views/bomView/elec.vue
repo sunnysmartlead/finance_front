@@ -12,13 +12,13 @@
       <el-button type="primary" @click="filterTableData">筛选涉及项</el-button>
       <h4>电子料</h4>
       <el-table :data="data.electronicData" border style="width: 100%" height="500">
-        <el-table-column prop="categoryName" label="物料大类" />
+        <el-table-column prop="categoryName" label="物料大类" width="120" />
         <el-table-column prop="typeName" label="物料种类" width="120" />
         <el-table-column prop="isInvolveItem" label="是否涉及" width="120" />
         <el-table-column prop="sapItemNum" label="物料编号" width="120" />
         <el-table-column prop="sapItemName" label="材料名称" width="120" />
         <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
-        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
+        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" width="120" />
       </el-table>
     </el-card>
   </div>

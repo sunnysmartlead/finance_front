@@ -2,7 +2,7 @@
   <div style="padding: 0 10px">
     <el-row justify="end">
       <ProcessVertifyBox v-if="isVertify" :onSubmit="handleVertify" :processType="'baseProcessType'" />
-      <ProcessVertifyBox v-if="!mouldInventoryData.length && !isVertify" :onSubmit="handleSubmit" processType="confirmProcessType" />
+      <ProcessVertifyBox v-if="!mouldInventoryData.length && !isVertify && !isAllNull" :onSubmit="handleSubmit" processType="confirmProcessType" />
       <ThreeDImage m="2" />
     </el-row>
     <el-card class="margin-top">
@@ -83,13 +83,14 @@ const props = defineProps({
 const mouldInventoryData = ref<NreMarketingDepartmentModel[]>([])
 const multipleTableRef = ref<InstanceType<typeof ElTable>>()
 const multipleSelection = ref<any[]>([])
+const isAllNull = ref(false)
 
 const initFetch = async () => {
   if (!auditFlowId || !productId) return
   const { result } = await GetInitialResourcesManagementSingle({ auditFlowId, solutionId: productId })
   console.log(result, "result")
   mouldInventoryData.value = result?.mouldInventoryModels
-
+  isAllNull.value = result.isAllNull
   setTimeout(() => {
     handleToggleSelection()
   }, 300)

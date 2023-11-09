@@ -454,6 +454,12 @@
         <div :id="'unitpriceChart' + key" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
       </div> -->
+      <div v-for="(value, key) in gradientTableMap" :key="key">
+        <div :id="'unitpriceChart' + key" class="h-400px" />
+        <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
+      </div>
+
+
     </el-card>
     <el-button @click="save">保存</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
@@ -637,178 +643,7 @@ const data = reactive({
         solutionName: "NRE AR0820",
         solutionId: 0,
         auditFlowId: 0,
-        models: [
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "手板件费",
-            pricingMoney: 4000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9722126+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "模具费",
-            pricingMoney: 193000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724113+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "生产设备费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.972412+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "工装费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724122+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "治具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724124+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "检具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724133+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "实验费",
-            pricingMoney: 372770,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724137+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "测试软件费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724138+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "差旅费",
-            pricingMoney: 800,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.972414+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "其他费用",
-            pricingMoney: 50000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:43.9724144+08:00",
-            creatorUserId: null,
-            id: 0
-          }
-        ],
+        models: [],
         devices: [],
         numberLine: 0,
         collinearAllocationRate: 0
@@ -819,332 +654,7 @@ const data = reactive({
         solutionName: "AR0820",
         auditFlowId: 0,
         solutionId: 0,
-        onlySampleModels: [
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7712274+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.771562+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7715628+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7712274+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.771562+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7715628+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7712274+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.771562+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7715628+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7712274+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.771562+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7715628+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7712274+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.771562+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7715628+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7712274+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.771562+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1863.5649316381819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-12T02:45:38.7715628+08:00",
-            creatorUserId: null,
-            id: 0
-          }
-        ]
+        onlySampleModels: []
       }
     ],
     sops: [
@@ -1255,41 +765,6 @@ const data = reactive({
         ],
         project: "报价毛利率测算-实际数量-Y1"
       }
-      // {
-      //   project: "报价毛利率测算-实际数量-X01",
-      //   grossMargins: [
-      //     {
-      //       product: "AR0820",
-      //       productNumber: 1,
-      //       quotedGrossMarginSimple: {
-      //         interior: {
-      //           price: 1,
-      //           grossMargin: 20,
-      //           clientGrossMargin: 22,
-      //           nreGrossMargin: 20
-      //         },
-      //         client: {
-      //           price: 1,
-      //           grossMargin: 20,
-      //           clientGrossMargin: 22,
-      //           nreGrossMargin: 25
-      //         },
-      //         thisQuotation: {
-      //           price: 1,
-      //           grossMargin: 20,
-      //           clientGrossMargin: 24,
-      //           nreGrossMargin: 25
-      //         },
-      //         lastRound: {
-      //           price: 1,
-      //           grossMargin: 20,
-      //           clientGrossMargin: 21,
-      //           nreGrossMargin: 25
-      //         }
-      //       }
-      //     }
-      //   ]
-      // }
     ],
     gradientQuotedGrossMargins: [
       {
@@ -1504,17 +979,6 @@ const planListArrChange = async (val) => {
 interface stringKeyObj {
   [propName: string]: any
 }
-// const gradientTableMap = computed(() => {
-//   let gradientTableMap: stringKeyObj = {}
-//   data.allRes.gradientQuotedGrossMargins.forEach((item) => {
-//     if (!gradientTableMap[item.gradient]) {
-//       gradientTableMap[item.gradient] = []
-//     }
-//     gradientTableMap[item.gradient].push(item)
-//   })
-//   // setChartData(gradientTableMap)
-//   return gradientTableMap
-// })
 const gradientTableMap = computed(() => {
   let gradientTableMap: stringKeyObj = {}
   data.allRes.gradientQuotedGrossMargins.forEach((item) => {
@@ -1523,7 +987,8 @@ const gradientTableMap = computed(() => {
     }
     gradientTableMap[item.gradientId].push(item)
   })
-  // setChartData(gradientTableMap)
+
+  setChartData(gradientTableMap)
   return gradientTableMap
 })
 let gradientTableMapResult = ref([])
@@ -1694,6 +1159,7 @@ const setChartData = (gradientTableMap: any) => {
       ],
       series: []
     }
+
     ProjectUnitPrice[key].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
     ProjectUnitPrice[key].series = gradientTableMap[key].map((item: any) => {
       return {
@@ -1706,23 +1172,21 @@ const setChartData = (gradientTableMap: any) => {
         emphasis: {
           focus: "series"
         },
-        data: [
-          item.quotedGrossMarginSimple.interior.price,
-          item.quotedGrossMarginSimple.client.price,
-          item.quotedGrossMarginSimple.thisQuotation.price
-        ]
+        data: [item.interiorPrice, item.clientPrice, item.thisQuotationPrice]
       }
     })
-    ProjectUnitPrice[key].series.push({
-      yAxisIndex: 1,
-      name: "整体毛利率",
-      type: "line",
-      tooltip: {
-        formatter: "{a}{b}{c}%"
-      },
-      // 临时造的数据没有看到该字段
-      data: [Number(111).toFixed(2), Number(2222).toFixed(2), Number(2222).toFixed(2) || 0]
-    })
+
+    // ProjectUnitPrice[key].series.push({
+    //   yAxisIndex: 1,
+    //   name: "整体毛利率",
+    //   type: "line",
+    //   tooltip: {
+    //     formatter: "{a}{b}{c}%"
+    //   },
+    //   // 临时造的数据没有看到该字段
+    //   data: [Number(item.interiorGrossMargin).toFixed(2), Number(2222).toFixed(2), Number(2222).toFixed(2) || 0]
+    // })
+
     RevenueGrossMargin[key] = {
       title: {
         text: "收入和毛利率对比"
@@ -1771,6 +1235,31 @@ const setChartData = (gradientTableMap: any) => {
         // }
       ]
     }
+    // {
+    //     gradient: "2664.9k/y",
+    //     gradientId: 599,
+    //     solutionId: 664,
+    //     product: "延锋科技前装车内1M",
+    //     id: 0,
+    //     version: 0,
+    //     auditFlowId: 337,
+    //     interiorPrice: 783.3082529596942, //目标价（内部）单价
+    //     interiorGrossMargin: 20, // 目标价（内部）毛利率
+    //     interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
+    //     interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
+    //     clientPrice: 0, // 目标价（客户）单价
+    //     clientGrossMargin: 0, // 目标价（客户）毛利率
+    //     clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
+    //     clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
+    //     thisQuotationPrice: 0, /// 本次报价单价
+    //     thisQuotationGrossMargin: 0, // 本次报价毛利率
+    //     thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
+    //     thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
+    //     lastRoundPrice: 0, // 上轮报价单价
+    //     lastRoundGrossMargin: 0, // 上轮报价毛利率
+    //     lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
+    //     lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
+    //   }
     let RevenueGrossMarginSeries = [] as any[]
     gradientTableMap[key].forEach((item: any) => {
       if (item.product === "销售收入") {
@@ -1784,10 +1273,10 @@ const setChartData = (gradientTableMap: any) => {
           emphasis: {
             focus: "series"
           },
-          data: [item.quotedGrossMarginSimple.interior.price, item.quotedGrossMarginSimple.client.price]
+          data: [item.interiorPrice, item.clientPrice]
         }
-        if (item.quotedGrossMarginSimple.thisQuotation.price) {
-          RevenueGrossMarginData.data.push(item.quotedGrossMarginSimple.thisQuotation.price)
+        if (item.thisQuotationPrice) {
+          RevenueGrossMarginData.data.push(item.thisQuotationPrice)
         }
         RevenueGrossMarginSeries.push(RevenueGrossMarginData)
       }
@@ -1799,11 +1288,11 @@ const setChartData = (gradientTableMap: any) => {
           tooltip: {
             formatter: "{a}{b}{c}%"
           },
-          data: [item.quotedGrossMarginSimple.interior.grossMargin, item.quotedGrossMarginSimple.client.grossMargin]
+          data: [item.interiorGrossMargin, item.clientGrossMargin]
         }
-        if (item.quotedGrossMarginSimple.thisQuotation.grossMargin) {
+        if (item.thisQuotationGrossMargin) {
           //这里计算只有grossMarginNumber
-          RevenueGrossMarginDataY.data.push(item.quotedGrossMarginSimple.thisQuotation.grossMargin)
+          RevenueGrossMarginDataY.data.push(item.thisQuotationGrossMargin)
         }
         RevenueGrossMarginSeries.push(RevenueGrossMarginDataY)
       }
@@ -1898,7 +1387,7 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
   let grossMargins = data.allRes.gradientQuotedGrossMargins.filter((item) => item.thisQuotationGrossMargin)
   // console.log(grossMargins, grossMargins.length)
 
-  let { sl, unitPrice, xscb, xsml, xssr, yj } = result
+  let { sl, xscb, xsml, xssr, yj } = result
   data.allRes.gradientQuotedGrossMargins[index].sl = sl // 数量
   data.allRes.gradientQuotedGrossMargins[index].xscb = xscb // 销售成本
   data.allRes.gradientQuotedGrossMargins[index].xsml = xsml // 销售毛利
@@ -1949,7 +1438,7 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
               row.offer = ritem.xssr / ritem.sl
             }
             if (row.projectName === "销售毛利") {
-              row.offer = ritem.xssr - ritem.xscb
+              row.offer = ritem.xssr - ritem.xscb - ritem.yj
             }
             if (row.projectName === "毛利率") {
               row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
@@ -2022,6 +1511,57 @@ const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: 
   data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationNreGrossMargin =
     result.nreGrossMargin
   data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].thisQuotationPrice = result.unitPrice
+
+  let { sl, xscb, xsml, xssr, yj } = result
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].sl = sl // 数量
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].xscb = xscb // 销售成本
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].xsml = xsml // 销售毛利
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].xssr = xssr // 销售收入
+  data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList[rowIndex].yj = yj // 佣金
+
+  if (
+    data.allRes.quotedGrossMargins.length === index + 1 &&
+    data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length === rowIndex + 1
+  ) {
+    let ritem = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.reduce((pre, cur) => {
+      return {
+        sl: pre.sl + cur.sl,
+        xscb: pre.xscb + cur.xscb,
+        yj: pre.yj + cur.yj,
+        xssr: pre.xssr + cur.xssr
+      }
+    })
+    data.allRes.projectBoard.forEach((item) => {
+      if (!item.gradientId) {
+        item.projectBoardModels.forEach((row) => {
+          if (row.projectName === "数量") {
+            row.offer = ritem.sl
+          }
+          if (row.projectName === "销售成本") {
+            row.offer = ritem.xscb
+          }
+          if (row.projectName === "销售收入") {
+            row.offer = ritem.xssr
+          }
+          if (row.projectName === "单位平均成本") {
+            row.offer = ritem.xscb / ritem.sl
+          }
+          if (row.projectName === "平均单价") {
+            row.offer = ritem.xssr / ritem.sl
+          }
+          if (row.projectName === "销售毛利") {
+            row.offer = ritem.xssr - ritem.xscb - ritem.yj
+          }
+          if (row.projectName === "毛利率") {
+            row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
+          }
+          if (row.projectName === "佣金") {
+            row.offer = ritem.yj
+          }
+        })
+      }
+    })
+  }
 }
 const comfirmPlans = async () => {
   // fullscreenLoading.value = true
@@ -2053,6 +1593,17 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
 }
 const save = () => {
   debugger
+  if (auditFlowId) {
+    let saveData = {
+      version: 1,
+      ntime: 1,
+      IsOffer: true,
+      Solutions: planListArr,
+      ...data.allRes,
+      auditFlowId
+    }
+  }
+
   console.log(productList, planListArr, data.allRes)
 }
 onBeforeMount(() => {

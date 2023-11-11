@@ -4,8 +4,8 @@
       <div class="u-flex u-row-left u-col-center"/>
       <div>
 <!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
-        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>
+    -->    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
@@ -676,13 +676,13 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input-number  v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
+              <el-input-number :min="0"  v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center" v-if="isCOB">
-              <el-input-number  v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number  v-model="uphItem.cobuph" :min="0" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input-number  v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number :min="0"   v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
           </div>
         </div>
@@ -1179,7 +1179,28 @@ const handleSaveData = () => {
     processHoursEnterUphList: JSON.parse(JSON.stringify(UPHData.value)),
     processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
   }
-  console.log("保存参数", param)
+  console.log("保存参数", param.processHoursEnterUphList)
+ for (let a =0;a<param.processHoursEnterUphList.length;a++){
+   if (!isCOB){
+     if (param.processHoursEnterUphList[a].smtuph == null || param.processHoursEnterUphList[a].zcuph == null){
+       ElMessage({
+         type: "error",
+         message: "uph不能为空"
+       })
+       return  false;
+     }
+
+   }{
+     if (param.processHoursEnterUphList[a].smtuph == null || param.processHoursEnterUphList[a].zcuph == null|| param.processHoursEnterUphList[a].cobuph == null){
+       ElMessage({
+         type: "error",
+         message: "uph不能为空"
+       })
+       return  false;
+     }
+
+   }
+   }
   return handleSaveOption(param).then((response: any) => {
     console.log("保存响应", response)
     if (response.success) {

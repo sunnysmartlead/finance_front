@@ -1,7 +1,7 @@
 <template>
   <el-card class="" header="产品识别分析表">
     <el-row justify="end">
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" />
+      <!-- <ProcessVertifyBox :onSubmit="handleSubmit" processType="complianceProcessType" /> -->
       <el-button m="2" type="primary" @click="handleDownload">贸易合规下载</el-button>
     </el-row>
     <el-descriptions :column="2" border>

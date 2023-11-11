@@ -13,27 +13,27 @@
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column type="index" label="序号" width="70" />
         <el-table-column label="模具费用" prop="modelName" width="180" />
-        <el-table-column label="模穴数" width="150" prop="moldCavityCount">
+        <el-table-column label="模穴数" width="150" prop="moldCavityCount" :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.moldCavityCount" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="模次数" width="150" prop="modelNumber">
+        <el-table-column label="模次数" width="150" prop="modelNumber"  :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.modelNumber" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" width="180" prop="count">
+        <el-table-column label="数量" width="180" prop="count"  :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="单价" width="180" prop="unitPrice">
+        <el-table-column label="单价" width="180" prop="unitPrice"  :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="金额" prop="cost" width="180" />
+        <el-table-column label="金额" prop="cost" width="180"  :formatter="formatThousandths" />
         <el-table-column label="备注" prop="remark" width="180">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" v-model="row.remark" :disabled="row.isSubmit" />
@@ -68,6 +68,8 @@ import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { useRoute } from "vue-router"
 import useJump from "@/hook/useJump"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
+import { formatThousandths } from '@/utils/number'
+
 const route = useRoute()
 const { auditFlowId, right = 1, productId }: any = getQuery()
 

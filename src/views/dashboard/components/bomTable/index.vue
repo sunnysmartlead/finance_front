@@ -6,7 +6,7 @@
           <span>bom成本</span>
           <el-row>
             <el-button v-if="!hideEdit" type="primary" m="2" @click="goEdit">去修改</el-button>
-            <el-button v-if="!hideEdit" type="primary" m="2" @click="handleSubmit">提交是否可控修改</el-button>
+            <el-button v-if="!hideEdit" type="primary" m="2" @click="handleSubmit">提交是否客供修改</el-button>
           </el-row>
         </el-row>
       </template>
@@ -119,11 +119,8 @@ onMounted(() => {
 })
 
 const handleChange = (val: any, index: number) => {
-  console.log(val, index)
   bomData.value.forEach((item: any, cIndex: number) => {
-    if (index === 0) {
-      item.isCustomerSupply = val
-    } else if (cIndex === index) {
+    if (cIndex === index) {
       item.isCustomerSupply = val
     }
   })

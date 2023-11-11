@@ -24,7 +24,7 @@
           </el-form-item> -->
           <el-form-item label="梯度:" prop="gradientId">
             <el-select v-model="data.form.gradientId" placeholder="请选择梯度" @change="initGradientId">
-              <el-option v-for="item in data.gradientList" :key="item.id" :label="`${item.gradientValue} (K/Y)`"
+              <el-option v-for="item in data.gradientList" :key="item.id" :label="`${item.gradientValue} ${item.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
                 :value="item.id" />
             </el-select>
           </el-form-item>

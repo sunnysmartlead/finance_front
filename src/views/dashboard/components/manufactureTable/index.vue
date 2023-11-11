@@ -28,7 +28,6 @@ import manufactureTable from "./manufactureTable.vue"
 import getQuery from "@/utils/getQuery"
 import { cloneDeep, isEmpty, map } from "lodash"
 import { ElMessage } from "element-plus"
-import { getEditTotal } from '../../common/util'
 import { formatThousandths } from '@/utils/number'
 
 const { auditFlowId, productId: SolutionId } = getQuery()
@@ -58,11 +57,12 @@ const editTotal = computed(() => {
     return 0
   }
   let total = 0
+  console.log(originArr , 'originArr')
   originArr.forEach((item: any) => {
-    const findData = modifyData.value?.find(c => c.editId === item.editId && !c.costItem.includes('制造成本合计'))
+    const findData = modifyData.value?.find((c: any) => c.editId === item.editId)
     if (findData) {
       total += Number(findData.subtotal)
-    } else total += Number(item.subtotal)
+    } else if (!item.costItem.includes('制造成本合计')) total += Number(item.subtotal)
   })
   return formatThousandths(null,null,total)
 })

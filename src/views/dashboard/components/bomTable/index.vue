@@ -119,11 +119,8 @@ onMounted(() => {
 })
 
 const handleChange = (val: any, index: number) => {
-  console.log(val, index)
   bomData.value.forEach((item: any, cIndex: number) => {
-    if (index === 0) {
-      item.isCustomerSupply = val
-    } else if (cIndex === index) {
+    if (cIndex === index) {
       item.isCustomerSupply = val
     }
   })

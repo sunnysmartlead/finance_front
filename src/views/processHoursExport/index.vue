@@ -4,8 +4,8 @@
       <div class="u-flex u-row-left u-col-center"/>
       <div>
 <!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
-        <el-button @click="handleSubmit" type="primary">提交</el-button>
-    -->    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
+        <el-button @click="handleSubmit" type="primary">提交</el-button>-->
+        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone/>
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
@@ -1563,6 +1563,8 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
       if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
          newSopItem= newSop[newSop.length-1];
+      }else {
+        newSopItem = newSop[newSop.length-1];
       }
       //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
       if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
@@ -2682,6 +2684,8 @@ const compareSopData=(newExportItem:any)=>{
     //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
     if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
       newSopItem= newSop[newSop.length-1];
+    }else {
+      newSopItem = newSop[newSop.length-1];
     }
     //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
     if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){

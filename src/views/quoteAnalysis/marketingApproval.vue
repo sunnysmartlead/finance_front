@@ -1048,8 +1048,10 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 }
 
 const initFetch = async () => {
-  const { result } = await getQuotationApprovedMarketing(auditFlowId)
-  data.resa = result
+  if (auditFlowId) {
+    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: 0 })
+    data.resa = result
+  }
 }
 
 // 计算含佣金的毛利率

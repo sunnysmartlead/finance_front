@@ -87,7 +87,7 @@ export function GetSolution(auditFlowId: number): any {
   })
 }
 
-//报价分析看板
+//查看报表分析看板 查看报价分析看板不含样品,查看报价分析看板含样品,查看报价分析看板仅含样品 ,特别注意，传入方案，方案中的moduleName不能一样
 export function PostStatementAnalysisBoardSecond(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostStatementAnalysisBoardSecond",
@@ -95,7 +95,6 @@ export function PostStatementAnalysisBoardSecond(data: any): any {
     data
   })
 }
-
 //查看年份维度对比(全部模组)
 export function PostComparison(data: { auditFlowId: number; productId: number }): any {
   return request({
@@ -157,6 +156,39 @@ export function PostGrossMarginForactualQt(data: any): any {
   })
 }
 
+//报价分析看板 报价接口
+export function PostIsOfferSecond(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSecond",
+    method: "post",
+    data
+  })
+}
+/**
+ *根据流程id,版本version 查看报表分析看板 查看报价分析看板不含样品,查看报价分析看板含样品,查看报价分析看板仅含样品
+ * @param data
+ * @returns
+ */
+export function getStatementAnalysisBoardSecond(data: { auditFlowId?: number; version?: number }): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/getStatementAnalysisBoardSecond",
+    method: "post",
+    data
+  })
+}
+/**
+ * 报价保存接口
+ * @param data
+ * @returns
+ */
+export function PostIsOfferSaveSecond(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSaveSecond",
+    method: "post",
+    data
+  })
+}
+
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率
@@ -199,13 +231,11 @@ export function getFinancialArchive(auditFlowId: number) {
 /**
  * 营销部报价审批数据
  */
-export function getQuotationApprovedMarketing(auditFlowId: number) {
+export function getQuotationApprovedMarketing(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetQuotationApprovedMarketing",
-    method: "post",
-    data: {
-      auditFlowId
-    }
+    method: "get",
+    data
   })
 }
 /**

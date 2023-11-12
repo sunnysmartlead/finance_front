@@ -59,6 +59,7 @@
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
+    <ProcessVertifyBox :onSubmit="submit" v-havedone />
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -577,6 +578,7 @@ import {
   PostIsOfferSecond
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 /**
  * 路由对象
@@ -1751,6 +1753,7 @@ const toMarketingApproval = () => {
     }
   })
 }
+const submit = () => {}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

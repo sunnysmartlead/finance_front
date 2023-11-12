@@ -2,7 +2,7 @@ import { bigNumberTransform } from "./util"
 
 export const percentageCostChartData = {
   title: {
-    text: "产品成本",
+    text: "产品成本占比",
     subtext: "",
     left: "center"
   },
@@ -19,7 +19,7 @@ export const percentageCostChartData = {
     alignTo: "edge",
     formatter: (item: any) => {
       // console.log(item, "itemitem")
-      return `${item.name}: ${bigNumberTransform(item.value || 0)}`
+      return `${item.name}: ${(item.value * 100).toFixed(2)}%`
     },
     minMargin: 5,
     edgeDistance: 10,

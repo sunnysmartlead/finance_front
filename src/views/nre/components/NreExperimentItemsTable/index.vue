@@ -58,7 +58,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="单价" prop="unitPrice" width="175" />
+        <el-table-column align="center"  label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" />
         <el-table-column align="center"  label="调整系数" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
@@ -84,7 +84,7 @@
             <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="总费用" prop="allCost" width="180" />
+        <el-table-column align="center"  label="总费用" prop="allCost" width="180" :formatter="formatThousandths" />
         <el-table-column align="center"  label="备注">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.remark }}</span>
@@ -126,6 +126,7 @@ import { designScheme } from "@/views/demandApplyAudit"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
+import { formatThousandths } from '@/utils/number'
 
 const { closeSelectedTag } = useJump()
 const route = useRoute()

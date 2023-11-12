@@ -50,7 +50,7 @@
     <el-card m="2">
       <!-- Bom成本  -->
       <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" />
+        :gradientId="data.form.gradientId" :on-refresh="initPage" />
       <!-- 损耗成本  -->
       <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" :on-refresh="fetchAllData" />
@@ -476,6 +476,11 @@ const getGoTableChartData = async () => {
     })
   })
 
+}
+
+const initPage = () => {
+  getGoTableChartData()
+  fetchAllData()
 }
 
 const fetchAllData = async () => {

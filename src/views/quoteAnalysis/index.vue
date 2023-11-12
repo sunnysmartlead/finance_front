@@ -56,8 +56,8 @@
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
-      <el-button type="primary" @click="postOffer(1)" v-havedone>报价</el-button>
-      <el-button type="primary" @click="postOffer(0)" v-havedone>不报价</el-button>
+      <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
+      <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
     <!-- nre -->
     <h3>NRE</h3>
@@ -464,6 +464,7 @@
       </div>
     </el-card>
     <el-button @click="save">保存</el-button>
+    <el-button @click="toMarketingApproval">生成审批表</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -563,18 +564,17 @@ import * as echarts from "echarts"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
 import {
-  calculateRate,
   PostStatementAnalysisBoardSecond,
-  PostComparison,
   GetSolution,
   PostDownloadMessageSecond,
-  PostSpreadSheetCalculate,
   PostYearDimensionalityComparisonForGradient,
   PostGrossMarginForGradient,
   PostGrossMarginForactual,
   PostYearDimensionalityComparisonForactual,
   PostYearDimensionalityComparisonForactualQt,
-  PostGrossMarginForactualQt
+  PostGrossMarginForactualQt,
+  PostIsOfferSaveSecond,
+  PostIsOfferSecond
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 
@@ -590,7 +590,7 @@ const router = useRouter()
 /**
  * 数据部分
  */
-let { auditFlowId, productId, nodeInstanceId } = getQuery()
+let { auditFlowId, productId, nodeInstanceId, right } = getQuery()
 interface planListItem {
   value: string
   isOffer: boolean
@@ -602,6 +602,7 @@ const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
 const planListArr = reactive<any[]>([])
+let selectPlan = ref<any[]>([])
 const planListArrVal = ref(null)
 const yearDimension = ref({
   numk: [],
@@ -637,6 +638,8 @@ const data = reactive({
     message: "调用成功"
   },
   allRes: {
+    isOffer: false,
+    noOfferReason: "string",
     auditFlowId: 0,
     grossMarginList: null,
     unitPrice: null,
@@ -984,24 +987,22 @@ const data = reactive({
           }
         ]
       }
-    ],
-    isSuccess: true,
-    message: "调用成功"
-  }
+    ]
+  } as any
 })
 const planListArrChange = async (val) => {
   fullscreenLoading.value = true
   try {
-    let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables: planListArr[val] })
+    selectPlan.value = planListArr[val]
+    let res = await PostStatementAnalysisBoardSecond({
+      auditFlowId,
+      solutionTables: planListArr[val],
+      version: 0,
+      ntime: 0
+    })
     fullscreenLoading.value = false
-
-    console.log(res)
-    console.log(planList)
-    console.log(planListArr[val])
     data.allRes = res.result
-    debugger
   } catch (error) {
-    console.log(error, "errorerrorerror")
     fullscreenLoading.value = false
   }
 }
@@ -1427,6 +1428,7 @@ const setChartData = () => {
   })
   setTimeout(() => {
     initCharts("unitpriceChart" + "shiji", ProjectUnitPrice["shiji"])
+    initCharts("revenueGrossMarginChart" + "shiji", RevenueGrossMargin["shiji"])
   }, 500)
 }
 const initCharts = (id: string, chartOption: any) => {
@@ -1438,10 +1440,6 @@ const initCharts = (id: string, chartOption: any) => {
     chart.setOption(chartOption)
     return chart
   }
-}
-
-const postOffer = (isOffer: number) => {
-  console.log(isOffer)
 }
 
 //成本信息表
@@ -1458,7 +1456,7 @@ const downLoad = async () => {
     }
   })
   try {
-    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables })
+    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables, version: 1, ntime: 1 })
     const blob = res
     const reader = new FileReader()
     reader.readAsDataURL(blob)
@@ -1564,7 +1562,6 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
         }
       })
     })
-    setChartData()
   }
 }
 
@@ -1638,7 +1635,6 @@ const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: 
     data.allRes.quotedGrossMargins.length === index + 1 &&
     data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length === rowIndex + 1
   ) {
-    debugger
     let slLenth = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.filter((item) => item.sl)
     if (slLenth.length === data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length) {
       let ritem = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.reduce((pre, cur) => {
@@ -1681,6 +1677,7 @@ const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: 
         }
       })
     }
+    setChartData()
   }
 }
 const comfirmPlans = async () => {
@@ -1711,20 +1708,48 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
-const save = () => {
-  debugger
+const save = async () => {
+  // let version = right==='2'?0:
   if (auditFlowId) {
     let saveData = {
-      version: 1,
-      ntime: 1,
-      IsOffer: true,
+      version: 0,
+      ntime: 0,
+      IsOffer: false,
       Solutions: planListArr,
       ...data.allRes,
       auditFlowId
     }
+    let res = await PostIsOfferSaveSecond(saveData)
+    console.log(res, "saveData")
   }
 
   console.log(productList, planListArr, data.allRes)
+}
+const postOffer = async (isOffer: boolean) => {
+  if (auditFlowId) {
+    let saveData = {
+      version: 0,
+      ntime: 1,
+      solutions: selectPlan.value,
+      ...data.allRes,
+      isOffer,
+      auditFlowId
+    }
+    delete saveData.isSuccess
+    delete saveData.message
+    delete saveData.mes
+    let res = await PostIsOfferSecond(saveData)
+    console.log(res)
+  }
+}
+const toMarketingApproval = () => {
+  debugger
+  router.push({
+    path: "/quoteAnalysis/marketingApproval",
+    query: {
+      auditFlowId
+    }
+  })
 }
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')

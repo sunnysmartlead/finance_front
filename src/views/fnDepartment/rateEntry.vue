@@ -5,7 +5,7 @@
         <span>作业价格</span>
         <el-row>
           <el-button m="2" type="primary" @click="handleAddYear">新增年</el-button>
-          <el-button m="2" type="primary" @click="submit">提交</el-button>
+          <!-- <el-button m="2" type="primary" @click="submit">提交</el-button> -->
         </el-row>
       </el-row>
       <el-table :data="tableData" height="50vh" style="width: 100%; margin-top: 25px" border>
@@ -157,17 +157,7 @@ const initFetch = async () => {
   try {
     const { success, result } = await GetRateEntry()
     if (!success) throw Error()
-    if (result.length > 0) {
-      tableData.value = result || []
-    } else {
-      tableData.value.push({
-        directManufacturingRate: 0,
-        indirectLaborRate: 0,
-        indirectDepreciationRate: 0,
-        indirectManufacturingRate: 0,
-        year: new Date().getFullYear()
-      })
-    }
+    tableData.value = result || []
   } catch (err: any) {
     console.log("[GetRateEntry Error]", err)
   }

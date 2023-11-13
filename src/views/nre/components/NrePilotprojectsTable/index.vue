@@ -24,7 +24,7 @@
           </el-row>
         </template>
         <el-table :data="data.laboratoryFeeModels" border :summary-method="getLaboratoryFeeSummaries" show-summary
-          height="70vh">
+          :height="data.laboratoryFeeModels?.length > 15 ? '70vh' : ''">
           <el-table-column type="index" width="50" />
           <el-table-column label="试验项目（根据与客户协定项目）" width="180">
             <template #default="{ row, $index }">
@@ -41,7 +41,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="单价" prop="unitPrice" width="175" />
+          <el-table-column label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" />
           <el-table-column label="调整系数" width="180" :formatter="formatThousandths">
             <template #default="{ row }">
               <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>

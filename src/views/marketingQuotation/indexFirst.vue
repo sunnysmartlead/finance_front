@@ -4,28 +4,31 @@
     <!-- 单价汇总 -->
     <p>单价汇总</p>
     <el-table :data="data.resa.unitPriceSum" border>
-      <el-table-column type="expand">
+      <!-- <el-table-column type="expand">
         <template #default="props">
           <el-table :data="props.row.solutuionAndValues" border>
             <el-table-column label="solutionId" prop="solutionId" />
             <el-table-column label="value" prop="value" />
           </el-table>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="产品名称" prop="product" />
+      <el-table-column label="价格" prop="price" />
     </el-table>
     <!-- NRE汇总 -->
     <p>NRE汇总</p>
     <el-table :data="data.resa.nreUnitSumModels" border>
-      <el-table-column type="expand">
+      <!-- <el-table-column type="expand">
         <template #default="props">
           <el-table :data="props.row.solutuionAndValues" border>
             <el-table-column label="solutionId" prop="solutionId" />
             <el-table-column label="value" prop="value" />
           </el-table>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="产品名称" prop="product" />
+      <el-table-column label="花费" prop="cost" />
+      <el-table-column label="数量" prop="number" />
     </el-table>
     <!-- nre -->
     <el-card v-for="(item, index) in data.resa.managerApprovalOfferNres" :key="index">
@@ -45,13 +48,13 @@
         <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
       </el-table>
       <!-- nre汇总 -->
-      <p>{{ item.analyseBoardNreDto.solutionName }}</p>
-      <p>
+      <!-- <p>{{ item.analyseBoardNreDto.solutionName }}</p> -->
+      <!-- <p>
         线体数量：{{ item.analyseBoardNreDto.numberLine }} 共线分摊率：{{
           item.analyseBoardNreDto.collinearAllocationRate
         }}
-      </p>
-      <el-table
+      </p> -->
+      <!-- <el-table
         :data="item.analyseBoardNreDto.models"
         style="width: 100%"
         border
@@ -77,7 +80,7 @@
             <el-input v-model="scope.row.remark" type="textarea" />
           </template>
         </el-table-column>
-      </el-table>
+      </el-table> -->
       <p>专用设备</p>
       <el-table :data="item.analyseBoardNreDto.devices" style="width: 100%" border max-height="500px">
         <el-table-column prop="deviceName" label="设备名称" />
@@ -394,17 +397,9 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
 
-// const initFetch = async () => {
-//   const { result } = await GetQuotationList({ Id: auditFlowId })
-//   data.resa = result
-//   data.motionMessageSop = result.motionMessage[0].sop.map((item: any) => item)
-//   console.log(result, "result")
-// }
-
 const initFetch = async () => {
   if (auditFlowId) {
-    debugger
-    const { result } = await GetManagerApprovalOfferOne(auditFlowId)
+    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: 0 })
     data.resa = result
     console.log(result, "result")
   }

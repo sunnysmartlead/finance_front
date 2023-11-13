@@ -676,13 +676,13 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
+              <el-input-number :min="0"  v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center" v-if="isCOB">
-              <el-input v-model="uphItem.cobuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number  v-model="uphItem.cobuph" :min="0" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number :min="0"   v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
           </div>
         </div>
@@ -1179,7 +1179,28 @@ const handleSaveData = () => {
     processHoursEnterUphList: JSON.parse(JSON.stringify(UPHData.value)),
     processHoursEnterLineList: JSON.parse(JSON.stringify(lineData.value))
   }
-  console.log("保存参数", param)
+  console.log("保存参数", param.processHoursEnterUphList)
+ for (let a =0;a<param.processHoursEnterUphList.length;a++){
+   if (!isCOB){
+     if (param.processHoursEnterUphList[a].smtuph == null || param.processHoursEnterUphList[a].zcuph == null){
+       ElMessage({
+         type: "error",
+         message: "uph不能为空"
+       })
+       return  false;
+     }
+
+   }{
+     if (param.processHoursEnterUphList[a].smtuph == null || param.processHoursEnterUphList[a].zcuph == null|| param.processHoursEnterUphList[a].cobuph == null){
+       ElMessage({
+         type: "error",
+         message: "uph不能为空"
+       })
+       return  false;
+     }
+
+   }
+   }
   return handleSaveOption(param).then((response: any) => {
     console.log("保存响应", response)
     if (response.success) {
@@ -1542,6 +1563,8 @@ const getProcessInfoByID = (ProcessNumber: string, dataIndex: number) => {
       //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
       if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
          newSopItem= newSop[newSop.length-1];
+      }else {
+        newSopItem = newSop[newSop.length-1];
       }
       //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
       if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
@@ -1800,9 +1823,11 @@ const hardWareNameChange = (value: any, deviceIndex: any, dataIndex: any) => {
 //软件设备数量和价格变化
 const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDeviceIndex: any) => {
   let handleHardwareDeviceCost = 0.0
+  if (null != dataArr.value[dataIndex].developCostInfo.hardwareInfo){
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + item.hardwareDeviceNumber * item.hardwareDevicePrice
   })
+  }
   dataArr.value[dataIndex].developCostInfo.hardwareTotalPrice = Number(Number(handleHardwareDeviceCost).toFixed(2));
   let kaituCost = dataArr.value[dataIndex].developCostInfo.softwarePrice ? dataArr.value[dataIndex].developCostInfo.softwarePrice : 0;
   let zhuiSuCost = dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost ? dataArr.value[dataIndex].developCostInfo.traceabilitySoftwareCost : 0;
@@ -1813,10 +1838,12 @@ const handleHardwareDeviceChange = (inputValue: any, dataIndex: any, hardwareDev
 
 const caclHardWareCost = (dataIndex: any) => {
   let handleHardwareDeviceCost = 0.0;
+  if (null != dataArr.value[dataIndex].developCostInfo.hardwareInfo){
   dataArr.value[dataIndex].developCostInfo.hardwareInfo.forEach((item: any) => {
     handleHardwareDeviceCost = handleHardwareDeviceCost + (Number(item.hardwareDeviceNumber) * Number(item.hardwareDevicePrice))
     //console.log("计算硬件总价====", handleHardwareDeviceCost);
   })
+  }
   return handleHardwareDeviceCost;
 }
 //#endregion
@@ -2657,6 +2684,8 @@ const compareSopData=(newExportItem:any)=>{
     //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
     if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
       newSopItem= newSop[newSop.length-1];
+    }else {
+      newSopItem = newSop[newSop.length-1];
     }
     //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
     if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){

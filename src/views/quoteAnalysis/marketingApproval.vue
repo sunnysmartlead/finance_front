@@ -39,41 +39,33 @@
     <el-card header="sop走量信息" m="2">
       <div v-for="item in data.resa.motionMessage" :key="item.messageName">
         <p>{{ item.messageName }}</p>
-        <el-table :data="item.sop" border>
+        <el-table :data="item.yearValues" border>
           <el-table-column type="index" width="100" />
-          <el-table-column prop="year" label="年份" />
+          <el-table-column prop="key" label="年份" />
           <el-table-column prop="value" />
-          <el-table-column prop="sopValue" label="sop" />
-          <el-table-column prop="fullValue" />
-          <!-- <el-table-column label="梯度" prop="messageName" /> -->
-          <!-- <el-table-column
-          v-for="(item, index) in data.motionMessageSop"
-          :key="item.year"
-          :label="item.year"
-          :prop="`sop[${index}].value`"
-          :formatter="formatMarketingQuotationDatas"
-        /> -->
+          <!-- <el-table-column prop="sopValue" label="sop" />
+          <el-table-column prop="fullValue" /> -->
         </el-table>
       </div>
     </el-card>
     <!-- 核心部件 -->
     <el-card header="核心部件：" m="2">
-      <el-card class="m-2">
-        <el-table :data="data.resa.componenSocondModels" border>
-          <el-table-column type="expand">
+      <el-table :data="data.resa.componenSocondModels" border>
+        <!-- <el-table-column type="expand">
             <template #default="props">
               <el-table :data="props.row.specifications" border>
-                <el-table-column label="方案名" prop="solutionname" />
+                <el-table-column label="方案名" prop="solutionName" />
                 <el-table-column label="specification" prop="specification" />
               </el-table>
             </template>
-          </el-table-column>
-          <el-table-column label="核心部件" prop="coreComponent" />
-          <!-- <el-table-column label="型号" prop="model" /> -->
-          <el-table-column label="类型" prop="type" />
-          <el-table-column label="备注" prop="remark" />
-        </el-table>
-      </el-card>
+          </el-table-column> -->
+        <el-table-column label="型号" prop="model" />
+        <el-table-column label="核心部件" prop="partsName" />
+        <el-table-column label="方案名" prop="solutionName" />
+        <!-- <el-table-column label="型号" prop="model" /> -->
+        <el-table-column label="类型" prop="type" />
+        <el-table-column label="备注" prop="remark" />
+      </el-table>
     </el-card>
     <!-- nre -->
     <h3>NRE</h3>
@@ -113,19 +105,26 @@
     </el-card>
     <el-card header="内部核价信息：" m="2">
       <el-table :data="data.resa.pricingMessageSecondModels" border>
-        <el-table-column type="expand">
-          <template #default="props">
-            <el-table :data="props.row.sops" border>
-              <el-table-column label="sop" prop="sop" />
-              <el-table-column label="梯度" prop="gradientValue" />
-              <el-table-column label="全周期" prop="all" />
-            </el-table>
-          </template>
-        </el-table-column>
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="方案名称" prop="solutionName" />
-        <el-table-column label="费用类别" prop="name" />
-        <!-- <el-table-column label="成本值" prop="costValue" :formatter="formatThousandths" /> -->
+        <el-table-column label="序号" type="index" width="50" />
+        <el-table-column label="方案名称" prop="solutionName" width="180" />
+        <el-table-column label="费用类别" prop="name" width="100" />
+        <el-table-column label="方案名称" prop="allSop" width="100" />
+        <el-table-column label="费用类别" prop="allfull" width="100" />
+        <el-table-column label="方案名称" prop="bomSop" width="100" />
+        <el-table-column label="费用类别" prop="bomfull" width="100" />
+        <el-table-column label="方案名称" prop="ftSop" width="100" />
+        <el-table-column label="费用类别" prop="ftfull" width="100" />
+        <el-table-column label="梯度" prop="gradient" width="100" />
+        <el-table-column label="费用类别" prop="lsSop" width="100" />
+        <el-table-column label="方案名称" prop="lsfull" width="100" />
+        <el-table-column label="费用类别" prop="moqSop" width="100" />
+        <el-table-column label="方案名称" prop="moqfull" width="100" />
+        <el-table-column label="费用类别" prop="quSop" width="100" />
+        <el-table-column label="梯度" prop="qufull" width="100" />
+        <el-table-column label="费用类别" prop="scSop" width="100" />
+        <el-table-column label="方案名称" prop="scfull" width="100" />
+        <el-table-column label="费用类别" prop="yfSop" width="100" />
+        <el-table-column label="方案名称" prop="yffull" width="100" />
       </el-table>
       <!-- <template v-for="item in data.resa.pricingMessage" :key="item.messageName">
         <el-card :header="item.pricingMessageName" class="m-2">
@@ -150,8 +149,8 @@
       <el-table :data="data.resa.biddingStrategySecondModels" border>
         <el-table-column type="index" width="100" />
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="Sop年成本" prop="sopCost" />
-        <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" />
+        <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
+        <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
         <el-table-column label="毛利率" prop="grossMargin">
           <template #default="{ row }">
             {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
@@ -162,8 +161,8 @@
             {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
-        <el-table-column label="价格" prop="price" />
-        <el-table-column label="佣金" prop="commission" width="180">
+        <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+        <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
           <template #default="scope">
             <el-input-number
               controls-position="right"
@@ -184,7 +183,7 @@
     <!-- 样品 -->
     <p>样品报价</p>
     <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
-      <span>{{ sample.solutionName }}</span>
+      <div mb-20px>{{ sample.solutionName }}</div>
       <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
         <el-table-column prop="name" label="样品阶段" />
         <el-table-column prop="pcs" label="需求量（pcs）" />
@@ -1048,8 +1047,10 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 }
 
 const initFetch = async () => {
-  const { result } = await getQuotationApprovedMarketing(auditFlowId)
-  data.resa = result
+  if (auditFlowId) {
+    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: 0 })
+    data.resa = result
+  }
 }
 
 // 计算含佣金的毛利率

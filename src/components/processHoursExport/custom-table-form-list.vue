@@ -168,7 +168,11 @@
                             </div>
                             <!-- 设备状态 -->
                             <div class="u-width-150  u-border  u-p-t-b-5">
-                                <span>{{ deviceItem.deviceStatus }}</span>
+                              <el-select v-model="deviceItem.deviceStatus" placeholder="选择状态"
+                                         >
+                                <el-option v-for="item in deviceStatusEnmus" :key="item.code" :label="item.value"
+                                           :value="item.code"/>
+                              </el-select>
                             </div>
                             <!-- 设备数量 -->
                             <div class="u-width-150  u-border  u-p-t-b-5">
@@ -310,8 +314,20 @@
     </el-scrollbar>
 </template>
 <script lang="ts" setup>
+import {onMounted, ref} from "vue";
+import {getDeviceStatus} from "@/api/processHoursEnter";
+const deviceStatusEnmus = ref<any>([]);
 let props = defineProps(['dataArr'])
+onMounted(() => {
+  getDeviceStatus().then((response: any) => {
+    console.log("======设备状态列表=======", response);
+    if (response.success) {
+      deviceStatusEnmus.value = response.result;
+    }
+  })
+})
 </script>
+
 <style scoped lang="scss">
 .u-p-t-b-5 {
     padding-top: 5px;

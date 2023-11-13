@@ -463,9 +463,9 @@
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
     </el-card>
-    <el-button @click="save">保存</el-button>
-    <el-button @click="toMarketingApproval">生成审批表</el-button>
+    <!-- <el-button @click="save">保存</el-button> -->
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">

@@ -1,5 +1,5 @@
 import { request } from "@/utils/service"
-export const baseURL="https://localhost:44311/"
+export const baseURL=import.meta.env.VITE_BASE_API
 
 
 

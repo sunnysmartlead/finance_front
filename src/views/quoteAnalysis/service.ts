@@ -188,7 +188,18 @@ export function PostIsOfferSaveSecond(data: any): any {
     data
   })
 }
-
+/**
+ * 前端流程流转
+ * @param data
+ * @returns
+ */
+export function SubmitNode(data: any): any {
+  return request({
+    url: "/api/services/app/WorkflowInstance/SubmitNode",
+    method: "post",
+    data
+  })
+}
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率

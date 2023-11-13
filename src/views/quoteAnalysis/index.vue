@@ -59,8 +59,8 @@
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
-    <ProcessVertifyBox :onSubmit="submit" v-havedone />
-    <ResetProcess/>
+    <ProcessVertifyBox :onSubmit="handleSubmit" v-havedone processType="confirmProcessType" />
+    <ResetProcess />
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -258,7 +258,7 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="上轮报价">
-          <el-table-column label="单价" width="150" prop="lastRoundPrice" :formatter="formatThousandths" >
+          <el-table-column label="单价" width="150" prop="lastRoundPrice" :formatter="formatThousandths">
             <!-- <template #default="scope">
               <el-input v-model="scope.row.lastRoundPrice" />
             </template> -->
@@ -562,6 +562,7 @@
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import * as echarts from "echarts"
+import { ElMessage } from "element-plus"
 // import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
@@ -576,7 +577,9 @@ import {
   PostYearDimensionalityComparisonForactualQt,
   PostGrossMarginForactualQt,
   PostIsOfferSaveSecond,
-  PostIsOfferSecond
+  PostIsOfferSecond,
+  SubmitNode,
+  getStatementAnalysisBoardSecond
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
@@ -1755,7 +1758,23 @@ const toMarketingApproval = () => {
     }
   })
 }
-const submit = () => {}
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  let res: any = await SubmitNode({
+    comment,
+    nodeInstanceId,
+    financeDictionaryDetailId: opinion
+    // AuditFlowId: auditFlowId,
+    // opinionDescription: comment,
+    // isAgree: opinion.includes("Done") ? true : false,
+  })
+  if (res.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+    // postOffer
+  }
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -1770,6 +1789,10 @@ onMounted(async () => {
     // productStore.setProductList(auditFlowId)
     // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
     // console.log(res)
+  }
+  if (right === "1") {
+    let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })
+    console.log(res, "getStatementAnalysisBoardSecond")
   }
 })
 watchEffect(() => {})

@@ -60,6 +60,7 @@
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
     <ProcessVertifyBox :onSubmit="submit" v-havedone />
+    <ResetProcess/>
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -579,6 +580,7 @@ import {
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import ResetProcess from "@/components/ResetProcess/index.vue"
 
 /**
  * 路由对象

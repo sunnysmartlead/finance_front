@@ -59,6 +59,7 @@
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
+    <ProcessVertifyBox :onSubmit="submit" v-havedone />
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -462,9 +463,9 @@
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
     </el-card>
-    <el-button @click="save">保存</el-button>
-    <el-button @click="toMarketingApproval">生成审批表</el-button>
+    <!-- <el-button @click="save">保存</el-button> -->
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -577,6 +578,7 @@ import {
   PostIsOfferSecond
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 /**
  * 路由对象
@@ -1751,6 +1753,7 @@ const toMarketingApproval = () => {
     }
   })
 }
+const submit = () => {}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

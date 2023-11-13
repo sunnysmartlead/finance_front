@@ -5,12 +5,14 @@
       <el-descriptions-item label="直接客户名称">
         {{ data.resa.directCustomerName }}
       </el-descriptions-item>
-      <el-descriptions-item label="客户性质"> {{ data.resa.clientNature }} </el-descriptions-item>
+      <el-descriptions-item label="客户性质">
+        {{ typeMapGetText("customerNatureOptions", data.resa.clientNature) }}
+      </el-descriptions-item>
       <el-descriptions-item label="终端客户名称">
         {{ data.resa.terminalCustomerName }}
       </el-descriptions-item>
       <el-descriptions-item label="终端客户性质">
-        {{ data.resa.terminalClientNature }}
+        {{ typeMapGetText("terminalNatureOptions", data.resa.terminalClientNature) }}
       </el-descriptions-item>
       <el-descriptions-item label="开发计划">
         <el-input v-model="data.resa.developmentPlan" />
@@ -22,10 +24,12 @@
         <el-input v-model="data.resa.projectCycle" />
       </el-descriptions-item>
       <el-descriptions-item label="销售类型">
-        <el-input v-model="data.resa.forSale" />
+        {{ typeMapGetText("salesTypeOptions", data.resa.forSale) }}
+        <!-- <el-input v-model="data.resa.forSale" /> -->
       </el-descriptions-item>
       <el-descriptions-item label="贸易方式">
-        <el-input v-model="data.resa.modeOfTrade" />
+        {{ typeMapGetText("TradeMethodOptions", data.resa.modeOfTrade) }}
+        <!-- <el-input v-model="data.resa.modeOfTrade" /> -->
       </el-descriptions-item>
       <el-descriptions-item label="付款方式">
         <el-input v-model="data.resa.paymentMethod" />
@@ -104,27 +108,42 @@
       </el-table>
     </el-card>
     <el-card header="内部核价信息：" m="2">
-      <el-table :data="data.resa.pricingMessageSecondModels" border>
+      <el-table :data="data.resa.pricingMessageSecondModels" border align="center">
         <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="方案名称" prop="solutionName" width="180" />
-        <el-table-column label="费用类别" prop="name" width="100" />
-        <el-table-column label="方案名称" prop="allSop" width="100" />
-        <el-table-column label="费用类别" prop="allfull" width="100" />
-        <el-table-column label="方案名称" prop="bomSop" width="100" />
-        <el-table-column label="费用类别" prop="bomfull" width="100" />
-        <el-table-column label="方案名称" prop="ftSop" width="100" />
-        <el-table-column label="费用类别" prop="ftfull" width="100" />
         <el-table-column label="梯度" prop="gradient" width="100" />
-        <el-table-column label="费用类别" prop="lsSop" width="100" />
-        <el-table-column label="方案名称" prop="lsfull" width="100" />
-        <el-table-column label="费用类别" prop="moqSop" width="100" />
-        <el-table-column label="方案名称" prop="moqfull" width="100" />
-        <el-table-column label="费用类别" prop="quSop" width="100" />
-        <el-table-column label="梯度" prop="qufull" width="100" />
-        <el-table-column label="费用类别" prop="scSop" width="100" />
-        <el-table-column label="方案名称" prop="scfull" width="100" />
-        <el-table-column label="费用类别" prop="yfSop" width="100" />
-        <el-table-column label="方案名称" prop="yffull" width="100" />
+        <el-table-column label="方案名称" prop="solutionName" width="180" />
+        <el-table-column label="BOM成本">
+          <el-table-column label="SOP年成本" prop="bomSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="bomfull" width="100" />
+        </el-table-column>
+        <el-table-column label="生产成本">
+          <el-table-column label="SOP年成本" prop="scSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="scfull" width="100" />
+        </el-table-column>
+        <el-table-column label="良损率、良损成本">
+          <el-table-column label="SOP年成本" prop="lsSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="lsfull" width="100" />
+        </el-table-column>
+        <el-table-column label="运费">
+          <el-table-column label="SOP年成本" prop="yfSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="yffull" width="100" />
+        </el-table-column>
+        <el-table-column label="MOQ分摊成本">
+          <el-table-column label="SOP年成本" prop="moqSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="moqfull" width="100" />
+        </el-table-column>
+        <el-table-column label="质量成本">
+          <el-table-column label="SOP年成本" prop="quSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="qufull" width="100" />
+        </el-table-column>
+        <el-table-column label="分摊成本">
+          <el-table-column label="SOP年成本" prop="ftSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="ftfull" width="100" />
+        </el-table-column>
+        <el-table-column label="总成本">
+          <el-table-column label="SOP年成本" prop="allSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="allfull" width="100" />
+        </el-table-column>
       </el-table>
       <!-- <template v-for="item in data.resa.pricingMessage" :key="item.messageName">
         <el-card :header="item.pricingMessageName" class="m-2">
@@ -148,6 +167,7 @@
     <el-card header="报价策略：" m="2">
       <el-table :data="data.resa.biddingStrategySecondModels" border>
         <el-table-column type="index" width="100" />
+        <el-table-column label="梯度" prop="gradient" />
         <el-table-column label="产品" prop="product" />
         <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
         <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
@@ -203,9 +223,6 @@
         <el-table-column label="备注" prop="remark" />
       </el-table>
     </el-card> -->
-    <el-row justify="end" m="2">
-      <el-button @click="save" type="primary">保存</el-button>
-    </el-row>
   </el-card>
 </template>
 
@@ -216,6 +233,9 @@ import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
 // import { PostAuditQuotationListSave } from "./service"
 import { getQuotationApprovedMarketing } from "./service"
+import { getDictionaryAndDetail } from "@/api/dictionary"
+import { ElLoading } from 'element-plus'
+
 import { ElMessage } from "element-plus"
 // import { ElMessageBox } from "element-plus"
 
@@ -996,6 +1016,12 @@ const data = reactive<any>({
     ]
   }
 })
+const typeMap = reactive<any>({
+  customerNatureOptions: [],
+  terminalNatureOptions: [],
+  salesTypeOptions: [],
+  TradeMethodOptions: []
+})
 const getSummaries = (param) => {
   const { columns, data } = param
   const sums: string[] = []
@@ -1046,10 +1072,32 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
 
+const typeMapGetText = (key: any, id: any) => {
+  let text = ""
+  typeMap[key].forEach((item: any) => {
+    if (item.id === id) {
+      text = item.displayName
+    }
+  })
+  return text
+}
 const initFetch = async () => {
+  let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
+  typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
+
+  let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
+  typeMap.terminalNatureOptions = terminalNature.result.financeDictionaryDetailList
+
+  let salesType: any = await getDictionaryAndDetail("SalesType") //销售类型
+  typeMap.salesTypeOptions = salesType.result.financeDictionaryDetailList
+
+  let tradeMethodType: any = await getDictionaryAndDetail("TradeMethod") //贸易方式
+  typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
   if (auditFlowId) {
+    const loadingInstance = ElLoading.service({ fullscreen: true })
     const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: 0 })
     data.resa = result
+    loadingInstance.close()
   }
 }
 
@@ -1064,14 +1112,6 @@ const fetchSopYear = async () => {
   columns.sopData = result || []
 }
 
-const save = async () => {
-  // const { success }: any =
-  //   (await PostAuditQuotationListSave({
-  //     auditFlowId,
-  //     ...data.resa
-  //   })) || {}
-  // if (success) ElMessage.success("保存成功！")
-}
 
 watchEffect(() => {})
 </script>

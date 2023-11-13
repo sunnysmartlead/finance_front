@@ -36,7 +36,7 @@ defineProps({
   width: 100%;
   height: 84px;
   line-height: 84px;
-  background: #0c202b;
+  background: black;
   text-align: center;
   overflow: hidden;
   .sidebar-logo {
@@ -46,7 +46,7 @@ defineProps({
     height: 100%;
     width: 100%;
     & .sidebar-logo-text {
-      height: 50px;
+      height: 45px;
       vertical-align: middle;
       width: 220px;
     }

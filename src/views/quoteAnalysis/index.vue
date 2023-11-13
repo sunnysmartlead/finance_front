@@ -56,9 +56,10 @@
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
-      <el-button type="primary" @click="postOffer(1)" v-havedone>报价</el-button>
-      <el-button type="primary" @click="postOffer(0)" v-havedone>不报价</el-button>
+      <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
+      <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
+    <ProcessVertifyBox :onSubmit="submit" v-havedone />
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -458,10 +459,13 @@
         <div :id="'unitpriceChart' + key" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
       </div>
-
-
+      <div>
+        <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
+        <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
+      </div>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
     </el-card>
-    <el-button @click="save">保存</el-button>
+    <!-- <el-button @click="save">保存</el-button> -->
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -561,20 +565,20 @@ import * as echarts from "echarts"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
 import {
-  calculateRate,
   PostStatementAnalysisBoardSecond,
-  PostComparison,
   GetSolution,
   PostDownloadMessageSecond,
-  PostSpreadSheetCalculate,
   PostYearDimensionalityComparisonForGradient,
   PostGrossMarginForGradient,
   PostGrossMarginForactual,
   PostYearDimensionalityComparisonForactual,
   PostYearDimensionalityComparisonForactualQt,
-  PostGrossMarginForactualQt
+  PostGrossMarginForactualQt,
+  PostIsOfferSaveSecond,
+  PostIsOfferSecond
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 
 /**
  * 路由对象
@@ -588,7 +592,7 @@ const router = useRouter()
 /**
  * 数据部分
  */
-let { auditFlowId, productId, nodeInstanceId } = getQuery()
+let { auditFlowId, productId, nodeInstanceId, right } = getQuery()
 interface planListItem {
   value: string
   isOffer: boolean
@@ -600,6 +604,7 @@ const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
 const planListArr = reactive<any[]>([])
+let selectPlan = ref<any[]>([])
 const planListArrVal = ref(null)
 const yearDimension = ref({
   numk: [],
@@ -635,6 +640,8 @@ const data = reactive({
     message: "调用成功"
   },
   allRes: {
+    isOffer: false,
+    noOfferReason: "string",
     auditFlowId: 0,
     grossMarginList: null,
     unitPrice: null,
@@ -779,11 +786,36 @@ const data = reactive({
         interiorGrossMargin: 20, // 目标价（内部）毛利率
         interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
         interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
-        clientPrice: 0, // 目标价（客户）单价
+        clientPrice: 1000, // 目标价（客户）单价
         clientGrossMargin: 0, // 目标价（客户）毛利率
         clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
         clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
-        thisQuotationPrice: 0, /// 本次报价单价
+        thisQuotationPrice: 1222, /// 本次报价单价
+        thisQuotationGrossMargin: 0, // 本次报价毛利率
+        thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
+        thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
+        lastRoundPrice: 0, // 上轮报价单价
+        lastRoundGrossMargin: 0, // 上轮报价毛利率
+        lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
+        lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
+      },
+      {
+        gradient: "4000k/y",
+        gradientId: 600,
+        solutionId: 664,
+        product: "延锋科技前装车内1M",
+        id: 0,
+        version: 0,
+        auditFlowId: 337,
+        interiorPrice: 783.3082529596942, //目标价（内部）单价
+        interiorGrossMargin: 20, // 目标价（内部）毛利率
+        interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
+        interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
+        clientPrice: 1200, // 目标价（客户）单价
+        clientGrossMargin: 0, // 目标价（客户）毛利率
+        clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
+        clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
+        thisQuotationPrice: 3333, /// 本次报价单价
         thisQuotationGrossMargin: 0, // 本次报价毛利率
         thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
         thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
@@ -957,20 +989,21 @@ const data = reactive({
           }
         ]
       }
-    ],
-    isSuccess: true,
-    message: "调用成功"
-  }
+    ]
+  } as any
 })
 const planListArrChange = async (val) => {
   fullscreenLoading.value = true
   try {
-    let res = await PostStatementAnalysisBoardSecond({ auditFlowId, solutionTables: planListArr[val] })
-    console.log(res)
-    console.log(planList)
-    console.log(planListArr[val])
-    data.allRes = res.result
+    selectPlan.value = planListArr[val]
+    let res = await PostStatementAnalysisBoardSecond({
+      auditFlowId,
+      solutionTables: planListArr[val],
+      version: 0,
+      ntime: 0
+    })
     fullscreenLoading.value = false
+    data.allRes = res.result
   } catch (error) {
     fullscreenLoading.value = false
   }
@@ -988,7 +1021,7 @@ const gradientTableMap = computed(() => {
     gradientTableMap[item.gradientId].push(item)
   })
 
-  setChartData(gradientTableMap)
+  // setChartData(gradientTableMap)
   return gradientTableMap
 })
 let gradientTableMapResult = ref([])
@@ -1112,10 +1145,11 @@ const addNewPlan = () => {
   })
 }
 // 设置图表
-const setChartData = (gradientTableMap: any) => {
+const setChartData = () => {
+  /**梯度图表 */
   let ProjectUnitPrice: stringKeyObj = {}
   let RevenueGrossMargin: stringKeyObj = {}
-  let keys = Object.keys(gradientTableMap)
+  let keys = Object.keys(gradientTableMap.value)
   keys.forEach((key) => {
     ProjectUnitPrice[key] = {
       title: {
@@ -1161,7 +1195,7 @@ const setChartData = (gradientTableMap: any) => {
     }
 
     ProjectUnitPrice[key].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
-    ProjectUnitPrice[key].series = gradientTableMap[key].map((item: any) => {
+    ProjectUnitPrice[key].series = gradientTableMap.value[key].map((item: any) => {
       return {
         name: item.product,
         type: "bar",
@@ -1175,18 +1209,6 @@ const setChartData = (gradientTableMap: any) => {
         data: [item.interiorPrice, item.clientPrice, item.thisQuotationPrice]
       }
     })
-
-    // ProjectUnitPrice[key].series.push({
-    //   yAxisIndex: 1,
-    //   name: "整体毛利率",
-    //   type: "line",
-    //   tooltip: {
-    //     formatter: "{a}{b}{c}%"
-    //   },
-    //   // 临时造的数据没有看到该字段
-    //   data: [Number(item.interiorGrossMargin).toFixed(2), Number(2222).toFixed(2), Number(2222).toFixed(2) || 0]
-    // })
-
     RevenueGrossMargin[key] = {
       title: {
         text: "收入和毛利率对比"
@@ -1221,50 +1243,38 @@ const setChartData = (gradientTableMap: any) => {
           }
         }
       ],
-      series: [
-        // {
-        //   data: [120, 200, 150],
-        //   type: "bar",
-        //   name: "OV方案销售收入"
-        // },
-        // {
-        //   data: [0, 0.05, 0.1],
-        //   type: "line",
-        //   name: "OV方案毛利率",
-        //   yAxisIndex: 1
-        // }
-      ]
+      series: []
     }
-    // {
-    //     gradient: "2664.9k/y",
-    //     gradientId: 599,
-    //     solutionId: 664,
-    //     product: "延锋科技前装车内1M",
-    //     id: 0,
-    //     version: 0,
-    //     auditFlowId: 337,
-    //     interiorPrice: 783.3082529596942, //目标价（内部）单价
-    //     interiorGrossMargin: 20, // 目标价（内部）毛利率
-    //     interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
-    //     interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
-    //     clientPrice: 0, // 目标价（客户）单价
-    //     clientGrossMargin: 0, // 目标价（客户）毛利率
-    //     clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
-    //     clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
-    //     thisQuotationPrice: 0, /// 本次报价单价
-    //     thisQuotationGrossMargin: 0, // 本次报价毛利率
-    //     thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
-    //     thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
-    //     lastRoundPrice: 0, // 上轮报价单价
-    //     lastRoundGrossMargin: 0, // 上轮报价毛利率
-    //     lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
-    //     lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
-    //   }
-    let RevenueGrossMarginSeries = [] as any[]
-    gradientTableMap[key].forEach((item: any) => {
-      if (item.product === "销售收入") {
-        let RevenueGrossMarginData = {
-          name: item.product,
+
+    data.allRes.projectBoard.forEach((item) => {
+      if (item.gradientId === Number(key)) {
+        let ritems = item.projectBoardModels.filter((fitem) => fitem.projectName === "毛利率")
+        let xssritems = item.projectBoardModels.filter((fitem) => fitem.projectName === "销售收入")
+
+        let ritem = ritems[0]
+        let xssritem = xssritems[0]
+        ProjectUnitPrice[key].series.push({
+          yAxisIndex: 1,
+          name: "整体毛利率",
+          type: "line",
+          tooltip: {
+            formatter: "{a}{b}{c}%"
+          },
+          // 临时造的数据没有看到该字段
+          data: [ritem.interiorTarget, ritem.clientTarget, ritem.offer]
+        })
+        RevenueGrossMargin[key].series.push({
+          yAxisIndex: 1,
+          name: "整体毛利率",
+          type: "line",
+          tooltip: {
+            formatter: "{a}{b}{c}%"
+          },
+          // 临时造的数据没有看到该字段
+          data: [ritem.interiorTarget, ritem.clientTarget, ritem.offer]
+        })
+        RevenueGrossMargin[key].series.push({
+          name: "销售收入",
           type: "bar",
           stack: "total",
           label: {
@@ -1273,47 +1283,155 @@ const setChartData = (gradientTableMap: any) => {
           emphasis: {
             focus: "series"
           },
-          data: [item.interiorPrice, item.clientPrice]
-        }
-        if (item.thisQuotationPrice) {
-          RevenueGrossMarginData.data.push(item.thisQuotationPrice)
-        }
-        RevenueGrossMarginSeries.push(RevenueGrossMarginData)
+          data: [xssritem.interiorTarget, xssritem.clientTarget, xssritem.offer]
+        })
       }
-      if (item.product === "毛利率") {
-        let RevenueGrossMarginDataY = {
-          yAxisIndex: 1,
-          name: "毛利率",
-          type: "line",
-          tooltip: {
-            formatter: "{a}{b}{c}%"
-          },
-          data: [item.interiorGrossMargin, item.clientGrossMargin]
-        }
-        if (item.thisQuotationGrossMargin) {
-          //这里计算只有grossMarginNumber
-          RevenueGrossMarginDataY.data.push(item.thisQuotationGrossMargin)
-        }
-        RevenueGrossMarginSeries.push(RevenueGrossMarginDataY)
+    })
+    setTimeout(() => {
+      initCharts("unitpriceChart" + key, ProjectUnitPrice[key])
+      initCharts("revenueGrossMarginChart" + key, RevenueGrossMargin[key])
+    }, 500)
+  })
+  /** 实际图表 */
+  let length = data.allRes.quotedGrossMargins.length
+  let sjTable = data.allRes.quotedGrossMargins[length - 1].quotedGrossMarginActualList
+  ProjectUnitPrice["shiji"] = {
+    title: {
+      text: "项目单价对比"
+    },
+    tooltip: {
+      trigger: "item",
+      axisPointer: {
+        // Use axis to trigger tooltip
+        type: "shadow" // 'shadow' as default; can also be 'line' or 'shadow'
       }
-      RevenueGrossMarginSeries.push({
+    },
+    legend: {},
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true
+    },
+    xAxis: {
+      type: "category",
+      data: ["目标价（内部）", "目标价（客户）", "本次报价"]
+    },
+    yAxis: [
+      {
+        type: "value",
+        name: "单价",
+        min: 0,
+        axisLabel: {
+          formatter: "{value} 元"
+        }
+      },
+      {
+        type: "value",
+        name: "毛利率",
+        min: 0,
+        axisLabel: {
+          formatter: "{value}%"
+        }
+      }
+    ],
+    series: []
+  }
+  ProjectUnitPrice["shiji"].xAxis.data = ["目标价（内部）", "目标价（客户）", "本次报价"]
+  ProjectUnitPrice["shiji"].series = sjTable.map((item: any) => {
+    return {
+      name: item.product,
+      type: "bar",
+      stack: "total",
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: "series"
+      },
+      data: [item.interiorPrice, item.clientPrice, item.thisQuotationPrice]
+    }
+  })
+  RevenueGrossMargin["shiji"] = {
+    title: {
+      text: "收入和毛利率对比"
+    },
+    xAxis: {
+      type: "category",
+      data: ["目标价(内部)", "目标价(客户)", "本次报价"]
+    },
+    tooltip: {
+      trigger: "item",
+      axisPointer: {
+        // Use axis to trigger tooltip
+        type: "shadow" // 'shadow' as default; can also be 'line' or 'shadow'
+      }
+    },
+    legend: {},
+    yAxis: [
+      {
+        type: "value",
+        name: "收入",
+        min: 0,
+        axisLabel: {
+          formatter: "{value} 元"
+        }
+      },
+      {
+        type: "value",
+        name: "毛利率",
+        min: 0,
+        axisLabel: {
+          formatter: "{value}%"
+        }
+      }
+    ],
+    series: []
+  }
+  data.allRes.projectBoard.forEach((item) => {
+    if (!item.gradientId) {
+      let ritems = item.projectBoardModels.filter((fitem) => fitem.projectName === "毛利率")
+      let xssritems = item.projectBoardModels.filter((fitem) => fitem.projectName === "销售收入")
+      let ritem = ritems[0]
+      let xssritem = xssritems[0]
+      ProjectUnitPrice["shiji"].series.push({
         yAxisIndex: 1,
         name: "整体毛利率",
         type: "line",
         tooltip: {
           formatter: "{a}{b}{c}%"
         },
-        data: [Number(1111).toFixed(2), Number(1111).toFixed(2), Number(2222).toFixed(2) || 0]
+        // 临时造的数据没有看到该字段
+        data: [ritem.interiorTarget, ritem.clientTarget, ritem.offer]
       })
-    })
-    RevenueGrossMargin[key].series = RevenueGrossMarginSeries
-    setTimeout(() => {
-      initCharts("unitpriceChart" + key, ProjectUnitPrice[key])
-      console.log(ProjectUnitPrice[key])
-      console.log(RevenueGrossMarginSeries)
-      initCharts("revenueGrossMarginChart" + key, RevenueGrossMargin[key])
-    }, 500)
+      RevenueGrossMargin["shiji"].series.push({
+        yAxisIndex: 1,
+        name: "整体毛利率",
+        type: "line",
+        tooltip: {
+          formatter: "{a}{b}{c}%"
+        },
+        // 临时造的数据没有看到该字段
+        data: [ritem.interiorTarget, ritem.clientTarget, ritem.offer]
+      })
+      RevenueGrossMargin["shiji"].series.push({
+        name: "销售收入",
+        type: "bar",
+        stack: "total",
+        label: {
+          show: true
+        },
+        emphasis: {
+          focus: "series"
+        },
+        data: [xssritem.interiorTarget, xssritem.clientTarget, xssritem.offer]
+      })
+    }
   })
+  setTimeout(() => {
+    initCharts("unitpriceChart" + "shiji", ProjectUnitPrice["shiji"])
+    initCharts("revenueGrossMarginChart" + "shiji", RevenueGrossMargin["shiji"])
+  }, 500)
 }
 const initCharts = (id: string, chartOption: any) => {
   // 基于准备好的dom，初始化echarts实例
@@ -1324,10 +1442,6 @@ const initCharts = (id: string, chartOption: any) => {
     chart.setOption(chartOption)
     return chart
   }
-}
-
-const postOffer = (isOffer: number) => {
-  console.log(isOffer)
 }
 
 //成本信息表
@@ -1344,7 +1458,7 @@ const downLoad = async () => {
     }
   })
   try {
-    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables })
+    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables, version: 1, ntime: 1 })
     const blob = res
     const reader = new FileReader()
     reader.readAsDataURL(blob)
@@ -1441,7 +1555,7 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
               row.offer = ritem.xssr - ritem.xscb - ritem.yj
             }
             if (row.projectName === "毛利率") {
-              row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
+              row.offer = ((ritem.xssr - ritem.xscb - ritem.yj) / ritem.xssr) * 100
             }
             if (row.projectName === "佣金") {
               row.offer = ritem.yj
@@ -1523,44 +1637,49 @@ const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: 
     data.allRes.quotedGrossMargins.length === index + 1 &&
     data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length === rowIndex + 1
   ) {
-    let ritem = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.reduce((pre, cur) => {
-      return {
-        sl: pre.sl + cur.sl,
-        xscb: pre.xscb + cur.xscb,
-        yj: pre.yj + cur.yj,
-        xssr: pre.xssr + cur.xssr
-      }
-    })
-    data.allRes.projectBoard.forEach((item) => {
-      if (!item.gradientId) {
-        item.projectBoardModels.forEach((row) => {
-          if (row.projectName === "数量") {
-            row.offer = ritem.sl
-          }
-          if (row.projectName === "销售成本") {
-            row.offer = ritem.xscb
-          }
-          if (row.projectName === "销售收入") {
-            row.offer = ritem.xssr
-          }
-          if (row.projectName === "单位平均成本") {
-            row.offer = ritem.xscb / ritem.sl
-          }
-          if (row.projectName === "平均单价") {
-            row.offer = ritem.xssr / ritem.sl
-          }
-          if (row.projectName === "销售毛利") {
-            row.offer = ritem.xssr - ritem.xscb - ritem.yj
-          }
-          if (row.projectName === "毛利率") {
-            row.offer = ((ritem.xssr - ritem.xscb) / ritem.xssr) * 100
-          }
-          if (row.projectName === "佣金") {
-            row.offer = ritem.yj
-          }
-        })
-      }
-    })
+    let slLenth = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.filter((item) => item.sl)
+    if (slLenth.length === data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.length) {
+      let ritem = data.allRes.quotedGrossMargins[index].quotedGrossMarginActualList.reduce((pre, cur) => {
+        return {
+          sl: pre.sl + cur.sl,
+          xscb: pre.xscb + cur.xscb,
+          yj: pre.yj + cur.yj,
+          xssr: pre.xssr + cur.xssr
+        }
+      })
+
+      data.allRes.projectBoard.forEach((item) => {
+        if (!item.gradientId) {
+          item.projectBoardModels.forEach((row) => {
+            if (row.projectName === "数量") {
+              row.offer = ritem.sl
+            }
+            if (row.projectName === "销售成本") {
+              row.offer = ritem.xscb
+            }
+            if (row.projectName === "销售收入") {
+              row.offer = ritem.xssr
+            }
+            if (row.projectName === "单位平均成本") {
+              row.offer = ritem.xscb / ritem.sl
+            }
+            if (row.projectName === "平均单价") {
+              row.offer = ritem.xssr / ritem.sl
+            }
+            if (row.projectName === "销售毛利") {
+              row.offer = ritem.xssr - ritem.xscb - ritem.yj
+            }
+            if (row.projectName === "毛利率") {
+              row.offer = ((ritem.xssr - ritem.xscb - ritem.yj) / ritem.xssr) * 100
+            }
+            if (row.projectName === "佣金") {
+              row.offer = ritem.yj
+            }
+          })
+        }
+      })
+    }
+    setChartData()
   }
 }
 const comfirmPlans = async () => {
@@ -1591,21 +1710,50 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
-const save = () => {
-  debugger
+const save = async () => {
+  // let version = right==='2'?0:
   if (auditFlowId) {
     let saveData = {
-      version: 1,
-      ntime: 1,
-      IsOffer: true,
+      version: 0,
+      ntime: 0,
+      IsOffer: false,
       Solutions: planListArr,
       ...data.allRes,
       auditFlowId
     }
+    let res = await PostIsOfferSaveSecond(saveData)
+    console.log(res, "saveData")
   }
 
   console.log(productList, planListArr, data.allRes)
 }
+const postOffer = async (isOffer: boolean) => {
+  if (auditFlowId) {
+    let saveData = {
+      version: 0,
+      ntime: 1,
+      solutions: selectPlan.value,
+      ...data.allRes,
+      isOffer,
+      auditFlowId
+    }
+    delete saveData.isSuccess
+    delete saveData.message
+    delete saveData.mes
+    let res = await PostIsOfferSecond(saveData)
+    console.log(res)
+  }
+}
+const toMarketingApproval = () => {
+  debugger
+  router.push({
+    path: "/quoteAnalysis/marketingApproval",
+    query: {
+      auditFlowId
+    }
+  })
+}
+const submit = () => {}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

@@ -182,7 +182,8 @@ const bomCostProcessType = [
   },
   {
     val: "BomEvalSelect_Dzjgj",
-    label: "定制结构件"
+    label: "定制结构件",
+    disabled: true
   },
   {
     val: "BomEvalSelect_Yes",
@@ -195,7 +196,8 @@ const priceEvaluationBoard = [
   {
     val: "HjkbSelect_Dzjgj",
     label: "定制结构件",
-    notHas: ["HjkbSelect_Input"]
+    notHas: ["HjkbSelect_Input"],
+    disabled: true
   },
   {
     val: "HjkbSelect_Jgbomppxg",

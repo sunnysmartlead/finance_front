@@ -175,11 +175,15 @@ const formLabelWidth = "100px"
 
 <style lang="scss" scoped>
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  position: relative;
   width: 100%;
   min-height: 100%;
+  background-image: url("/loginBg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
   .theme-switch {
     position: fixed;
     top: 5%;
@@ -187,6 +191,10 @@ const formLabelWidth = "100px"
     cursor: pointer;
   }
   .login-card {
+    position: absolute;
+    top: 50%;
+    right: 150px;
+    transform: translateY(-50%);
     width: 480px;
     border-radius: 20px;
     box-shadow: 0 0 10px #dcdfe6;

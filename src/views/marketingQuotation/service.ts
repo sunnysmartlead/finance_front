@@ -57,13 +57,11 @@ export function PostAuditQuotationListSave(data: {
 }
 
 // 总经理审批1
-export function GetManagerApprovalOfferOne(auditFlowId: number): any {
+export function GetManagerApprovalOfferOne(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferOne",
     method: "get",
-    data: {
-      auditFlowId
-    }
+    data
   })
 }
 

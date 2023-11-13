@@ -90,9 +90,10 @@ const isAllNull = ref(false)
 const initFetch = async () => {
   if (!auditFlowId || !productId) return
   const { result } = await GetInitialResourcesManagementSingle({ auditFlowId, solutionId: productId })
-  console.log(result, "result")
+
   mouldInventoryData.value = result?.mouldInventoryModels
   isAllNull.value = result.isAllNull
+  console.log(props.isVertify, isAllNull.value, "result")
   setTimeout(() => {
     handleToggleSelection()
   }, 300)

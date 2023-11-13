@@ -2280,8 +2280,8 @@ watch(
               arr.push({
                 kv: c.gradientValue,
                 product: item.product,
-                targetPrice: 0,
-                currency: 0
+                // targetPrice: 0,
+                // currency: 0
               })
             }
           })

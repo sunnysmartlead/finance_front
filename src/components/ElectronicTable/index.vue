@@ -45,7 +45,7 @@
               <template #default="{ row, $index }">
                 <el-input-number size="small" v-if="row.isEdit"
                   v-model="row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
-                  :min="0" @change="handleCalculation(row, $index)" />
+                  :min="0" @change="handleCalculation(row, $index, 0)" />
                 <span v-if="!row.isEdit">{{
                   row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5)
                 }}</span>
@@ -59,9 +59,9 @@
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
-              <template #default="scope">
-                <el-input size="small" v-if="scope.row.isEdit"
-                  v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value" type="number">
+              <template #default="{ row, $index }">
+                <el-input size="small" v-if="row.isEdit"
+                  v-model="row.inTheRate[index].yearOrValueModes[iIndex].value" type="number" @change="handleCalculation(row, $index, 1)">
                   <template #append> % </template>
                 </el-input>
               </template>
@@ -397,10 +397,10 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
   }
 }
 
-const debounceHandleCalculation = debounce(async (row: any, index: number) => {
+const debounceHandleCalculation = debounce(async (row: any, index: number, type: number) => {
   try {
     row.loading = true
-    const { success, result } = await PosToriginalCurrencyCalculate(row)
+    const { success, result } = await PosToriginalCurrencyCalculate({ ...row, type })
     if (!success && !result.length) throw Error()
     electronicBomList.value[index] = { ...(result || {}), isEdit: true, isEdited: true }
     row.loading = false
@@ -413,9 +413,9 @@ const debounceHandleCalculation = debounce(async (row: any, index: number) => {
 }, 300)
 
 // 根据汇率计算
-const handleCalculation = (row: any, index: number) => {
+const handleCalculation = (row: any, index: number, type: number) => {
   row.loading = true
-  return debounceHandleCalculation(row, index)
+  return debounceHandleCalculation(row, index, type)
 }
 
 const SubmitJudge = async (record: any, isSubmit: number, index: number) => {

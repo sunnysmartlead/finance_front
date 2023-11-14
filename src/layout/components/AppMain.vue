@@ -10,6 +10,7 @@ const key = computed(() => {
 
 <template>
   <section class="app-main">
+    <ResetProcess />
     <el-scrollbar style="height: 100%" native>
       <router-view v-slot="{ Component }">
         <transition name="fade-transform" mode="out-in">

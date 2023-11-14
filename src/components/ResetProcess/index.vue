@@ -1,6 +1,6 @@
 <template>
   <el-row justify="end">
-    <el-button type="primary" m="2" @click="data.dialogVisible = true">重置流程</el-button>
+    <el-button type="primary" m="2" @click="data.dialogVisible = true" v-if="!notShow">重置流程</el-button>
     <el-dialog v-model="data.dialogVisible" title="重置流程" width="30%">
       <el-form>
         <el-form-item label="选择人员">
@@ -30,18 +30,29 @@
 <script lang="ts" setup>
 import { reactive, PropType, computed, onMounted, ref } from "vue"
 import { ElMessage } from "element-plus"
+import { useRoute } from "vue-router"
 
-// import { useRoute } from "vue-router"
-// import PROGRESSTYPE from "@/constant/approvalProcess"
-// import { useProductStore } from "@/store/modules/productList"
-// import { debounce } from "lodash"
 import { GetAll, ResetTask } from "./service"
 import getQuery from "@/utils/getQuery"
 
-// const productStore = useProductStore()
+const route = useRoute()
+
 const loading = ref(false)
 let { nodeInstanceId } = getQuery()
 
+const notShowRoutes = [
+  "/nre/nreResourcesDepartment",
+  "/resourcesDepartment/electronic",
+  "/resourcesDepartment/construction",
+  "/demandApply/index"
+]
+let notShow = computed(() => {
+  if (notShowRoutes.includes(route.path)) {
+    return true
+  } else {
+    return false
+  }
+})
 onMounted(async () => {
   let params: any = {
     keyword: "",
@@ -76,36 +87,4 @@ const onSubmit = async () => {
     console.log(res.data)
   }
 }
-// const props = defineProps({
-//   onSubmit: {
-//     type: Function as PropType<any>
-//   },
-//   processType: {
-//     type: String,
-//     default: "baseProcessType"
-//   },
-//   nodeInstanceId: {
-//     type: Number,
-//     default: 0
-//   }
-// })
-
-// const route = useRoute()
-
-// const solutionIdOptions = computed(() => {
-//   return productStore?.productList || []
-// })
-
-// const onSubmit = debounce(async () => {
-//   const label = PROGRESSTYPE[props.processType]?.find((v: any) => v.val === data.opinion)?.label || ""
-//   let { nodeInstanceId } = route.query
-//   await props.onSubmit({
-//     comment: data.comment,
-//     opinion: data.opinion,
-//     nodeInstanceId: nodeInstanceId,
-//     label,
-//     ids: data.solutionIds
-//   })
-//   data.dialogVisible = false
-// }, 350)
 </script>

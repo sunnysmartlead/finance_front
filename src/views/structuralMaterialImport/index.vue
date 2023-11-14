@@ -1,6 +1,6 @@
 <template>
   <el-row align="middle" justify="end" m="2">
-    <el-button type="primary" @click="submit(refForm)" v-havedone>校验</el-button>
+    <el-button type="primary" @click="submit(refForm)" v-if="!data.isShowBox" v-havedone>校验</el-button>
     <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" v-havedone />
   </el-row>
   <div class="structuralMaterial-import">

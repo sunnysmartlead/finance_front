@@ -1,5 +1,6 @@
 import { MouldInventoryModel } from "../data.type"
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults"
+import { formatThousandths } from '@/utils/number'
 
 // 手板件费用合计
 export interface MouldSummaryMethodProps<T = MouldInventoryModel> {
@@ -11,13 +12,13 @@ export const getMouldSummaries = (
   param: MouldSummaryMethodProps,
   name?: string,
   key?: string | null,
-  key2?: string
+  key2?: string,
+  currentIndex?: number,
 ) => {
   const { columns, data } = param
-  console.log(data, "getMouldSummaries")
   const sums: string[] = []
   columns.forEach((_, index) => {
-    if (index === 1) {
+    if (index === (currentIndex || 1)) {
       sums[index] = `${name || "模具费"}合计`
       return
     }
@@ -29,14 +30,15 @@ export const getMouldSummaries = (
     } else {
       values = data?.map((item) => Number((item.count || 0) * (item.unitPrice || 0)))
     }
-    if (!values?.every((value) => Number.isNaN(value)) && index === 2) {
-      sums[index] = `¥ ${values?.reduce((prev, curr) => {
+    if (!values?.every((value) => Number.isNaN(value)) && index === (currentIndex && currentIndex > 1 ? currentIndex + 1 : 2)) {
+      const total = values?.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {
           return prev + curr
         } else {
           return prev
         }
-      }, 0)}`
+      }, 0)
+      sums[index] = `¥ ${formatThousandths(null, null, total)}`
     } else {
       sums[index] = ""
     }

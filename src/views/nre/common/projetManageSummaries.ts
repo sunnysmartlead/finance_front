@@ -1,5 +1,6 @@
 import { HandPieceCostModel, RestsCostModel } from "../data.type"
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults"
+import { formatThousandths } from '@/utils/number'
 
 // 手板件费用合计
 export interface HandPieceSummaryMethodProps<T = HandPieceCostModel> {
@@ -25,13 +26,14 @@ export const getHandPieceCostSummaries = (param: HandPieceSummaryMethodProps) =>
 
     const values = data.map((item) => Number((item.quantity || 0) * (item.unitPrice || 0)))
     if (!values.every((value) => Number.isNaN(value)) && index === 5) {
-      sums[index] = `¥ ${values.reduce((prev, curr) => {
+      const total = values.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {
           return prev + curr
         } else {
           return prev
         }
-      }, 0)}`
+      }, 0)
+      sums[index] = `¥ ${formatThousandths(null, null, total)}`
     } else {
       sums[index] = ""
     }

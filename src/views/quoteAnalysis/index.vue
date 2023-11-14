@@ -60,6 +60,7 @@
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
     <ProcessVertifyBox :onSubmit="submit" v-havedone />
+    <ResetProcess/>
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -257,10 +258,10 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="上轮报价">
-          <el-table-column label="单价" width="150">
-            <template #default="scope">
+          <el-table-column label="单价" width="150" prop="lastRoundPrice" :formatter="formatThousandths" >
+            <!-- <template #default="scope">
               <el-input v-model="scope.row.lastRoundPrice" />
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column label="毛利率">
             <template #default="{ row }">
@@ -471,7 +472,7 @@
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="数量K" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -481,7 +482,7 @@
       <el-table :data="yearDimension.prices" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="单价" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -491,7 +492,7 @@
       <el-table :data="yearDimension.sellingCost" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="销售成本" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -501,7 +502,7 @@
       <el-table :data="yearDimension.averageCost" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="单位平均成本" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -511,7 +512,7 @@
       <el-table :data="yearDimension.salesRevenue" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="销售收入" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -521,7 +522,7 @@
       <el-table :data="yearDimension.salesMargin" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="销售毛利（千元）" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -531,7 +532,7 @@
       <el-table :data="yearDimension.commission" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="佣金" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -541,7 +542,7 @@
       <el-table :data="yearDimension.grossMargin" style="width: 100%" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" />
         <el-table-column label="年份" prop="key" />
-        <el-table-column label="值" prop="value">
+        <el-table-column label="毛利率" prop="value">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)}% ` }}</div>
           </template>
@@ -579,6 +580,7 @@ import {
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import ResetProcess from "@/components/ResetProcess/index.vue"
 
 /**
  * 路由对象

@@ -8,7 +8,7 @@
     <el-card class="margin-top">
       <template #header> 资源部 - 业务员 </template>
       <el-table ref="multipleTableRef" :data="mouldInventoryData" style="width: 100%" border
-        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost')" show-summary
+        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost', '', 5)" show-summary
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column type="index" label="序号" width="70" />
@@ -90,9 +90,10 @@ const isAllNull = ref(false)
 const initFetch = async () => {
   if (!auditFlowId || !productId) return
   const { result } = await GetInitialResourcesManagementSingle({ auditFlowId, solutionId: productId })
-  console.log(result, "result")
+
   mouldInventoryData.value = result?.mouldInventoryModels
   isAllNull.value = result.isAllNull
+  console.log(props.isVertify, isAllNull.value, "result")
   setTimeout(() => {
     handleToggleSelection()
   }, 300)

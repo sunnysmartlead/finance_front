@@ -10,21 +10,41 @@
 
 <template>
   <el-row justify="end" v-havedone>
+    <div v-if="props.processType === 'baseProcessType'">
+      <el-button type="primary" @click="data.dialogVisible = true" m="2">同意</el-button>
+      <el-button type="danger" @click="data.dialogVisible = true" m="2">不同意</el-button>
+    </div>
     <div v-if="props.processType === 'confirmProcessType'">
-      <el-button type="primary"  @click="onSubmit('Save', '保存')" m="2">保存</el-button>
+      <el-button type="primary" @click="onSubmit('Save', '保存')" m="2">保存</el-button>
       <el-button type="primary" @click="handleEnter('Done', '提交')" m="2">提交</el-button>
     </div>
-    <el-button v-if="!['confirmProcessType'].includes(props.processType)" type="primary" m="2" @click="data.dialogVisible = true">{{ title }}</el-button>
+    <el-button
+      v-if="!['baseProcessType', 'confirmProcessType'].includes(props.processType)"
+      type="primary"
+      m="2"
+      @click="data.dialogVisible = true"
+      >{{ title }}</el-button
+    >
     <el-dialog v-model="data.dialogVisible" title="流程确认" width="30%">
       <el-form>
         <el-form-item label="选择类型" v-if="!['confirmProcessType'].includes(props.processType)">
           <el-select v-model="data.opinion" :disabled="processType === 'confirm'">
-            <el-option v-for="item in (PROGRESSTYPE[props.processType] || [])" :key="item.val" :label="item.label"
-              :value="item.val"  :disabled="item.disabled" />
+            <el-option
+              v-for="item in PROGRESSTYPE[props.processType] || []"
+              :key="item.val"
+              :label="item.label"
+              :value="item.val"
+              :disabled="item.disabled"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="审批意见">
-          <el-input v-model="data.comment" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" placeholder="请输入审批意见" />
+          <el-input
+            v-model="data.comment"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            type="textarea"
+            placeholder="请输入审批意见"
+          />
         </el-form-item>
         <!-- <el-form-item label="要退回的方案">
           <el-checkbox-group v-model="data.solutionIds">
@@ -35,7 +55,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="data.dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="onSubmit"> 确定 </el-button>
+          <el-button type="primary" @click="onSubmit()"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -50,7 +70,7 @@ import PROGRESSTYPE from "@/constant/approvalProcess"
 import { useProductStore } from "@/store/modules/productList"
 import { debounce } from "lodash"
 import { handleSubmit } from "@/api/COB"
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox } from "element-plus"
 
 const productStore = useProductStore()
 
@@ -58,9 +78,8 @@ const data: any = reactive({
   dialogVisible: false,
   comment: "",
   opinion: "",
-  solutionIds: [],
+  solutionIds: []
 })
-
 
 const props = defineProps({
   onSubmit: {
@@ -83,10 +102,9 @@ const props = defineProps({
 const route = useRoute()
 
 onMounted(() => {
-  console.log(props.processType, 'props')
-  if (props.processType === 'confirm') {
-    data.opinion = 'YesOrNo_Yes'
-
+  console.log(props.processType, "props")
+  if (props.processType === "confirm") {
+    data.opinion = "YesOrNo_Yes"
   }
 })
 
@@ -104,7 +122,7 @@ const onSubmit = debounce(async (opinion, label) => {
     opinion = data.opinion
   }
   if (!label) {
-    label = PROGRESSTYPE[props.processType]?.find((v: any) => v.val === data.opinion)?.label || ''
+    label = PROGRESSTYPE[props.processType]?.find((v: any) => v.val === data.opinion)?.label || ""
   }
   await props.onSubmit({
     comment: data.comment,

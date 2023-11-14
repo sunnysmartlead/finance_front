@@ -10,18 +10,14 @@
 
 <template>
   <el-row justify="end" v-havedone>
-    <div v-if="props.processType === 'baseProcessType'">
-      <el-button type="primary"  @click="data.dialogVisible = true" m="2">同意</el-button>
-      <el-button type="danger" @click="data.dialogVisible = true" m="2">不同意</el-button>
-    </div>
     <div v-if="props.processType === 'confirmProcessType'">
       <el-button type="primary"  @click="onSubmit('Save', '保存')" m="2">保存</el-button>
       <el-button type="primary" @click="handleEnter('Done', '提交')" m="2">提交</el-button>
     </div>
-    <el-button v-if="!['baseProcessType', 'confirmProcessType'].includes(props.processType)" type="primary" m="2" @click="data.dialogVisible = true">{{ title }}</el-button>
+    <el-button v-if="!['confirmProcessType'].includes(props.processType)" type="primary" m="2" @click="data.dialogVisible = true">{{ title }}</el-button>
     <el-dialog v-model="data.dialogVisible" title="流程确认" width="30%">
       <el-form>
-        <el-form-item label="选择类型" v-if="!['baseProcessType', 'confirmProcessType'].includes(props.processType)">
+        <el-form-item label="选择类型" v-if="!['confirmProcessType'].includes(props.processType)">
           <el-select v-model="data.opinion" :disabled="processType === 'confirm'">
             <el-option v-for="item in (PROGRESSTYPE[props.processType] || [])" :key="item.val" :label="item.label"
               :value="item.val"  :disabled="item.disabled" />

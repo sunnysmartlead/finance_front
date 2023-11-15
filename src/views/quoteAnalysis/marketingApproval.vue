@@ -171,18 +171,18 @@
         <el-table-column label="产品" prop="product" />
         <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
         <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
-        <el-table-column label="毛利率" prop="grossMargin">
+        <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+        <!-- <el-table-column label="毛利率" prop="grossMargin">
           <template #default="{ row }">
             {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
           <template #default="{ row }">
             {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
-        <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
-        <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
+        <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
           <template #default="scope">
             <el-input-number
               controls-position="right"
@@ -192,10 +192,15 @@
               :min="0"
             />
           </template>
-        </el-table-column>
-        <el-table-column label="含佣金的毛利率" prop="grossMarginCommission">
+        </el-table-column> -->
+        <el-table-column label="增加客供料毛利率" prop="clientGrossMargin">
           <template #default="{ row }">
-            {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
+            {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
+          </template>
+        </el-table-column>
+        <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin">
+          <template #default="{ row }">
+            {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
       </el-table>
@@ -234,7 +239,7 @@ import { getYears } from "../pmDepartment/service"
 // import { PostAuditQuotationListSave } from "./service"
 import { getQuotationApprovedMarketing } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
-import { ElLoading } from 'element-plus'
+import { ElLoading } from "element-plus"
 
 import { ElMessage } from "element-plus"
 // import { ElMessageBox } from "element-plus"
@@ -823,195 +828,42 @@ const data = reactive<any>({
     ],
     pricingMessageSecondModels: [
       {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "BOM成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "制造成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "损耗成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "物流成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "MOQ分摊成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "质量成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "其他成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "总成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "备注",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
+        solutionName: "延锋科技前装车内1M-舱内",
+        gradientId: 599,
+        solutionId: 664,
+        gradient: "2664.9",
+        bomSop: 370.34, //BOM成本 sop
+        bomfull: 368.58, //全生命周期成本
+        scSop: 94.95, //  生产成本 sop
+        scfull: 99.92, //生产成本 全生命周期成本
+        lsSop: 16.72, // sop  良损率、良损成本
+        lsfull: 9.42, //良损率、良损成本 全生命周期成本
+        yfSop: 0.23, // 运费 sop
+        yffull: 0.23, //运费 全生命周期成本
+        moqSop: 0.01, // MOQ分摊成本 sop
+        moqfull: 0.06, //MOQ分摊成本 全生命周期成本
+        quSop: 2.79, //  质量成本 sop
+        qufull: 1.84, //质量成本 全生命周期成本
+        ftSop: 0.81, // 分摊成本 sop
+        ftfull: 1.24, //分摊成本 全生命周期成本
+        allSop: 485.85, //  总成本 sop
+        allfull: 481.28 //总成本 全生命周期成本
       }
     ],
     biddingStrategySecondModels: [
       {
-        gradientId: 202,
-        gradient: "25K/Y",
+        gradientId: 599,
+        gradient: "2664.9k/y",
         productId: 0,
-        product: "前视-AR0820",
-        sopCost: 1,
-        fullLifeCyclecost: 2,
-        salesRevenue: 0,
-        sellingCost: 0,
-        grossMargin: 0,
-        price: 1,
-        commission: 0,
-        sopGrossMargin: 23,
-        grossMarginCommission: 0,
-        totallifeCyclegrossMargin: 12,
-        clientGrossMargin: 23,
-        nreGrossMargin: 10
-      },
-      {
-        gradientId: 203,
-        gradient: "35K/Y",
-        productId: 0,
-        product: "前视-AR0820",
-        sopCost: 1,
-        fullLifeCyclecost: 2,
-        salesRevenue: 0,
-        sellingCost: 0,
-        grossMargin: 0,
-        price: 1,
-        commission: 0,
-        sopGrossMargin: 23,
-        grossMarginCommission: 0,
-        totallifeCyclegrossMargin: 12,
-        clientGrossMargin: 23,
-        nreGrossMargin: 10
+        product: "延锋科技前装车内1M",
+        sopCost: 1669950.5306498313, //Sop年成本
+        fullLifeCyclecost: 6551899.356798569, //全生命周期成本
+        price: 1111, //价格
+
+        sopGrossMargin: 40.41033099014627, //SOP年毛利率
+        totallifeCyclegrossMargin: 40.37, //
+        clientGrossMargin: -44.58, //增加客供料毛利率
+        nreGrossMargin: 40.4 //剔除分摊费用毛利率
       }
     ]
   }
@@ -1111,7 +963,6 @@ const fetchSopYear = async () => {
   const { result } = (await getYears(auditFlowId)) || {}
   columns.sopData = result || []
 }
-
 
 watchEffect(() => {})
 </script>

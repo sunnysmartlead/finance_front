@@ -62,7 +62,7 @@
                   <template #default="scope">
                     <el-input-number size="small" v-if="scope.row.isEdit"
                       v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value" controls-position="right"
-                      :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index)" />
+                      :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index, 0)" />
                     <span v-if="!scope.row.isEdit">{{
                       scope.row.systemiginalCurrency[i]?.yearOrValueModes[iIndex]?.value.toFixed(5)
                     }}</span>
@@ -78,7 +78,7 @@
                   :label="yearItem.year + upDownEnum[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="150" :formatter="filterinTheRate">
                   <template #default="scope">
                     <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
-                      type="number">
+                      type="number" @input="handleCalculation(scope.row, bomIndex, scope.$index, 1)">
                       <template #append> % </template>
                     </el-input>
                   </template>
@@ -333,10 +333,10 @@ const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, row
   }
 }
 
-const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, index: number) => {
+const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, index: number, type: number) => {
   try {
     row.loading = true
-    const { success, result } = await PostStructuralMaterialCalculate(row)
+    const { success, result } = await PostStructuralMaterialCalculate({ ...row, type })
     if (!success && !result.length) {
       row.loading = false
       throw Error()
@@ -351,9 +351,9 @@ const debounceHandleCalculation = debounce(async (row: any, bomIndex: number, in
 }, 300)
 
 // 根据汇率计算
-const handleCalculation = (row: any, bomIndex: number, index: number) => {
+const handleCalculation = (row: any, bomIndex: number, index: number, type: number) => {
   row.loading = true
-  return debounceHandleCalculation(row, bomIndex, index)
+  return debounceHandleCalculation(row, bomIndex, index, type)
 }
 
 const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {

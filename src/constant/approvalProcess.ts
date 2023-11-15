@@ -59,7 +59,7 @@ const confirm = [
   //YesOrNo
   {
     label: "同意",
-    val: "YesOrNo_Yes"
+    val: "HjkbSelect_Yes"
   }
 ]
 

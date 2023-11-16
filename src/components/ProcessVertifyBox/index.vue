@@ -27,7 +27,7 @@
     >
     <el-dialog v-model="data.dialogVisible" title="流程确认" width="30%">
       <el-form>
-        <el-form-item label="选择类型" v-if="!['confirmProcessType'].includes(props.processType)">
+        <el-form-item label="选择类型" v-if="!['confirmProcessType', 'confirm'].includes(props.processType)">
           <el-select v-model="data.opinion" :disabled="processType === 'confirm'">
             <el-option
               v-for="item in PROGRESSTYPE[props.processType] || []"
@@ -104,7 +104,7 @@ const route = useRoute()
 onMounted(() => {
   console.log(props.processType, "props")
   if (props.processType === "confirm") {
-    data.opinion = "YesOrNo_Yes"
+    data.opinion = "HjkbSelect_Yes"
   }
 })
 

@@ -60,7 +60,6 @@
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
     <ProcessVertifyBox :onSubmit="handleSubmit" v-havedone processType="confirmProcessType" />
-    <ResetProcess />
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -583,8 +582,6 @@ import {
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
-import ResetProcess from "@/components/ResetProcess/index.vue"
-
 /**
  * 路由对象
  */
@@ -677,46 +674,6 @@ const data = reactive({
           {
             gross: "5",
             grossvalue: 1961.647296461244
-          },
-          {
-            gross: "6",
-            grossvalue: 1982.51588472147
-          },
-          {
-            gross: "8",
-            grossvalue: 2025.6140561284585
-          },
-          {
-            gross: "10",
-            grossvalue: 2070.6277018202018
-          },
-          {
-            gross: "12",
-            grossvalue: 2117.6874223161158
-          },
-          {
-            gross: "14",
-            grossvalue: 2166.9359670211416
-          },
-          {
-            gross: "16",
-            grossvalue: 2218.529680521645
-          },
-          {
-            gross: "18",
-            grossvalue: 2272.640160534368
-          },
-          {
-            gross: "20",
-            grossvalue: 2329.4561645477274
-          },
-          {
-            gross: "22",
-            grossvalue: 2389.1858097925406
-          },
-          {
-            gross: "24",
-            grossvalue: 2452.059120576555
           }
         ]
       }
@@ -729,31 +686,6 @@ const data = reactive({
             solutionId: 0,
             product: "延锋科技前装车内1M",
             carNum: 2,
-            id: 0,
-            version: 0,
-            auditFlowId: 337,
-            interiorPrice: 0.0,
-            interiorGrossMargin: 0.0,
-            interiorClientGrossMargin: 0.0,
-            interiorNreGrossMargin: 0.0,
-            clientPrice: 0.0,
-            clientGrossMargin: 0.0,
-            clientClientGrossMargin: 0.0,
-            clientNreGrossMargin: 0.0,
-            thisQuotationPrice: 0.0,
-            thisQuotationGrossMargin: 0.0,
-            thisQuotationClientGrossMargin: 0.0,
-            thisQuotationNreGrossMargin: 0.0,
-            lastRoundPrice: 0.0,
-            lastRoundGrossMargin: 0.0,
-            lastRoundClientGrossMargin: 0.0,
-            lastRoundNreGrossMargin: 0.0
-          },
-          {
-            carModel: "Y1",
-            solutionId: 0,
-            product: "延锋科技-DMS-2M",
-            carNum: 1,
             id: 0,
             version: 0,
             auditFlowId: 337,
@@ -803,31 +735,6 @@ const data = reactive({
         lastRoundGrossMargin: 0, // 上轮报价毛利率
         lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
         lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
-      },
-      {
-        gradient: "4000k/y",
-        gradientId: 600,
-        solutionId: 664,
-        product: "延锋科技前装车内1M",
-        id: 0,
-        version: 0,
-        auditFlowId: 337,
-        interiorPrice: 783.3082529596942, //目标价（内部）单价
-        interiorGrossMargin: 20, // 目标价（内部）毛利率
-        interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
-        interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
-        clientPrice: 1200, // 目标价（客户）单价
-        clientGrossMargin: 0, // 目标价（客户）毛利率
-        clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
-        clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
-        thisQuotationPrice: 3333, /// 本次报价单价
-        thisQuotationGrossMargin: 0, // 本次报价毛利率
-        thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
-        thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
-        lastRoundPrice: 0, // 上轮报价单价
-        lastRoundGrossMargin: 0, // 上轮报价毛利率
-        lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
-        lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
       }
     ],
     fullLifeCycle: [
@@ -837,46 +744,6 @@ const data = reactive({
           {
             grossMargin: 5,
             grossMarginNumber: 1.05
-          },
-          {
-            grossMargin: 6,
-            grossMarginNumber: 1.06
-          },
-          {
-            grossMargin: 8,
-            grossMarginNumber: 1.09
-          },
-          {
-            grossMargin: 10,
-            grossMarginNumber: 1.11
-          },
-          {
-            grossMargin: 12,
-            grossMarginNumber: 1.14
-          },
-          {
-            grossMargin: 14,
-            grossMarginNumber: 1.16
-          },
-          {
-            grossMargin: 16,
-            grossMarginNumber: 1.19
-          },
-          {
-            grossMargin: 18,
-            grossMarginNumber: 1.22
-          },
-          {
-            grossMargin: 20,
-            grossMarginNumber: 1.25
-          },
-          {
-            grossMargin: 22,
-            grossMarginNumber: 1.28
-          },
-          {
-            grossMargin: 24,
-            grossMarginNumber: 1.32
           }
         ]
       }
@@ -894,76 +761,6 @@ const data = reactive({
             clientTarget: 21319.2,
             offer: 0.0,
             oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "销售成本",
-            interiorTarget: 23570070.79,
-            clientTarget: 23570070.79,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "单位平均成本",
-            interiorTarget: 1105.58,
-            clientTarget: 1105.58,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "销售收入",
-            interiorTarget: 28985042.52,
-            clientTarget: 8438427.92,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "佣金",
-            interiorTarget: 590007.46,
-            clientTarget: 171769.13,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "平均单价",
-            interiorTarget: 6.01,
-            clientTarget: 395.81,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "销售毛利",
-            interiorTarget: 4824964.28,
-            clientTarget: -15303411.98,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "毛利率",
-            interiorTarget: 16.65,
-            clientTarget: -181.35,
-            offer: 0.0,
-            oldOffer: null
           }
         ]
       },
@@ -978,17 +775,6 @@ const data = reactive({
             projectName: "数量",
             interiorTarget: 32000.0,
             clientTarget: 32000.0,
-            offer: 0.0,
-            oldOffer: null
-          },
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            gradientId: 2,
-            projectName: "销售成本",
-            interiorTarget: 34679267.1,
-            clientTarget: 34679267.1,
             offer: 0.0,
             oldOffer: null
           }

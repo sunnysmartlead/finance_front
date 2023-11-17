@@ -60,7 +60,7 @@
                 <el-table-column v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150">
                   <template #default="scope">
-                    <el-input-number size="small" v-if="scope.row.isEdit"
+                    <el-input-number @mousewheel.native.prevent size="small" v-if="scope.row.isEdit"
                       v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value" controls-position="right"
                       :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index, 0)" />
                     <span v-if="!scope.row.isEdit">{{
@@ -95,7 +95,7 @@
             </el-table-column>
             <el-table-column prop="moq" label="MOQ" width="150">
               <template #default="{ row }">
-                <el-input-number size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
+                <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
                 <span v-if="!row.isEdit">{{ row.moq }}</span>
               </template>
             </el-table-column>
@@ -104,7 +104,7 @@
                 :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" width="150" :key="`rebateMoney${i}`" :prop="`rebateMoney.${i}.value`"
                 :formatter="formatThousandths">
                 <template #default="{ row }">
-                  <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
+                  <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
                     :min="0" />
                 </template>
               </el-table-column>

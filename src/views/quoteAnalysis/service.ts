@@ -337,3 +337,12 @@ export function DownloadExternalQuotation(data: any) {
     data
   })
 }
+
+// 根据流程号获取报价目录
+export function GeCatalogue(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GeCatalogue",
+    method: "post",
+    data
+  })
+}

@@ -41,17 +41,17 @@
         </el-table-column>
         <el-table-column prop="partNumber" width="175" label="料号">
           <template #default="{ row }">
-            <el-input-number v-model="row.partNumber" width="175" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.partNumber" width="175" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="unitPrice" width="175" label="单价" :formatter="formatThousandths">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPrice" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="quantity" width="175" label="数量" :formatter="formatThousandthsNoFixed">
           <template #default="{ row }">
-            <el-input-number v-model="row.quantity" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.quantity" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
@@ -105,17 +105,17 @@
         </el-table-column>
         <el-table-column prop="moldCavityCount" width="175" label="模穴数">
           <template #default="{ row }">
-            <el-input-number v-model="row.moldCavityCount" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.moldCavityCount" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="unitPrice" width="175" label="单价">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPrice" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="quantity" width="175" label="数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.quantity" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.quantity" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />
@@ -181,17 +181,17 @@
         </el-table-column>
         <el-table-column prop="countBottomingOut" width="175" label="计数-摸底" >
           <template #default="{ row }">
-            <el-input-number v-model="row.countBottomingOut" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.countBottomingOut" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="countDV" width="175" label="计数-DV">
           <template #default="{ row }">
-            <el-input-number v-model="row.countDV" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.countDV" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="countPV" width="175" label="计数-PV">
           <template #default="{ row }">
-            <el-input-number v-model="row.countPV" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.countPV" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="allCost" label="总费用" />
@@ -243,12 +243,12 @@
         </el-table-column>
         <el-table-column prop="toolingCount" width="175" label="工装数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.toolingCount" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.toolingCount" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="unitPriceOfTooling" width="175" label="工装单价">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPriceOfTooling" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPriceOfTooling" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />
@@ -299,12 +299,12 @@
         </el-table-column>
         <el-table-column prop="unitPrice" width="175" label="治具单价">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPrice" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="number" width="175" label="治具数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.number" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />
@@ -358,12 +358,12 @@
         </el-table-column>
         <el-table-column prop="unitPrice" width="175" label="检具单价">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPrice" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="number" width="175" label="检具数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.number" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />
@@ -419,12 +419,12 @@
         </el-table-column>
         <el-table-column prop="unitPrice" width="175" label="单价">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPrice" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="number" width="175" label="数量">
           <template #default="{ row }">
-            <el-input-number v-model="row.number" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />
@@ -535,17 +535,17 @@
         </el-table-column>
         <el-table-column prop="peopleCount" width="175" label="人数">
           <template #default="{ row }">
-            <el-input-number v-model="row.peopleCount" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.peopleCount" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="costSky" width="175" label="费用/天">
           <template #default="{ row }">
-            <el-input-number v-model="row.costSky" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.costSky" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="skyCount" width="175" label="天数">
           <template #default="{ row }">
-            <el-input-number v-model="row.skyCount" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.skyCount" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" />
@@ -591,7 +591,7 @@
         </el-table-column>
         <el-table-column prop="cost" label="费用">
           <template #default="{ row }">
-            <el-input-number v-model="row.cost" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.cost" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">

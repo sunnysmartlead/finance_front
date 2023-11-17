@@ -9,7 +9,7 @@
     </el-table-column>
     <el-table-column align="center" prop="total" label="总费用" :formatter="formatThousandths">
       <template #default="{ row }">
-        <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
+        <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
       </template>
     </el-table-column>
     <el-table-column align="center" prop="yearCount" label="分摊年数">

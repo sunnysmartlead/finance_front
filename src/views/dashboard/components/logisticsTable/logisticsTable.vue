@@ -6,27 +6,27 @@
     </el-table-column>
     <el-table-column align="center" width="180"   prop="monthEndDemand" label="月底需求量" :formatter="formatThousandths">
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.monthEndDemand" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.monthEndDemand" />
       </template>
     </el-table-column>
     <el-table-column align="center" width="180"  prop="storageExpenses" label="仓储费用/元" :formatter="formatThousandths" >
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.storageExpenses" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.storageExpenses" />
       </template>
     </el-table-column>
     <el-table-column align="center" width="180"  prop="perPackagingPrice" label="单PCS包装价格/元" :formatter="formatThousandths" >
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.perPackagingPrice" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.perPackagingPrice" />
       </template>
     </el-table-column>
     <el-table-column align="center" width="180"  prop="perFreight" label="单PCS运输费" :formatter="formatThousandths" >
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.perFreight" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.perFreight" />
       </template>
     </el-table-column>
     <el-table-column align="center" width="180"  prop="perTotalLogisticsCost" label="单PCS总物流成本" :formatter="formatThousandths" >
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.perTotalLogisticsCost" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.perTotalLogisticsCost" />
       </template>
     </el-table-column>
     <el-table-column align="center" v-if="isEdit" width="180" prop="editNotes" label="备注">

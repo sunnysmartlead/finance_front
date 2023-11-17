@@ -184,7 +184,7 @@
         </el-table-column>
         <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
           <template #default="scope">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               controls-position="right"
               v-model="scope.row.commission"
               placeholder="请输入佣金"

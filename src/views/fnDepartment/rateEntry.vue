@@ -31,13 +31,13 @@
           <el-input controls-position="right" v-model="formData.directManufacturingRate" />
         </el-form-item>
         <el-form-item label="间接人工作业价格" prop="indirectLaborRate">
-          <el-input-number controls-position="right" :min="0" v-model="formData.indirectLaborRate" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.indirectLaborRate" />
         </el-form-item>
         <el-form-item label="间接折旧作业价格" prop="indirectDepreciationRate">
-          <el-input-number controls-position="right" :min="0" v-model="formData.indirectDepreciationRate" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.indirectDepreciationRate" />
         </el-form-item>
         <el-form-item label="间接其他费用作业价格" prop="indirectManufacturingRate">
-          <el-input-number controls-position="right" :min="0" v-model="formData.indirectManufacturingRate" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.indirectManufacturingRate" />
         </el-form-item>
       </el-form>
       <template #footer>

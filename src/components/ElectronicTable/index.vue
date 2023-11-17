@@ -43,7 +43,7 @@
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150">
               <template #default="{ row, $index }">
-                <el-input-number size="small" v-if="row.isEdit"
+                <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit"
                   v-model="row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
                   :min="0" @change="handleCalculation(row, $index, 0)" />
                 <span v-if="!row.isEdit">{{
@@ -61,7 +61,7 @@
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
               <template #default="{ row, $index }">
                 <el-input size="small" v-if="row.isEdit"
-                  v-model="row.inTheRate[index].yearOrValueModes[iIndex].value" type="number" @change="handleCalculation(row, $index, 1)">
+                  v-model="row.inTheRate[index].yearOrValueModes[iIndex].value" type="number" @change="handleCalculation(row, $index, 1)" oninput="value = value.replace(/[^0-9.]/g,'')">
                   <template #append> % </template>
                 </el-input>
               </template>
@@ -78,14 +78,14 @@
         </el-table-column>
         <el-table-column prop="moq" label="MOQ" width="150">
           <template #default="{ row }">
-            <el-input-number size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
           <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} K/Y`"
             width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`" :formatter="formatThousandths">
             <template #default="{ row }">
-              <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
+              <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
                 controls-position="right" :min="0" />
             </template>
           </el-table-column>
@@ -401,8 +401,10 @@ const debounceHandleCalculation = debounce(async (row: any, index: number, type:
   try {
     row.loading = true
     const { success, result } = await PosToriginalCurrencyCalculate({ ...row, type })
-    if (!success && !result.length) throw Error()
+    if (!success) throw Error()
+    console.log(result, "result")
     electronicBomList.value[index] = { ...(result || {}), isEdit: true, isEdited: true }
+    console.log(electronicBomList.value[index], "electronicBomList.value[index]")
     row.loading = false
   } catch (err) {
     console.log(err, "[根据原币计算 计算失败]")

@@ -1532,6 +1532,52 @@ const postOffer = async (isOffer: boolean) => {
     delete saveData.message
     delete saveData.mes
     let res = await PostIsOfferSecond(saveData)
+    //是否报价
+    const baseProcessType = [
+      //YesOrNo
+      {
+        label: "不同意",
+        val: "YesOrNo_No"
+      },
+      {
+        label: "同意",
+        val: "YesOrNo_Yes"
+      },
+      {
+        label: "保存",
+        val: "YesOrNo_Save"
+      }
+    ]
+    // 报价分析看板选择方案
+    const confirmProcessType = [
+      //Done
+      {
+        label: "提交",
+        val: "Done"
+      },
+      {
+        label: "保存",
+        val: "Save"
+      }
+    ]
+    // let FangAnres: any = await SubmitNode({
+    //   comment: "",
+    //   nodeInstanceId,
+    //   financeDictionaryDetailId: confirmProcessType[1].val
+    // })
+    let FangAnres: any = await SubmitNode({
+      comment: "",
+      nodeInstanceId,
+      financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
+    })
+    console.log(FangAnres)
+    if (res.success) {
+      ElMessage({
+        type: "success",
+        message: "操作成功"
+      })
+      // postOffer
+    }
     console.log(res)
   }
 }

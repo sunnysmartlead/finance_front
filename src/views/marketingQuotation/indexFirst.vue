@@ -103,7 +103,7 @@ import { ElMessage } from "element-plus"
 import { GetQuotationList } from "./service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
-import { PostAuditQuotationListSave, GetManagerApprovalOfferOne } from "./service"
+import { PostAuditQuotationListSave, GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
 // import { ElMessageBox } from "element-plus"
 
 const router = useRouter()
@@ -436,7 +436,8 @@ const fetchSopYear = async () => {
 // }
 const save = async () => {
   let query = route.query
-  debugger
+  let res = await PostManagerApprovalOfferOneSave(data.resa)
+  console.log(res)
   router.push({ path: "/marketingQuotation/indexSecond", query })
 }
 

@@ -86,7 +86,7 @@
         />
         <el-table-column label="报价系数" width="200" align="center">
           <template #default="scope">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
               @change="offerCoefficientChange(scope.row)"
@@ -131,7 +131,7 @@
         <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="right" />
         <el-table-column prop="unitPrice" label="单价" width="200" align="center">
           <template #default="scope">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               v-model="scope.row.unitPrice"
               controls-position="right"
               @change="unitPriceChange(scope.row)"
@@ -164,7 +164,7 @@
       >
         <template #default="scope">
           <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
-          <!-- <el-input-number v-model="scope.row.grossValues[index].grossvalue" controls-position="right" :precision="2" /> -->
+          <!-- <el-input-number @mousewheel.native.prevent v-model="scope.row.grossValues[index].grossvalue" controls-position="right" :precision="2" /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -318,7 +318,7 @@
         <el-table-column label="目标价（客户）">
           <el-table-column label="单价" prop="clientPrice" width="180">
             <template #default="scope">
-              <el-input-number v-model="scope.row.clientPrice" :precision="2" controls-position="right" />
+              <el-input-number @mousewheel.native.prevent v-model="scope.row.clientPrice" :precision="2" controls-position="right" />
             </template>
           </el-table-column>
           <el-table-column label="毛利率">

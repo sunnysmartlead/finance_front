@@ -6,27 +6,27 @@
     <el-table-column align="center"  prop="manufacturingCostDirect" label="直接制造成本" :formatter="toFixedTwo">
       <el-table-column align="center"  prop="manufacturingCostDirect.directLabor" label="直接人工" width="175" :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostDirect.directLabor" />
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostDirect.equipmentDepreciation" label="设备折旧" width="175"
         :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostDirect.equipmentDepreciation" />
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostDirect.lineChangeCost" label="换线成本" width="175" :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostDirect.lineChangeCost" />
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostDirect.manufacturingExpenses" label="制造费用" width="175"
         :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostDirect.manufacturingExpenses" />
         </template>
       </el-table-column>
@@ -35,21 +35,21 @@
     <el-table-column align="center"  prop="manufacturingCostIndirect" label="间接制造成本">
       <el-table-column align="center"  prop="manufacturingCostIndirect.directLabor" label="直接人工" width="175" :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostIndirect.directLabor" />
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostIndirect.equipmentDepreciation" label="设备折旧" width="175"
         :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostIndirect.equipmentDepreciation" />
         </template>
       </el-table-column>
       <el-table-column align="center"  prop="manufacturingCostIndirect.manufacturingExpenses" label="制造费用" width="175"
         :formatter="toFixedTwo">
         <template #default="{ row }">
-          <el-input-number v-if="isEdit" controls-position="right" :min="0"
+          <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0"
             v-model="row.manufacturingCostIndirect.manufacturingExpenses" />
         </template>
       </el-table-column>

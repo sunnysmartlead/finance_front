@@ -119,7 +119,7 @@
           <el-input v-model="ruleForm.laboratory" controls-position="right" />
         </el-form-item>
         <el-form-item label="单价" prop="price">
-          <el-input-number v-model="ruleForm.price" controls-position="right" :min="0" />
+          <el-input-number @mousewheel.native.prevent v-model="ruleForm.price" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="ruleForm.unit" controls-position="right" />

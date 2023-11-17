@@ -71,7 +71,7 @@
                 <template #default="scope">
                   <div>
                     <!-- :disabled="data.editDisabled" -->
-                    <el-input-number
+                    <el-input-number @mousewheel.native.prevent
                       v-model="scope.row.packagingPrice"
                       :precision="2"
                       :step="0.01"
@@ -84,7 +84,7 @@
                 <template #default="scope">
                   <div>
                     <!-- :disabled="data.editDisabled" -->
-                    <el-input-number
+                    <el-input-number @mousewheel.native.prevent
                       v-model="scope.row.freightPrice"
                       :precision="2"
                       :step="0.01"
@@ -97,7 +97,7 @@
                 <template #default="scope">
                   <div>
                     <!--  :disabled="data.editDisabled" -->
-                    <el-input-number
+                    <el-input-number @mousewheel.native.prevent
                       v-model="scope.row.storagePrice"
                       :precision="2"
                       :step="0.01"

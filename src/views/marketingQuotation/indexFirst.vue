@@ -52,7 +52,7 @@
         <el-table-column prop="pricingMoney" label="核价金额" />
         <el-table-column label="报价系数">
           <template #default="scope">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
               @change="offerCoefficientChange(scope.row)"

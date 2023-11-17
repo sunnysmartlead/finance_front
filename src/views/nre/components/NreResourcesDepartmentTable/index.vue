@@ -25,12 +25,12 @@
         </el-table-column>
         <el-table-column label="数量" width="180" prop="count" :formatter="formatThousandths">
           <template #default="{ row }">
-            <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="单价" width="180" prop="unitPrice" :formatter="formatThousandths">
           <template #default="{ row }">
-            <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="金额" prop="cost" width="180" :formatter="formatThousandths" />

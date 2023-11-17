@@ -348,13 +348,13 @@
                       </el-select>
                     </div>
                     <div class="u-width-150 u-border">
-                      <el-input-number v-model="deviceItem.deviceNumber" :min="0" :precision="2" :step="0.01"
+                      <el-input-number @mousewheel.native.prevent v-model="deviceItem.deviceNumber" :min="0" :precision="2" :step="0.01"
                                        :disabled="isDisable(dataIndex)"
                                        @change="handleDeviceChange($event, dataIndex, deviceIndex)"/>
 
                     </div>
                     <div  v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
-                      <el-input-number v-model="deviceItem.devicePrice"
+                      <el-input-number @mousewheel.native.prevent v-model="deviceItem.devicePrice"
                                        @change="handleDeviceChange($event, dataIndex, deviceIndex)"/>
                     </div>
 
@@ -400,12 +400,12 @@
                       </el-select>
                     </div>
                     <div class="u-border u-width-150">
-                      <el-input-number v-model="hardInfo.hardwareDeviceNumber" :min="0" :step="1"
+                      <el-input-number @mousewheel.native.prevent v-model="hardInfo.hardwareDeviceNumber" :min="0" :step="1"
                                        :disabled="isDisable(dataIndex)"
                                        @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)"/>
                     </div>
                     <div v-if="!isDisable(dataIndex)" class="u-border u-width-150">
-                      <el-input-number v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)"
+                      <el-input-number @mousewheel.native.prevent v-model="hardInfo.hardwareDevicePrice" :disabled="isDisable(dataIndex)"
                                        @change="handleHardwareDeviceChange($event, dataIndex, hardIndex)"/>
                     </div>
                     <div v-if="isDisable(dataIndex)" class="u-width-150 u-border  u-p-t-5 u-p-b-5">
@@ -442,7 +442,7 @@
                     <el-input v-model="dataItem.developCostInfo.traceabilitySoftware" :disabled="isDisable(dataIndex)"/>
                   </div>
                   <div class="u-width-150  u-border">
-                    <el-input-number v-model="dataItem.developCostInfo.traceabilitySoftwareCost"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.developCostInfo.traceabilitySoftwareCost"
                                      @change="handleHardwareDeviceChange($event, dataIndex,null)"
                                      :disabled="isDisable(dataIndex)"/>
                   </div>
@@ -452,7 +452,7 @@
                               :disabled="isDisable(dataIndex)"/>
                   </div>
                   <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
-                    <el-input-number v-model="dataItem.developCostInfo.softwarePrice"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.developCostInfo.softwarePrice"
                                      :disabled="isDisable(dataIndex)"
                                      @change="handleHardwareDeviceChange($event, dataIndex,null)"/>
                   </div>
@@ -497,12 +497,12 @@
                         </el-select>
                       </div>
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="zhiju.fixtureNumber" :min="0" :precision="2"
+                        <el-input-number @mousewheel.native.prevent v-model="zhiju.fixtureNumber" :min="0" :precision="2"
                                          :disabled="isDisable(dataIndex)"
                                          @change="handleZhiJuCountChange(dataIndex, zhijuindex)"/>
                       </div>
                       <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
-                        <el-input-number v-model="zhiju.fixturePrice"
+                        <el-input-number @mousewheel.native.prevent v-model="zhiju.fixturePrice"
                                          @change="handleZhiJuCountChange(dataIndex, zhijuindex)"/>
                       </div>
                       <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -539,11 +539,11 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.toolInfo.fixtureNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleJianJuCountChange($event, dataIndex)"/>
                   </div>
                   <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.fixturePrice" :min="0" :disabled="isDisable(dataIndex)"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.toolInfo.fixturePrice" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="jianJuNameChange($event, dataIndex)"/>
                   </div>
                   <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -560,11 +560,11 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.toolInfo.frockNumber" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
                   <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.frockPrice" :min="0" :disabled="isDisable(dataIndex)"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.toolInfo.frockPrice" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="handleGongZhuangCountChange($event, dataIndex)"/>
                   </div>
                   <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -581,12 +581,12 @@
                     </el-select>
                   </div>
                   <div class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.testLineNumber" :min="0"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.toolInfo.testLineNumber" :min="0"
                                      :disabled="isDisable(dataIndex)"
                                      @change="handleTestLineCountChange($event, dataIndex)"/>
                   </div>
                   <div v-if="!isDisable(dataIndex)" class="u-width-150 u-border">
-                    <el-input-number v-model="dataItem.toolInfo.testLinePrice" :min="0" :disabled="isDisable(dataIndex)"
+                    <el-input-number @mousewheel.native.prevent v-model="dataItem.toolInfo.testLinePrice" :min="0" :disabled="isDisable(dataIndex)"
                                      @change="testLineNameChange($event, dataIndex)"/>
                   </div>
                   <div v-if="isDisable(dataIndex)" class="u-width-150 u-border u-p-t-5 u-p-b-5">
@@ -622,15 +622,15 @@
                   <template v-else>
                     <div class="u-flex u-row-left u-col-center">
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="scopItem.issues[0].laborHour" :min="0" :precision="2" :step="0.01"
+                        <el-input-number @mousewheel.native.prevent v-model="scopItem.issues[0].laborHour" :min="0" :precision="2" :step="0.01"
                                          :disabled="isDisable(dataIndex)"/>
                       </div>
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="scopItem.issues[0].machineHour" :min="0" :precision="2" :step="0.01"
+                        <el-input-number @mousewheel.native.prevent v-model="scopItem.issues[0].machineHour" :min="0" :precision="2" :step="0.01"
                                          :disabled="isDisable(dataIndex)"/>
                       </div>
                       <div class="u-width-150 u-border">
-                        <el-input-number v-model="scopItem.issues[0].personnelNumber" :min="0" :precision="2"
+                        <el-input-number @mousewheel.native.prevent v-model="scopItem.issues[0].personnelNumber" :min="0" :precision="2"
                                          :step="0.01"
                                          :disabled="isDisable(dataIndex)"/>
                       </div>
@@ -676,13 +676,13 @@
               <span>{{ uphItem.year }}</span>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input-number :min="0"  v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
+              <el-input-number @mousewheel.native.prevent :min="0"  v-model="uphItem.smtuph" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center" v-if="isCOB">
-              <el-input-number  v-model="uphItem.cobuph" :min="0" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number @mousewheel.native.prevent  v-model="uphItem.cobuph" :min="0" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
             <div class="u-border u-width-150 u-text-center">
-              <el-input-number :min="0"   v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
+              <el-input-number @mousewheel.native.prevent :min="0"   v-model="uphItem.zcuph" class="u-text-center" @change="uphChange($event, uphIndex)"/>
             </div>
           </div>
         </div>

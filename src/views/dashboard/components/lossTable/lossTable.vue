@@ -13,12 +13,12 @@
     </el-table-column>
     <el-table-column align="center" :formatter="formatThousandths" prop="wastageCost" label="损耗成本" >
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.wastageCost" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.wastageCost" />
       </template>
     </el-table-column>
     <el-table-column align="center"  prop="moqShareCount" label="MOQ分摊成本" :formatter="formatThousandths" >
       <template #default="{ row }" v-if="isEdit">
-        <el-input-number controls-position="right" :min="0" v-model="row.moqShareCount" />
+        <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.moqShareCount" />
       </template>
     </el-table-column>
     <el-table-column align="center" v-if="isEdit" prop="editNotes" label="备注">

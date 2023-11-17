@@ -66,13 +66,12 @@
       <el-card style="margin-top: 10px;" header="NRE报价清单">
         <el-table :data="data.form.nreQuotationListDtos" style="width: 100%" border height="500px">
           <el-table-column type="index" label="序号" width="80" fixed="left" />
-          <el-table-column type="index" label="序号" width="80" fixed="left" />
           <el-table-column prop="productName" label="产品名称" />
           <el-table-column prop="travelVolume" label="走量" />
-          <el-table-column prop="unitPrice" label="手板件费" />
-          <el-table-column prop="costOfToolingAndFixtures" label="模具费" />
-          <el-table-column prop="unitPrice" label="工装治具费" />
-          <el-table-column prop="unitPrice" label="实验费" />
+          <el-table-column prop="handmadePartsFee" label="手板件费" />
+          <el-table-column prop="myPropMoldCosterty" label="模具费" />
+          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" />
+          <el-table-column prop="experimentalFees" label="实验费" />
           <el-table-column prop="remark" label="备注" >
             <template #default="{ row }">
               <el-input v-model="row.remark" />
@@ -82,7 +81,7 @@
       </el-card>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="备注">
-          {{ data.form.remark }}
+          <el-input v-model="data.form.remark" />
         </el-descriptions-item>
         <el-descriptions-item label=" " :span="2">
           * 无公司公章报价单为无效报价单
@@ -90,19 +89,19 @@
       </el-descriptions>
       <el-descriptions style="margin-top: 20px;" title="开票资料" :column="2" border>
         <el-descriptions-item label="制作">
-          {{ data.form.remark }}
+          <el-input v-model="data.form.make" />
         </el-descriptions-item>
         <el-descriptions-item label="审核">
-          {{ data.form.quotationName }}
+          <el-input v-model="data.form.toExamine" />
         </el-descriptions-item>
         <el-descriptions-item label="户名">
-          {{ data.form.accountName }}
+          <el-input v-model="data.form.accountName" />
         </el-descriptions-item>
         <el-descriptions-item label="税号">
-          {{ data.form.quotationAdd }}
+          <el-input v-model="data.form.dutyParagraph" />
         </el-descriptions-item>
         <el-descriptions-item label="开户行">
-          <el-input v-model="data.form.customerLink" />
+          <el-input v-model="data.form.bankOfDeposit" />
         </el-descriptions-item>
         <el-descriptions-item label="账号">
           <el-input v-model="data.form.quotationLink" />
@@ -137,6 +136,7 @@ const { auditFlowId, productId, numberOfQuotations = 1 }: any = getQuery()
 const data = reactive({
   form: {
     productQuotationListDtos: [],
+    bankOfDeposit: null,
     nreQuotationListDtos: [],
     customerName: "理想",
     address: null,
@@ -149,13 +149,14 @@ const data = reactive({
     projectCycle: 3,
     projectName: "流程测试OK，测试数据1",
     sopTime: 2024,
-    currency: 0,
+    currency: "",
     remark: "",
     customerAdd: "",
     creationTime: "",
     recordNo: "",
     numberOfQuotations: "",
     accountName: "",
+    make: "",
   },
   auditFlowId: 0
 })
@@ -163,7 +164,7 @@ const data = reactive({
 const init = async () => {
   const { result } = await GetExternalQuotation({
     auditFlowId,
-    solutionId: productId,
+    solutionId: 67,
     numberOfQuotations,
   }) || {}
   data.form = {
@@ -179,7 +180,10 @@ onMounted(() => {
 
 const submit = async () => {
   const { success } = await SaveExternalQuotation({
-    ...data.form
+    ...data.form,
+    nreQuotationListDtos: [
+      {}
+    ]
   })
   if (success) {
     ElMessage.success('提交成功！')

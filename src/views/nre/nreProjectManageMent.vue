@@ -29,12 +29,12 @@
         </el-table-column>
         <el-table-column label="单价" width="175">
           <template #default="{ row }">
-            <el-input-number v-model="row.unitPrice" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="数量" width="175">
           <template #default="{ row }">
-            <el-input-number v-model="row.quantity" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-model="row.quantity" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="费用" prop="cost" width="100">
@@ -85,7 +85,7 @@
         </el-table-column>
         <el-table-column label="人数" width="150">
           <template #default="{ row }">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               v-model="row.peopleCount"
               :min="0"
               controls-position="right"
@@ -95,12 +95,12 @@
         </el-table-column>
         <el-table-column label="费用/天" width="175">
           <template #default="{ row }">
-            <el-input-number v-model="row.costSky" :min="0" controls-position="right" @change="calculateCost(row)" />
+            <el-input-number @mousewheel.native.prevent v-model="row.costSky" :min="0" controls-position="right" @change="calculateCost(row)" />
           </template>
         </el-table-column>
         <el-table-column label="天数" width="175">
           <template #default="{ row }">
-            <el-input-number v-model="row.skyCount" :min="0" controls-position="right" @change="calculateCost(row)" />
+            <el-input-number @mousewheel.native.prevent v-model="row.skyCount" :min="0" controls-position="right" @change="calculateCost(row)" />
           </template>
         </el-table-column>
         <el-table-column label="费用" width="175">
@@ -144,7 +144,7 @@
         </el-table-column>
         <el-table-column label="费用">
           <template #default="{ row }">
-            <el-input-number v-model="row.cost" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-model="row.cost" :min="0" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="备注">

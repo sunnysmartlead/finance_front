@@ -160,7 +160,7 @@
           <el-table-column label="价格" prop="price" />
           <el-table-column label="佣金" prop="commission" width="180">
             <template #default="scope">
-              <el-input-number controls-position="right" v-model="scope.row.commission" placeholder="请输入佣金"
+              <el-input-number @mousewheel.native.prevent controls-position="right" v-model="scope.row.commission" placeholder="请输入佣金"
                 @change="(val: any) => changeCommission(scope.row, scope.$index)" :min="0" />
             </template>
           </el-table-column>

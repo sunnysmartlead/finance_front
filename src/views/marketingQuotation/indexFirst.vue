@@ -27,14 +27,26 @@
       <p>报价毛利率测算-实际数量</p>
       <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
         <el-table-column prop="solutionName" label="方案名" />
-        <el-table-column prop="offerUnitPrice" label="本次报价-单价" />
-        <el-table-column prop="offerGrossMargin" label="本次报价-毛利率" />
-        <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率" />
-        <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率" />
-        <el-table-column prop="salesRevenue" label="销售收入" />
-        <el-table-column prop="sellingCost" label="销售成本" />
-        <el-table-column prop="sopCost" label="SOP成本" />
-        <el-table-column prop="fullCost" label="全生命周期成本" />
+        <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" />
+        <el-table-column prop="offerGrossMargin" label="本次报价-毛利率">
+          <template #default="{ row }">
+            {{ `${row.offerGrossMargin?.toFixed(2)} %` }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率">
+          <template #default="{ row }">
+            {{ `${row.offerClientGrossMargin?.toFixed(2)} %` }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率">
+          <template #default="{ row }">
+            {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="salesRevenue" label="销售收入" :formatter="formatThousandths" />
+        <el-table-column prop="sellingCost" label="销售成本" :formatter="formatThousandths" />
+        <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
+        <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
         <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
       </el-table>
       <!-- nre汇总 -->
@@ -49,7 +61,7 @@
       >
         <el-table-column label="序号" type="index" />
         <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额" />
+        <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
         <el-table-column label="报价系数">
           <template #default="scope">
             <el-input-number
@@ -59,7 +71,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="offerMoney" label="报价金额" />
+        <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
         <el-table-column label="备注">
           <template #default="scope">
             <el-input v-model="scope.row.remark" type="textarea" />
@@ -91,7 +103,7 @@ import { ElMessage } from "element-plus"
 import { GetQuotationList } from "./service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
-import { PostAuditQuotationListSave, GetManagerApprovalOfferOne } from "./service"
+import { PostAuditQuotationListSave, GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
 // import { ElMessageBox } from "element-plus"
 
 const router = useRouter()
@@ -341,18 +353,18 @@ const data = reactive<any>({
     }
   }
 })
-const getSummaries = (param) => {
+const getSummaries = (param: any) => {
   const { columns, data } = param
   const sums: string[] = []
-  columns.forEach((column, index) => {
+  columns.forEach((column: any, index: number) => {
     if (index === 0) {
       sums[index] = "合计"
       return
     }
     if (index === 2 || index === 4) {
-      const values = data.map((item) => Number(item[column.property]))
-      if (!values.every((value) => Number.isNaN(value))) {
-        sums[index] = `${values.reduce((prev, curr) => {
+      const values = data.map((item: any) => Number(item[column.property]))
+      if (!values.every((value: any) => Number.isNaN(value))) {
+        sums[index] = `${values.reduce((prev: any, curr: any) => {
           const value = Number(curr)
           if (!Number.isNaN(value)) {
             return prev + curr
@@ -360,6 +372,7 @@ const getSummaries = (param) => {
             return prev
           }
         }, 0)}`
+        sums[index] = (Number(sums[index]).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
       } else {
         sums[index] = "N/A"
       }
@@ -423,7 +436,8 @@ const fetchSopYear = async () => {
 // }
 const save = async () => {
   let query = route.query
-  debugger
+  let res = await PostManagerApprovalOfferOneSave(data.resa)
+  console.log(res)
   router.push({ path: "/marketingQuotation/indexSecond", query })
 }
 

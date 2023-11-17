@@ -1,6 +1,15 @@
 <!-- 报价单 -->
 <template>
   <div>
+    <el-row class="m-2">
+      <el-radio-group v-model="data.solutionId" @change="init">
+        <template v-for="item in data.solutionIdList" :key="item.title">
+          <el-radio :label="`方案${item.version}`" size="large" border>
+            {{ item.id }}
+          </el-radio>
+        </template>
+      </el-radio-group>
+    </el-row>
     <el-card>
       <el-row justify="end">
         <el-button type="primary" @click="submit" m="2">提交</el-button>
@@ -117,21 +126,23 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue"
+import { reactive, onMounted, watch } from "vue"
 import {
   GetExternalQuotation,
   SaveExternalQuotation,
   DownloadExternalQuotation,
+  GeCatalogue,
 } from "./service"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
+
 const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId, productId, numberOfQuotations = 1 }: any = getQuery()
+const { auditFlowId, numberOfQuotations = 1 }: any = getQuery()
 
 const data = reactive({
   form: {
@@ -158,13 +169,15 @@ const data = reactive({
     accountName: "",
     make: "",
   },
-  auditFlowId: 0
+  auditFlowId: 0,
+  solutionId: null,
+  solutionIdList: []
 })
 
-const init = async () => {
+const init = async (solutionId: any) => {
   const { result } = await GetExternalQuotation({
     auditFlowId,
-    solutionId: 67,
+    solutionId,
     numberOfQuotations,
   }) || {}
   data.form = {
@@ -175,15 +188,13 @@ const init = async () => {
 }
 
 onMounted(() => {
-  init()
+  fetchList()
 })
+
 
 const submit = async () => {
   const { success } = await SaveExternalQuotation({
     ...data.form,
-    nreQuotationListDtos: [
-      {}
-    ]
   })
   if (success) {
     ElMessage.success('提交成功！')
@@ -194,7 +205,7 @@ const submit = async () => {
 const downLoad = async () => {
   let res: any = await DownloadExternalQuotation({
     auditFlowId,
-    solutionId: productId,
+    solutionId: data.solutionId,
     numberOfQuotations,
   })
   const blob = res
@@ -210,6 +221,11 @@ const downLoad = async () => {
     a.click()
     a.remove() //将a标签移除
   }
+}
+
+const fetchList = async () => {
+  const { result } = await GeCatalogue({ auditFlowId })
+  data.solutionIdList = result
 }
 </script>
 <style scoped></style>

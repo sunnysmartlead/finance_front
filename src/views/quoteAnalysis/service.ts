@@ -208,19 +208,6 @@ export function SubmitNode(data: any): any {
     data
   })
 }
-/**
- *
- * @param data 根据流程号获取报价目录
-
- * @returns
- */
-export function GeCatalogue(data: any): any {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/GeCatalogue",
-    method: "post",
-    data
-  })
-}
 
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison

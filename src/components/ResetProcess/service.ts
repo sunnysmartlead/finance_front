@@ -1,12 +1,12 @@
 import { request } from "@/utils/service"
 // 获取用户
-export function GetAll({ keyword, isActive }: any): any {
+export function GetUserByDeptName({ deptName, name }: any): any {
   return request({
-    url: "/api/services/app/User/GetAll",
+    url: "/api/services/app/Hr/GetUserByDeptName",
     method: "get",
     data: {
-      keyword,
-      isActive,
+      deptName,
+      name,
       skipCount: 1,
       maxResultCount: 20
     }

@@ -170,6 +170,11 @@
               {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
+          <el-table-column label="全生命周期毛利率" prop="TotallifeCyclegrossMargin">
+            <template #default="{ row }">
+              {{ `${row.TotallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
       <!-- 样品 -->

@@ -59,7 +59,6 @@
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
     </el-button-group>
-    <ProcessVertifyBox :onSubmit="handleSubmit" v-havedone processType="confirmProcessType" />
     <!-- nre -->
     <h3>NRE</h3>
     <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
@@ -465,7 +464,7 @@
       </div>
       <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
     </el-card>
-    <!-- <el-button @click="save">保存</el-button> -->
+    <el-button @click="save">保存</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -578,10 +577,11 @@ import {
   PostIsOfferSaveSecond,
   PostIsOfferSecond,
   SubmitNode,
-  getStatementAnalysisBoardSecond
+  getStatementAnalysisBoardSecond,
+  PostIsOfferSecondOnlySave,
+  GeCatalogue
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
-import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 /**
  * 路由对象
  */
@@ -1512,7 +1512,7 @@ const save = async () => {
       ...data.allRes,
       auditFlowId
     }
-    let res = await PostIsOfferSaveSecond(saveData)
+    let res = await PostIsOfferSecondOnlySave(saveData)
     console.log(res, "saveData")
   }
 
@@ -1560,16 +1560,16 @@ const postOffer = async (isOffer: boolean) => {
         val: "Save"
       }
     ]
-    // let FangAnres: any = await SubmitNode({
-    //   comment: "",
-    //   nodeInstanceId,
-    //   financeDictionaryDetailId: confirmProcessType[1].val
-    // })
     let FangAnres: any = await SubmitNode({
       comment: "",
       nodeInstanceId,
-      financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
+      financeDictionaryDetailId: confirmProcessType[1].val
     })
+    // let FangAnres: any = await SubmitNode({
+    //   comment: "",
+    //   nodeInstanceId,
+    //   financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
+    // })
     console.log(FangAnres)
     if (res.success) {
       ElMessage({
@@ -1621,6 +1621,8 @@ onMounted(async () => {
     // productStore.setProductList(auditFlowId)
     // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
     // console.log(res)
+    let cc = await GeCatalogue({ auditFlowId })
+    console.log(cc, "cc")
   }
   if (right === "1") {
     let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })

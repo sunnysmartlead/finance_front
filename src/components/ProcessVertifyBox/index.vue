@@ -10,16 +10,12 @@
 
 <template>
   <el-row justify="end" v-havedone>
-    <div v-if="props.processType === 'baseProcessType'">
-      <el-button type="primary" @click="data.dialogVisible = true" m="2">同意</el-button>
-      <el-button type="danger" @click="data.dialogVisible = true" m="2">不同意</el-button>
-    </div>
     <div v-if="props.processType === 'confirmProcessType'">
       <el-button type="primary" @click="onSubmit('Save', '保存')" m="2">保存</el-button>
       <el-button type="primary" @click="handleEnter('Done', '提交')" m="2">提交</el-button>
     </div>
     <el-button
-      v-if="!['baseProcessType', 'confirmProcessType'].includes(props.processType)"
+      v-if="!['confirmProcessType'].includes(props.processType)"
       type="primary"
       m="2"
       @click="data.dialogVisible = true"

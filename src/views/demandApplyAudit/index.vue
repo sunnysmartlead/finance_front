@@ -2,7 +2,7 @@
   <div class="demand-apply">
     <el-row justify="end" style="margin-top: 20px">
       <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
-      <ProcessVertifyBox :onSubmit="submit" v-havedone />
+      <ProcessVertifyBox :onSubmit="submit" v-havedone processType="demanApplyVertify" />
     </el-row>
     <demandApply :isDisabled="true" />
     <el-card>

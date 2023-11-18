@@ -2,8 +2,11 @@
   <el-row justify="end">
     <el-button type="primary" m="2" @click="data.dialogVisible = true" v-if="!notShow">重置流程</el-button>
     <el-dialog v-model="data.dialogVisible" title="重置流程" width="30%">
-      <el-form>
-        <el-form-item label="选择人员">
+      <el-form :inline="true">
+        <el-form-item label="选择部门:">
+          <el-input v-model="dpartName" @blur="GetUserByDeptNamAction" />
+        </el-form-item>
+        <el-form-item label="选择人员:">
           <el-select
             v-model="data.opinion"
             filterable
@@ -32,14 +35,15 @@ import { reactive, PropType, computed, onMounted, ref } from "vue"
 import { ElMessage } from "element-plus"
 import { useRoute } from "vue-router"
 
-import { GetAll, ResetTask } from "./service"
+import { GetUserByDeptName, ResetTask } from "./service"
 import getQuery from "@/utils/getQuery"
 
 const route = useRoute()
 
 const loading = ref(false)
 let { nodeInstanceId } = getQuery()
-
+const dpartName = ref("")
+const name = ref("")
 const notShowRoutes = [
   "/nre/nreResourcesDepartment",
   "/resourcesDepartment/electronic",
@@ -54,14 +58,18 @@ let notShow = computed(() => {
   }
 })
 onMounted(async () => {
-  let params: any = {
-    keyword: "",
-    maxResultCount: 20,
-    skipCount: 0
-  }
-  let res = await GetAll(params)
-  data.userList = res.result.items
+  GetUserByDeptNamAction()
 })
+const GetUserByDeptNamAction = async () => {
+  let params: any = {
+    maxResultCount: 20,
+    skipCount: 0,
+    name: name.value,
+    deptName: dpartName.value
+  }
+  let res = await GetUserByDeptName(params)
+  data.userList = res.result.items
+}
 const data: any = reactive({
   dialogVisible: false,
   comment: "",
@@ -72,7 +80,8 @@ const data: any = reactive({
 const remoteMethod = async (query: string) => {
   if (query !== "") {
     loading.value = true
-    let res = await GetAll({ keyword: query })
+    let res = await GetUserByDeptName({ name: query, deptName: dpartName.value })
+    name.value = query
     loading.value = false
     data.userList = res.result.items
   }

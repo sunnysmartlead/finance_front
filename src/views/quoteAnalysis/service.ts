@@ -164,6 +164,14 @@ export function PostIsOfferSecond(data: any): any {
     data
   })
 }
+//报价分析看板 仅保存
+export function PostIsOfferSecondOnlySave(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSecondOnlySave",
+    method: "post",
+    data
+  })
+}
 /**
  *根据流程id,版本version 查看报表分析看板 查看报价分析看板不含样品,查看报价分析看板含样品,查看报价分析看板仅含样品
  * @param data
@@ -176,18 +184,18 @@ export function getStatementAnalysisBoardSecond(data: { auditFlowId?: number; ve
     data
   })
 }
-/**
- * 报价保存接口
- * @param data
- * @returns
- */
-export function PostIsOfferSaveSecond(data: any): any {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSaveSecond",
-    method: "post",
-    data
-  })
-}
+// /**
+//  * 报价保存接口
+//  * @param data
+//  * @returns
+//  */
+// export function PostIsOfferSaveSecond(data: any): any {
+//   return request({
+//     url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSaveSecond",
+//     method: "post",
+//     data
+//   })
+// }
 /**
  * 前端流程流转
  * @param data
@@ -200,6 +208,20 @@ export function SubmitNode(data: any): any {
     data
   })
 }
+/**
+ *
+ * @param data 根据流程号获取报价目录
+
+ * @returns
+ */
+export function GeCatalogue(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GeCatalogue",
+    method: "post",
+    data
+  })
+}
+
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率

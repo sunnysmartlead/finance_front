@@ -326,7 +326,13 @@ let SumCount = computed(() => {
 const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   if (isSubmit) {
     //提交
-    await submitFun(record, isSubmit, bomIndex, rowIndex)
+    if (record.rebateMoney) {
+      ElMessageBox.confirm("当前行的金额为0，您确定还要提交嘛?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    }).then(async () => await submitFun(record, isSubmit, bomIndex, rowIndex))
+    } else await submitFun(record, isSubmit, bomIndex, rowIndex)
   } else {
     //确认
     await SubmitJudge(record, isSubmit, bomIndex, rowIndex)

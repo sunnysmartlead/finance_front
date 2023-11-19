@@ -390,6 +390,13 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
     console.log(record, 'handleSubmit111111')
     //提交
     await submitFun(record, isSubmit, index)
+    if (record.rebateMoney) {
+      ElMessageBox.confirm("当前行的金额为0，您确定还要提交嘛?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    }).then(async () => await submitFun(record, isSubmit, index))
+    } else await submitFun(record, isSubmit, index)
   } else {
     //确认
     // await handleSubmitcalculate(record, isSubmit, index)

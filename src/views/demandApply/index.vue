@@ -653,30 +653,22 @@
           </el-table-column>
           <el-table-column label="客户年降率(%)">
             <template #default="{ row, $index }">
-              <el-input v-model="row.annualDeclineRate" :disabled="isDisabled || !$index" type="number" :min="0" oninput="value = value.replace(/[^0-9.]/g,'')">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.annualDeclineRate" :disabled="isDisabled || !$index" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
-              <el-input v-model="row.annualRebateRequirements" :disabled="isDisabled || right === '1'" type="number" :min="0" oninput="value = value.replace(/[^0-9.]/g,'')">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.annualRebateRequirements" :disabled="isDisabled || right === '1'" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
-              <el-input v-model="row.oneTimeDiscountRate" :disabled="isDisabled || right === '1'" type="number" :min="0" oninput="value = value.replace(/[^0-9.]/g,'')">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.oneTimeDiscountRate" :disabled="isDisabled || right === '1'" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
-              <el-input v-model="row.commissionRate" :disabled="isDisabled || right === '1'" type="number" :min="0" oninput="value = value.replace(/[^0-9.]/g,'')">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.commissionRate" :disabled="isDisabled || right === '1'" :min="0" />
             </template>
           </el-table-column>
         </el-table>

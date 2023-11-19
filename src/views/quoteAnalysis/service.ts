@@ -352,6 +352,6 @@ export function GeCatalogue(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GeCatalogue",
     method: "post",
-    data
+    params: data
   })
 }

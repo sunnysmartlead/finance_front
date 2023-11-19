@@ -599,9 +599,10 @@ interface planListItem {
   value: string
   isOffer: boolean
 }
+
 const planList: Array<planListItem> = reactive([])
 const productStore = useProductStore()
-
+const version = ref(1)
 const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
@@ -1359,7 +1360,7 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
 }
 
 const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number, list: any) => {
-  if (row.product === "齐套") {
+  if (row.product === "齐套" || row.product === "") {
     try {
       const { result } = await PostGrossMarginForactualQt({
         AuditFlowId: auditFlowId,
@@ -1505,7 +1506,7 @@ const save = async () => {
   // let version = right==='2'?0:
   if (auditFlowId) {
     let saveData = {
-      version: 0,
+      version: version.value,
       ntime: 0,
       IsOffer: false,
       Solutions: planListArr,
@@ -1521,7 +1522,7 @@ const save = async () => {
 const postOffer = async (isOffer: boolean) => {
   if (auditFlowId) {
     let saveData = {
-      version: 0,
+      version: version.value,
       ntime: 1,
       solutions: selectPlan.value,
       ...data.allRes,
@@ -1571,12 +1572,11 @@ const postOffer = async (isOffer: boolean) => {
     //   financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
     // })
     console.log(FangAnres)
-    if (res.success) {
+    if (FangAnres.success) {
       ElMessage({
         type: "success",
         message: "操作成功"
       })
-      // postOffer
     }
     console.log(res)
   }
@@ -1614,20 +1614,23 @@ onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 
   if (auditFlowId) {
-    let res = await GetSolution(auditFlowId)
+    await GetSolution(auditFlowId)
     const resp: any = await getProductByAuditFlowId(auditFlowId)
     productList.value = resp.result
     // await productStore.setProductList(Number(auditFlowId))
     // productStore.setProductList(auditFlowId)
     // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
     // console.log(res)
-    let cc = await GeCatalogue({ auditFlowId })
-    console.log(cc, "cc")
+    let { result }: any = await GeCatalogue({ auditFlowId })
+    if (result.length === 0) {
+      version.value = 1
+    }
+    console.log(result, "res")
   }
-  if (right === "1") {
-    let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })
-    console.log(res, "getStatementAnalysisBoardSecond")
-  }
+  // if (right === "1") {
+  //   let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })
+  //   console.log(res, "getStatementAnalysisBoardSecond")
+  // }
 })
 watchEffect(() => {})
 // 使用toRefs解构

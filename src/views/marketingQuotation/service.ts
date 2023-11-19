@@ -90,18 +90,19 @@ export function PostManagerApprovalOfferTwoSave(data: any): any {
   })
 }
 
-// // 总经理报价审批
-// export function GeneralManagerQuoteCheck(data: {
-//   /**
-//    * 流程Id
-//    */
-//   auditFlowId?: number
-//   isAgree: boolean
-//   opinionDescription: string
-// }): any {
-//   return request({
-//     url: "/api/services/app/GeneralManagerCheck/GeneralManagerQuoteCheck",
-//     method: "post",
-//     data
-//   })
-// }
+// 中标确认查看
+export function GetAcceptanceBid(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetAcceptanceBid",
+    method: "get",
+    data
+  })
+}
+// 总经理中标查看
+export function GetBidView(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetBidView",
+    method: "get",
+    data
+  })
+}

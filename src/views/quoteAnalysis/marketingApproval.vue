@@ -1,6 +1,9 @@
 <template>
   <!-- 营销部审批 -->
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
+    <div float-right mb-20px>
+      <el-button type="primary" @click="downLoadTable">审批表下载</el-button>
+    </div>
     <el-descriptions :column="2" border>
       <el-descriptions-item label="直接客户名称">
         {{ data.resa.directCustomerName }}
@@ -233,6 +236,9 @@
         <el-table-column label="备注" prop="remark" />
       </el-table>
     </el-card> -->
+    <div float-right>
+      <el-button type="primary" @click="save">保存</el-button>
+    </div>
   </el-card>
 </template>
 
@@ -242,7 +248,12 @@ import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
 // import { PostAuditQuotationListSave } from "./service"
-import { getQuotationApprovedMarketing } from "./service"
+import {
+  getQuotationApprovedMarketing,
+  GeCatalogue,
+  GetDownloadAuditQuotationList,
+  PostQuotationApprovedMarketingSave
+} from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
 
@@ -254,10 +265,10 @@ const { auditFlowId = 1 }: any = getQuery()
  * 数据部分
  */
 const data = reactive<any>({
-  projectName: "",
-  developmentPlan: "",
-  marketingQuotationData: {},
-  motionMessageSop: [],
+  // projectName: "",
+  // developmentPlan: "",
+  // marketingQuotationData: {},
+  // motionMessageSop: [],
   resa: {
     date: "2023-09-13T01:04:17.6054181+08:00",
     recordNumber: "BJHJ-ZL20230831-001",
@@ -871,7 +882,8 @@ const data = reactive<any>({
         nreGrossMargin: 40.4 //剔除分摊费用毛利率
       }
     ]
-  }
+  },
+  version: 1
 })
 const typeMap = reactive<any>({
   customerNatureOptions: [],
@@ -910,6 +922,40 @@ const columns = reactive({
   sopData: []
 })
 
+/**
+ * 营销部报价审批 报价审核表 下载
+ */
+const downLoadTable = async () => {
+  try {
+    let res: any = await GetDownloadAuditQuotationList({ auditFlowId: Number(auditFlowId), version: data.version })
+    const blob = res
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = "报价审核表.xlsx"
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+const save = async () => {
+  try {
+    let res: any = await PostQuotationApprovedMarketingSave(data.resa)
+    console.log(res)
+    if (res.success) {
+      ElMessage.success("保存成功")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -939,6 +985,8 @@ const typeMapGetText = (key: any, id: any) => {
   return text
 }
 const initFetch = async () => {
+  let res: any = await GeCatalogue({ auditFlowId })
+  data.version = res.result.length
   let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
   typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
 
@@ -952,7 +1000,7 @@ const initFetch = async () => {
   typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
   if (auditFlowId) {
     const loadingInstance = ElLoading.service({ fullscreen: true })
-    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: 0 })
+    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: data.version - 1 })
     data.resa = result
     loadingInstance.close()
   }

@@ -64,7 +64,8 @@
         <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
         <el-table-column label="报价系数">
           <template #default="scope">
-            <el-input-number @mousewheel.native.prevent
+            <el-input-number
+              @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
               @change="offerCoefficientChange(scope.row)"
@@ -100,10 +101,11 @@ import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
 
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { GetQuotationList } from "./service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
 import { PostAuditQuotationListSave, GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
+import { GeCatalogue } from "../quoteAnalysis/service"
+
 // import { ElMessageBox } from "element-plus"
 
 const router = useRouter()
@@ -406,7 +408,9 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 
 const initFetch = async () => {
   if (auditFlowId) {
-    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: 0 })
+    let res: any = await GeCatalogue({ auditFlowId })
+    let version = res.result.length
+    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: version - 1 }) //暂时先减1 针对337
     data.resa = result
     console.log(result, "result")
   }
@@ -426,14 +430,9 @@ const fetchSopYear = async () => {
   columns.sopData = result || []
 }
 
-// const save = async () => {
-//   const { success }: any =
-//     (await PostAuditQuotationListSave({
-//       auditFlowId,
-//       ...data.resa
-//     })) || {}
-//   if (success) ElMessage.success("保存成功！")
-// }
+/**
+ * 总经理页面1保存
+ */
 const save = async () => {
   let query = route.query
   let res = await PostManagerApprovalOfferOneSave(data.resa)

@@ -215,22 +215,29 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
-import { GetQuotationList, PostAuditQuotationList, GetManagerApprovalOfferTwo } from "./service"
-import { getAcceptanceBid, getBidView } from "../quoteAnalysis/service"
-import getQuery from "@/utils/getQuery"
+
 // import { getYears } from "../pmDepartment/service"
 import { ElMessageBox, ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
+
+import { ElLoading } from "element-plus"
+import { useRoute } from "vue-router"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { CommonDownloadFile } from "@/api/bom"
 import { GetPicture3DByAuditFlowId, getProductByAuditFlowId } from "../processImport/service"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
 import { downloadFile, getAuditFlowVersion } from "../trAudit/service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
-import { ElLoading } from "element-plus"
-
-import { useRoute } from "vue-router"
-import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import {
+  GetQuotationList,
+  PostAuditQuotationList,
+  GetManagerApprovalOfferTwo,
+  GetAcceptanceBid,
+  GetBidView
+} from "./service"
+import { GeCatalogue } from "../quoteAnalysis/service"
+import getQuery from "@/utils/getQuery"
 
 const router = useRouter()
 const query = useJump()
@@ -976,11 +983,13 @@ const typeMapGetText = (key: any, id: any) => {
 const initFetch = async () => {
   if (auditFlowId) {
     // 总经理审批2
-    const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: 0 })
+    let res: any = await GeCatalogue({ auditFlowId })
+    let version = res.result.length
+    const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version - 1 })
     // 总经理中标查看
-    // const { result } = await getAcceptanceBid(auditFlowId)
+    // const { result } = await GetBidView({ auditFlowId, version: version - 1 })
     // 中标确认
-    // const { result } = await getAcceptanceBid(auditFlowId)
+    // const { result } = await GetAcceptanceBid({ auditFlowId, version: version - 1 })
     data.resa = result
     console.log(result, "result")
 

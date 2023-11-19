@@ -4,8 +4,8 @@
     <el-row class="m-2">
       <el-radio-group v-model="data.solutionId" @change="init">
         <template v-for="item in data.solutionIdList" :key="item.title">
-          <el-radio :label="`方案${item.version}`" size="large" border>
-            {{ item.id }}
+          <el-radio :label="item.id" size="large" border>
+            方案{{ item.version }}
           </el-radio>
         </template>
       </el-radio-group>
@@ -224,7 +224,7 @@ const downLoad = async () => {
 }
 
 const fetchList = async () => {
-  const { result } = await GeCatalogue({ auditFlowId: Number(auditFlowId) })
+  const { result }: any = await GeCatalogue({ auditFlowId: Number(auditFlowId) })
   data.solutionIdList = result
 }
 </script>

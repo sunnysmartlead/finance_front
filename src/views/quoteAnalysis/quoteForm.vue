@@ -224,7 +224,7 @@ const downLoad = async () => {
 }
 
 const fetchList = async () => {
-  const { result } = await GeCatalogue({ auditFlowId })
+  const { result } = await GeCatalogue({ auditFlowId: Number(auditFlowId) })
   data.solutionIdList = result
 }
 </script>

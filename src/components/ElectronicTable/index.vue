@@ -53,17 +53,15 @@
             </el-table-column>
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="inTheRate" label="年降率">
+        <el-table-column prop="inTheRate" label="年降率（%）">
           <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`inTheRate${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
               <template #default="{ row, $index }">
-                <el-input size="small" v-if="row.isEdit"
-                  v-model="row.inTheRate[index].yearOrValueModes[iIndex].value" type="number" @change="handleCalculation(row, $index, 1)" oninput="value = value.replace(/[^0-9.]/g,'')">
-                  <template #append> % </template>
-                </el-input>
+                <el-input-number size="small" v-if="row.isEdit"
+                  v-model="row.inTheRate[index].yearOrValueModes[iIndex].value" @change="handleCalculation(row, $index, 1)" :min="0" />
               </template>
             </el-table-column>
           </el-table-column>
@@ -389,9 +387,11 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
   if (isSubmit) {
     console.log(record, 'handleSubmit111111')
     //提交
-    await submitFun(record, isSubmit, index)
-    if (record.rebateMoney) {
-      ElMessageBox.confirm("当前行的金额为0，您确定还要提交嘛?", "提示", {
+    const notPass = record.standardMoney?.some(item => {
+      return item.yearOrValueModes?.some((c: any) => !c.value)
+    })
+    if (notPass) {
+      ElMessageBox.confirm("当前行有本位币的金额为0，您确定还要提交嘛?", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning"

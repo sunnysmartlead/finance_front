@@ -70,17 +70,15 @@
                 </el-table-column>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="inTheRate" label="年降率">
+            <el-table-column prop="inTheRate" label="年降率（%）">
               <el-table-column v-for="(c, i) in item.structureMaterial[0]?.inTheRate" align="center"
                 :class-name="`column-class-${i}`" :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`inTheRate${i}`"
                 >
                 <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="150" :formatter="filterinTheRate">
                   <template #default="scope">
-                    <el-input size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
-                      type="number" @input="handleCalculation(scope.row, bomIndex, scope.$index, 1)">
-                      <template #append> % </template>
-                    </el-input>
+                    <el-input-number size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
+                      :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index, 1)" />
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -326,8 +324,11 @@ let SumCount = computed(() => {
 const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   if (isSubmit) {
     //提交
-    if (record.rebateMoney) {
-      ElMessageBox.confirm("当前行的金额为0，您确定还要提交嘛?", "提示", {
+    const notPass = record.standardMoney?.some((item: any) => {
+      return item.yearOrValueModes?.some((c: any) => !c.value)
+    })
+    if (notPass) {
+      ElMessageBox.confirm("当前行有本位币的金额为0，您确定还要提交嘛?", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning"

@@ -410,7 +410,7 @@ const initFetch = async () => {
   if (auditFlowId) {
     let res: any = await GeCatalogue({ auditFlowId })
     let version = res.result.length
-    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: version - 1 }) //暂时先减1 针对337
+    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: version }) //暂时先减1 针对337
     data.resa = result
     console.log(result, "result")
   }

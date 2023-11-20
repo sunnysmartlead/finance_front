@@ -2,6 +2,26 @@
 <!-- 报价反馈 -->
 <template>
   <div>
+    <h4 mb-20px>已保存的方案版本</h4>
+    <div mb-20px>
+      <el-table :data="versionList" border max-height="300px">
+        <el-table-column label="版本号" width="200" align="center" prop="version" />
+        <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+        <el-table-column label="组合方案" width="300" align="center">
+          <template #default="scope">
+            <div v-for="item in scope.row.solutionList" :key="item.product">
+              {{ item.product }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+     
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
@@ -552,8 +572,10 @@ const version = ref(1)
 const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
+let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
-
+let getVersionData = null
+let versionData: any = null
 const yearDimension = ref({
   numk: [],
   prices: [],
@@ -1148,22 +1170,57 @@ const initCharts = (id: string, chartOption: any) => {
     return chart
   }
 }
+/**
+ * 加载之前的版本
+ */
+const selectVersion = async (row: any) => {
+  fullscreenLoading.value = true
+  try {
+    versionChosen = row
 
+    let res = await PostStatementAnalysisBoardSecond({
+      ...versionChosen,
+      solutionTables: versionChosen.solutionList
+    })
+    fullscreenLoading.value = false
+    data.allRes = res.result
+
+    /**
+     * 根据版本号查询该版本数据
+     */
+
+    // let res: any = await getQuotationFeedback({
+    //   auditFlowId,
+    //   version: versionChosen.version,
+    //   ntime: versionChosen.ntime
+    // })
+    data.allRes = res.result
+    fullscreenLoading.value = false
+  } catch (error) {
+    fullscreenLoading.value = false
+  }
+}
 //成本信息表
 const downLoad = async () => {
   console.log("downLoad")
-  let planMap = {}
+  // let planMap = {}
   let solutionTables: any[] = []
-  productList.value.forEach((item: any) => {
-    planMap[item.id as keyof Object] = item
-  })
-  planList.forEach((item) => {
-    if (planMap[item.value as keyof Object] && item.isOffer) {
-      solutionTables.push(planMap[item.value as keyof Object])
-    }
-  })
+  // productList.value.forEach((item: any) => {
+  //   planMap[item.id as keyof Object] = item
+  // })
+  // planList.forEach((item) => {
+  //   if (planMap[item.value as keyof Object] && item.isOffer) {
+  //     solutionTables.push(planMap[item.value as keyof Object])
+  //   }
+  // })
+  solutionTables = versionChosen.solutionList
   try {
-    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables, version: 1, ntime: 1 })
+    let res: any = await PostDownloadMessageSecond({
+      auditFlowId,
+      solutionTables,
+      version: versionChosen.version,
+      ntime: versionChosen.ntime
+    })
     const blob = res
     const reader = new FileReader()
     reader.readAsDataURL(blob)
@@ -1464,7 +1521,6 @@ const postOffer = async (isOffer: boolean) => {
   }
 }
 const toMarketingApproval = () => {
-  debugger
   router.push({
     path: "/quoteAnalysis/marketingApproval",
     query: {
@@ -1496,15 +1552,33 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   if (auditFlowId) {
+    //solutionList
     let { result }: any = await GeCatalogue({ auditFlowId })
+    // getVersionData = result
+    result.forEach((item: any) => {
+      versionList.push(item)
+    })
     //auditFlowId
-    // solutionTables
-    // version
-    // ntime
-    // 报价次数
-
-    let res = await getQuotationFeedback({})
-    console.log(res)
+    //solutionTables
+    //version
+    //ntime
+    // let versions = getVersionData.map((item: any) => item.version)
+    // let maxVersion = Math.max(...versions)
+    // let maxVersionIndex = 0
+    // getVersionData.forEach((item: any, index: number) => {
+    //   if (maxVersion === item.version) {
+    //     maxVersionIndex = index
+    //   }
+    // })
+    // versionData = getVersionData[maxVersionIndex]
+    // let res: any = await getQuotationFeedback({
+    //   auditFlowId,
+    //   version: maxVersion,
+    //   ntime: versionData.ntime,
+    //   solutionTables: versionData.solutionList
+    // })
+    // data.allRes = res.result
+    // console.log(res)
   }
 })
 watchEffect(() => {})

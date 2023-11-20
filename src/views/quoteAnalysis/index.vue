@@ -2,23 +2,26 @@
 <template>
   <div>
     <el-card mb-20px>
-      <h4 mt-100px>已保存的方案版本</h4>
-      <el-table :data="versionList" border max-height="300px">
-        <el-table-column label="版本号" width="200" align="center" prop="version" />
-        <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
-        <el-table-column label="组合方案" width="300" align="center">
-          <template #default="scope">
-            <div v-for="item in scope.row.solutionList" :key="item.product">
-              {{ item.product }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <h4 mb-20px>已保存的方案版本</h4>
+      <div mb-20px>
+        <el-table :data="versionList" border max-height="300px">
+          <el-table-column label="版本号" width="200" align="center" prop="version" />
+          <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+          <el-table-column label="组合方案" width="300" align="center">
+            <template #default="scope">
+              <div v-for="item in scope.row.solutionList" :key="item.product">
+                {{ item.product }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
       <el-table :data="planList" border max-height="300px">
@@ -477,9 +480,10 @@
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
+      <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px v-if="versionList.length>0" mr-20px>生成审批表</el-button>
     </el-card>
-    <el-button @click="save">保存</el-button>
+    
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -1637,7 +1641,8 @@ const toMarketingApproval = () => {
   router.push({
     path: "/quoteAnalysis/marketingApproval",
     query: {
-      auditFlowId
+      auditFlowId,
+      version: versionChosen.version
     }
   })
 }

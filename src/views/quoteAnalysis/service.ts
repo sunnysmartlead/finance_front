@@ -232,7 +232,7 @@ export function calculateRate(data: calculateRateParam) {
 export function getQuotationFeedback(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedback",
-    method: "post",
+    method: "get",
     data
   })
 }
@@ -257,25 +257,12 @@ export function getQuotationApprovedMarketing(data: any) {
   })
 }
 
-// 归档
-export function getDownloadList(auditFlowId: number) {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetDownloadList",
-    method: "post",
-    data: {
-      auditFlowId
-    }
-  })
-}
-
 //查看核心器件
-export function GetCoreComponentAndNreList(auditFlowId: number) {
+export function GetCoreComponentAndNreList(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetCoreComponentAndNreList",
     method: "get",
-    data: {
-      auditFlowId
-    }
+    data
   })
 }
 //下载成本信息表
@@ -344,6 +331,19 @@ export function PostQuotationApprovedMarketingSave(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostQuotationApprovedMarketingSave",
     method: "post",
+    data
+  })
+}
+
+/**
+ *
+ * @param data 归档文件列表
+ * @returns
+ */
+export function GetDownloadList(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadList",
+    method: "get",
     data
   })
 }

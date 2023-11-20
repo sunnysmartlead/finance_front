@@ -252,7 +252,8 @@ import {
   getQuotationApprovedMarketing,
   GeCatalogue,
   GetDownloadAuditQuotationList,
-  PostQuotationApprovedMarketingSave
+  PostQuotationApprovedMarketingSave,
+  GetDownloadList
 } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
@@ -260,7 +261,7 @@ import { ElLoading } from "element-plus"
 import { ElMessage } from "element-plus"
 // import { ElMessageBox } from "element-plus"
 
-const { auditFlowId = 1 }: any = getQuery()
+const { auditFlowId, version }: any = getQuery()
 /**
  * 数据部分
  */
@@ -1000,9 +1001,12 @@ const initFetch = async () => {
   typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
   if (auditFlowId) {
     const loadingInstance = ElLoading.service({ fullscreen: true })
-    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: data.version - 1 })
+    debugger
+    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
     data.resa = result
     loadingInstance.close()
+    let fileRes = await GetDownloadList({ auditFlowId })
+    console.log(fileRes)
   }
 }
 

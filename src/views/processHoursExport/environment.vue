@@ -17,6 +17,7 @@
       <div class="u-flex u-row-left u-col-center">
         <div class="u-m-r-20">
           <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false" :on-error="uploadErrror"
+                     :headers="AuthorizationdDta"
             :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction" :limit="1">
             <template #trigger>
               <el-button type="primary">表单导入</el-button>
@@ -152,6 +153,7 @@ import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus'
 import { formatDateTime } from "@/utils"
 import {exportFoundationEmc} from "@/api/foundationEmc";
+import {getToken} from "@/utils/cookies";
 const uploadAction = baseDomain + "api/services/app/Foundationreliable/UploadFoundationreliable";
 const data = reactive({
   queryParams: {
@@ -236,6 +238,9 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   const file = files[0] as UploadRawFile
   file.uid = genFileId()
   upload.value!.handleStart(file)
+}
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
 }
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   console.log("responese", response);

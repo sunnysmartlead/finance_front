@@ -19,7 +19,7 @@
           <div class="u-flex u-row-left u-col-center">
             <div class="u-m-r-20">
               <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
-                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"
+                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"  :headers="AuthorizationdDta"
                 :limit="1">
                 <template #trigger>
                   <el-button type="primary">软硬件导入</el-button>
@@ -274,6 +274,7 @@ import {
 } from "@/api/foundationFixtureDto";
 import {getDeviceLog, getDeviceStatus} from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
+import {getToken} from "@/utils/cookies";
 //查询关键字
 const queryForm = reactive({
   hardwareName: '',
@@ -495,7 +496,9 @@ const submitSearch = () => {
 }
 
 
-
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
+}
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.clearFiles()

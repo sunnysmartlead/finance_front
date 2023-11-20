@@ -16,6 +16,7 @@
           <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
               :show-file-list="false"
                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                     :headers="AuthorizationdDta"
                 :action="uploadAction" :limit="1">
             <template #trigger>
               <el-button type="primary">工序库导入</el-button>
@@ -147,6 +148,7 @@ import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { GetListAll, getProcessDetail, createProcess, exportProcess,
       updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
 import {deleteFoundationEmc} from "@/api/foundationEmc";
+import {getToken} from "@/utils/cookies";
 const queryForm = reactive({
   processName:''
 })
@@ -228,6 +230,9 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
         message: '导入失败',
        })
     }
+}
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
 }
 const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     console.log("error", error);

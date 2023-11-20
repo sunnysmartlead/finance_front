@@ -18,6 +18,7 @@
             <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
               :show-file-list="false"
                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                       :headers="AuthorizationdDta"
                 :action="uploadAction" :limit="1">
             <template #trigger>
                 <el-button type="primary">工装库导入</el-button>
@@ -208,6 +209,7 @@ import {baseURL,getListAll, createFoundationProcedure,
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { formatDateTime } from '@/utils';
+import {getToken} from "@/utils/cookies";
 const uploadAction=baseURL+"api/services/app/FoundationProcedure/UploadFoundationProcedure";
 
 //查询关键字
@@ -459,7 +461,9 @@ const saveEdit = async (index: number, row: any) => {
     })
   }
 }
-
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
+}
 /** 删除按钮操作 */
 function handleDelete(index: number, row: workClothesItem) {
   const postIds = row.id

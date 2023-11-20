@@ -17,6 +17,7 @@
             <el-upload class="upload-demo" ref="upload"   accept=".xls,.xlsx"
                        :show-file-list="false"
                        :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                       :headers="AuthorizationdDta"
                        :action="uploadAction" :limit="1">
               <template #trigger>
                 <el-button type="primary">工时库导入</el-button>
@@ -186,6 +187,7 @@ import { getLogRecord } from "@/api/logRecord";
 import { GetListAll, update, create, deleteItem, uploadAction,handelExport} from "@/api/workHour";
 import { GetListAll as queryProcessList } from "@/api/process";
 import { formatDateTime } from '@/utils';
+import {getToken} from "@/utils/cookies";
 const queryForm = reactive({
   processName: ''
 })
@@ -363,7 +365,9 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     message: '导入失败',
   })
 }
-
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
+}
 
 
 

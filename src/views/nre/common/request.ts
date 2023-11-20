@@ -471,3 +471,12 @@ export function DelOtherExpenseModificationItemsAdded(data: any): any {
     data,
   })
 }
+
+// 查询nre核价表数据
+export function GetPricingFormDownload(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/GetPricingFormDownload",
+    method: "get",
+    data,
+  })
+}

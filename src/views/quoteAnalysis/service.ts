@@ -291,15 +291,14 @@ export function getDownloadList(auditFlowId: number) {
 }
 
 //查看核心器件
-export function GetCoreComponentAndNreList(auditFlowId: number) {
+export function GetCoreComponentAndNreList(data: any) {
   return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetCoreComponentAndNreList",
-    method: "get",
-    data: {
-      auditFlowId
-    }
+    url: "/api/services/app/AnalyseBoardSecond/PostCoreComponentAndNreList",
+    method: "post",
+    data
   })
 }
+
 //下载成本信息表
 export function PostDownloadMessageSecond(data: any) {
   return request({

@@ -494,7 +494,7 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   if (auditFlowId) {
-    let { result }: any = await GetCoreComponentAndNreList(auditFlowId)
+    let { result }: any = await GetCoreComponentAndNreList({ auditFlowId, version: 1 })
     data.productAndGradients = result.productAndGradients
     data.productAndGradients.forEach((item) => {
       if (!gradientValueMaps[item.gradientValue]) {

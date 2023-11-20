@@ -2,6 +2,26 @@
 <template>
   <div>
     <el-card mb-20px>
+      <h4 mb-20px>已保存的方案版本</h4>
+      <div mb-20px>
+        <el-table :data="versionList" border max-height="300px">
+          <el-table-column label="版本号" width="200" align="center" prop="version" />
+          <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+          <el-table-column label="组合方案" width="300" align="center">
+            <template #default="scope">
+              <div v-for="item in scope.row.solutionList" :key="item.product">
+                {{ item.product }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
       <p>请选择报价方案组合：</p>
       <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
       <el-table :data="planList" border max-height="300px">
@@ -37,11 +57,6 @@
         >确定</el-button
       >
       <h4 mt-100px>方案组合</h4>
-      <!-- <el-radio-group v-model="planListArrVal" mt-20px @change="planListArrChange">
-        <el-radio :label="index" v-for="(item, index) in planListArr" size="large" border :key="index"
-          >方案{{ index + 1 }}</el-radio
-        >
-      </el-radio-group> -->
       <div v-for="(plan, index) in planListArr" :key="index" mt="20px">
         <el-descriptions :title="`方案${index + 1}`" :column="1" border>
           <template #extra>
@@ -84,7 +99,8 @@
         />
         <el-table-column label="报价系数" width="200" align="center">
           <template #default="scope">
-            <el-input-number @mousewheel.native.prevent
+            <el-input-number
+              @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
               @change="offerCoefficientChange(scope.row)"
@@ -129,7 +145,8 @@
         <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="right" />
         <el-table-column prop="unitPrice" label="单价" width="200" align="center">
           <template #default="scope">
-            <el-input-number @mousewheel.native.prevent
+            <el-input-number
+              @mousewheel.native.prevent
               v-model="scope.row.unitPrice"
               controls-position="right"
               @change="unitPriceChange(scope.row)"
@@ -286,12 +303,8 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <el-card class="card" v-for="(item, index) in data.allRes.quotedGrossMargins" :key="index">
       <p>{{ item.project }}</p>
-      <!-- <el-row justify="end" m="2">
-        <el-button type="primary">年份维度对比</el-button>
-      </el-row> -->
       <el-table :data="item.quotedGrossMarginActualList" border>
         <el-table-column label="产品" prop="product" />
         <el-table-column label="单车产品数量" prop="carNum" />
@@ -316,7 +329,12 @@
         <el-table-column label="目标价（客户）">
           <el-table-column label="单价" prop="clientPrice" width="180">
             <template #default="scope">
-              <el-input-number @mousewheel.native.prevent v-model="scope.row.clientPrice" :precision="2" controls-position="right" />
+              <el-input-number
+                @mousewheel.native.prevent
+                v-model="scope.row.clientPrice"
+                :precision="2"
+                controls-position="right"
+              />
             </template>
           </el-table-column>
           <el-table-column label="毛利率">
@@ -462,9 +480,10 @@
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
+      <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px v-if="versionList.length>0" mr-20px>生成审批表</el-button>
     </el-card>
-    <el-button @click="save">保存</el-button>
+    
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -599,15 +618,19 @@ interface planListItem {
   value: string
   isOffer: boolean
 }
+
 const planList: Array<planListItem> = reactive([])
 const productStore = useProductStore()
-
+const version = ref(1)
 const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
-const planListArr = reactive<any[]>([])
+let planListArr = reactive<any[]>([])
+let versionList = reactive<any[]>([])
 let selectPlan = ref<any[]>([])
 const planListArrVal = ref(null)
+let versionChosen: any = null // 选中的以前版本
+
 const yearDimension = ref({
   numk: [],
   prices: [],
@@ -786,15 +809,39 @@ const data = reactive({
 const planListArrChange = async (val) => {
   fullscreenLoading.value = true
   try {
+    versionChosen = null // 清空
     selectPlan.value = planListArr[val]
     let res = await PostStatementAnalysisBoardSecond({
       auditFlowId,
-      solutionTables: planListArr[val],
-      version: 0,
-      ntime: 0
+      solutionTables: planListArr[val]
     })
     fullscreenLoading.value = false
     data.allRes = res.result
+  } catch (error) {
+    fullscreenLoading.value = false
+  }
+}
+/**
+ * 加载之前的版本
+ */
+const selectVersion = async (row: any) => {
+  fullscreenLoading.value = true
+  try {
+    versionChosen = row
+
+    // let res = await PostStatementAnalysisBoardSecond({
+    //   ...versionChosen,
+    //   solutionTables: versionChosen.solutionList
+    // })
+    // fullscreenLoading.value = false
+    // data.allRes = res.result
+
+    /**
+     * 根据版本号查询该版本数据
+     */
+    let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: row.version })
+    data.allRes = res.result
+    fullscreenLoading.value = false
   } catch (error) {
     fullscreenLoading.value = false
   }
@@ -1359,7 +1406,7 @@ const calculateFullGrossMarginNew = async (row: any, index: any) => {
 }
 
 const calculateFullGrossMarginNewSj = async (row: any, rowIndex: number, index: number, list: any) => {
-  if (row.product === "齐套") {
+  if (row.product === "齐套" || row.product === "") {
     try {
       const { result } = await PostGrossMarginForactualQt({
         AuditFlowId: auditFlowId,
@@ -1505,7 +1552,7 @@ const save = async () => {
   // let version = right==='2'?0:
   if (auditFlowId) {
     let saveData = {
-      version: 0,
+      version: version.value,
       ntime: 0,
       IsOffer: false,
       Solutions: planListArr,
@@ -1518,16 +1565,26 @@ const save = async () => {
 
   console.log(productList, planListArr, data.allRes)
 }
+/**
+ * 报价
+ */
 const postOffer = async (isOffer: boolean) => {
   if (auditFlowId) {
     let saveData = {
-      version: 0,
+      version: version.value,
       ntime: 1,
       solutions: selectPlan.value,
       ...data.allRes,
       isOffer,
       auditFlowId
     }
+    //如果存在选择过的版本对象，那么提交的就是该版本
+    if (versionChosen) {
+      saveData.version = versionChosen.version // 版本不变
+      saveData.ntime = versionChosen.ntime + 1 // 提交次数+1
+      saveData.solutions = versionChosen.solutionList
+    }
+
     delete saveData.isSuccess
     delete saveData.message
     delete saveData.mes
@@ -1570,13 +1627,11 @@ const postOffer = async (isOffer: boolean) => {
     //   nodeInstanceId,
     //   financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
     // })
-    console.log(FangAnres)
-    if (res.success) {
+    if (FangAnres.success) {
       ElMessage({
         type: "success",
         message: "操作成功"
       })
-      // postOffer
     }
     console.log(res)
   }
@@ -1586,7 +1641,8 @@ const toMarketingApproval = () => {
   router.push({
     path: "/quoteAnalysis/marketingApproval",
     query: {
-      auditFlowId
+      auditFlowId,
+      version: versionChosen.version
     }
   })
 }
@@ -1614,20 +1670,27 @@ onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 
   if (auditFlowId) {
-    let res = await GetSolution(auditFlowId)
+    await GetSolution(auditFlowId)
     const resp: any = await getProductByAuditFlowId(auditFlowId)
     productList.value = resp.result
-    // await productStore.setProductList(Number(auditFlowId))
-    // productStore.setProductList(auditFlowId)
-    // let res = await PostStatementAnalysisBoardSecond({ auditFlowId })
-    // console.log(res)
-    let cc = await GeCatalogue({ auditFlowId })
-    console.log(cc, "cc")
+    let { result }: any = await GeCatalogue({ auditFlowId })
+
+    //如果方案组合接口没有那么就从初始1开始计数
+    if (result.length === 0) {
+      version.value = 1
+    } else {
+      // 如果不是，那么当前默认从之前的开始
+      version.value = result.length + 1
+      result.forEach((item: any) => {
+        versionList.push(item)
+      })
+    }
+    console.log(result, "res")
   }
-  if (right === "1") {
-    let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })
-    console.log(res, "getStatementAnalysisBoardSecond")
-  }
+  // if (right === "1") {
+  //   let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })
+  //   console.log(res, "getStatementAnalysisBoardSecond")
+  // }
 })
 watchEffect(() => {})
 // 使用toRefs解构

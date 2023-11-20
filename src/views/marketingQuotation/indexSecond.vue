@@ -1,7 +1,14 @@
 <!-- 财务中标确认、总经理中标查看、总经理审批2的界面是一样的 -->
 <template>
   <div>
-    <el-card header="总经理审批2">
+    <div style="margin: 10px 0; float: right">
+      <!-- 总经理查看流程为Done,财务确认为yesOrNo -->
+      <ProcessVertifyBox
+        :onSubmit="handleSubmit"
+        :processType="data.pageType === 3 ? 'baseProcessType' : 'confirmProcessType'"
+      />
+    </div>
+    <el-card header="">
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
         <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
@@ -215,22 +222,29 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
-import { GetQuotationList, PostAuditQuotationList, GetManagerApprovalOfferTwo } from "./service"
-import { getAcceptanceBid, getBidView } from "../quoteAnalysis/service"
-import getQuery from "@/utils/getQuery"
+
 // import { getYears } from "../pmDepartment/service"
 import { ElMessageBox, ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
+
+import { ElLoading } from "element-plus"
+import { useRoute } from "vue-router"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { CommonDownloadFile } from "@/api/bom"
 import { GetPicture3DByAuditFlowId, getProductByAuditFlowId } from "../processImport/service"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
 import { downloadFile, getAuditFlowVersion } from "../trAudit/service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
-import { ElLoading } from "element-plus"
-
-import { useRoute } from "vue-router"
-import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import {
+  GetQuotationList,
+  PostAuditQuotationList,
+  GetManagerApprovalOfferTwo,
+  GetAcceptanceBid,
+  GetBidView
+} from "./service"
+import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
+import getQuery from "@/utils/getQuery"
 
 const router = useRouter()
 const query = useJump()
@@ -244,6 +258,7 @@ const ProductByAuditFlowId = ref<any>({})
  * 数据部分
  */
 const data = reactive<any>({
+  pageType: 0, //1 总经理审批 2总经理中标查看 3.财务中标确认
   projectName: "",
   developmentPlan: "",
   userInfo: JSON.parse(window.localStorage.getItem("user") || ""),
@@ -878,15 +893,23 @@ const data = reactive<any>({
   __abp: true
 })
 
-// const columns = reactive({
-//   sopData: []
-// })
-// const formatter = (_record: any, _row: any, cellValue: any) => {
-//   return Number(cellValue).toFixed(2)
-// }
-// const formatterP = (_record: any, _row: any, cellValue: any) => {
-//   return Number(cellValue).toFixed(2) + "%"
-// }
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  let res: any = await SubmitNode({
+    comment,
+    nodeInstanceId,
+    financeDictionaryDetailId: opinion
+    // AuditFlowId: auditFlowId,
+    // opinionDescription: comment,
+    // isAgree: opinion.includes("Done") ? true : false,
+  })
+  if (res.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+    // postOffer
+  }
+}
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
@@ -910,6 +933,15 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
+  console.log(route.path)
+  if (route.path === "/marketingQuotation/indexSecond") {
+    data.pageType = 1
+    if (route.query.right === "1") {
+      data.pageType = 2
+    }
+  } else if (route.path === "/marketingQuotation/bidWinningConfirmation") {
+    data.pageType = 3
+  }
   initFetch()
   // fetchSopYear()
 })
@@ -976,14 +1008,22 @@ const typeMapGetText = (key: any, id: any) => {
 const initFetch = async () => {
   if (auditFlowId) {
     // 总经理审批2
-    const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: 0 })
-    // 总经理中标查看
-    // const { result } = await getAcceptanceBid(auditFlowId)
-    // 中标确认
-    // const { result } = await getAcceptanceBid(auditFlowId)
-    data.resa = result
-    console.log(result, "result")
-
+    let res: any = await GeCatalogue({ auditFlowId })
+    let version = res.result.length
+    let selectResult = null
+    if (data.pageType === 1) {
+      const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version })
+      selectResult = result
+    } else if (data.pageType === 2) {
+      // 总经理中标查看
+      const { result } = await GetBidView({ auditFlowId, version: version })
+      selectResult = result
+    } else if (data.pageType === 3) {
+      // 中标确认
+      const { result } = await GetAcceptanceBid({ auditFlowId, version: version })
+      selectResult = result
+    }
+    data.resa = selectResult
     let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
     typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
 

@@ -48,7 +48,24 @@ const notShowRoutes = [
   "/nre/nreResourcesDepartment",
   "/resourcesDepartment/electronic",
   "/resourcesDepartment/construction",
-  "/demandApply/index"
+  "/demandApply/index",
+  "/todoCenter/index",
+  "/createProcess/index",
+  "/timeliness/index",
+  "/departmentManage/index",
+  "/role/index",
+  "/user/index",
+  "/E-mail/index",
+  "/dictionary/index",
+  "/dictionary/detailList",
+  "/fnDepartment/index",
+  "/fnDepartment/countryLibrary",
+  "/fnDepartment/qualityCost",
+  "/fnDepartment/exchangeRate",
+  "/fnDepartment/grossProfitMargin",
+  "/fnDepartment/unitPriceImport",
+  "/fnDepartment/rateEntry",
+  "/engineeringParameters/followLineTangent"
 ]
 let notShow = computed(() => {
   if (notShowRoutes.includes(route.path)) {

@@ -708,7 +708,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/marketingQuotation/indexSecond.vue"),
         name: "indexSecond",
         meta: {
-          title: "总经理审批2"
+          title: "总经理中标查看"
         }
       },
       {

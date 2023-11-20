@@ -9,12 +9,14 @@
         {{ data.resa.directCustomerName }}
       </el-descriptions-item>
       <el-descriptions-item label="客户性质">
+        <!-- {{ data.resa.clientNature }} -->
         {{ typeMapGetText("customerNatureOptions", data.resa.clientNature) }}
       </el-descriptions-item>
       <el-descriptions-item label="终端客户名称">
         {{ data.resa.terminalCustomerName }}
       </el-descriptions-item>
       <el-descriptions-item label="终端客户性质">
+        <!-- {{ data.resa.terminalClientNature }} -->
         {{ typeMapGetText("terminalNatureOptions", data.resa.terminalClientNature) }}
       </el-descriptions-item>
       <el-descriptions-item label="开发计划">
@@ -27,10 +29,12 @@
         <el-input v-model="data.resa.projectCycle" />
       </el-descriptions-item>
       <el-descriptions-item label="销售类型">
+        <!-- {{ data.resa.forSale }} -->
         {{ typeMapGetText("salesTypeOptions", data.resa.forSale) }}
         <!-- <el-input v-model="data.resa.forSale" /> -->
       </el-descriptions-item>
       <el-descriptions-item label="贸易方式">
+        <!-- {{ data.resa.modeOfTrade }} -->
         {{ typeMapGetText("TradeMethodOptions", data.resa.modeOfTrade) }}
         <!-- <el-input v-model="data.resa.modeOfTrade" /> -->
       </el-descriptions-item>
@@ -148,24 +152,6 @@
           <el-table-column label="全生命周期成本" prop="allfull" width="100" />
         </el-table-column>
       </el-table>
-      <!-- <template v-for="item in data.resa.pricingMessage" :key="item.messageName">
-        <el-card :header="item.pricingMessageName" class="m-2">
-          <el-table :data="item.pricingMessageModels" border>
-            <el-table-column type="expand">
-              <template #default="props">
-                <el-table :data="props.row.sops" border>
-                  <el-table-column label="sop" prop="sop" />
-                  <el-table-column label="梯度" prop="gradientValue" />
-                  <el-table-column label="全周期" prop="all" />
-                </el-table>
-              </template>
-            </el-table-column>
-            <el-table-column label="序号" type="index" width="100" />
-            <el-table-column label="费用类别" prop="name" />
-            <el-table-column label="成本值" prop="costValue" :formatter="formatThousandths" />
-          </el-table>
-        </el-card>
-      </template> -->
     </el-card>
     <el-card header="报价策略：" m="2">
       <el-table :data="data.resa.biddingStrategySecondModels" border>
@@ -206,9 +192,9 @@
             {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
-        <el-table-column label="全生命周期毛利率" prop="TotallifeCyclegrossMargin">
+        <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
           <template #default="{ row }">
-            {{ `${row.TotallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+            {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
       </el-table>
@@ -977,7 +963,7 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 }
 
 const typeMapGetText = (key: any, id: any) => {
-  let text = ""
+  let text = id
   typeMap[key].forEach((item: any) => {
     if (item.id === id) {
       text = item.displayName
@@ -990,6 +976,7 @@ const initFetch = async () => {
   data.version = res.result.length
   let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
   typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
+  debugger
 
   let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
   typeMap.terminalNatureOptions = terminalNature.result.financeDictionaryDetailList
@@ -1001,11 +988,11 @@ const initFetch = async () => {
   typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
   if (auditFlowId) {
     const loadingInstance = ElLoading.service({ fullscreen: true })
-    debugger
     const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
     data.resa = result
     loadingInstance.close()
     let fileRes = await GetDownloadList({ auditFlowId })
+    debugger
     console.log(fileRes)
   }
 }

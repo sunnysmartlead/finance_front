@@ -164,6 +164,14 @@ export function PostIsOfferSecond(data: any): any {
     data
   })
 }
+//报价分析看板 仅保存
+export function PostIsOfferSecondOnlySave(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSecondOnlySave",
+    method: "post",
+    data
+  })
+}
 /**
  *根据流程id,版本version 查看报表分析看板 查看报价分析看板不含样品,查看报价分析看板含样品,查看报价分析看板仅含样品
  * @param data
@@ -172,22 +180,22 @@ export function PostIsOfferSecond(data: any): any {
 export function getStatementAnalysisBoardSecond(data: { auditFlowId?: number; version?: number }): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/getStatementAnalysisBoardSecond",
-    method: "post",
+    method: "get",
     data
   })
 }
-/**
- * 报价保存接口
- * @param data
- * @returns
- */
-export function PostIsOfferSaveSecond(data: any): any {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSaveSecond",
-    method: "post",
-    data
-  })
-}
+// /**
+//  * 报价保存接口
+//  * @param data
+//  * @returns
+//  */
+// export function PostIsOfferSaveSecond(data: any): any {
+//   return request({
+//     url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSaveSecond",
+//     method: "post",
+//     data
+//   })
+// }
 /**
  * 前端流程流转
  * @param data
@@ -200,6 +208,7 @@ export function SubmitNode(data: any): any {
     data
   })
 }
+
 // AnalyseBoardSecond / PostStatementAnalysisBoardSecond
 // AnalyseBoardSecond / PostYearDimensionalityComparison
 // AnalyseBoardSecond / PostSpreadSheetCalculate 计算毛利率
@@ -220,13 +229,11 @@ export function calculateRate(data: calculateRateParam) {
 }
 
 // 获取报价反馈数据
-export function getQuotationFeedback(auditFlowId: number) {
+export function getQuotationFeedback(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedback",
-    method: "post",
-    data: {
-      auditFlowId
-    }
+    method: "get",
+    data
   })
 }
 // 获取归档数据
@@ -247,46 +254,6 @@ export function getQuotationApprovedMarketing(data: any) {
     url: "/api/services/app/AnalyseBoardSecond/GetQuotationApprovedMarketing",
     method: "get",
     data
-  })
-}
-/**
- * 中标确认
- * @param auditFlowId
- * @returns
- */
-export function getAcceptanceBid(auditFlowId: number) {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetAcceptanceBid",
-    method: "post",
-    data: {
-      auditFlowId
-    }
-  })
-}
-
-/**
- * 总经理中标查看
- * @param auditFlowId
- * @returns
- */
-export function getBidView(auditFlowId: number) {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetBidView",
-    method: "post",
-    data: {
-      auditFlowId
-    }
-  })
-}
-
-// 归档
-export function getDownloadList(auditFlowId: number) {
-  return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetDownloadList",
-    method: "post",
-    data: {
-      auditFlowId
-    }
   })
 }
 
@@ -342,6 +309,42 @@ export function GeCatalogue(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GeCatalogue",
     method: "post",
+    params: data
+  })
+}
+
+//营销部报价审批 报价审核表 下载
+export function GetDownloadAuditQuotationList(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadAuditQuotationList",
+    method: "get",
+    responseType: "blob",
+    data
+  })
+}
+
+/**
+ *
+ * @param data 营销部报价保存/修改
+ * @returns
+ */
+export function PostQuotationApprovedMarketingSave(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostQuotationApprovedMarketingSave",
+    method: "post",
+    data
+  })
+}
+
+/**
+ *
+ * @param data 归档文件列表
+ * @returns
+ */
+export function GetDownloadList(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadList",
+    method: "get",
     data
   })
 }

@@ -69,11 +69,11 @@ const urlMap = {
   ProjectDirectorLook: { path: "/projectDirectorLook", query: {} }, // 项目部长查看
   // 报价分析看板
   QuoteAnalysis: { path: "/quoteAnalysis/index", query: {} }, // 报价分析看板
-  ConfirmWinningBid: { path: "/marketingQuotation/indexSecond", query: {} }, //确认中标
+  ConfirmWinningBid: { path: "/marketingQuotation/confirmWinningBid", query: {} }, //确认中标
   CoreNre: { path: "/quoteAnalysis/nreCoreDevices", query: {} }, //核心部件
-  QuoteFeedback: { path: "/quoteAnalysis/quoteForm", query: {} }, //（报价反馈）
-  BidWinningConfirmation: { path: "/marketingQuotation/indexSecond", query: {} }, // （财务中标确认）
+  QuoteFeedback: { path: "/quoteAnalysis/quoteFeedback", query: {} }, //（报价反馈）
+  BidWinningConfirmation: { path: "/marketingQuotation/bidWinningConfirmation", query: {} }, // （财务中标确认）
   ArchiveEnd: { path: "/archive/index", query: {} }, //"归档结束（异常终止）"
-  QuoteApproval: { path: "/marketingQuotation/indexFirst", query: {} } //"总经理报价审批界面"
+  QuoteApproval: { path: "/marketingQuotation/indexFirst", query: {} } //"总经理报价审批界面 2从1直接跳转过去，非直接进去"
 }
 export default urlMap

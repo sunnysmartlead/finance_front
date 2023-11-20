@@ -19,7 +19,9 @@
         <div class="u-flex u-row-left u-col-center">
           <div class="u-m-r-20">
             <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
-              :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"
+              :on-error="uploadErrror"
+                       :headers="AuthorizationdDta"
+                       :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"
               :limit="1">
               <template #trigger>
                 <el-button type="primary">治具库导入</el-button>
@@ -263,6 +265,7 @@ import { ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, Upload
 import { getListAll, updateFoundationFixture, createFoundationFixture, deleteFoundationPFoundationFixture, exportFoundationFixture, uploadAction } from "@/api/foundationFixtureDto";
 import {exportDevice, getDeviceLog, getDeviceStatus, saveDeviceLog} from "@/api/foundationDeviceDto";
 import { GetListAll as queryProcessList } from "@/api/process";
+import {getToken} from "@/utils/cookies";
 const data = reactive<any>({
   tableColumnWidth: 200,
   tableData: [],
@@ -277,6 +280,9 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   const file = files[0] as UploadRawFile
   file.uid = genFileId()
   upload.value!.handleStart(file)
+}
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
 }
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   console.log("responese", response);

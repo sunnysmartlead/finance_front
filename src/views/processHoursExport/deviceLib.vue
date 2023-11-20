@@ -16,6 +16,7 @@
                 <div class="u-m-r-20">
                     <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
                         :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
+                        :headers="AuthorizationdDta"
                         :action="uploadAction" :limit="1">
                         <template #trigger>
                             <el-button type="primary">设备库导入</el-button>
@@ -236,6 +237,7 @@ import {
 } from "@/api/foundationProcedure";
 import { GetListAll as queryProcessList } from "@/api/process";
 import { forIn } from "lodash";
+import {getToken} from "@/utils/cookies";
 interface selectOptionListItem {
     value: string
     label: string
@@ -308,6 +310,9 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
             message: '导入失败',
         })
     }
+}
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
 }
 const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     console.log("error", error);

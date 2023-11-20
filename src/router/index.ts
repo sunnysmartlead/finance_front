@@ -368,7 +368,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "environment",
         meta: {
-          title: "环境"
+          title: "环境实验库"
         }
       },
       {
@@ -377,7 +377,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "emc",
         meta: {
-          title: "emc"
+          title: "EMC实验费"
         }
       },
       {

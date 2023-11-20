@@ -260,11 +260,12 @@ export function getQuotationApprovedMarketing(data: any) {
 //查看核心器件
 export function GetCoreComponentAndNreList(data: any) {
   return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetCoreComponentAndNreList",
-    method: "get",
+    url: "/api/services/app/AnalyseBoardSecond/PostCoreComponentAndNreList",
+    method: "post",
     data
   })
 }
+
 //下载成本信息表
 export function PostDownloadMessageSecond(data: any) {
   return request({

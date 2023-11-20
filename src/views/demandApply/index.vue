@@ -157,6 +157,7 @@
                 value-format="YYYY"
                 :disabled="isDisabled || right === '1'"
                 @change="yearChange"
+                :disabled-date="disabledDate"
               />
             </el-form-item>
           </el-col>
@@ -1688,6 +1689,10 @@ const fileList = ref<UploadUserFile[]>([])
 const yearCount = ref(0)
 let route = useRoute()
 let router = useRouter()
+
+const disabledDate = (time: Date) => {
+  return time.getTime() < Date.now()
+}
 
 // const pcsYearQuantitySum = (row: Pcs, count: number) => {
 //   var numReg = /[^\d]/g

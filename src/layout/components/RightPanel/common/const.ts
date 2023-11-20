@@ -40,4 +40,5 @@ export const wahiteRotes: any[] = [
   "ProjectChiefAudit",
   "FinanceDirectorAudit",
   "ProjectDirectorLook",
+  "nreCoreDevices",
 ]

@@ -199,8 +199,8 @@
       </el-card>
       <el-row justify="end" style="margin-top: 20px">
         <div v-if="data.userInfo.userJobs === '总经理'">
-          <el-button type="primary" @click="handleGeneralManagerQuoteCheck(true)" v-havedone>同意</el-button>
-          <el-button type="danger" @click="handleGeneralManagerQuoteCheck(false)" v-havedone>拒绝</el-button>
+          <!-- <el-button type="primary" @click="handleGeneralManagerQuoteCheck(true)" v-havedone>同意</el-button>
+          <el-button type="danger" @click="handleGeneralManagerQuoteCheck(false)" v-havedone>拒绝</el-button> -->
           <!-- <ProcessVertifyBox :onSubmit="handleSubmit" /> -->
         </div>
       </el-row>
@@ -1071,20 +1071,20 @@ const handleGeneralManagerQuoteCheck = (isAgree: boolean) => {
     // }
   })
 }
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
-  const { success } = await PostAuditQuotationList({
-    ...data.marketingQuotationData,
-    isPass: !opinion.includes("_No"),
-    auditFlowId,
-    backReason: comment,
-    comment,
-    nodeInstanceId
-  })
-  if (success) {
-    ElMessage.success("操作成功")
-    closeSelectedTag(route.path)
-  }
-}
+// const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+//   const { success } = await PostAuditQuotationList({
+//     ...data.marketingQuotationData,
+//     isPass: !opinion.includes("_No"),
+//     auditFlowId,
+//     backReason: comment,
+//     comment,
+//     nodeInstanceId
+//   })
+//   if (success) {
+//     ElMessage.success("操作成功")
+//     closeSelectedTag(route.path)
+//   }
+// }
 const toProductPriceList = () => {
   router.push({
     path: "/nupriceManagement/productPriceList",

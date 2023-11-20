@@ -1,16 +1,21 @@
 <template>
   <!-- 营销部审批 -->
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
+    <div float-right mb-20px>
+      <el-button type="primary" @click="downLoadTable">审批表下载</el-button>
+    </div>
     <el-descriptions :column="2" border>
       <el-descriptions-item label="直接客户名称">
         {{ data.resa.directCustomerName }}
       </el-descriptions-item>
-      <el-descriptions-item label="客户性质"> {{ data.resa.clientNature }} </el-descriptions-item>
+      <el-descriptions-item label="客户性质">
+        {{ typeMapGetText("customerNatureOptions", data.resa.clientNature) }}
+      </el-descriptions-item>
       <el-descriptions-item label="终端客户名称">
         {{ data.resa.terminalCustomerName }}
       </el-descriptions-item>
       <el-descriptions-item label="终端客户性质">
-        {{ data.resa.terminalClientNature }}
+        {{ typeMapGetText("terminalNatureOptions", data.resa.terminalClientNature) }}
       </el-descriptions-item>
       <el-descriptions-item label="开发计划">
         <el-input v-model="data.resa.developmentPlan" />
@@ -22,10 +27,12 @@
         <el-input v-model="data.resa.projectCycle" />
       </el-descriptions-item>
       <el-descriptions-item label="销售类型">
-        <el-input v-model="data.resa.forSale" />
+        {{ typeMapGetText("salesTypeOptions", data.resa.forSale) }}
+        <!-- <el-input v-model="data.resa.forSale" /> -->
       </el-descriptions-item>
       <el-descriptions-item label="贸易方式">
-        <el-input v-model="data.resa.modeOfTrade" />
+        {{ typeMapGetText("TradeMethodOptions", data.resa.modeOfTrade) }}
+        <!-- <el-input v-model="data.resa.modeOfTrade" /> -->
       </el-descriptions-item>
       <el-descriptions-item label="付款方式">
         <el-input v-model="data.resa.paymentMethod" />
@@ -104,27 +111,42 @@
       </el-table>
     </el-card>
     <el-card header="内部核价信息：" m="2">
-      <el-table :data="data.resa.pricingMessageSecondModels" border>
+      <el-table :data="data.resa.pricingMessageSecondModels" border align="center">
         <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="方案名称" prop="solutionName" width="180" />
-        <el-table-column label="费用类别" prop="name" width="100" />
-        <el-table-column label="方案名称" prop="allSop" width="100" />
-        <el-table-column label="费用类别" prop="allfull" width="100" />
-        <el-table-column label="方案名称" prop="bomSop" width="100" />
-        <el-table-column label="费用类别" prop="bomfull" width="100" />
-        <el-table-column label="方案名称" prop="ftSop" width="100" />
-        <el-table-column label="费用类别" prop="ftfull" width="100" />
         <el-table-column label="梯度" prop="gradient" width="100" />
-        <el-table-column label="费用类别" prop="lsSop" width="100" />
-        <el-table-column label="方案名称" prop="lsfull" width="100" />
-        <el-table-column label="费用类别" prop="moqSop" width="100" />
-        <el-table-column label="方案名称" prop="moqfull" width="100" />
-        <el-table-column label="费用类别" prop="quSop" width="100" />
-        <el-table-column label="梯度" prop="qufull" width="100" />
-        <el-table-column label="费用类别" prop="scSop" width="100" />
-        <el-table-column label="方案名称" prop="scfull" width="100" />
-        <el-table-column label="费用类别" prop="yfSop" width="100" />
-        <el-table-column label="方案名称" prop="yffull" width="100" />
+        <el-table-column label="方案名称" prop="solutionName" width="180" />
+        <el-table-column label="BOM成本">
+          <el-table-column label="SOP年成本" prop="bomSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="bomfull" width="100" />
+        </el-table-column>
+        <el-table-column label="生产成本">
+          <el-table-column label="SOP年成本" prop="scSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="scfull" width="100" />
+        </el-table-column>
+        <el-table-column label="良损率、良损成本">
+          <el-table-column label="SOP年成本" prop="lsSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="lsfull" width="100" />
+        </el-table-column>
+        <el-table-column label="运费">
+          <el-table-column label="SOP年成本" prop="yfSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="yffull" width="100" />
+        </el-table-column>
+        <el-table-column label="MOQ分摊成本">
+          <el-table-column label="SOP年成本" prop="moqSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="moqfull" width="100" />
+        </el-table-column>
+        <el-table-column label="质量成本">
+          <el-table-column label="SOP年成本" prop="quSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="qufull" width="100" />
+        </el-table-column>
+        <el-table-column label="分摊成本">
+          <el-table-column label="SOP年成本" prop="ftSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="ftfull" width="100" />
+        </el-table-column>
+        <el-table-column label="总成本">
+          <el-table-column label="SOP年成本" prop="allSop" width="100" />
+          <el-table-column label="全生命周期成本" prop="allfull" width="100" />
+        </el-table-column>
       </el-table>
       <!-- <template v-for="item in data.resa.pricingMessage" :key="item.messageName">
         <el-card :header="item.pricingMessageName" class="m-2">
@@ -148,23 +170,24 @@
     <el-card header="报价策略：" m="2">
       <el-table :data="data.resa.biddingStrategySecondModels" border>
         <el-table-column type="index" width="100" />
+        <el-table-column label="梯度" prop="gradient" />
         <el-table-column label="产品" prop="product" />
         <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
         <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
-        <el-table-column label="毛利率" prop="grossMargin">
+        <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+        <!-- <el-table-column label="毛利率" prop="grossMargin">
           <template #default="{ row }">
             {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
           <template #default="{ row }">
             {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
-        <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
-        <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
+        <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
           <template #default="scope">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               controls-position="right"
               v-model="scope.row.commission"
               placeholder="请输入佣金"
@@ -172,10 +195,20 @@
               :min="0"
             />
           </template>
-        </el-table-column>
-        <el-table-column label="含佣金的毛利率" prop="grossMarginCommission">
+        </el-table-column> -->
+        <el-table-column label="增加客供料毛利率" prop="clientGrossMargin">
           <template #default="{ row }">
-            {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
+            {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
+          </template>
+        </el-table-column>
+        <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin">
+          <template #default="{ row }">
+            {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
+          </template>
+        </el-table-column>
+        <el-table-column label="全生命周期毛利率" prop="TotallifeCyclegrossMargin">
+          <template #default="{ row }">
+            {{ `${row.TotallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
       </el-table>
@@ -203,9 +236,9 @@
         <el-table-column label="备注" prop="remark" />
       </el-table>
     </el-card> -->
-    <el-row justify="end" m="2">
-      <el-button @click="save" type="primary">保存</el-button>
-    </el-row>
+    <div float-right>
+      <el-button type="primary" @click="save">保存</el-button>
+    </div>
   </el-card>
 </template>
 
@@ -215,19 +248,28 @@ import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
 // import { PostAuditQuotationListSave } from "./service"
-import { getQuotationApprovedMarketing } from "./service"
+import {
+  getQuotationApprovedMarketing,
+  GeCatalogue,
+  GetDownloadAuditQuotationList,
+  PostQuotationApprovedMarketingSave,
+  GetDownloadList
+} from "./service"
+import { getDictionaryAndDetail } from "@/api/dictionary"
+import { ElLoading } from "element-plus"
+
 import { ElMessage } from "element-plus"
 // import { ElMessageBox } from "element-plus"
 
-const { auditFlowId = 1 }: any = getQuery()
+const { auditFlowId, version }: any = getQuery()
 /**
  * 数据部分
  */
 const data = reactive<any>({
-  projectName: "",
-  developmentPlan: "",
-  marketingQuotationData: {},
-  motionMessageSop: [],
+  // projectName: "",
+  // developmentPlan: "",
+  // marketingQuotationData: {},
+  // motionMessageSop: [],
   resa: {
     date: "2023-09-13T01:04:17.6054181+08:00",
     recordNumber: "BJHJ-ZL20230831-001",
@@ -803,198 +845,52 @@ const data = reactive<any>({
     ],
     pricingMessageSecondModels: [
       {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "BOM成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "制造成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "损耗成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "物流成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "MOQ分摊成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "质量成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "其他成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "总成本",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
-      },
-      {
-        solutionName: "AR0820",
-        solutionId: 115,
-        name: "备注",
-        sops: [
-          {
-            gradientValue: 25,
-            sop: 12,
-            all: 24
-          },
-          {
-            gradientValue: 35,
-            sop: 12,
-            all: 24
-          }
-        ]
+        solutionName: "延锋科技前装车内1M-舱内",
+        gradientId: 599,
+        solutionId: 664,
+        gradient: "2664.9",
+        bomSop: 370.34, //BOM成本 sop
+        bomfull: 368.58, //全生命周期成本
+        scSop: 94.95, //  生产成本 sop
+        scfull: 99.92, //生产成本 全生命周期成本
+        lsSop: 16.72, // sop  良损率、良损成本
+        lsfull: 9.42, //良损率、良损成本 全生命周期成本
+        yfSop: 0.23, // 运费 sop
+        yffull: 0.23, //运费 全生命周期成本
+        moqSop: 0.01, // MOQ分摊成本 sop
+        moqfull: 0.06, //MOQ分摊成本 全生命周期成本
+        quSop: 2.79, //  质量成本 sop
+        qufull: 1.84, //质量成本 全生命周期成本
+        ftSop: 0.81, // 分摊成本 sop
+        ftfull: 1.24, //分摊成本 全生命周期成本
+        allSop: 485.85, //  总成本 sop
+        allfull: 481.28 //总成本 全生命周期成本
       }
     ],
     biddingStrategySecondModels: [
       {
-        gradientId: 202,
-        gradient: "25K/Y",
+        gradientId: 599,
+        gradient: "2664.9k/y",
         productId: 0,
-        product: "前视-AR0820",
-        sopCost: 1,
-        fullLifeCyclecost: 2,
-        salesRevenue: 0,
-        sellingCost: 0,
-        grossMargin: 0,
-        price: 1,
-        commission: 0,
-        sopGrossMargin: 23,
-        grossMarginCommission: 0,
-        totallifeCyclegrossMargin: 12,
-        clientGrossMargin: 23,
-        nreGrossMargin: 10
-      },
-      {
-        gradientId: 203,
-        gradient: "35K/Y",
-        productId: 0,
-        product: "前视-AR0820",
-        sopCost: 1,
-        fullLifeCyclecost: 2,
-        salesRevenue: 0,
-        sellingCost: 0,
-        grossMargin: 0,
-        price: 1,
-        commission: 0,
-        sopGrossMargin: 23,
-        grossMarginCommission: 0,
-        totallifeCyclegrossMargin: 12,
-        clientGrossMargin: 23,
-        nreGrossMargin: 10
+        product: "延锋科技前装车内1M",
+        sopCost: 1669950.5306498313, //Sop年成本
+        fullLifeCyclecost: 6551899.356798569, //全生命周期成本
+        price: 1111, //价格
+
+        sopGrossMargin: 40.41033099014627, //SOP年毛利率
+        totallifeCyclegrossMargin: 40.37, //
+        clientGrossMargin: -44.58, //增加客供料毛利率
+        nreGrossMargin: 40.4 //剔除分摊费用毛利率
       }
     ]
-  }
+  },
+  version: 1
+})
+const typeMap = reactive<any>({
+  customerNatureOptions: [],
+  terminalNatureOptions: [],
+  salesTypeOptions: [],
+  TradeMethodOptions: []
 })
 const getSummaries = (param) => {
   const { columns, data } = param
@@ -1027,6 +923,40 @@ const columns = reactive({
   sopData: []
 })
 
+/**
+ * 营销部报价审批 报价审核表 下载
+ */
+const downLoadTable = async () => {
+  try {
+    let res: any = await GetDownloadAuditQuotationList({ auditFlowId: Number(auditFlowId), version: data.version })
+    const blob = res
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = "报价审核表.xlsx"
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+const save = async () => {
+  try {
+    let res: any = await PostQuotationApprovedMarketingSave(data.resa)
+    console.log(res)
+    if (res.success) {
+      ElMessage.success("保存成功")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -1046,10 +976,37 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
 
+const typeMapGetText = (key: any, id: any) => {
+  let text = ""
+  typeMap[key].forEach((item: any) => {
+    if (item.id === id) {
+      text = item.displayName
+    }
+  })
+  return text
+}
 const initFetch = async () => {
+  let res: any = await GeCatalogue({ auditFlowId })
+  data.version = res.result.length
+  let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
+  typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
+
+  let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
+  typeMap.terminalNatureOptions = terminalNature.result.financeDictionaryDetailList
+
+  let salesType: any = await getDictionaryAndDetail("SalesType") //销售类型
+  typeMap.salesTypeOptions = salesType.result.financeDictionaryDetailList
+
+  let tradeMethodType: any = await getDictionaryAndDetail("TradeMethod") //贸易方式
+  typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
   if (auditFlowId) {
-    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: 0 })
+    const loadingInstance = ElLoading.service({ fullscreen: true })
+    debugger
+    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
     data.resa = result
+    loadingInstance.close()
+    let fileRes = await GetDownloadList({ auditFlowId })
+    console.log(fileRes)
   }
 }
 
@@ -1062,15 +1019,6 @@ const changeCommission = (row: any, index: number) => {
 const fetchSopYear = async () => {
   const { result } = (await getYears(auditFlowId)) || {}
   columns.sopData = result || []
-}
-
-const save = async () => {
-  // const { success }: any =
-  //   (await PostAuditQuotationListSave({
-  //     auditFlowId,
-  //     ...data.resa
-  //   })) || {}
-  // if (success) ElMessage.success("保存成功！")
 }
 
 watchEffect(() => {})

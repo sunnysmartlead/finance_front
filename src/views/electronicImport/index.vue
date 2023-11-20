@@ -29,22 +29,22 @@
         </el-table-column>
         <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)">
           <template #default="{ row }">
-            <el-input-number v-model="row.boardLenth" controls-position="right" :min="0" placeholder="请录入板部件长" />
+            <el-input-number @mousewheel.native.prevent v-model="row.boardLenth" controls-position="right" :min="0" placeholder="请录入板部件长" />
           </template>
         </el-table-column>
         <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)">
           <template #default="{ row }">
-            <el-input-number v-model="row.boardWidth" controls-position="right" :min="0" placeholder="请录入板部件宽" />
+            <el-input-number @mousewheel.native.prevent v-model="row.boardWidth" controls-position="right" :min="0" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
         <el-table-column prop="boardSquare" label="板部件面积(mm^2)" >
           <template #default="{ row }">
-            <!-- <el-input-number v-model="row.sapItemNum" placeholder="请录入板部件面积" /> -->
+            <!-- <el-input-number @mousewheel.native.prevent v-model="row.sapItemNum" placeholder="请录入板部件面积" /> -->
           </template>
         </el-table-column>
         <el-table-column prop="stoneQuantity" label="拼板数量">
           <template #default="{ row }">
-            <el-input-number :min="0" v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
+            <el-input-number @mousewheel.native.prevent :min="0" v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
         <el-table-column label="操作">

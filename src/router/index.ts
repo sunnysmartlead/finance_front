@@ -93,7 +93,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "产品开发部审核"
         }
-      },
+      }
       // {
       //   path: "/partEntry/managerOperate",
       //   component: () => import("@/views/partEntry/managerOperate.vue"),
@@ -687,14 +687,6 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       hidden: false
     },
     children: [
-      // {
-      //   path: "/marketingQuotation/index",
-      //   component: () => import("@/views/marketingQuotation/old.vue"),
-      //   name: "marketingQuotation",
-      //   meta: {
-      //     title: "总经理审批"
-      //   }
-      // },
       {
         path: "/marketingQuotation/indexFirst",
         component: () => import("@/views/marketingQuotation/indexFirst.vue"),
@@ -705,11 +697,34 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: "/marketingQuotation/indexSecond",
-        // component: () => import("@/views/demandApply/marketingApproval.vue"),
         component: () => import("@/views/marketingQuotation/indexSecond.vue"),
         name: "indexSecond",
         meta: {
           title: "总经理审批2"
+        }
+      },
+      {
+        path: "/marketingQuotation/indexSecond",
+        component: () => import("@/views/marketingQuotation/indexSecond.vue"),
+        name: "indexSecond",
+        meta: {
+          title: "总经理审批2"
+        }
+      },
+      {
+        path: "/marketingQuotation/bidWinningConfirmation",
+        component: () => import("@/views/marketingQuotation/indexSecond.vue"),
+        name: "bidWinningConfirmation",
+        meta: {
+          title: "财务中标确认"
+        }
+      },
+      {
+        path: "/marketingQuotation/confirmWinningBid",
+        component: () => import("@/views/marketingQuotation/indexSecond.vue"),
+        name: "confirmWinningBid",
+        meta: {
+          title: "总经理中标确认"
         }
       }
     ]

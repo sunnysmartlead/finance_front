@@ -12,3 +12,8 @@ export enum CountryTypeEnum {
   '三级管制国家',
   '四级管制国家',
 }
+
+export const formatNumber = (value: any) => {
+  console.log(value, "value11")
+  value = value.replace(/[^0-9.]/g,'')
+}

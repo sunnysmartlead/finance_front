@@ -3,7 +3,7 @@
     :show-summary="!isEdit">
     <el-table-column align="center"  prop="productCategory" label="产品类别">
       <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.qualityCost" />
+        <el-input v-if="isEdit" v-model="row.productCategory" />
       </template>
     </el-table-column>
     <el-table-column align="center" prop="costProportion" label="成本比例" :formatter="formatter">
@@ -15,7 +15,7 @@
     </el-table-column>
     <el-table-column align="center"  prop="qualityCost" label="质量成本（MAX）" :formatter="toFixed">
       <template #default="{ row }">
-        <el-input-number v-if="isEdit" controls-position="right" :min="0" v-model="row.qualityCost" />
+        <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0" v-model="row.qualityCost" />
       </template>
     </el-table-column>
     <el-table-column align="center"  label="操作" width="200" v-if="!hideEdit">

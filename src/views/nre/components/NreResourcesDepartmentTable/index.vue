@@ -8,7 +8,7 @@
     <el-card class="margin-top">
       <template #header> 资源部 - 业务员 </template>
       <el-table ref="multipleTableRef" :data="mouldInventoryData" style="width: 100%" border
-        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost')" show-summary
+        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost', '', 5)" show-summary
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" v-if="isVertify" />
         <el-table-column type="index" label="序号" width="70" />
@@ -23,17 +23,17 @@
             <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.modelNumber" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" width="180" prop="count"  :formatter="formatThousandths">
+        <el-table-column label="数量" width="180" prop="count" :formatter="formatThousandths">
           <template #default="{ row }">
-            <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="单价" width="180" prop="unitPrice"  :formatter="formatThousandths">
+        <el-table-column label="单价" width="180" prop="unitPrice" :formatter="formatThousandths">
           <template #default="{ row }">
-            <el-input-number v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
+            <el-input-number @mousewheel.native.prevent v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="金额" prop="cost" width="180"  :formatter="formatThousandths" />
+        <el-table-column label="金额" prop="cost" width="180" :formatter="formatThousandths" />
         <el-table-column label="备注" prop="remark" width="180">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" v-model="row.remark" :disabled="row.isSubmit" />
@@ -43,10 +43,10 @@
         <el-table-column label="操作" v-if="!isVertify" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link v-if="!row.isSubmit && !row.isEdit" :disabled="row.isSubmit" @click="handleEdit(row)"
-              type="danger">修改</el-button>
+              >修改</el-button>
             <el-button link v-if="!row.isSubmit && row.isEdit" :disabled="row.isSubmit" @click="submit(false, row)"
-              type="danger">确认</el-button>
-            <el-button v-if="!row.isSubmit" :disabled="row.isSubmit" link @click="submit(true, row)"
+              >确认</el-button>
+            <el-button v-if="!row.isSubmit" :disabled="row.isSubmit" link @click="checkData(true, row)"
               type="warning">提交</el-button>
           </template>
         </el-table-column>
@@ -60,9 +60,9 @@ import { ref, onBeforeMount, onMounted, watch } from "vue"
 import { GetInitialResourcesManagementSingle, PostSalesDepartment, NREToExamine } from "../../common/request"
 import { getMouldSummaries } from "../../common/mouldSummaries"
 import { NreMarketingDepartmentModel, MouldInventoryModel } from "../../data.type"
-import { ElMessage } from "element-plus"
+import { ElMessage, ElMessageBox } from "element-plus"
 import getQuery from "@/utils/getQuery"
-import { debounce, filter } from "lodash"
+import { debounce } from "lodash"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { useRoute } from "vue-router"
@@ -90,9 +90,10 @@ const isAllNull = ref(false)
 const initFetch = async () => {
   if (!auditFlowId || !productId) return
   const { result } = await GetInitialResourcesManagementSingle({ auditFlowId, solutionId: productId })
-  console.log(result, "result")
+
   mouldInventoryData.value = result?.mouldInventoryModels
   isAllNull.value = result.isAllNull
+  console.log(props.isVertify, isAllNull.value, "result")
   setTimeout(() => {
     handleToggleSelection()
   }, 300)
@@ -137,6 +138,16 @@ const handleSelectionChange = (val: MouldInventoryModel[]) => {
     ...filterData,
     [productId]: ids
   }))
+}
+
+const checkData = (isSubmit: boolean, row: any) => {
+  if (!row.cost) {
+    ElMessageBox.confirm("当前行的金额为0！,您确定要提交嘛?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+      type: "warning"
+    }).then(async () => submit(isSubmit, row))
+  } else submit(isSubmit, row)
 }
 
 const submit = debounce(async (isSubmit: boolean, row: any) => {
@@ -212,8 +223,6 @@ onBeforeMount(() => {
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   // right === 1 ? queryDoneData() : initFetch()
-
-
   initFetch()
 })
 </script>

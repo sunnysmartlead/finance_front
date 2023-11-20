@@ -28,7 +28,7 @@ import manufactureTable from "./manufactureTable.vue"
 import getQuery from "@/utils/getQuery"
 import { cloneDeep, isEmpty, map } from "lodash"
 import { ElMessage } from "element-plus"
-import { formatThousandths } from '@/utils/number'
+import { formatThousandths } from "@/utils/number"
 
 const { auditFlowId, productId: SolutionId } = getQuery()
 
@@ -57,14 +57,14 @@ const editTotal = computed(() => {
     return 0
   }
   let total = 0
-  console.log(originArr , 'originArr')
+  console.log(originArr, "originArr")
   originArr.forEach((item: any) => {
     const findData = modifyData.value?.find((c: any) => c.editId === item.editId)
     if (findData) {
       total += Number(findData.subtotal)
-    } else if (!item.costItem.includes('制造成本合计')) total += Number(item.subtotal)
+    } else if (!item.costItem.includes("制造成本合计")) total += Number(item.subtotal)
   })
-  return formatThousandths(null,null,total)
+  return formatThousandths(null, null, total)
 })
 
 // 获取 制造成本汇总表
@@ -77,9 +77,9 @@ const getManufacturingCost = async () => {
       AuditFlowId: auditFlowId,
       SolutionId,
       UpDown: yearData.upDown,
-      GradientId: gradientId,
+      GradientId: gradientId
     })
-    manufactureData.value = map(result, (item, index) => ({ ...item, editId: item.editId || (index + 1) })) || []
+    manufactureData.value = map(result, (item, index) => ({ ...item, editId: item.editId || index + 1 })) || []
     console.log(result, "getManufacturingCost")
     loading.value = false
   } catch (err: any) {
@@ -89,13 +89,14 @@ const getManufacturingCost = async () => {
 }
 
 const getModifyData = async () => {
-  const { result }: any = (await GetUpdateItemManufacturingCost({
-    AuditFlowId: auditFlowId,
-    GradientId: props.gradientId,
-    SolutionId,
-    Year: props.yearData.year,
-    UpDown: props.yearData.upDown,
-  })) || {}
+  const { result }: any =
+    (await GetUpdateItemManufacturingCost({
+      AuditFlowId: auditFlowId,
+      GradientId: props.gradientId,
+      SolutionId,
+      Year: props.yearData.year,
+      UpDown: props.yearData.upDown
+    })) || {}
   modifyData.value = result || []
 }
 
@@ -106,12 +107,11 @@ const init = () => {
   }
 }
 
-
 const handleSubmit = async () => {
   if (!modifyData.value.length) {
     ElMessage({
-      type: 'error',
-      message: '请先添加修改项数据再操作！'
+      type: "error",
+      message: "请先添加修改项数据再操作！"
     })
     return
   }
@@ -121,12 +121,12 @@ const handleSubmit = async () => {
     gradientId: props.gradientId,
     Year: props.yearData.year,
     SolutionId,
-    UpDown: props.yearData.upDown,
+    UpDown: props.yearData.upDown
   })
   if (success) {
     ElMessage({
-      type: 'success',
-      message: '提交成功！'
+      type: "success",
+      message: "提交成功！"
     })
     props.onRefresh()
   }
@@ -157,11 +157,13 @@ watch(
   () => modifyData.value,
   (val) => {
     modifyData.value.forEach((item: any) => {
-      item.manufacturingCostDirect.subtotal = (item.manufacturingCostDirect.directLabor || 0) +
+      item.manufacturingCostDirect.subtotal =
+        (item.manufacturingCostDirect.directLabor || 0) +
         (item.manufacturingCostDirect.equipmentDepreciation || 0) +
         (item.manufacturingCostDirect.lineChangeCost || 0) +
         (item.manufacturingCostDirect.manufacturingExpenses || 0)
-      item.manufacturingCostIndirect.subtotal = (item.manufacturingCostIndirect.directLabor || 0) +
+      item.manufacturingCostIndirect.subtotal =
+        (item.manufacturingCostIndirect.directLabor || 0) +
         (item.manufacturingCostIndirect.equipmentDepreciation || 0) +
         (item.manufacturingCostIndirect.lineChangeCost || 0) +
         (item.manufacturingCostIndirect.manufacturingExpenses || 0)

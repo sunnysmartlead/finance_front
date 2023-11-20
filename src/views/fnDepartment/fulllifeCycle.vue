@@ -44,16 +44,16 @@
     <el-dialog v-model="visible" title="制造成本计算-参数" @close="handleCancel(formRef)">
       <el-form ref="formRef" inline :model="formData" status-icon>
         <el-form-item label="年份Sop" prop="year"  >
-          <el-input-number readonly v-model="formData.year" />
+          <el-input-number @mousewheel.native.prevent readonly v-model="formData.year" />
         </el-form-item>
         <el-form-item label="月工作天数"  prop="monthlyWorkingDays">
-          <el-input-number controls-position="right" v-model="formData.monthlyWorkingDays" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" v-model="formData.monthlyWorkingDays" />
         </el-form-item>
         <el-form-item label="人员平均工资"  prop="averageWage">
-          <el-input-number controls-position="right" v-model="formData.averageWage" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" v-model="formData.averageWage" />
         </el-form-item>
         <el-form-item label="每班正常工作时间"  prop="workingHours">
-          <el-input-number controls-position="right" v-model="formData.workingHours" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" v-model="formData.workingHours" />
         </el-form-item>
         <el-form-item label="稼动率"  prop="rateOfMobilization">
           <el-input type="number" v-model="formData.rateOfMobilization">
@@ -61,11 +61,11 @@
           </el-input>
         </el-form-item>
         <el-form-item label="折旧年限"  prop="usefulLifeOfFixedAssets">
-          <el-input-number controls-position="right" :min="0" v-model="formData.usefulLifeOfFixedAssets" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.usefulLifeOfFixedAssets" />
 
         </el-form-item>
         <el-form-item label="每日班次"  prop="dailyShift">
-          <el-input-number controls-position="right" :min="0" v-model="formData.dailyShift" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.dailyShift" />
 
         </el-form-item>
         <el-form-item label="增值税率"  prop="vatRate">
@@ -74,10 +74,10 @@
           </el-input>
         </el-form-item>
         <el-form-item label="人均跟线数量"  prop="traceLineOfPerson">
-          <el-input-number controls-position="right" :min="0" v-model="formData.traceLineOfPerson" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.traceLineOfPerson" />
         </el-form-item>
         <el-form-item label="GP12工序成本(元/pcs)"  prop="processCost">
-          <el-input-number controls-position="right" :min="0" v-model="formData.processCost" />
+          <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="formData.processCost" />
         </el-form-item>
         <el-form-item label="产能利用率"  prop="capacityUtilizationRate">
           <el-input type="number" v-model="formData.capacityUtilizationRate">

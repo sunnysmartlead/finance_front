@@ -15,22 +15,22 @@
         <el-table-column label="直接制造成本" width="180">
           <el-table-column label="直接人工" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.directLabor1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.directLabor1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="设备折旧" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.equipmentDepreciation1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.equipmentDepreciation1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="换线成本" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.lineChangeCost1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.lineChangeCost1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="制造费用" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.manufacturingExpenses1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.manufacturingExpenses1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="小计" width="180" prop="cost">
@@ -42,17 +42,17 @@
         <el-table-column label="间接制造成本" width="180">
           <el-table-column label="直接人工" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.directLabor2" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.directLabor2" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="设备折旧" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.equipmentDepreciation2" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.equipmentDepreciation2" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="制造费用" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.manufacturingExpenses2" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.manufacturingExpenses2" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="小计" width="180" prop="cost">
@@ -80,22 +80,22 @@
         <el-table-column label="直接制造成本" width="180">
           <el-table-column label="直接人工" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.directLabor1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.directLabor1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="设备折旧" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.equipmentDepreciation1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.equipmentDepreciation1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="换线成本" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.lineChangeCost1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.lineChangeCost1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="制造费用" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.manufacturingExpenses1" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.manufacturingExpenses1" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="小计" width="180" prop="cost">
@@ -107,17 +107,17 @@
         <el-table-column label="间接制造成本" width="180">
           <el-table-column label="直接人工" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.directLabor2" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.directLabor2" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="设备折旧" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.equipmentDepreciation2" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.equipmentDepreciation2" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="制造费用" width="180">
             <template #default="{ row }">
-              <el-input-number controls-position="right" :min="0" v-model="row.manufacturingExpenses2" placeholder="" />
+              <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.manufacturingExpenses2" placeholder="" />
             </template>
           </el-table-column>
           <el-table-column label="小计" width="180" prop="cost">
@@ -149,7 +149,7 @@
         </el-table-column>
         <el-table-column label="合计" width="180" prop="cost" fixed="right">
           <template #default="{ row }">
-            <el-input-number controls-position="right" :min="0" v-model="row.subtotal" placeholder="" />
+            <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.subtotal" placeholder="" />
           </template>
         </el-table-column>
       </el-table>

@@ -43,9 +43,9 @@
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150">
               <template #default="{ row, $index }">
-                <el-input-number size="small" v-if="row.isEdit"
+                <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit"
                   v-model="row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
-                  :min="0" @change="handleCalculation(row, $index)" />
+                  :min="0" @change="handleCalculation(row, $index, 0)" />
                 <span v-if="!row.isEdit">{{
                   row.systemiginalCurrency[index]?.yearOrValueModes[iIndex]?.value.toFixed(5)
                 }}</span>
@@ -53,17 +53,15 @@
             </el-table-column>
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="inTheRate" label="年降率">
+        <el-table-column prop="inTheRate" label="年降率（%）">
           <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`inTheRate${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
               :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
-              <template #default="scope">
-                <el-input size="small" v-if="scope.row.isEdit"
-                  v-model="scope.row.inTheRate[index].yearOrValueModes[iIndex].value" type="number">
-                  <template #append> % </template>
-                </el-input>
+              <template #default="{ row, $index }">
+                <el-input-number size="small" v-if="row.isEdit"
+                  v-model="row.inTheRate[index].yearOrValueModes[iIndex].value" @change="handleCalculation(row, $index, 1)" :min="0" />
               </template>
             </el-table-column>
           </el-table-column>
@@ -78,14 +76,14 @@
         </el-table-column>
         <el-table-column prop="moq" label="MOQ" width="150">
           <template #default="{ row }">
-            <el-input-number size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
           <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} K/Y`"
             width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`" :formatter="formatThousandths">
             <template #default="{ row }">
-              <el-input-number size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
+              <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
                 controls-position="right" :min="0" />
             </template>
           </el-table-column>
@@ -389,7 +387,16 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
   if (isSubmit) {
     console.log(record, 'handleSubmit111111')
     //提交
-    await submitFun(record, isSubmit, index)
+    const notPass = record.standardMoney?.some(item => {
+      return item.yearOrValueModes?.some((c: any) => !c.value)
+    })
+    if (notPass) {
+      ElMessageBox.confirm("当前行有本位币的金额为0，您确定还要提交嘛?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    }).then(async () => await submitFun(record, isSubmit, index))
+    } else await submitFun(record, isSubmit, index)
   } else {
     //确认
     // await handleSubmitcalculate(record, isSubmit, index)
@@ -397,12 +404,14 @@ const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: numb
   }
 }
 
-const debounceHandleCalculation = debounce(async (row: any, index: number) => {
+const debounceHandleCalculation = debounce(async (row: any, index: number, type: number) => {
   try {
     row.loading = true
-    const { success, result } = await PosToriginalCurrencyCalculate(row)
-    if (!success && !result.length) throw Error()
+    const { success, result } = await PosToriginalCurrencyCalculate({ ...row, type })
+    if (!success) throw Error()
+    console.log(result, "result")
     electronicBomList.value[index] = { ...(result || {}), isEdit: true, isEdited: true }
+    console.log(electronicBomList.value[index], "electronicBomList.value[index]")
     row.loading = false
   } catch (err) {
     console.log(err, "[根据原币计算 计算失败]")
@@ -413,9 +422,9 @@ const debounceHandleCalculation = debounce(async (row: any, index: number) => {
 }, 300)
 
 // 根据汇率计算
-const handleCalculation = (row: any, index: number) => {
+const handleCalculation = (row: any, index: number, type: number) => {
   row.loading = true
-  return debounceHandleCalculation(row, index)
+  return debounceHandleCalculation(row, index, type)
 }
 
 const SubmitJudge = async (record: any, isSubmit: number, index: number) => {

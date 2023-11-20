@@ -19,7 +19,7 @@
         <el-table-column prop="pricingMoney" label="核价金额" width="180" :formatter="formatThousandths" />
         <el-table-column label="报价系数" width="180">
           <template #default="scope">
-            <el-input-number
+            <el-input-number @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
               type="number"

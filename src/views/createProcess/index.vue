@@ -6,17 +6,19 @@
           <span>集成流程</span>
         </div>
       </template>
-      <el-row :gutter="12">
-        <el-col :span="4" v-for="item in PROCESS_EUNM" :key="item.id">
-          <el-card shadow="hover" class="card" @click="createFlow(item.id)">
-            <img
-              style="width: 100px; height: 100px"
-              src="@/assets/images/mainProcess.png"
-              :style="{ filter: `hue-rotate(${hueRotate}deg)` }"
-            />
-            <div class="text">{{ item.name }}</div>
-          </el-card>
-        </el-col>
+      <el-row>
+        <template :span="4" v-for="item in PROCESS_EUNM" :key="item.title">
+        <el-card shadow="hover" class="card"  :header="item.title" m="2">
+          <!-- <img
+            style="width: 100px; height: 100px"
+            src="@/assets/images/mainProcess.png"
+            :style="{ filter: `hue-rotate(${hueRotate}deg)` }"
+          /> -->
+          <template v-for="c in item.children">
+            <el-button @click="createFlow(c.id)" :disabled="!c.id" type="primary" m="2">{{ c.name }}</el-button>
+          </template>
+        </el-card>
+      </template>
       </el-row>
     </el-card>
   </div>
@@ -43,15 +45,8 @@ const createFlow = (id: string) => {
 .div-card {
   margin: 10px;
   .card {
-    width: 150px;
-    cursor: pointer;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    .text {
-      margin: 5px;
-      text-align: center;
-      color: cadetblue;
-    }
+    width: 200px;
+    flex-direction: column;
   }
   .card:hover {
     background-color: azure;

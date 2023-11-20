@@ -157,6 +157,7 @@
                 value-format="YYYY"
                 :disabled="isDisabled || right === '1'"
                 @change="yearChange"
+                :disabled-date="disabledDate"
               />
             </el-form-item>
           </el-col>
@@ -179,7 +180,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="项目周期:" prop="projectCycle">
-              <el-input-number
+              <el-input-number @mousewheel.native.prevent
                 v-model="state.quoteForm.projectCycle"
                 @change="yearChange"
                 :min="0"
@@ -299,7 +300,7 @@
               :prop="`pcsYearList[${index}].quantity`"
             >
               <template #default="{ row }">
-                <el-input-number
+                <el-input-number @mousewheel.native.prevent
                   controls-position="right"
                   v-model="row.pcsYearList[index].quantity"
                   :disabled="isDisabled || right === '1'"
@@ -582,6 +583,7 @@
             <el-table-column prop="displayGradientValue" label="梯度" width="250">
               <template #default="{ row }">
                 <el-input-number
+                  @mousewheel.native.prevent
                   controls-position="right"
                   v-model="row.displayGradientValue"
                   :disabled="isDisabled || !state.quoteForm.isHasGradient"
@@ -652,30 +654,22 @@
           </el-table-column>
           <el-table-column label="客户年降率(%)">
             <template #default="{ row, $index }">
-              <el-input v-model="row.annualDeclineRate" :disabled="isDisabled || !$index">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.annualDeclineRate" :disabled="isDisabled || !$index" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
-              <el-input v-model="row.annualRebateRequirements" :disabled="isDisabled || right === '1'">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.annualRebateRequirements" :disabled="isDisabled || right === '1'" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
-              <el-input v-model="row.oneTimeDiscountRate" :disabled="isDisabled || right === '1'">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.oneTimeDiscountRate" :disabled="isDisabled || right === '1'" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
-              <el-input v-model="row.commissionRate" :disabled="isDisabled || right === '1'">
-                <template #append>%</template>
-              </el-input>
+              <el-input-number v-model="row.commissionRate" :disabled="isDisabled || right === '1'" :min="0" />
             </template>
           </el-table-column>
         </el-table>
@@ -888,6 +882,8 @@
                     placeholder="汇率:"
                     :disabled="isDisabled || right === '1'"
                     style="width: 100px"
+                    type="number"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
                   />
                 </template>
               </el-input>
@@ -933,6 +929,8 @@
                     placeholder="汇率:"
                     :disabled="isDisabled || right === '1'"
                     style="width: 100px"
+                    type="number"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
                   />
                 </template>
               </el-input>
@@ -978,6 +976,8 @@
                     placeholder="汇率:"
                     :disabled="isDisabled || right === '1'"
                     style="width: 100px"
+                    type="number"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
                   />
                 </template>
               </el-input>
@@ -1023,6 +1023,8 @@
                     placeholder="汇率:"
                     :disabled="isDisabled || right === '1'"
                     style="width: 100px"
+                    type="number"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
                   />
                 </template>
               </el-input>
@@ -1068,6 +1070,8 @@
                     placeholder="汇率:"
                     :disabled="isDisabled || right === '1'"
                     style="width: 100px"
+                    type="number"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
                   />
                 </template>
               </el-input>
@@ -1113,6 +1117,8 @@
                     placeholder="汇率:"
                     :disabled="isDisabled || right === '1'"
                     style="width: 100px"
+                    type="number"
+                    oninput="value=value.replace(/[^0-9.]/g,'')"
                   />
                 </template>
               </el-input>
@@ -1210,6 +1216,8 @@
                 v-model="row.exchangeRate"
                 :disabled="isDisabled || right === '1'"
                 @change="(val) => changeExchangRate(val, $index)"
+                type="number"
+                oninput="value=value.replace(/[^0-9.]/g,'')"
               />
             </template>
           </el-table-column>
@@ -1426,7 +1434,7 @@ import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
 import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
-import { CountryTypeEnum } from "./common/util"
+import { CountryTypeEnum, formatNumber } from "./common/util"
 import { debounce } from "lodash"
 
 let { right } = getQuery()
@@ -1681,6 +1689,10 @@ const fileList = ref<UploadUserFile[]>([])
 const yearCount = ref(0)
 let route = useRoute()
 let router = useRouter()
+
+const disabledDate = (time: Date) => {
+  return time.getTime() < Date.now()
+}
 
 // const pcsYearQuantitySum = (row: Pcs, count: number) => {
 //   var numReg = /[^\d]/g
@@ -2280,8 +2292,8 @@ watch(
               arr.push({
                 kv: c.gradientValue,
                 product: item.product,
-                targetPrice: 0,
-                currency: 0
+                // targetPrice: 0,
+                // currency: 0
               })
             }
           })

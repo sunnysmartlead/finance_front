@@ -58,33 +58,33 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="单价" prop="unitPrice" width="175" />
+        <el-table-column align="center"  label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" />
         <el-table-column align="center"  label="调整系数" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
+            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
           </template>
         </el-table-column>
         <el-table-column align="center"  label="计价单位" prop="unit" width="180" />
         <el-table-column align="center"  label="时间-摸底" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countBottomingOut }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
+            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
           </template>
         </el-table-column>
         <el-table-column align="center"  label="时间-DV" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countDV }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.countDV" />
+            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countDV" />
           </template>
         </el-table-column>
         <el-table-column align="center"  label="时间-PV" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countPV }}</span>
-            <el-input-number v-else :min="0" controls-position="right" v-model="row.countPV" />
+            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countPV" />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="总费用" prop="allCost" width="180" />
+        <el-table-column align="center"  label="总费用" prop="allCost" width="180" :formatter="formatThousandths" />
         <el-table-column align="center"  label="备注">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.remark }}</span>
@@ -126,6 +126,7 @@ import { designScheme } from "@/views/demandApplyAudit"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
+import { formatThousandths } from '@/utils/number'
 
 const { closeSelectedTag } = useJump()
 const route = useRoute()

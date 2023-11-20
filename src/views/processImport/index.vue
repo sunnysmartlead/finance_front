@@ -149,7 +149,7 @@
                   :prop="`tangent.${$index}.laborTime`"
                   :rules="[{ required: true, message: '请输入人工工时', trigger: 'change' }]"
                 >
-                  <el-input-number v-model="row.laborTime" :min="0" controls-position="right" />
+                  <el-input-number @mousewheel.native.prevent v-model="row.laborTime" :min="0" controls-position="right" />
                 </el-form-item>
               </template>
             </el-table-column>
@@ -159,7 +159,7 @@
                   :prop="`tangent.${$index}.machineHours`"
                   :rules="[{ required: true, message: '请输入机器工时', trigger: 'change' }]"
                 >
-                  <el-input-number v-model="row.machineHours" :min="0" controls-position="right" />
+                  <el-input-number @mousewheel.native.prevent v-model="row.machineHours" :min="0" controls-position="right" />
                 </el-form-item>
               </template>
             </el-table-column>
@@ -169,7 +169,7 @@
                   :prop="`tangent.${$index}.personnelNumber`"
                   :rules="[{ required: true, message: '请输入人均跟线数量', trigger: 'change' }]"
                 >
-                  <el-input-number v-model="row.personnelNumber" :min="0" controls-position="right" />
+                  <el-input-number @mousewheel.native.prevent v-model="row.personnelNumber" :min="0" controls-position="right" />
                 </el-form-item>
               </template>
             </el-table-column>

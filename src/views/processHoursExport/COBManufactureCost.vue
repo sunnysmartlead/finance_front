@@ -67,7 +67,7 @@
                       <el-table-column label="直接人工" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.directLaborPrice }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.directLaborPrice"
                             @change="directChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -78,7 +78,7 @@
                       <el-table-column label="设备折旧" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.directDepreciation }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.directDepreciation"
                             @change="directChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -89,7 +89,7 @@
                       <el-table-column label="换线成本" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.directLineChangeCost }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.directLineChangeCost"
                             @change="directChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -100,7 +100,7 @@
                       <el-table-column label="制造费用" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.directManufacturingCosts }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.directManufacturingCosts"
                             @change="directChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -118,7 +118,7 @@
                       <el-table-column label="直接人工" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.indirectLaborPrice }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.indirectLaborPrice"
                             @change="indirectChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -129,7 +129,7 @@
                       <el-table-column label="设备折旧" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.indirectDepreciation }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.indirectDepreciation"
                             @change="indirectChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -141,7 +141,7 @@
                       <el-table-column label="制造费用" width="200" align="center">
                         <template #default="scope">
                           <!-- <span>{{ scope.row.indirectManufacturingCosts }}</span> -->
-                          <el-input-number
+                          <el-input-number @mousewheel.native.prevent
                             v-model="scope.row.indirectManufacturingCosts"
                             @change="indirectChange($event, scope.$index, scope.row, dataIndex)"
                             :precision="2"
@@ -190,7 +190,7 @@
                     <el-table-column label="合计" align="center" width="200">
                       <template #default="scope">
                         <!-- <span>{{ scope.row.totalCost }}</span> -->
-                        <el-input-number v-model="scope.row.totalCost" :precision="2" :step="0.01" />
+                        <el-input-number @mousewheel.native.prevent v-model="scope.row.totalCost" :precision="2" :step="0.01" />
                       </template>
                     </el-table-column>
                     <el-table-column label="备注" align="center" width="200">

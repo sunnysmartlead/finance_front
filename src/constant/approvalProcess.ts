@@ -49,6 +49,18 @@ const baseProcessType = [
     label: "同意",
     val: "YesOrNo_Yes"
   },
+]
+
+const demanApplyVertify = [
+  //YesOrNo
+  {
+    label: "不同意",
+    val: "YesOrNo_No"
+  },
+  {
+    label: "同意",
+    val: "YesOrNo_Yes"
+  },
   {
     label: "保存",
     val: "YesOrNo_Save"
@@ -59,7 +71,7 @@ const confirm = [
   //YesOrNo
   {
     label: "同意",
-    val: "YesOrNo_Yes"
+    val: "HjkbSelect_Yes"
   }
 ]
 
@@ -321,6 +333,7 @@ const PROGRESSTYPE = {
   structBomProcessType,
   bomCostProcessType,
   priceEvaluationBoard,
-  confirm
+  confirm,
+  demanApplyVertify
 }
 export default PROGRESSTYPE

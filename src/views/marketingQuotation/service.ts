@@ -56,7 +56,7 @@ export function PostAuditQuotationListSave(data: {
   })
 }
 
-// 总经理审批1
+// 总经理审批1获取
 export function GetManagerApprovalOfferOne(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferOne",
@@ -64,30 +64,45 @@ export function GetManagerApprovalOfferOne(data: any): any {
     data
   })
 }
-
-// 总经理审批2
-export function GetManagerApprovalOfferTwo(auditFlowId: number): any {
+// 总经理审批1 保存提交
+export function PostManagerApprovalOfferOneSave(data: any): any {
   return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferTwo",
-    method: "get",
-    data: {
-      auditFlowId
-    }
+    url: "/api/services/app/AnalyseBoardSecond/PostManagerApprovalOfferOneSave",
+    method: "post",
+    data
   })
 }
 
-// // 总经理报价审批
-// export function GeneralManagerQuoteCheck(data: {
-//   /**
-//    * 流程Id
-//    */
-//   auditFlowId?: number
-//   isAgree: boolean
-//   opinionDescription: string
-// }): any {
-//   return request({
-//     url: "/api/services/app/GeneralManagerCheck/GeneralManagerQuoteCheck",
-//     method: "post",
-//     data
-//   })
-// }
+// 总经理审批2
+export function GetManagerApprovalOfferTwo(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetManagerApprovalOfferTwo",
+    method: "get",
+    data
+  })
+}
+// 总经理审批2 保存提交
+export function PostManagerApprovalOfferTwoSave(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostManagerApprovalOfferTwoSave",
+    method: "post",
+    data
+  })
+}
+
+// 中标确认查看
+export function GetAcceptanceBid(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetAcceptanceBid",
+    method: "get",
+    data
+  })
+}
+// 总经理中标查看
+export function GetBidView(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetBidView",
+    method: "get",
+    data
+  })
+}

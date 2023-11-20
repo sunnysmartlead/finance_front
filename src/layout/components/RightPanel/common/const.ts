@@ -39,5 +39,6 @@ export const wahiteRotes: any[] = [
   "COBManufactureCost",
   "ProjectChiefAudit",
   "FinanceDirectorAudit",
-  "ProjectDirectorLook"
+  "ProjectDirectorLook",
+  "nreCoreDevices",
 ]

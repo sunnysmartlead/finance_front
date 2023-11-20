@@ -40,7 +40,10 @@ const props = defineProps({
     type: Object as PropType<any>
   },
   gradientId: String,
-  hideEdit: Boolean
+  hideEdit: Boolean,
+  onRefresh: {
+    type: Function as PropType<any>
+  }
 })
 
 const loading = ref(false)
@@ -136,6 +139,8 @@ const handleSubmit = async () => {
     bomIsCustomerSupplyList: ids
   })
   if (success) {
+    props.onRefresh()
+    init()
     ElMessage.success('提交成功！')
   }
 }

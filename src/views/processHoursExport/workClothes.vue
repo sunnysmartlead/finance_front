@@ -81,7 +81,7 @@
               <div>
                 <!-- <el-input v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex !=scope.$index"
                       placeholder="请输入工装单价" /> -->
-                <el-input-number v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex != scope.$index"
+                <el-input-number @mousewheel.native.prevent v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex != scope.$index"
                   placeholder="工装单价"  />
               </div>
             </template>
@@ -112,7 +112,7 @@
               <div>
                 <!-- <el-input v-model="scope.row.installationPrice" :disabled="currentEditProcessIndex !=scope.$index"
                       placeholder="请输入测试线单价" /> -->
-                <el-input-number v-model="scope.row.testPrice" :disabled="currentEditProcessIndex != scope.$index"
+                <el-input-number @mousewheel.native.prevent v-model="scope.row.testPrice" :disabled="currentEditProcessIndex != scope.$index"
                   placeholder="测试线单价" />
               </div>
             </template>

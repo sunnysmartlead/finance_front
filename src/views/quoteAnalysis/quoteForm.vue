@@ -1,6 +1,15 @@
 <!-- 报价单 -->
 <template>
   <div>
+    <el-row class="m-2">
+      <el-radio-group v-model="data.solutionId" @change="init">
+        <template v-for="item in data.solutionIdList" :key="item.title">
+          <el-radio :label="item.id" size="large" border>
+            方案{{ item.version }}
+          </el-radio>
+        </template>
+      </el-radio-group>
+    </el-row>
     <el-card>
       <el-row justify="end">
         <el-button type="primary" @click="submit" m="2">提交</el-button>
@@ -66,13 +75,12 @@
       <el-card style="margin-top: 10px;" header="NRE报价清单">
         <el-table :data="data.form.nreQuotationListDtos" style="width: 100%" border height="500px">
           <el-table-column type="index" label="序号" width="80" fixed="left" />
-          <el-table-column type="index" label="序号" width="80" fixed="left" />
           <el-table-column prop="productName" label="产品名称" />
           <el-table-column prop="travelVolume" label="走量" />
-          <el-table-column prop="unitPrice" label="手板件费" />
-          <el-table-column prop="costOfToolingAndFixtures" label="模具费" />
-          <el-table-column prop="unitPrice" label="工装治具费" />
-          <el-table-column prop="unitPrice" label="实验费" />
+          <el-table-column prop="handmadePartsFee" label="手板件费" />
+          <el-table-column prop="myPropMoldCosterty" label="模具费" />
+          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" />
+          <el-table-column prop="experimentalFees" label="实验费" />
           <el-table-column prop="remark" label="备注" >
             <template #default="{ row }">
               <el-input v-model="row.remark" />
@@ -82,7 +90,7 @@
       </el-card>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="备注">
-          {{ data.form.remark }}
+          <el-input v-model="data.form.remark" />
         </el-descriptions-item>
         <el-descriptions-item label=" " :span="2">
           * 无公司公章报价单为无效报价单
@@ -90,19 +98,19 @@
       </el-descriptions>
       <el-descriptions style="margin-top: 20px;" title="开票资料" :column="2" border>
         <el-descriptions-item label="制作">
-          {{ data.form.remark }}
+          <el-input v-model="data.form.make" />
         </el-descriptions-item>
         <el-descriptions-item label="审核">
-          {{ data.form.quotationName }}
+          <el-input v-model="data.form.toExamine" />
         </el-descriptions-item>
         <el-descriptions-item label="户名">
-          {{ data.form.accountName }}
+          <el-input v-model="data.form.accountName" />
         </el-descriptions-item>
         <el-descriptions-item label="税号">
-          {{ data.form.quotationAdd }}
+          <el-input v-model="data.form.dutyParagraph" />
         </el-descriptions-item>
         <el-descriptions-item label="开户行">
-          <el-input v-model="data.form.customerLink" />
+          <el-input v-model="data.form.bankOfDeposit" />
         </el-descriptions-item>
         <el-descriptions-item label="账号">
           <el-input v-model="data.form.quotationLink" />
@@ -118,25 +126,28 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue"
+import { reactive, onMounted, watch } from "vue"
 import {
   GetExternalQuotation,
   SaveExternalQuotation,
   DownloadExternalQuotation,
+  GeCatalogue,
 } from "./service"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
+
 const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId, productId, numberOfQuotations = 1 }: any = getQuery()
+const { auditFlowId, numberOfQuotations = 1 }: any = getQuery()
 
 const data = reactive({
   form: {
     productQuotationListDtos: [],
+    bankOfDeposit: null,
     nreQuotationListDtos: [],
     customerName: "理想",
     address: null,
@@ -149,21 +160,24 @@ const data = reactive({
     projectCycle: 3,
     projectName: "流程测试OK，测试数据1",
     sopTime: 2024,
-    currency: 0,
+    currency: "",
     remark: "",
     customerAdd: "",
     creationTime: "",
     recordNo: "",
     numberOfQuotations: "",
     accountName: "",
+    make: "",
   },
-  auditFlowId: 0
+  auditFlowId: 0,
+  solutionId: null,
+  solutionIdList: []
 })
 
-const init = async () => {
+const init = async (solutionId: any) => {
   const { result } = await GetExternalQuotation({
     auditFlowId,
-    solutionId: productId,
+    solutionId,
     numberOfQuotations,
   }) || {}
   data.form = {
@@ -174,12 +188,13 @@ const init = async () => {
 }
 
 onMounted(() => {
-  init()
+  fetchList()
 })
+
 
 const submit = async () => {
   const { success } = await SaveExternalQuotation({
-    ...data.form
+    ...data.form,
   })
   if (success) {
     ElMessage.success('提交成功！')
@@ -190,7 +205,7 @@ const submit = async () => {
 const downLoad = async () => {
   let res: any = await DownloadExternalQuotation({
     auditFlowId,
-    solutionId: productId,
+    solutionId: data.solutionId,
     numberOfQuotations,
   })
   const blob = res
@@ -206,6 +221,11 @@ const downLoad = async () => {
     a.click()
     a.remove() //将a标签移除
   }
+}
+
+const fetchList = async () => {
+  const { result }: any = await GeCatalogue({ auditFlowId: Number(auditFlowId) })
+  data.solutionIdList = result
 }
 </script>
 <style scoped></style>

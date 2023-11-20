@@ -124,13 +124,13 @@
                      class="u-text-center">
                   <div class="u-flex u-row-left u-col-center">
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.laborHour" :min="0" :disabled="isDisable(dataIndex)" />
+                      <el-input-number @mousewheel.native.prevent v-model="scopItem.laborHour" :min="0" :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.machineHour" :min="0" :disabled="isDisable(dataIndex)" />
+                      <el-input-number @mousewheel.native.prevent v-model="scopItem.machineHour" :min="0" :disabled="isDisable(dataIndex)" />
                     </div>
                     <div class="u-width-150  u-border">
-                      <el-input-number v-model="scopItem.numberPersonnel" :min="0" :disabled="isDisable(dataIndex)" />
+                      <el-input-number @mousewheel.native.prevent v-model="scopItem.numberPersonnel" :min="0" :disabled="isDisable(dataIndex)" />
                     </div>
                   </div>
                 </div>

@@ -3,7 +3,7 @@
     :show-summary="!isEdit">
     <el-table-column align="center"  prop="productCategory" label="产品类别">
       <template #default="{ row }">
-        <el-input v-if="isEdit" v-model="row.qualityCost" />
+        <el-input v-if="isEdit" v-model="row.productCategory" />
       </template>
     </el-table-column>
     <el-table-column align="center" prop="costProportion" label="成本比例" :formatter="formatter">

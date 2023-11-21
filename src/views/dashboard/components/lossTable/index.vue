@@ -29,7 +29,7 @@ import getQuery from "@/utils/getQuery"
 import { isEmpty, cloneDeep } from "lodash"
 import { ElMessage } from "element-plus"
 import { map } from 'lodash';
-import { getEditTotal } from '../../common/util'
+import { getEditTotal, saveAfterUpdateSum } from '../../common/util'
 
 const { auditFlowId, productId: solutionId } = getQuery()
 
@@ -95,13 +95,16 @@ const handleEdit = (row: any) => {
 }
 
 const handleSubmit = async () => {
-  const { success } = await SetUpdateItemLossCost({
-    updateItem: modifyData.value,
+  const params = {
     auditFlowId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
     SolutionId: solutionId,
     UpDown: props.yearData.upDown,
+  }
+  const { success } = await SetUpdateItemLossCost({
+    ...params,
+    updateItem: modifyData.value,
   })
   if (success) {
     ElMessage({
@@ -109,6 +112,10 @@ const handleSubmit = async () => {
       message: '提交成功！'
     })
     props.onRefresh()
+    saveAfterUpdateSum({
+      ...params,
+      lossCostAfterSum: editTotal.value
+    })
   }
 }
 

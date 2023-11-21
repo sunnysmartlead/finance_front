@@ -227,7 +227,7 @@ const data = reactive({
   construction,
   people,
   constructionId,
-  peopleId
+  peopleId,
 })
 
 const router = useRouter()
@@ -246,6 +246,7 @@ onMounted(async () => {
     toggleSelection() //数据反填
   } else {
     fetchInitData()
+    getRole()
   }
 })
 

@@ -351,3 +351,13 @@ export function SetIsCustomerSupply(data: any) {
     data,
   })
 }
+
+// 保存修改后数据
+export function SaveAfterUpdateSum(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/SaveAfterUpdateSum",
+    method: "post",
+    data,
+  })
+}
+

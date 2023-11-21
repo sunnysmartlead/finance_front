@@ -29,6 +29,7 @@ import getQuery from "@/utils/getQuery"
 import { cloneDeep, isEmpty, map } from "lodash"
 import { ElMessage } from "element-plus"
 import { formatThousandths } from "@/utils/number"
+import { saveAfterUpdateSum } from "../../common/util"
 
 const { auditFlowId, productId: SolutionId } = getQuery()
 
@@ -115,13 +116,16 @@ const handleSubmit = async () => {
     })
     return
   }
-  const { success } = await SetUpdateItemManufacturingCost({
-    updateItem: modifyData.value,
+  const params = {
     auditFlowId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
     SolutionId,
-    UpDown: props.yearData.upDown
+    UpDown: props.yearData.upDown,
+  }
+  const { success } = await SetUpdateItemManufacturingCost({
+    ...params,
+    updateItem: modifyData.value,
   })
   if (success) {
     ElMessage({
@@ -129,6 +133,10 @@ const handleSubmit = async () => {
       message: "提交成功！"
     })
     props.onRefresh()
+    saveAfterUpdateSum({
+      ...params,
+      manufacturingAfterSum: editTotal.value
+    })
   }
 }
 

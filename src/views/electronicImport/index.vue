@@ -2,7 +2,7 @@
   <div class="electronic-import">
     <el-row justify="end" m="2">
       <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.canDo" v-havedone />
     </el-row>
     <el-row justify="end">
       <InterfaceRequiredTime :ProcessIdentifier="Host" />
@@ -19,7 +19,7 @@
     </div>
     <h5>电子料导入</h5>
     <el-card>
-      <el-button :style="{ margin: '10px' }" type="primary" @click="addPlatePart">新增</el-button>
+      <el-button :style="{ margin: '10px' }" type="primary" @click="addPlatePart" :disabled="!data.canDo">新增</el-button>
       <el-table :data="platePart" border style="width: 100%">
         <el-table-column type="index" width="50" />
         <el-table-column prop="boardName" label="板部件名称">
@@ -61,7 +61,7 @@
           show-file-list
           :on-progress="handleGetUploadProgress"
         >
-          <el-button :style="{ margin: '15px' }" type="primary">电子料上传</el-button>
+          <el-button :style="{ margin: '15px' }" type="primary" :disabled="!data.canDo">电子料上传</el-button>
         </el-upload>
       </el-row>
 
@@ -94,9 +94,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from "vue"
 import type { UploadProps } from "element-plus"
-import { ElLoading, ElMessage } from "element-plus"
+import { ElLoading, ElMessage, ElNotification } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom, SaveBoard } from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom, SaveBoard, GetBOMViewPermissions } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 // import ProductInfo from "@/components/ProductInfo/index.vue"
@@ -135,8 +135,24 @@ const data = reactive({
   downloadSetForm: {
     number: 1
   },
-  auditFlowId: null as any
+  auditFlowId: null as any,
+  canDo: false,
 })
+
+const getRole = async () => {
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId, bOMtype: 0 })
+  if (success) {
+    data.canDo = result
+    if (!result) {
+      ElMessage({
+        message: '您当前暂无操作权限！',
+        type: 'error',
+        grouping: true,
+        zIndex: 1
+      })
+    }
+  }
+}
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   console.log(res)
@@ -237,6 +253,7 @@ onMounted(async () => {
   if (auditFlowId && solutionId) {
     init()
     queryBoardInfomation()
+    getRole()
   }
 })
 </script>

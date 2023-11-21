@@ -27,7 +27,7 @@ import { GetUpdateItemOtherCost, SetUpdateItemOtherCost, GetOtherCostItem } from
 import otherCostTable from "./otherCostTable.vue"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
-import { getEditTotal } from '../../common/util'
+import { getEditTotal, saveAfterUpdateSum } from '../../common/util'
 const { auditFlowId, productId: SolutionId } = getQuery()
 import { cloneDeep, map, isEmpty } from 'lodash'
 
@@ -95,19 +95,27 @@ const init = () => {
 }
 
 const handleSubmit = async () => {
-  const { success } = await SetUpdateItemOtherCost({
+const params = {
     updateItem: modifyData.value,
     auditFlowId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
     SolutionId,
     UpDown: props.yearData.upDown,
+  }
+  const { success } = await SetUpdateItemOtherCost({
+    ...params,
+    updateItem: modifyData.value,
   })
   if (success) {
     props.onRefresh()
     ElMessage({
       type: 'success',
       message: '提交成功！'
+    })
+    saveAfterUpdateSum({
+      ...params,
+      otherCosttAfterSum: editTotal.value
     })
   }
 }

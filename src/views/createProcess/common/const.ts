@@ -11,6 +11,10 @@ export const PROCESS_EUNM = [
         id: "EvalReason_Yp"
       },
       {
+        name: "量产样品",
+        id: ""
+      },
+      {
         name: "其他",
         id: "EvalReason_Qt"
       }
@@ -67,7 +71,7 @@ export const PROCESS_EUNM = [
     title: "零星报价流程",
     children: [
       {
-        name: "样品",
+        name: "推广样品",
         id: "EvalReason_Yp"
       },
       {

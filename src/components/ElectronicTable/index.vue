@@ -154,7 +154,8 @@ import {
   BomReview,
   GetBOMElectronicSingle,
   ElectronicUnitPriceCopyingInformationAcquisition,
-  PostElectronicMaterialEnteringCopy
+  PostElectronicMaterialEnteringCopy,
+  GetBOMViewPermissions,
 } from "./common/request"
 import { useRoute } from "vue-router"
 import { getExchangeRate } from "@/views/demandApply/service"
@@ -320,6 +321,7 @@ watch(
   },
   { immediate: true }
 )
+
 const handleDealWithColumn = (columns: any) => {
   // 初始化表头数据
   const { materialsUseCount, systemiginalCurrency, inTheRate, iginalCurrency, standardMoney, rebateMoney } =

@@ -1,7 +1,7 @@
 <template>
   <el-row align="middle" justify="end" m="2">
     <el-button type="primary" @click="submit(refForm)" v-if="!data.isShowBox" v-havedone>校验</el-button>
-    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" v-havedone />
+    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox && data.canDo" v-havedone />
   </el-row>
   <div class="structuralMaterial-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
@@ -11,11 +11,11 @@
     <el-row class="structuralMaterial-import__btn-container">
       <el-upload :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'" :on-success="handleSuccess" show-file-list
         :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
-        <el-button type="primary">结构料上传</el-button>
+        <el-button type="primary" :disabled="!data.canDo">结构料上传</el-button>
       </el-upload>
       <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess3D"
         show-file-list>
-        <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
+        <el-button class="gap" type="primary" :disabled="!data.canDo">附件上传：3D爆炸图</el-button>
       </el-upload>
       <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
     </el-row>
@@ -123,14 +123,15 @@
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue"
 import type { UploadProps, FormInstance, FormRules } from "element-plus"
-import { ElMessage, ElLoading } from "element-plus"
+import { ElMessage, ElLoading, ElNotification } from "element-plus"
 import {
   SaveStructionBom,
   SaveBOM,
   getBomTemplate,
   SaveProductDevelopmentInput,
   GetStructionBom,
-  getProductDevelopmentInput
+  getProductDevelopmentInput,
+  GetBOMViewPermissions
 } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
@@ -164,7 +165,8 @@ const data = reactive<any>({
     remarks: "",
     picture3DFileId: ""
   },
-  isShowBox: false
+  isShowBox: false,
+  canDo: false
 })
 const rules = reactive<FormRules>({
   outerPackagingLength: [{ required: true, message: "请输入该值", trigger: "blur" }],
@@ -188,6 +190,7 @@ onMounted(async () => {
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
   console.log(query, '结构料导入')
   if (auditFlowId && productId) {
+    getRole()
     let { success, result }: any = await GetStructionBom({ auditFlowId, solutionId: productId })
     if (success) {
       data.tableData = result
@@ -257,6 +260,21 @@ const submit = async (formEl: FormInstance | undefined) => {
       console.log("error submit!", fields)
     }
   })
+}
+
+const getRole = async () => {
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId: productId, bOMtype: 0 })
+  if (success) {
+    data.canDo = result
+    if (!result) {
+      ElMessage({
+        message: '您当前暂无操作权限！',
+        type: 'error',
+        grouping: true,
+        zIndex: 1
+      })
+    }
+  }
 }
 
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {

@@ -686,56 +686,55 @@ watch(
   () => data.value,
   (val) => {
     // 手板件
-    if (data.value.handPieceCostModifyDtos.length) {
+    if (data.value.handPieceCostModifyDtos?.length) {
       data.value.handPieceCostModifyDtos.forEach((item: any) => {
         item.cost = (item.unitPrice || 0) * (item.quantity || 0)
       })
     }
     // 模具
-    if (data.value.mouldInventoryModifyDtos.length) {
+    if (data.value.mouldInventoryModifyDto?.length) {
       data.value.mouldInventoryModifyDtos.forEach((item: any) => {
-        console.log(item, "item123123")
         item.cost = (item.unitPrice || 0) * (item.quantity || 0)
       })
     }
     // 工装
-    if (data.value.toolingCostsModifyDtos.length) {
+    if (data.value.toolingCostsModifyDtos?.length) {
       data.value.toolingCostsModifyDtos.forEach((item: any) => {
         item.cost = (item.toolingCount || 0) * (item.unitPriceOfTooling || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 治具
-    if (data.value.fixtureCostsModifyDtos.length) {
+    if (data.value.fixtureCostsModifyDtos?.length) {
       data.value.fixtureCostsModifyDtos.forEach((item: any) => {
         item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 检具
-    if (data.value.inspectionToolCostModifyDtos.length) {
+    if (data.value.inspectionToolCostModifyDtos?.length) {
       data.value.inspectionToolCostModifyDtos.forEach((item: any) => {
         item.cost = (item.count || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 生产设备
-    if (data.value.productionEquipmentCostsModifyDtos.length) {
+    if (data.value.productionEquipmentCostsModifyDtos?.length) {
       data.value.productionEquipmentCostsModifyDtos.forEach((item: any) => {
         item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 实验费
-    if (data.value.experimentalExpensesModifyDtos.length) {
+    if (data.value.experimentalExpensesModifyDtos?.length) {
       data.value.experimentalExpensesModifyDtos.forEach((item: any) => {
         item.allCost = (item.countBottomingOut || 0) * (item.countDV || 0) * (item.countPV || 0)
       })
     }
     // 测试软件
-    if (data.value.testingSoftwareCostsModifyDtos.length) {
+    if (data.value.testingSoftwareCostsModifyDtos?.length) {
       data.value.testingSoftwareCostsModifyDtos.forEach((item: any) => {
         item.cost = (item.costH || 0) * (item.hour || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
       })
     }
     // 差旅费用修改项
-    if (data.value.travelExpenseModifyDtos.length) {
+    if (data.value.travelExpenseModifyDtos?.length) {
       data.value.travelExpenseModifyDtos.forEach((item: any) => {
         item.cost = (item.skyCount || 0) * (item.costSky || 0) * (item.peopleCount || 0)
       })

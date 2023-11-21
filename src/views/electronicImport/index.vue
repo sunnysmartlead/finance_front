@@ -19,7 +19,7 @@
     </div>
     <h5>电子料导入</h5>
     <el-card>
-      <el-button :style="{ margin: '10px' }" type="primary" @click="addPlatePart">新增</el-button>
+      <el-button :style="{ margin: '10px' }" type="primary" @click="addPlatePart" :disabled="!data.canDo">新增</el-button>
       <el-table :data="platePart" border style="width: 100%">
         <el-table-column type="index" width="50" />
         <el-table-column prop="boardName" label="板部件名称">
@@ -61,7 +61,7 @@
           show-file-list
           :on-progress="handleGetUploadProgress"
         >
-          <el-button :style="{ margin: '15px' }" type="primary">电子料上传</el-button>
+          <el-button :style="{ margin: '15px' }" type="primary" :disabled="!data.canDo">电子料上传</el-button>
         </el-upload>
       </el-row>
 

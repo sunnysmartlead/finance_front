@@ -550,6 +550,7 @@ import {
   GeCatalogue
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+import { Decipher } from "crypto"
 /**
  * 路由对象
  */
@@ -938,9 +939,10 @@ const setChartData = () => {
   let RevenueGrossMargin: stringKeyObj = {}
   let keys = Object.keys(gradientTableMap.value)
   keys.forEach((key) => {
+    let gradientItem = data.allRes.projectBoard.filter((item: any) => item.gradientId === Number(key))
     ProjectUnitPrice[key] = {
       title: {
-        text: "项目单价对比"
+        text: `${gradientItem[0].title}项目单价对比`
       },
       tooltip: {
         trigger: "item",
@@ -998,7 +1000,7 @@ const setChartData = () => {
     })
     RevenueGrossMargin[key] = {
       title: {
-        text: "收入和毛利率对比"
+        text: `${gradientItem[0].title}收入和毛利率对比`
       },
       xAxis: {
         type: "category",
@@ -1084,7 +1086,7 @@ const setChartData = () => {
   let sjTable = data.allRes.quotedGrossMargins[length - 1].quotedGrossMarginActualList
   ProjectUnitPrice["shiji"] = {
     title: {
-      text: "项目单价对比"
+      text: "实际数量项目单价对比"
     },
     tooltip: {
       trigger: "item",
@@ -1141,7 +1143,7 @@ const setChartData = () => {
   })
   RevenueGrossMargin["shiji"] = {
     title: {
-      text: "收入和毛利率对比"
+      text: "实际数量收入和毛利率对比"
     },
     xAxis: {
       type: "category",
@@ -1503,8 +1505,14 @@ const save = async () => {
     let saveData = {
       ...data.allRes,
       auditFlowId,
-      solutions: planListArr
+      solutions: selectPlan.value
     }
+    if (versionChosen) {
+      saveData.version = versionChosen.version // 版本不变
+      // saveData.ntime = versionChosen.ntime + 1 // 提交次数+1
+      saveData.solutions = versionChosen.solutionList
+    }
+
     delete saveData.isSuccess
     delete saveData.message
     delete saveData.mes
@@ -1569,7 +1577,7 @@ const postOffer = async (isOffer: boolean) => {
     let FangAnres: any = await SubmitNode({
       comment: "",
       nodeInstanceId,
-      financeDictionaryDetailId: confirmProcessType[1].val
+      financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0]
     })
     // let FangAnres: any = await SubmitNode({
     //   comment: "",

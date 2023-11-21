@@ -70,10 +70,9 @@
               </el-table>
             </template>
           </el-table-column> -->
-        <el-table-column label="型号" prop="model" />
-        <el-table-column label="核心部件" prop="partsName" />
         <el-table-column label="方案名" prop="solutionName" />
-        <!-- <el-table-column label="型号" prop="model" /> -->
+        <el-table-column label="核心部件" prop="partsName" />
+        <el-table-column label="型号" prop="model" />
         <el-table-column label="类型" prop="type" />
         <el-table-column label="备注" prop="remark" />
       </el-table>

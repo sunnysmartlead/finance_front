@@ -1,10 +1,20 @@
 <template>
-  <!-- 总经理审批1 -->
-  <el-card header="报价审核表">
-    <!-- 单价汇总 -->
-    <p>单价汇总</p>
-    <el-table :data="data.resa.unitPriceSum" border>
-      <!-- <el-table-column type="expand">
+  <div>
+    <!-- 总经理审批1 -->
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <span>报价审核表</span>
+          <el-button-group float-right>
+            <el-button type="primary" @click="dialogVisible = true">同意</el-button>
+            <el-button type="danger" @click="dialogVisibleR = true"> 退回</el-button>
+          </el-button-group>
+        </div>
+      </template>
+      <!-- 单价汇总 -->
+      <p>单价汇总</p>
+      <el-table :data="data.resa.unitPriceSum" border>
+        <!-- <el-table-column type="expand">
         <template #default="props">
           <el-table :data="props.row.solutuionAndValues" border>
             <el-table-column label="solutionId" prop="solutionId" />
@@ -12,105 +22,134 @@
           </el-table>
         </template>
       </el-table-column> -->
-      <el-table-column label="产品名称" prop="product" />
-      <el-table-column label="价格" prop="price" />
-    </el-table>
-    <!-- NRE报价汇总 -->
-    <p>NRE报价汇总</p>
-    <el-table :data="data.resa.nreUnitSumModels" border>
-      <el-table-column label="产品名称" prop="product" />
-      <el-table-column label="花费" prop="cost" />
-      <el-table-column label="数量" prop="number" />
-    </el-table>
-    <!-- nre -->
-    <el-card>
-      <p>报价毛利率测算-实际数量</p>
-      <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
-        <el-table-column prop="solutionName" label="方案名" />
-        <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" />
-        <el-table-column prop="offerGrossMargin" label="本次报价-毛利率">
-          <template #default="{ row }">
-            {{ `${row.offerGrossMargin?.toFixed(2)} %` }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率">
-          <template #default="{ row }">
-            {{ `${row.offerClientGrossMargin?.toFixed(2)} %` }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率">
-          <template #default="{ row }">
-            {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="salesRevenue" label="销售收入" :formatter="formatThousandths" />
-        <el-table-column prop="sellingCost" label="销售成本" :formatter="formatThousandths" />
-        <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
-        <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
-        <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
+        <el-table-column label="产品名称" prop="product" />
+        <el-table-column label="价格" prop="price" />
       </el-table>
-      <!-- nre汇总 -->
-      <p>线体数量：{{ data.resa.nre.numberLine }} 共线分摊率：{{ data.resa.nre.collinearAllocationRate }}</p>
-      <el-table
-        :data="data.resa.nre.models"
-        style="width: 100%"
-        border
-        max-height="500px"
-        :summary-method="getSummaries"
-        show-summary
-      >
-        <el-table-column label="序号" type="index" />
-        <el-table-column prop="formName" label="费用名称" />
-        <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
-        <el-table-column label="报价系数">
-          <template #default="scope">
-            <el-input-number
-              @mousewheel.native.prevent
-              v-model="scope.row.offerCoefficient"
-              controls-position="right"
-              @change="offerCoefficientChange(scope.row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
-        <el-table-column label="备注">
-          <template #default="scope">
-            <el-input v-model="scope.row.remark" type="textarea" />
-          </template>
-        </el-table-column>
+      <!-- NRE报价汇总 -->
+      <p>NRE报价汇总</p>
+      <el-table :data="data.resa.nreUnitSumModels" border>
+        <el-table-column label="产品名称" prop="product" />
+        <el-table-column label="花费" prop="cost" />
+        <el-table-column label="数量" prop="number" />
       </el-table>
-      <p>专用设备</p>
-      <el-table :data="data.resa.nre.devices" style="width: 100%" border max-height="500px">
-        <el-table-column prop="deviceName" label="设备名称" />
-        <el-table-column prop="devicePrice" label="设备单价" />
-        <el-table-column prop="number" label="设备数量" />
-        <el-table-column prop="equipmentMoney" label="设备金额" />
-      </el-table>
-    </el-card>
-    <!-- <el-row justify="end" m="2">
+      <!-- nre -->
+      <el-card>
+        <p>报价毛利率测算-实际数量</p>
+        <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
+          <el-table-column prop="solutionName" label="方案名" />
+          <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" />
+          <el-table-column prop="offerGrossMargin" label="本次报价-毛利率">
+            <template #default="{ row }">
+              {{ `${row.offerGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率">
+            <template #default="{ row }">
+              {{ `${row.offerClientGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率">
+            <template #default="{ row }">
+              {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="salesRevenue" label="销售收入" :formatter="formatThousandths" />
+          <el-table-column prop="sellingCost" label="销售成本" :formatter="formatThousandths" />
+          <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
+          <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
+          <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
+        </el-table>
+        <!-- nre汇总 -->
+        <p>线体数量：{{ data.resa.nre.numberLine }} 共线分摊率：{{ data.resa.nre.collinearAllocationRate }}</p>
+        <el-table
+          :data="data.resa.nre.models"
+          style="width: 100%"
+          border
+          max-height="500px"
+          :summary-method="getSummaries"
+          show-summary
+        >
+          <el-table-column label="序号" type="index" />
+          <el-table-column prop="formName" label="费用名称" />
+          <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
+          <el-table-column label="报价系数">
+            <template #default="scope">
+              <el-input-number
+                @mousewheel.native.prevent
+                v-model="scope.row.offerCoefficient"
+                controls-position="right"
+                @change="offerCoefficientChange(scope.row)"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
+          <el-table-column label="备注">
+            <template #default="scope">
+              <el-input v-model="scope.row.remark" type="textarea" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <p>专用设备</p>
+        <el-table :data="data.resa.nre.devices" style="width: 100%" border max-height="500px">
+          <el-table-column prop="deviceName" label="设备名称" />
+          <el-table-column prop="devicePrice" label="设备单价" />
+          <el-table-column prop="number" label="设备数量" />
+          <el-table-column prop="equipmentMoney" label="设备金额" />
+        </el-table>
+      </el-card>
+      <!-- <el-row justify="end" m="2">
       <el-button @click="save" type="primary">保存</el-button>
     </el-row> -->
-    <el-row justify="end" m="2">
-      <el-button @click="save" type="primary">总经理审批2</el-button>
-    </el-row>
-  </el-card>
+      <el-row justify="end" m="2">
+        <el-button @click="save" type="primary">总经理审批2</el-button>
+      </el-row>
+    </el-card>
+    <el-dialog v-model="dialogVisible" title="审批意见" width="30%" :before-close="handleClose">
+      <el-input type="textarea" rows="4" v-model="confirmText" />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="agreeConfirm"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="dialogVisibleR" title="退回" width="30%" :before-close="handleClose">
+      <el-form>
+        <el-form-item label="退回因素">
+          <el-select v-model="refuseReason">
+            <el-option label="价格因素-退回到报价分析看板" value="Spbjclyhjb_Bjfxkb" />
+            <el-option label="价格因素-退回到核价看板" value="Spbjclyhjb_Hjkb" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="退回原因">
+          <el-input type="textarea" rows="4" v-model="refuseText" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisibleR = false">取消</el-button>
+          <el-button type="primary" @click="refuseConfirm"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
+import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
 import { PostAuditQuotationListSave, GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
-import { GeCatalogue } from "../quoteAnalysis/service"
+import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 
 // import { ElMessageBox } from "element-plus"
 
 const router = useRouter()
 const route = useRoute()
-const { auditFlowId } = getQuery()
+const { auditFlowId, nodeInstanceId } = getQuery()
 /**
  * 数据部分
  */
@@ -387,6 +426,37 @@ const columns = reactive({
   sopData: []
 })
 
+const dialogVisible = ref(false)
+const dialogVisibleR = ref(false)
+const confirmText = ref("")
+const refuseText = ref("")
+const refuseReason = ref("Spbjclyhjb_Bjfxkb")
+const handleClose = () => {
+  confirmText.value = ""
+  refuseText.value = ""
+}
+
+const refuseConfirm = async () => {
+  if (refuseText.value) {
+    await SubmitNode({
+      comment: refuseText.value,
+      nodeInstanceId,
+      financeDictionaryDetailId: refuseReason.value
+    })
+    dialogVisibleR.value = false
+  } else {
+    ElMessage.warning("退回原因必填！")
+  }
+}
+
+const agreeConfirm = async () => {
+  await SubmitNode({
+    comment: confirmText.value,
+    nodeInstanceId,
+    financeDictionaryDetailId: "Spbjclyhjb_Yes"
+  })
+  dialogVisibleR.value = false
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })

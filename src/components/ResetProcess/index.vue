@@ -4,18 +4,22 @@
     <el-dialog v-model="data.dialogVisible" title="重置流程" width="30%">
       <el-form :inline="true">
         <el-form-item label="选择部门:">
-          <el-input v-model="dpartName" @blur="GetUserByDeptNamAction" />
-        </el-form-item>
-        <el-form-item label="选择人员:">
           <el-select
-            v-model="data.opinion"
+            v-model="data.departmentId"
             filterable
             remote
             reserve-keyword
             placeholder="请输入关键词"
             :remote-method="remoteMethod"
             :loading="loading"
+            @change="departmentChange"
           >
+            <el-option v-for="item in data.departmentList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+          <!-- <el-input v-model="dpartName" @blur="GetUserByDeptNamAction" /> -->
+        </el-form-item>
+        <el-form-item label="选择人员:">
+          <el-select v-model="data.userId" filterable>
             <el-option v-for="item in data.userList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -35,7 +39,7 @@ import { reactive, PropType, computed, onMounted, ref } from "vue"
 import { ElMessage } from "element-plus"
 import { useRoute } from "vue-router"
 
-import { GetUserByDeptName, ResetTask } from "./service"
+import { GetUserByDeptName, ResetTask, GetDepartmentByName, GetUserByDepartmentId } from "./service"
 import getQuery from "@/utils/getQuery"
 
 const route = useRoute()
@@ -75,7 +79,8 @@ let notShow = computed(() => {
   }
 })
 onMounted(async () => {
-  GetUserByDeptNamAction()
+  // GetUserByDeptNamAction()
+  getDepartmentByName()
 })
 const GetUserByDeptNamAction = async () => {
   let params: any = {
@@ -87,18 +92,33 @@ const GetUserByDeptNamAction = async () => {
   let res = await GetUserByDeptName(params)
   data.userList = res.result.items
 }
+const getDepartmentByName = async () => {
+  let params: any = {
+    name: name.value
+  }
+  let res = await GetDepartmentByName(params)
+  data.departmentList = res.result.items
+}
+const departmentChange = async (val) => {
+  let res = await GetUserByDepartmentId({ departmentId: val })
+  data.userList = res.result.items
+}
+
 const data: any = reactive({
   dialogVisible: false,
-  comment: "",
-  opinion: "",
-  userList: [],
-  solutionIds: []
+  // comment: "",
+  // opinion: "",
+  // solutionIds: [],
+  departmentId: "",
+  departmentList: [],
+  userId: "",
+  userList: []
 })
 const remoteMethod = async (query: string) => {
   if (query !== "") {
     loading.value = true
-    let res = await GetUserByDeptName({ name: query, deptName: dpartName.value })
-    name.value = query
+    let res = await getDepartmentByName({ name: query })
+    // name.value = query
     loading.value = false
     data.userList = res.result.items
   }

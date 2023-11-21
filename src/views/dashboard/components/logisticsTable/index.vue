@@ -29,7 +29,8 @@ import getQuery from "@/utils/getQuery"
 import { cloneDeep, isEmpty, map } from "lodash"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import { ElMessage } from "element-plus"
-import { getEditTotal } from '../../common/util'
+import { getEditTotal, saveAfterUpdateSum } from '../../common/util'
+
 const { auditFlowId, productId: solutionId } = getQuery()
 
 const props = defineProps({
@@ -94,13 +95,16 @@ const handleEdit = (row: any) => {
 }
 
 const handleSubmit = async () => {
-  const { success } = await SetUpdateItemLogisticsCost({
-    updateItem: modifyData.value,
+  const params = {
     auditFlowId,
     SolutionId: solutionId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
     UpDown: props.yearData.upDown,
+  }
+  const { success } = await SetUpdateItemLogisticsCost({
+    ...params,
+    updateItem: modifyData.value,
   })
   if (success) {
     ElMessage({
@@ -108,6 +112,10 @@ const handleSubmit = async () => {
       message: '提交成功！'
     })
     props.onRefresh()
+    saveAfterUpdateSum({
+      ...params,
+      logisticsAfterSum: editTotal.value
+    })
   }
 }
 

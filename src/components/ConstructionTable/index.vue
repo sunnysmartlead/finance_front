@@ -130,7 +130,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="peopleName" label="确认人" v-else />
-            <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
+            <el-table-column label="操作" fixed="right" v-if="!isVertify && data.canDo" width="160">
               <template #default="{ row, $index }">
                 <el-button link :disabled="row.isSubmit" @click="handleSubmit(row, 0, bomIndex, $index)" type="danger"
                   :loading="row.loading">确认</el-button>
@@ -178,6 +178,7 @@ import {
   BomReview,
   StructureUnitPriceCopyingInformationAcquisition,
   PostStructuralMemberEnteringCopy,
+  GetBOMViewPermissions,
 } from "../ElectronicTable/common/request"
 import { useRouter } from "vue-router"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
@@ -227,7 +228,8 @@ const data = reactive({
   construction,
   people,
   constructionId,
-  peopleId
+  peopleId,
+  canDo: false
 })
 
 const router = useRouter()
@@ -246,8 +248,16 @@ onMounted(async () => {
     toggleSelection() //数据反填
   } else {
     fetchInitData()
+    getRole()
   }
 })
+
+const getRole = async () => {
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId: productId, bOMtype: 0 })
+  if (success) {
+    data.canDo = result
+  }
+}
 
 const setTableRefs = (el: any) => {
   if (el) {

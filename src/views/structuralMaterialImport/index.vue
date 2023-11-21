@@ -11,11 +11,11 @@
     <el-row class="structuralMaterial-import__btn-container">
       <el-upload :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'" :on-success="handleSuccess" show-file-list
         :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
-        <el-button type="primary">结构料上传</el-button>
+        <el-button type="primary" :disabled="!data.canDo">结构料上传</el-button>
       </el-upload>
       <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess3D"
         show-file-list>
-        <el-button class="gap" type="primary">附件上传：3D爆炸图</el-button>
+        <el-button class="gap" type="primary" :disabled="!data.canDo">附件上传：3D爆炸图</el-button>
       </el-upload>
       <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
     </el-row>

@@ -304,3 +304,12 @@ export function panelSubmitNode(data: any) {
     data
   })
 }
+
+// 查询权限
+export function GetBOMViewPermissions(data: any): any {
+  return request({
+    url: "/api/services/app/DemandApplyAudit/GetBOMViewPermissions",
+    method: "get",
+    data
+  })
+}

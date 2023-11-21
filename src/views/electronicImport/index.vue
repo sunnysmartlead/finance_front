@@ -140,7 +140,7 @@ const data = reactive({
 })
 
 const getRole = async () => {
-  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId: productId, bOMtype: 0 })
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId, bOMtype: 0 })
   if (success) {
     data.canDo = result
   }

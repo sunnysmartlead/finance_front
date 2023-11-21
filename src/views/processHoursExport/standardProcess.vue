@@ -97,6 +97,7 @@
                                 :show-file-list="showUploadFile"
                                 :on-remove="onFileRemove"
                                 :on-error="uploadErrror"
+                                         :headers="AuthorizationdDta"
                                 :on-success="uploadSuccess"
                                 :on-exceed="handleExceed">
                                 <template #trigger>
@@ -147,6 +148,7 @@ import { formatDateTime } from "@/utils";
 import { getListAll, getDetail, create, uploadAction, update, deleteProcess, getProcessLog, saveProcessLog,exportDownload } from "@/api/standardProcess";
 import customTableFormList from "@/components/processHoursExport/custom-table-form-list.vue"
 import {deleteFoundationEmc} from "@/api/foundationEmc";
+import {getToken} from "@/utils/cookies";
 const data = reactive({
     queryForm: {
         standardProcessName: '',
@@ -227,6 +229,9 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
         })
         return;
     }
+}
+const AuthorizationdDta = {
+  Authorization: "Bearer " + getToken()
 }
 //上传失败
 const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {

@@ -266,6 +266,15 @@ export function GetCoreComponentAndNreList(data: any) {
   })
 }
 
+// nre 核心器件
+export function GetCoreNRE(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetCoreNRE",
+    method: "get",
+    data
+  })
+}
+
 //下载成本信息表
 export function PostDownloadMessageSecond(data: any) {
   return request({

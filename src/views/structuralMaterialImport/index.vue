@@ -123,7 +123,7 @@
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue"
 import type { UploadProps, FormInstance, FormRules } from "element-plus"
-import { ElMessage, ElLoading } from "element-plus"
+import { ElMessage, ElLoading, ElNotification } from "element-plus"
 import {
   SaveStructionBom,
   SaveBOM,
@@ -266,6 +266,14 @@ const getRole = async () => {
   const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId: productId, bOMtype: 0 })
   if (success) {
     data.canDo = result
+    if (!result) {
+      ElMessage({
+        message: '您当前暂无操作权限！',
+        type: 'error',
+        grouping: true,
+        zIndex: 1
+      })
+    }
   }
 }
 

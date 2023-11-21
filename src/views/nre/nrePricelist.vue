@@ -477,7 +477,11 @@
             <el-input v-model="row.softwareProject" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" >
+          <template #default="{ row }">
+            <el-input v-model="row.cost" />
+          </template>
+        </el-table-column>
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
             <el-input v-model="row.partName" />
@@ -1086,6 +1090,7 @@ onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   initFetch()
   getResonOptions()
+  getPricingFormDownload()
 })
 
 watchEffect(() => { })

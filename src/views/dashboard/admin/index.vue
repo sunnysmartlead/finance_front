@@ -51,6 +51,7 @@ watch(
     }
   }
 )
+
 const handleSetBomState = async ({ comment, opinion }: any) => {
   const fileList = bulletinBoardRef.value.getFileList()
   if (opinion === 'HjkbSelect_Yes' && !fileList.length) {

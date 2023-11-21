@@ -111,7 +111,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="peopleName" label="确认人" v-else />
-        <el-table-column label="操作" fixed="right" v-if="!isVertify" width="180">
+        <el-table-column label="操作" fixed="right" v-if="!isVertify && data.canDo" width="180">
           <template #default="{ row, $index }">
             <el-button link :disabled="row.isSubmit" :loading="row.loading" @click="handleSubmit(row, 0, $index)"
               type="danger" v-havedone>确认</el-button>
@@ -154,7 +154,8 @@ import {
   BomReview,
   GetBOMElectronicSingle,
   ElectronicUnitPriceCopyingInformationAcquisition,
-  PostElectronicMaterialEnteringCopy
+  PostElectronicMaterialEnteringCopy,
+  GetBOMViewPermissions,
 } from "./common/request"
 import { useRoute } from "vue-router"
 import { getExchangeRate } from "@/views/demandApply/service"
@@ -178,6 +179,10 @@ const props = defineProps({
   isVertify: Boolean,
   isMergeVertify: Boolean,
   isMergeEdit: Boolean
+})
+
+const data = reactive({
+  canDo: false
 })
 
 const STORAGE_KEY = "electronicVertify" // 浏览器缓存key
@@ -293,6 +298,7 @@ const filterinTheRate = (record: any, _row: any, cellValue: any) => {
 onMounted(async () => {
   if (!auditFlowId || !productId) return
   if (!props.isVertify) {
+    getRole()
     fetchInitData()
   } else {
     window.sessionStorage.setItem("placePath", router.currentRoute.value.path)
@@ -320,6 +326,14 @@ watch(
   },
   { immediate: true }
 )
+
+const getRole = async () => {
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId: productId, bOMtype: 0 })
+  if (success) {
+    data.canDo = result
+  }
+}
+
 const handleDealWithColumn = (columns: any) => {
   // 初始化表头数据
   const { materialsUseCount, systemiginalCurrency, inTheRate, iginalCurrency, standardMoney, rebateMoney } =

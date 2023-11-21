@@ -1,5 +1,5 @@
-import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
-import { sortBy } from 'lodash'
+import { formatThousandths } from '@/utils/number'
+import { SaveAfterUpdateSum } from "../service"
 
 /**
  * @param value 数字值
@@ -34,4 +34,8 @@ export const getEditTotal = (originArr: any[], editArr: any[], key: string) => {
     } else total += Number(item[key])
   })
   return formatThousandths(null,null,total)
+}
+
+export const saveAfterUpdateSum = async (params: any) => {
+  await SaveAfterUpdateSum(params)
 }

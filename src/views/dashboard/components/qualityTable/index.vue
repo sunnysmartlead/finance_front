@@ -27,9 +27,9 @@ import { GetUpdateItemQualityCost, SetUpdateItemQualityCost, GetQualityCost } fr
 import qualityTable from "./qualityTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty, cloneDeep } from "lodash"
-import type { UploadProps, UploadUserFile } from "element-plus"
+import type { UploadProps } from "element-plus"
 import { ElMessage } from "element-plus"
-import { getEditTotal } from '../../common/util'
+import { getEditTotal, saveAfterUpdateSum } from '../../common/util'
 
 const { auditFlowId, productId: SolutionId } = getQuery()
 
@@ -103,13 +103,16 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
 }
 
 const handleSubmit = async () => {
-  const { success } = await SetUpdateItemQualityCost({
-    updateItem: modifyData.value,
+const params = {
     auditFlowId,
-    SolutionId,
     gradientId: props.gradientId,
     Year: props.yearData.year,
+    SolutionId,
     UpDown: props.yearData.upDown,
+  }
+  const { success } = await SetUpdateItemQualityCost({
+    ...params,
+    updateItem: modifyData.value,
   })
   if (success) {
     ElMessage({
@@ -117,6 +120,10 @@ const handleSubmit = async () => {
       message: '提交成功！'
     })
     props.onRefresh()
+    saveAfterUpdateSum({
+      ...params,
+      qualityCostAfterSum: editTotal.value
+    })
   }
 }
 

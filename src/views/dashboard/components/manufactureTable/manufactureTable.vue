@@ -58,7 +58,7 @@
     </el-table-column>
     <el-table-column align="center"  label="合计" prop="subtotal" :formatter="formatThousandths" />
     <el-table-column align="center" v-if="isEdit" prop="editNotes" label="备注">
-      <template #default="{ row }" >
+      <template #default="{ row }">
         <el-input v-model="row.editNotes" />
       </template>
     </el-table-column>

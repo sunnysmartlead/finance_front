@@ -2,7 +2,7 @@
   <div class="electronic-import">
     <el-row justify="end" m="2">
       <!-- <el-button type="primary" @click="submit" v-havedone>提交</el-button> -->
-      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
+      <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.canDo" v-havedone />
     </el-row>
     <el-row justify="end">
       <InterfaceRequiredTime :ProcessIdentifier="Host" />
@@ -96,7 +96,7 @@ import { ref, reactive, onMounted, watch } from "vue"
 import type { UploadProps } from "element-plus"
 import { ElLoading, ElMessage } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
-import { SaveElectronicBom, DownloadFile, GetElectronicBom, SaveBoard } from "@/api/bom"
+import { SaveElectronicBom, DownloadFile, GetElectronicBom, SaveBoard, GetBOMViewPermissions } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 // import ProductInfo from "@/components/ProductInfo/index.vue"
@@ -135,8 +135,16 @@ const data = reactive({
   downloadSetForm: {
     number: 1
   },
-  auditFlowId: null as any
+  auditFlowId: null as any,
+  canDo: false,
 })
+
+const getRole = async () => {
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId, bOMtype: 0 })
+  if (success) {
+    data.canDo = result
+  }
+}
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   console.log(res)
@@ -237,6 +245,7 @@ onMounted(async () => {
   if (auditFlowId && solutionId) {
     init()
     queryBoardInfomation()
+    getRole()
   }
 })
 </script>

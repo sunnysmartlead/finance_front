@@ -1,7 +1,7 @@
 <template>
   <el-row align="middle" justify="end" m="2">
     <el-button type="primary" @click="submit(refForm)" v-if="!data.isShowBox" v-havedone>校验</el-button>
-    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox" v-havedone />
+    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox && data.canDo" v-havedone />
   </el-row>
   <div class="structuralMaterial-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
@@ -130,7 +130,8 @@ import {
   getBomTemplate,
   SaveProductDevelopmentInput,
   GetStructionBom,
-  getProductDevelopmentInput
+  getProductDevelopmentInput,
+  GetBOMViewPermissions
 } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
@@ -164,7 +165,8 @@ const data = reactive<any>({
     remarks: "",
     picture3DFileId: ""
   },
-  isShowBox: false
+  isShowBox: false,
+  canDo: false
 })
 const rules = reactive<FormRules>({
   outerPackagingLength: [{ required: true, message: "请输入该值", trigger: "blur" }],
@@ -188,6 +190,7 @@ onMounted(async () => {
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
   console.log(query, '结构料导入')
   if (auditFlowId && productId) {
+    getRole()
     let { success, result }: any = await GetStructionBom({ auditFlowId, solutionId: productId })
     if (success) {
       data.tableData = result
@@ -257,6 +260,13 @@ const submit = async (formEl: FormInstance | undefined) => {
       console.log("error submit!", fields)
     }
   })
+}
+
+const getRole = async () => {
+  const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId: productId, bOMtype: 0 })
+  if (success) {
+    data.canDo = result
+  }
 }
 
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {

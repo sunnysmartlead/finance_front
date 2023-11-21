@@ -94,7 +94,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from "vue"
 import type { UploadProps } from "element-plus"
-import { ElLoading, ElMessage } from "element-plus"
+import { ElLoading, ElMessage, ElNotification } from "element-plus"
 // import type { TabsPaneContext } from "element-plus"
 import { SaveElectronicBom, DownloadFile, GetElectronicBom, SaveBoard, GetBOMViewPermissions } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
@@ -143,6 +143,14 @@ const getRole = async () => {
   const { success, result } = await GetBOMViewPermissions({ auditFlowId, solutionId, bOMtype: 0 })
   if (success) {
     data.canDo = result
+    if (!result) {
+      ElMessage({
+        message: '您当前暂无操作权限！',
+        type: 'error',
+        grouping: true,
+        zIndex: 1
+      })
+    }
   }
 }
 

@@ -17,7 +17,7 @@
     </el-form>
   </el-row>
   <div>
-    <el-card>
+    <el-card header="核价看板" m="2">
       <el-table
         :data="data.productAndGradients"
         style="width: 100%"
@@ -25,10 +25,18 @@
         height="500px"
       >
         <el-table-column prop="projectName" label="项目名称" />
-        <el-table-column prop="unitPrice" label="金额" />
+        <el-table-column prop="unitPrice" label="单价" />
         <el-table-column prop="rate" label="汇率" width="100" />
         <el-table-column prop="sum" label="合计" />
       </el-table>
+    </el-card>
+    <el-card header="NRE" m="2">
+      <el-descriptions :column="1" border>
+        <el-descriptions-item v-for="(key, label) in Object.keys(columns)" :key="key"
+          :label="columns[key]">
+          {{ data.nres[key] }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-card>
   </div>
 </template>
@@ -36,7 +44,7 @@
 <script lang="ts" setup>
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { GetCoreComponentAndNreList } from "@/views/quoteAnalysis/service"
+import { GetCoreComponentAndNreList, GetCoreNRE } from "@/views/quoteAnalysis/service"
 import {
   GetGradient,
   GetPricingPanelTimeSelectList,
@@ -44,11 +52,29 @@ import {
 } from "../dashboard/service"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
+import map from 'lodash/map'
 
 enum upDownEnum {
   "全年",
   "上半年",
   "下半年"
+}
+
+const columns = {
+  handPieceCostTotal: "手板件费用",
+  mouldInventoryTotal: "模具费用",
+  toolingCostTotal: "工装费用",
+  fixtureCostTotal: "治具费用",
+  qaqcDepartmentsTotal: "检具费用",
+  productionEquipmentCostTotal: "生产设备费用",
+  deviceStatusSpecial: "专用生产设备",
+  deviceStatus: "非专用生产设备",
+  laboratoryFeeModelsTotal: "实验费用",
+  softwareTestingCostTotal: "测试软件费用",
+  travelExpenseTotal: "差旅费",
+  restsCostTotal: "其他费用",
+  remark: "备注",
+  sum: "合计",
 }
 
 /**
@@ -64,85 +90,13 @@ const route = useRoute()
  */
 const router = useRouter()
 
-let gradientValueMaps: any = {}
-const objectSpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
-  if (columnIndex === 1) {
-    console.log(column)
-  }
-}
 //console.log('1-开始创建组件-setup')
 /**
  * 数据部分
  */
 const data = reactive({
   productAndGradients: [],
-  nres: [
-    {
-      nre: "手板件费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "模具费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: " 工装费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "治具费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "检具费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "生产设备费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "专用生产设备",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "非专用生产设备",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "实验费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "测试软件费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "差旅费",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "其他费用",
-      price: 100,
-      remark: "12"
-    },
-    {
-      nre: "合计",
-      price: 100,
-      remark: "12"
-    }
-  ],
+  nres: {},
   gradientList : [],
   yearsOptions: [],
   form: {
@@ -186,13 +140,13 @@ const init = async () => {
   if (success) {
     console.log(result, "result")
     data.productAndGradients = result
-    // data.productAndGradients.forEach((item) => {
-    //   if (!gradientValueMaps[item.gradientValue]) {
-    //     gradientValueMaps[item.gradientValue] = []
-    //   }
-    //   gradientValueMaps[item.gradientValue].push(item)
-    // })
-    // data.nres = result.nres
+  }
+}
+
+const getCoreNRE = async () => {
+  const { result, success }: any = await GetCoreNRE({ auditFlowId, solutionId })
+  if (success) {
+    data.nres = result
   }
 }
 
@@ -227,6 +181,7 @@ onMounted(async () => {
     await getPricingPanelTimeSelectList()
     await queryGradientList()
     init()
+    getCoreNRE()
   }
 })
 watchEffect(() => {})

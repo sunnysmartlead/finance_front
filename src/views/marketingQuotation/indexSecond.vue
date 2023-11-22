@@ -247,7 +247,8 @@ import {
   PostAuditQuotationList,
   GetManagerApprovalOfferTwo,
   GetAcceptanceBid,
-  GetBidView
+  GetBidView,
+  FinancialFiling
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
@@ -305,60 +306,12 @@ const data = reactive<any>({
             value: 0,
             sopValue: 0,
             fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
           }
         ]
       },
       {
         messageName: "35K/Y",
         sop: [
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
           {
             year: 0,
             value: 0,
@@ -391,159 +344,6 @@ const data = reactive<any>({
             creationTime: "2023-09-13T01:04:19.6239762+08:00",
             creatorUserId: null,
             id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "模具费",
-            pricingMoney: 193000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241366+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "生产设备费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241372+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "工装费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241374+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "治具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241376+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "检具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241386+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "实验费",
-            pricingMoney: 372770,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241388+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "测试软件费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.624139+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "差旅费",
-            pricingMoney: 800,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241391+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "其他费用",
-            pricingMoney: 50000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6241396+08:00",
-            creatorUserId: null,
-            id: 0
           }
         ],
         devices: [],
@@ -569,159 +369,6 @@ const data = reactive<any>({
             lastModificationTime: null,
             lastModifierUserId: null,
             creationTime: "2023-09-13T01:04:19.6242865+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "模具费",
-            pricingMoney: 193000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.624287+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "生产设备费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242871+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "工装费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242872+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "治具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242874+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "检具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242878+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "实验费",
-            pricingMoney: 372770,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242879+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "测试软件费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242881+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "差旅费",
-            pricingMoney: 800,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242882+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "其他费用",
-            pricingMoney: 50000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242885+08:00",
             creatorUserId: null,
             id: 0
           }
@@ -752,42 +399,6 @@ const data = reactive<any>({
             lastModificationTime: null,
             lastModifierUserId: null,
             creationTime: "2023-09-13T01:04:22.8913946+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1866.5904956533819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:22.8919079+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1866.5904956533819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:22.8919094+08:00",
             creatorUserId: null,
             id: 0
           }
@@ -915,6 +526,9 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
     // postOffer
   }
+  if (data.pageType === 3) {
+    // FinancialFiling({})
+  }
 }
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -942,9 +556,9 @@ onMounted(async () => {
   console.log(route.path)
   if (route.path === "/marketingQuotation/indexSecond") {
     data.pageType = 1
-    if (route.query.right === "1") {
-      data.pageType = 2
-    }
+    // if (route.query.right === "1") {
+    //   data.pageType = 2
+    // }
   } else if (route.path === "/marketingQuotation/bidWinningConfirmation") {
     data.pageType = 3
   }

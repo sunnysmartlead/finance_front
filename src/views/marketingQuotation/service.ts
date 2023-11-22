@@ -106,3 +106,12 @@ export function GetBidView(data: any): any {
     data
   })
 }
+
+// 归档
+export function FinancialFiling(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/FinancialFiling",
+    method: "post",
+    data
+  })
+}

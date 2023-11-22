@@ -789,7 +789,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/archive/index",
     component: Layout,
     meta: {
-      hidden: true
+      hidden: false
     },
     children: [
       {

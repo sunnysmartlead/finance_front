@@ -124,10 +124,10 @@ const remoteMethod = async (query: string) => {
   }
 }
 const onSubmit = async () => {
-  if (nodeInstanceId && data.opinion) {
+  if (nodeInstanceId && data.userId) {
     let res = await ResetTask({
       nodeInstanceId,
-      targetUserId: data.opinion
+      targetUserId: data.userId
     })
     ElMessage.success("重置成功")
     console.log(res.data)

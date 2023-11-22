@@ -36,7 +36,7 @@
         <el-descriptions-item label="汇率"> {{ data.resa.exchangeRate }} </el-descriptions-item>
       </el-descriptions>
       <el-card header="sop走量信息" m="2">
-        <el-table :data="data.resa.motionMessage" border>
+        <!-- <el-table :data="data.resa.motionMessage" border>
           <el-table-column type="index" width="100" />
           <el-table-column label="名称" prop="messageName" />
           <el-table-column
@@ -46,6 +46,12 @@
             :prop="`sop[${index}].value`"
             :formatter="formatMarketingQuotationDatas"
           />
+        </el-table> -->
+        <el-table :data="data.resa.motion" border>
+          <el-table-column type="index" width="100" />
+          <el-table-column prop="gradient" label="梯度" />
+          <el-table-column prop="key" label="年份" />
+          <el-table-column prop="value" label="走量" />
         </el-table>
       </el-card>
       <!-- 核心部件 -->
@@ -144,7 +150,8 @@
           <el-table-column label="价格" prop="price" />
           <el-table-column label="佣金" prop="commission" width="180">
             <template #default="scope">
-              <el-input-number @mousewheel.native.prevent
+              <el-input-number
+                @mousewheel.native.prevent
                 controls-position="right"
                 v-model="scope.row.commission"
                 placeholder="请输入佣金"

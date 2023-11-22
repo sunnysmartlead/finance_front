@@ -7,7 +7,7 @@ export function GetUserByDeptName({ deptName, name }: any): any {
     data: {
       deptName,
       name,
-      skipCount: 1,
+      skipCount: 0,
       maxResultCount: 20
     }
   })
@@ -35,7 +35,7 @@ export function GetDepartmentByName({ Name }: any): any {
     method: "get",
     data: {
       Name,
-      skipCount: 1,
+      skipCount: 0,
       maxResultCount: 30
     }
   })
@@ -53,7 +53,7 @@ export function GetUserByDepartmentId({ departmentId }: any): any {
     method: "get",
     data: {
       departmentId,
-      skipCount: 1,
+      skipCount: 0,
       maxResultCount: 30
     }
   })

@@ -48,16 +48,18 @@
     </el-descriptions>
     <!-- sop走量信息 -->
     <el-card header="sop走量信息" m="2">
-      <div v-for="item in data.resa.motionMessage" :key="item.messageName">
-        <p>{{ item.messageName }}</p>
-        <el-table :data="item.yearValues" border>
-          <el-table-column type="index" width="100" />
-          <el-table-column prop="key" label="年份" />
-          <el-table-column prop="value" />
-          <!-- <el-table-column prop="sopValue" label="sop" />
-          <el-table-column prop="fullValue" /> -->
-        </el-table>
-      </div>
+      <!-- {
+        gradient: "",
+        key: "",
+        value: ""
+      } -->
+      <!-- <p>{{ item.messageName }}</p> -->
+      <el-table :data="data.resa.motion" border>
+        <el-table-column type="index" width="100" />
+        <el-table-column prop="gradient" label="梯度" />
+        <el-table-column prop="key" label="年份" />
+        <el-table-column prop="value" label="走量" />
+      </el-table>
     </el-card>
     <!-- 核心部件 -->
     <el-card header="核心部件：" m="2">
@@ -308,41 +310,13 @@ const data = reactive<any>({
             fullValue: 0
           }
         ]
-      },
+      }
+    ],
+    motion: [
       {
-        messageName: "35K/Y",
-        sop: [
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          },
-          {
-            year: 0,
-            value: 0,
-            sopValue: 0,
-            fullValue: 0
-          }
-        ]
+        gradient: "",
+        key: "",
+        value: ""
       }
     ],
     projectName: "流程测试OK，测试数据1",

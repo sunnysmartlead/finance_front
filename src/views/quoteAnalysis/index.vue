@@ -428,9 +428,7 @@
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
       <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px mr-20px
-        >生成审批表</el-button
-      >
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px mr-20px>生成审批表</el-button>
     </el-card>
 
     <el-dialog v-model="dialogVisible" title="年份维度对比">
@@ -1500,19 +1498,19 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   return val
 }
 const save = async () => {
-  // let version = right==='2'?0:
   if (auditFlowId) {
     let saveData = {
       ...data.allRes,
       auditFlowId,
-      solutions: selectPlan.value
+      solutions: selectPlan.value,
+      version: version.value,
+      ntime: 1
     }
     if (versionChosen) {
       saveData.version = versionChosen.version // 版本不变
-      // saveData.ntime = versionChosen.ntime + 1 // 提交次数+1
+      saveData.ntime = versionChosen.ntime // 保存提交次数 不变
       saveData.solutions = versionChosen.solutionList
     }
-
     delete saveData.isSuccess
     delete saveData.message
     delete saveData.mes

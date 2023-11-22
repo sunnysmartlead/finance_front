@@ -428,7 +428,7 @@
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
       <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px v-if="versionList.length > 0" mr-20px
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px mr-20px
         >生成审批表</el-button
       >
     </el-card>

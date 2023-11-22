@@ -96,7 +96,7 @@
       </el-table>
       <h6>修改项：</h6>
       <el-table :data="data.mouldInventoryModifyDtos" border
-        :summary-method="(val: any) => getMouldSummaries(val, '模具费用')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost')" show-summary>
         <el-table-column type="index" width="50" />
         <el-table-column prop="modelName" label="模具名称">
           <template #default="{ row }">
@@ -113,15 +113,15 @@
             <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="quantity" width="175" label="数量">
+        <el-table-column prop="count" width="175" label="数量">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.quantity" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.count" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -166,17 +166,22 @@
       <el-table :data="data.experimentalExpensesModifyDtos" border
         :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
         <el-table-column type="index" width="50" />
-        <el-table-column prop="projectName" label="试验项目">
+        <el-table-column prop="projectName" label="试验项目"  width="175" >
           <template #default="{ row }">
             <el-input v-model="row.projectName" />
           </template>
         </el-table-column>
-        <el-table-column prop="isThirdParty" label="是否指定第三方">
+        <el-table-column prop="isThirdParty" label="是否指定第三方"  width="200" >
           <template #default="{ row }">
             <el-select v-model="row.isThirdParty">
               <el-option :value="true" label="是" />
               <el-option :value="false" label="否" />
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column prop="unitPrice" label="单价"  width="175" >
+          <template #default="{ row }">
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="countBottomingOut" width="175" label="计数-摸底" >
@@ -194,8 +199,8 @@
             <el-input-number @mousewheel.native.prevent v-model="row.countPV" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="allCost" label="总费用" />
-        <el-table-column prop="remark" label="备注">
+        <el-table-column prop="allCost" label="总费用" width="175" :formatter="formatThousandths" />
+        <el-table-column prop="remark" width="220" label="备注">
           <template #default="{ row }">
             <el-input v-model="row.remark" />
           </template>
@@ -251,10 +256,10 @@
             <el-input-number @mousewheel.native.prevent v-model="row.unitPriceOfTooling" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -269,7 +274,7 @@
     <el-card class="margin-top" header="治具费用">
       <el-descriptions m="2" border>
         <el-descriptions-item label="线体数量">{{ uphAndValues.xtsl }}</el-descriptions-item>
-        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
+        <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0)}}%</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
@@ -307,10 +312,10 @@
             <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -366,10 +371,10 @@
             <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -427,10 +432,10 @@
             <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -477,14 +482,14 @@
             <el-input v-model="row.softwareProject" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" >
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input v-model="row.cost" />
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -552,7 +557,7 @@
             <el-input-number @mousewheel.native.prevent v-model="row.skyCount" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" />
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
             <el-input v-model="row.remark" />
@@ -593,14 +598,14 @@
             <el-input v-model="row.constName" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用">
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent v-model="row.cost" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">
           <template #default="{ row }">
-            <el-input v-model="row.partName" />
+            <el-input v-model="row.remark" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
@@ -615,10 +620,10 @@
     </el-card>
     <el-descriptions m="4" :column="1" border>
       <el-descriptions-item label="（不含税人民币）NRE 总费用">{{
-        formatThousandths(null,null,data.rmbAllCost)
+        formatThousandths(null,null,total.rmbAllCost)
       }}</el-descriptions-item>
       <el-descriptions-item label="（不含税美金）NRE 总费用">{{
-        formatThousandths(null,null,data.usdAllCost)
+        formatThousandths(null,null,total.usdAllCost)
       }}</el-descriptions-item>
     </el-descriptions>
   </el-card>
@@ -656,7 +661,7 @@ import getQuery from "@/utils/getQuery"
 import { formatDateTime, downloadFileExcel } from "@/utils"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElMessage, ElMessageBox } from "element-plus"
-import { cloneDeep } from "lodash"
+import { cloneDeep, omit } from "lodash"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 
 const { auditFlowId, productId, hideBtn, hideEdit }: any = getQuery()
@@ -673,6 +678,9 @@ const data = ref<any>({
   fixtureCost: [],
   productionEquipmentCost: [],
   softwareTestingCost: [],
+
+})
+const total = reactive({
   rmbAllCost: 0,
   usdAllCost: 0,
 })
@@ -692,47 +700,48 @@ watch(
       })
     }
     // 模具
-    if (data.value.mouldInventoryModifyDto?.length) {
+    if (data.value.mouldInventoryModifyDtos?.length) {
       data.value.mouldInventoryModifyDtos.forEach((item: any) => {
-        item.cost = (item.unitPrice || 0) * (item.quantity || 0)
+        item.cost = (item.unitPrice || 0) * (item.count || 0)
       })
+      console.log(data.value.mouldInventoryModifyDtos, "data.value.mouldInventoryModifyDtos")
     }
     // 工装
     if (data.value.toolingCostsModifyDtos?.length) {
       data.value.toolingCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.toolingCount || 0) * (item.unitPriceOfTooling || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
+        item.cost = (item.toolingCount || 0) * (item.unitPriceOfTooling || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0) / 100
       })
     }
     // 治具
     if (data.value.fixtureCostsModifyDtos?.length) {
       data.value.fixtureCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
+        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0)
       })
     }
     // 检具
     if (data.value.inspectionToolCostModifyDtos?.length) {
       data.value.inspectionToolCostModifyDtos.forEach((item: any) => {
-        item.cost = (item.count || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
+        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0) / 100
       })
     }
     // 生产设备
     if (data.value.productionEquipmentCostsModifyDtos?.length) {
       data.value.productionEquipmentCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
+        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0) / 100
       })
     }
     // 实验费
     if (data.value.experimentalExpensesModifyDtos?.length) {
       data.value.experimentalExpensesModifyDtos.forEach((item: any) => {
-        item.allCost = (item.countBottomingOut || 0) * (item.countDV || 0) * (item.countPV || 0)
+        item.allCost = item.unitPrice * ((item.countBottomingOut || 0) + (item.countDV || 0) + (item.countPV || 0))
       })
     }
     // 测试软件
-    if (data.value.testingSoftwareCostsModifyDtos?.length) {
-      data.value.testingSoftwareCostsModifyDtos.forEach((item: any) => {
-        item.cost = (item.costH || 0) * (item.hour || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0)
-      })
-    }
+    // if (data.value.testingSoftwareCostsModifyDtos?.length) {
+    //   data.value.testingSoftwareCostsModifyDtos.forEach((item: any) => {
+    //     item.cost = (item.costH || 0) * (item.hour || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0) / 100
+    //   })
+    // }
     // 差旅费用修改项
     if (data.value.travelExpenseModifyDtos?.length) {
       data.value.travelExpenseModifyDtos.forEach((item: any) => {
@@ -754,6 +763,7 @@ const initFetch = async () => {
     data.value = result
     uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
     uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
+
   } catch (err) {
     console.log(err, "[ GetPricingForm err ]")
   }
@@ -762,9 +772,8 @@ const initFetch = async () => {
 const getPricingFormDownload = async () => {
   const { success, result } = await GetPricingFormDownload({ auditFlowId, solutionId: productId })
   if (success) {
-    console.log(result, "result11")
-    data.value.rmbAllCost = result.rmbAllCost
-    data.value.usdAllCost = result.usdAllCost
+    total.rmbAllCost = result.rmbAllCost
+    total.usdAllCost = result.usdAllCost
   }
 }
 
@@ -788,13 +797,13 @@ const handleFethNreTableDownload = async () => {
 const handleEdit = (row: any, index: number, key: string) => {
   const findItemIndex = data.value[key]?.findIndex((item: any) => item.modifyId === row.id)
   if (!data.value[key]?.length || findItemIndex === -1) {
-    const val = cloneDeep(row)
+    const val = cloneDeep({ ...omit(row, 'id'), modifyId: row.id })
+    console.log(val, "vallll")
     data.value[key].push({
       ...val,
-      modifyId: val.id
+      modifyId: row.id
     })
   }
-  console.log(data.value[key], "data[key]")
 }
 
 const getResonOptions = async () => {
@@ -807,19 +816,21 @@ const addTableData = (key: string) => {
 }
 
 const handleAdditionOfCostModificationItemsForHandBoards = async (row: any) => {
-  const { success } = await AdditionOfCostModificationItemsForHandBoards({
+  console.log(row, "row,111")
+  const { success, result } = await AdditionOfCostModificationItemsForHandBoards({
     ...row,
     auditFlowId,
     solutionId: productId
   })
   if (success) {
     getPricingFormDownload()
+    row.id = result
     ElMessage.success('提交成功～')
   }
 }
 
 const handleAddMoldCostModificationItem = async (row: any) => {
-  const { success } = await AddMoldCostModificationItem({
+  const { success, result } = await AddMoldCostModificationItem({
     ...row,
     auditFlowId,
     solutionId: productId
@@ -827,11 +838,12 @@ const handleAddMoldCostModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAddToolingCostModificationItem = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await AddToolingCostModificationItem({
       ...row,
       auditFlowId,
@@ -840,11 +852,12 @@ const handleAddToolingCostModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAdditionOfFixtureCostModificationItem = async (row: any) => {
-  const { success } =
+  const { success , result} =
     (await AdditionOfFixtureCostModificationItem({
       ...row,
       auditFlowId,
@@ -853,11 +866,12 @@ const handleAdditionOfFixtureCostModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAddInspectionToolCostModificationItem = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await AddInspectionToolCostModificationItem({
       ...row,
       auditFlowId,
@@ -866,11 +880,12 @@ const handleAddInspectionToolCostModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAddProductionEquipmentCostModificationItem = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await AddProductionEquipmentCostModificationItem({
       ...row,
       auditFlowId,
@@ -879,11 +894,12 @@ const handleAddProductionEquipmentCostModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAddExperimentalFeeModificationItem = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await AddExperimentalFeeModificationItem({
       ...row,
       auditFlowId,
@@ -892,11 +908,12 @@ const handleAddExperimentalFeeModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAddingModificationItemsForTestingSoftwareCosts = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await AddingModificationItemsForTestingSoftwareCosts({
       ...row,
       auditFlowId,
@@ -905,11 +922,12 @@ const handleAddingModificationItemsForTestingSoftwareCosts = async (row: any) =>
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleAddTravelExpenseModificationItem = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await AddTravelExpenseModificationItem({
       ...row,
       auditFlowId,
@@ -918,11 +936,12 @@ const handleAddTravelExpenseModificationItem = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 const handleOtherExpenseModificationItemsAdded = async (row: any) => {
-  const { success } =
+  const { success, result } =
     (await OtherExpenseModificationItemsAdded({
       ...row,
       auditFlowId,
@@ -931,18 +950,18 @@ const handleOtherExpenseModificationItemsAdded = async (row: any) => {
   if (success) {
     getPricingFormDownload()
     ElMessage.success('提交成功～')
+    row.id = result
   }
 }
 
 
 const handleDelitionOfCostModificationItemsForHandBoards = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return  data.value.handPieceCostModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } = await DelitionOfCostModificationItemsForHandBoards({
       id
     })
     if (success) {
-      console.log(data.value.handPieceCostModifyDtos, "data.value.handPieceCostModifyDtos1")
       data.value.handPieceCostModifyDtos.splice(index, 1)
       getPricingFormDownload()
       ElMessage.success('删除成功～')
@@ -951,7 +970,7 @@ const handleDelitionOfCostModificationItemsForHandBoards = async (id: any, index
 }
 
 const handleDelMoldCostModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.mouldInventoryModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } = await DelMoldCostModificationItem({
       id
@@ -965,7 +984,7 @@ const handleDelMoldCostModificationItem = async (id: any, index: number) => {
 }
 
 const handleDelToolingCostModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.toolingCostsModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelToolingCostModificationItem({
@@ -980,7 +999,7 @@ const handleDelToolingCostModificationItem = async (id: any, index: number) => {
 }
 
 const handleDelitionOfFixtureCostModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.fixtureCostsModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelitionOfFixtureCostModificationItem({
@@ -995,7 +1014,7 @@ const handleDelitionOfFixtureCostModificationItem = async (id: any, index: numbe
 }
 
 const handleDelInspectionToolCostModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.inspectionToolCostModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelInspectionToolCostModificationItem({
@@ -1010,7 +1029,7 @@ const handleDelInspectionToolCostModificationItem = async (id: any, index: numbe
 }
 
 const handleDelProductionEquipmentCostModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.productionEquipmentCostsModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelProductionEquipmentCostModificationItem({
@@ -1025,7 +1044,7 @@ const handleDelProductionEquipmentCostModificationItem = async (id: any, index: 
 }
 
 const handleDelExperimentalFeeModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.experimentalExpensesModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelExperimentalFeeModificationItem({
@@ -1040,7 +1059,7 @@ const handleDelExperimentalFeeModificationItem = async (id: any, index: number) 
 }
 
 const handleDelingModificationItemsForTestingSoftwareCosts = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.testingSoftwareCostsModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelingModificationItemsForTestingSoftwareCosts({
@@ -1055,20 +1074,22 @@ const handleDelingModificationItemsForTestingSoftwareCosts = async (id: any, ind
 }
 
 const handleDelTravelExpenseModificationItem = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
-  const { success } =
-    (await DelTravelExpenseModificationItem({
-      id
-    })) || {}
-  if (success) {
-    data.value.travelExpenseModifyDtos.splice(index, 1)
-    getPricingFormDownload()
-    ElMessage.success('删除成功～')
-  }
+  if (!id) return  data.value.travelExpenseModifyDtos.splice(index, 1)
+  ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
+    const { success } =
+      (await DelTravelExpenseModificationItem({
+        id
+      })) || {}
+    if (success) {
+      data.value.travelExpenseModifyDtos.splice(index, 1)
+      getPricingFormDownload()
+      ElMessage.success('删除成功～')
+    }
+  })
 }
 
 const handleDelOtherExpenseModificationItemsAdded = async (id: any, index: number) => {
-  if (!id) return !ElMessage.warning('请确认后删除～')
+  if (!id) return data.value.restsCostModifyDtos.splice(index, 1)
   ElMessageBox.confirm('您确定要删除该项吗？').then(async () => {
     const { success } =
       (await DelOtherExpenseModificationItemsAdded({
@@ -1081,12 +1102,14 @@ const handleDelOtherExpenseModificationItemsAdded = async (id: any, index: numbe
     }
   })
 }
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
+  if (!auditFlowId || !productId) return
   initFetch()
   getResonOptions()
   getPricingFormDownload()

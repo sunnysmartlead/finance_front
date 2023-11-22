@@ -214,22 +214,7 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" width="150">
-            <template #default="scope">
-              <el-input v-model="scope.row.clientPrice" :precision="2">
-                <!-- <template #append>
-                  <el-button @click="
-                    calculateFullGrossMargin(
-                      scope.row,
-                      scope.$index,
-                      'clientTargetUnitPrice',
-                      'clientTargetGrossMargin'
-                    )
-                    ">计算</el-button>
-                </template> -->
-              </el-input>
-            </template>
-          </el-table-column>
+          <el-table-column label="单价" width="150" prop="clientPrice" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.clientGrossMargin?.toFixed(2)} %` }}
@@ -327,16 +312,7 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="目标价（客户）">
-          <el-table-column label="单价" prop="clientPrice" width="180">
-            <template #default="scope">
-              <el-input-number
-                @mousewheel.native.prevent
-                v-model="scope.row.clientPrice"
-                :precision="2"
-                controls-position="right"
-              />
-            </template>
-          </el-table-column>
+          <el-table-column label="单价" width="150" prop="clientPrice" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
             <template #default="{ row }">
               {{ `${row.clientGrossMargin?.toFixed(2)} %` }}
@@ -395,30 +371,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <!-- <el-table-column :label="'第' + (index + 1) + '轮'"
-          v-for="(item, index) in table.quotedGrossMarginSimple.length > 0 ? table.quotedGrossMarginSimple[0].oldOffer : []" :key="index"
-          width="300"
-        >
-          <el-table-column label="单价" :prop="`oldOffer[${index}].unitPrice`" :formatter="formatThousandths">
-          </el-table-column>
-          <el-table-column label="毛利率">
-            <template #default="{ row }">
-              <div>{{ `${row.oldOffer[index].grossMargin.toFixed(2)} %` }}</div>
-            </template>
-          </el-table-column>
-        </el-table-column> -->
-    <!-- <el-card class="card">
-      <div v-for="(table, index) in data.allRes.gradientGrossMarginModels" :key="index">
-        <p>{{ table.gradient }}</p>
-        <el-table :data="table._itemGrossMarginModels" border>
-          <el-table-column label="产品" prop="item" />
-          <el-table-column label="目标价（内部）" width="300" prop="interior" />
-          <el-table-column label="目标价（客户）" prop="client" />
-          <el-table-column label="本次报价" prop="thisQuotation" />
-          <el-table-column label="上轮报价" prop="lastRound" />
-        </el-table>
-      </div>
-    </el-card> -->
 
     <el-card class="card">
       <!-- projectBoard -->
@@ -432,46 +384,41 @@
             prop="interiorTarget"
             :formatter="formatThousandths"
             align="right"
-          />
-          <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right" />
-          <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right" />
-          <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right" />
+          >
+            <template #default="{ row }">
+              <div v-if="row.projectName !== '毛利率'">
+                {{ formatThousandths(null, null, row.interiorTarget) }}
+              </div>
+              <div v-else>{{ row.interiorTarget.toFixed(2) }}%</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right">
+            <template #default="{ row }">
+              <div v-if="row.projectName !== '毛利率'">
+                {{ formatThousandths(null, null, row.clientTarget) }}
+              </div>
+              <div v-else>{{ row.clientTarget.toFixed(2) }}%</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right">
+            <template #default="{ row }">
+              <div v-if="row.projectName !== '毛利率'">
+                {{ formatThousandths(null, null, row.offer) }}
+              </div>
+              <div v-else>{{ row.offer.toFixed(2) }}%</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right">
+            <template #default="{ row }">
+              <div v-if="row.projectName !== '毛利率'">
+                {{ formatThousandths(null, null, row.oldOffer) }}
+              </div>
+              <div v-else>{{ row.oldOffer.toFixed(2) }}%</div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
 
-      <!-- <div v-for="(value, key) in gradientTableMap" :key="key">
-        <p>{{ key }}</p>
-        <el-table :data="value" border>
-          <el-table-column label="产品" prop="product" />
-          <el-table-column
-            label="目标价（内部）"
-            width="300"
-            prop="quotedGrossMarginSimple.interior.price"
-            :formatter="formatThousandths"
-            align="right"
-          />
-          <el-table-column
-            label="目标价（客户）"
-            prop="quotedGrossMarginSimple.client.price"
-            :formatter="formatThousandths"
-            align="right"
-          />
-          <el-table-column
-            label="本次报价"
-            prop="quotedGrossMarginSimple.thisQuotation.price"
-            :formatter="formatThousandths"
-            align="right"
-          />
-          <el-table-column
-            label="上轮报价"
-            prop="quotedGrossMarginSimple.astRound.price"
-            :formatter="formatThousandths"
-            align="right"
-          />
-        </el-table>
-        <div :id="'unitpriceChart' + key" class="h-400px" />
-        <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
-      </div> -->
       <div v-for="(value, key) in gradientTableMap" :key="key">
         <div :id="'unitpriceChart' + key" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
@@ -481,9 +428,11 @@
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
       <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px v-if="versionList.length>0" mr-20px>生成审批表</el-button>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px v-if="versionList.length > 0" mr-20px
+        >生成审批表</el-button
+      >
     </el-card>
-    
+
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -601,6 +550,7 @@ import {
   GeCatalogue
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+import { Decipher } from "crypto"
 /**
  * 路由对象
  */
@@ -989,9 +939,10 @@ const setChartData = () => {
   let RevenueGrossMargin: stringKeyObj = {}
   let keys = Object.keys(gradientTableMap.value)
   keys.forEach((key) => {
+    let gradientItem = data.allRes.projectBoard.filter((item: any) => item.gradientId === Number(key))
     ProjectUnitPrice[key] = {
       title: {
-        text: "项目单价对比"
+        text: `${gradientItem[0].title}项目单价对比`
       },
       tooltip: {
         trigger: "item",
@@ -1049,7 +1000,7 @@ const setChartData = () => {
     })
     RevenueGrossMargin[key] = {
       title: {
-        text: "收入和毛利率对比"
+        text: `${gradientItem[0].title}收入和毛利率对比`
       },
       xAxis: {
         type: "category",
@@ -1135,7 +1086,7 @@ const setChartData = () => {
   let sjTable = data.allRes.quotedGrossMargins[length - 1].quotedGrossMarginActualList
   ProjectUnitPrice["shiji"] = {
     title: {
-      text: "项目单价对比"
+      text: "实际数量项目单价对比"
     },
     tooltip: {
       trigger: "item",
@@ -1192,7 +1143,7 @@ const setChartData = () => {
   })
   RevenueGrossMargin["shiji"] = {
     title: {
-      text: "收入和毛利率对比"
+      text: "实际数量收入和毛利率对比"
     },
     xAxis: {
       type: "category",
@@ -1296,7 +1247,7 @@ const downLoad = async () => {
     }
   })
   try {
-    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables, version: 1, ntime: 1 })
+    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables })
     const blob = res
     const reader = new FileReader()
     reader.readAsDataURL(blob)
@@ -1552,13 +1503,19 @@ const save = async () => {
   // let version = right==='2'?0:
   if (auditFlowId) {
     let saveData = {
-      version: version.value,
-      ntime: 0,
-      IsOffer: false,
-      Solutions: planListArr,
       ...data.allRes,
-      auditFlowId
+      auditFlowId,
+      solutions: selectPlan.value
     }
+    if (versionChosen) {
+      saveData.version = versionChosen.version // 版本不变
+      // saveData.ntime = versionChosen.ntime + 1 // 提交次数+1
+      saveData.solutions = versionChosen.solutionList
+    }
+
+    delete saveData.isSuccess
+    delete saveData.message
+    delete saveData.mes
     let res = await PostIsOfferSecondOnlySave(saveData)
     console.log(res, "saveData")
   }
@@ -1620,7 +1577,7 @@ const postOffer = async (isOffer: boolean) => {
     let FangAnres: any = await SubmitNode({
       comment: "",
       nodeInstanceId,
-      financeDictionaryDetailId: confirmProcessType[1].val
+      financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0]
     })
     // let FangAnres: any = await SubmitNode({
     //   comment: "",

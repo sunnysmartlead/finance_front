@@ -177,9 +177,9 @@
               {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="全生命周期毛利率" prop="TotallifeCyclegrossMargin">
+          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
             <template #default="{ row }">
-              {{ `${row.TotallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+              {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
         </el-table>

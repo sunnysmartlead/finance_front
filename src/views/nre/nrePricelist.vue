@@ -366,9 +366,9 @@
             <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="number" width="175" label="检具数量">
+        <el-table-column prop="count" width="175" label="检具数量">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.number" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.count" controls-position="right" :min="0" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
@@ -721,7 +721,7 @@ watch(
     // 检具
     if (data.value.inspectionToolCostModifyDtos?.length) {
       data.value.inspectionToolCostModifyDtos.forEach((item: any) => {
-        item.cost = (item.number || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0) / 100
+        item.cost = (item.count || 0) * (item.unitPrice || 0) * (uphAndValues.xtsl || 0) * (uphAndValues.gxftl || 0) / 100
       })
     }
     // 生产设备

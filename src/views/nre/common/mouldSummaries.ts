@@ -33,9 +33,9 @@ export const getMouldSummaries = (
     if (!values?.every((value) => Number.isNaN(value)) && index === (currentIndex && currentIndex > 1 ? currentIndex + 1 : 2)) {
       const total = values?.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {
-          return prev + curr
+          return Number(prev) + Number(curr)
         } else {
-          return prev
+          return Number(prev)
         }
       }, 0)
       sums[index] = `¥ ${formatThousandths(null, null, total)}`

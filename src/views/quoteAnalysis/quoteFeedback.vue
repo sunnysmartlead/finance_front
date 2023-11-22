@@ -21,7 +21,7 @@
         </el-table-column>
       </el-table>
     </div>
-     
+
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
@@ -550,7 +550,8 @@ import {
   SubmitNode,
   getStatementAnalysisBoardSecond,
   PostIsOfferSecondOnlySave,
-  GeCatalogue
+  GeCatalogue,
+  GetSoltionGradPriceList
 } from "./service"
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"

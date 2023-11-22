@@ -357,3 +357,19 @@ export function GetDownloadList(data: any) {
     data
   })
 }
+
+/**
+ *
+ * @param auditFlowId
+ * version
+ * ntype
+获取对应单价 ntype 报价分析看板0 ，报价反馈1
+ * @returns
+ */
+export function GetSoltionGradPriceList(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetSoltionGradPriceList",
+    method: "post",
+    data
+  })
+}

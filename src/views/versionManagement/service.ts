@@ -45,10 +45,18 @@ export function GetAllAuditFlowVersion(data: { projectName: string }): any {
   })
 }
 
+// // 根据项目名称获取项目已有核价流程所有版本
+// export function GetAllAuditFlowProjectNameAndVersion(): any {
+//   return request({
+//     url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersion",
+//     method: "get",
+//     data: {}
+//   })
+// }
 // 根据项目名称获取项目已有核价流程所有版本
 export function GetAllAuditFlowProjectNameAndVersion(): any {
   return request({
-    url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersion",
+    url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersionBySelf",
     method: "get",
     data: {}
   })
@@ -127,10 +135,7 @@ export function GetProductListByAuditFlowIds(data: {
 
 //删除指定流程id的流程
 // 根据两个流程号，获取产品列表
-export function DeleteAuditFlowById(data: {
-  auditFlowId: number
-  deleteReason: string
-}): any {
+export function DeleteAuditFlowById(data: { auditFlowId: number; deleteReason: string }): any {
   return request({
     url: "/api/services/app/AuditFlow/DeleteAuditFlowById",
     method: "delete",
@@ -139,7 +144,7 @@ export function DeleteAuditFlowById(data: {
 }
 
 //获取流程删除记录表的数据
-export function GetAuditFlowDeleteList(data:{auditFlowId: number}): any {
+export function GetAuditFlowDeleteList(data: { auditFlowId: number }): any {
   return request({
     url: "/api/services/app/AuditFlow/GetAuditFlowDeleteList",
     method: "get",
@@ -148,7 +153,7 @@ export function GetAuditFlowDeleteList(data:{auditFlowId: number}): any {
 }
 
 //获取流程删除记录表的数据
-export function GetTimeliness(data:{auditFlowId: number}): any {
+export function GetTimeliness(data: { auditFlowId: number }): any {
   return request({
     url: "/api/services/app/Timeliness/GetTimeliness",
     method: "get",
@@ -157,7 +162,7 @@ export function GetTimeliness(data:{auditFlowId: number}): any {
 }
 
 //写入时效性页面信息
-export function SetTimeliness(data:{auditFlowId: number,data:Array<{name:string,value:string}>}): any {
+export function SetTimeliness(data: { auditFlowId: number; data: Array<{ name: string; value: string }> }): any {
   return request({
     url: "/api/services/app/Timeliness/SetTimeliness",
     method: "post",

@@ -60,6 +60,15 @@
         <el-table-column prop="key" label="年份" />
         <el-table-column prop="value" label="走量" />
       </el-table>
+      <el-table :data="data.resa.sops" border>
+        <el-table-column type="index" width="100" />
+        <el-table-column prop="year" label="梯度" />
+        <el-table-column prop="motion" label="年份" />
+        <el-table-column prop="annualDeclineRate" label="年降率" />
+        <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
+        <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />
+        <el-table-column prop="commissionRate" label="年度佣金比例" />
+      </el-table>
     </el-card>
     <!-- 核心部件 -->
     <el-card header="核心部件：" m="2">
@@ -317,6 +326,17 @@ const data = reactive<any>({
         gradient: "",
         key: "",
         value: ""
+      }
+    ],
+    sops: [
+      {
+        id: 0,
+        year: "2031上半年",
+        motion: 0.0,
+        annualDeclineRate: 0.0,
+        annualRebateRequirements: 1.0,
+        oneTimeDiscountRate: 1.0,
+        commissionRate: 2.0
       }
     ],
     projectName: "流程测试OK，测试数据1",

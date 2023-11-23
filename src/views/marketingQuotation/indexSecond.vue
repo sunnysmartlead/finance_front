@@ -2,11 +2,30 @@
 <template>
   <div>
     <div style="margin: 10px 0; float: right">
-      <!-- 总经理查看流程为Done,财务确认为yesOrNo -->
+      <!-- 财务确认为yesOrNo -->
       <ProcessVertifyBox
         :onSubmit="handleSubmit"
         :processType="data.pageType === 3 ? 'baseProcessType' : 'confirmProcessType'"
       />
+    </div>
+    <h4 mb-20px>已保存的方案版本</h4>
+    <div mb-20px>
+      <el-table :data="versionList" border max-height="300px">
+        <el-table-column label="版本号" width="200" align="center" prop="version" />
+        <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+        <el-table-column label="组合方案" width="300" align="center">
+          <template #default="scope">
+            <div v-for="item in scope.row.solutionList" :key="item.product">
+              {{ item.product }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <el-card header="">
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
@@ -270,6 +289,8 @@ const { closeSelectedTag, jumpPage } = query
 const { auditFlowId } = getQuery()
 const dialogVisible = ref(false)
 const ProductByAuditFlowId = ref<any>({})
+let versionList = reactive<any[]>([])
+
 /**
  * 数据部分
  */
@@ -539,6 +560,7 @@ const data = reactive<any>({
 })
 
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  PostAuditQuotationList
   let res: any = await SubmitNode({
     comment,
     nodeInstanceId,
@@ -658,6 +680,9 @@ const initFetch = async () => {
     // 总经理审批2
     let res: any = await GeCatalogue({ auditFlowId })
     let version = res.result.length
+    res.result.forEach((item: any) => {
+      versionList.push(item)
+    })
     let selectResult = null
     if (data.pageType === 1) {
       const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version })

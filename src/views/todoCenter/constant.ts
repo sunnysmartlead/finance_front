@@ -69,16 +69,13 @@ const urlMap = {
   ProjectDirectorLook: { path: "/projectDirectorLook", query: {} }, // 项目部长查看
   // 报价分析看板
   QuoteAnalysis: { path: "/quoteAnalysis/index", query: {} }, // 报价分析看板
-  ConfirmWinningBid: { path: "/marketingQuotation/confirmWinningBid", query: {} }, //确认中标
   CoreNre: { path: "/quoteAnalysis/nreCoreDevices", query: {} }, //核心部件
+  ConfirmWinningBid: { path: "/marketingQuotation/confirmWinningBid", query: {} }, //总经理中标查看
   BidWinningConfirmation: { path: "/marketingQuotation/bidWinningConfirmation", query: {} }, // （财务中标确认）
   ArchiveEnd: { path: "/archive/index", query: {} }, //"归档结束（异常终止）"
-
   QuotationApprovalForm: { path: "/quoteAnalysis/marketingApproval", query: {} }, //系统生成报价审批表报价单
   ExternalQuotation: { path: "/quoteAnalysis/quoteForm", query: {} }, //系统生成对外报价单
-
   QuoteFeedback: { path: "/quoteAnalysis/quoteFeedback", query: {} }, //（报价反馈）
-
   QuoteApproval: { path: "/marketingQuotation/indexFirst", query: {} } //"审批报价策略与核价表  总经理报价审批界面 2从1直接跳转过去，非直接进去 "
 }
 export default urlMap

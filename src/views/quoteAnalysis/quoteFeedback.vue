@@ -555,6 +555,13 @@ import {
 } from "./service"
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+
+//报价反馈
+//标识符：QuoteFeedback
+// EvalFeedback_Js, DisplayName="接受报价",},
+// EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新核价",},
+// EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
+// EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",},
 /**
  * 路由对象
  */
@@ -1178,23 +1185,22 @@ const selectVersion = async (row: any) => {
   fullscreenLoading.value = true
   try {
     versionChosen = row
-
-    let res = await PostStatementAnalysisBoardSecond({
-      ...versionChosen,
-      solutionTables: versionChosen.solutionList
-    })
-    fullscreenLoading.value = false
-    data.allRes = res.result
+    // let res = await PostStatementAnalysisBoardSecond({
+    //   ...versionChosen,
+    //   solutionTables: versionChosen.solutionList
+    // })
+    // fullscreenLoading.value = false
+    // data.allRes = res.result
 
     /**
      * 根据版本号查询该版本数据
      */
 
-    // let res: any = await getQuotationFeedback({
-    //   auditFlowId,
-    //   version: versionChosen.version,
-    //   ntime: versionChosen.ntime
-    // })
+    let res: any = await getQuotationFeedback({
+      auditFlowId,
+      version: versionChosen.version,
+      ntime: versionChosen.ntime
+    })
     data.allRes = res.result
     fullscreenLoading.value = false
   } catch (error) {

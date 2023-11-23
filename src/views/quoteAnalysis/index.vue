@@ -103,7 +103,7 @@
               @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
-              @change="offerCoefficientChange(scope.row)"
+              @change="offerCoefficientChange(scope.row, index)"
               :precision="2"
               :min="0"
             />
@@ -549,6 +549,7 @@ import {
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 import { Decipher } from "crypto"
+import { flatMap } from "lodash"
 /**
  * 路由对象
  */
@@ -1264,8 +1265,162 @@ const downLoad = async () => {
   }
 }
 //报价值change
-const offerCoefficientChange = (row: any) => {
+const offerCoefficientChange = (row: any, index: number) => {
+  let length = data.allRes.nres.length
+  if (index === length - 1) {
+    return false
+  }
   row.offerMoney = row.offerCoefficient * row.pricingMoney
+
+  let sbjf: any = []
+  let mjf: any = []
+  let scsbf: any = []
+  let gzf: any = []
+  let zjf: any = []
+  let jjf: any = []
+  let syf: any = []
+  let csrjf: any = []
+  let clf: any = []
+  let qtf: any = []
+  for (let i = 0; i < data.allRes.nres.length; i++) {
+    data.allRes.nres[i].models.forEach((item: any) => {
+      if (item.formName === "手板件费") {
+        sbjf.push(item.offerMoney)
+      } else if (item.formName === "模具费") {
+        mjf.push(item.offerMoney)
+      } else if (item.formName === "生产设备费") {
+        scsbf.push(item.offerMoney)
+      } else if (item.formName === "工装费") {
+        gzf.push(item.offerMoney)
+      } else if (item.formName === "治具费") {
+        zjf.push(item.offerMoney)
+      } else if (item.formName === "检具费") {
+        jjf.push(item.offerMoney)
+      } else if (item.formName === "实验费") {
+        syf.push(item.offerMoney)
+      } else if (item.formName === "测试软件费") {
+        csrjf.push(item.offerMoney)
+      } else if (item.formName === "差旅费") {
+        clf.push(item.offerMoney)
+      } else if (item.formName === "其他费用") {
+        qtf.push(item.offerMoney)
+      }
+    })
+  }
+  let rsbjf = sbjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rmjf = mjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rscsbf = scsbf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rgzf = gzf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rzjf = zjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rjjf = jjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rsyf = syf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rcsrjf = csrjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rclf = clf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rqtf = qtf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  data.allRes.nres[length - 1].models.forEach((item) => {
+    if (item.formName === "手板件费") {
+      item.offerMoney = rsbjf
+    } else if (item.formName === "模具费") {
+      item.offerMoney = rmjf
+    } else if (item.formName === "生产设备费") {
+      item.offerMoney = rscsbf
+    } else if (item.formName === "工装费") {
+      item.offerMoney = rgzf
+    } else if (item.formName === "治具费") {
+      item.offerMoney = rzjf
+    } else if (item.formName === "检具费") {
+      item.offerMoney = rjjf
+    } else if (item.formName === "实验费") {
+      item.offerMoney = rsyf
+    } else if (item.formName === "测试软件费") {
+      item.offerMoney = rcsrjf
+    } else if (item.formName === "差旅费") {
+      item.offerMoney = rclf
+    } else if (item.formName === "其他费用") {
+      item.offerMoney = rqtf
+    }
+    item.offerCoefficient = item.offerMoney / item.pricingMoney
+  })
 }
 
 const unitPriceChange = (row: any) => {

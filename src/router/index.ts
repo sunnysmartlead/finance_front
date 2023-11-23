@@ -79,6 +79,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "/demandApply/fast",
+        component: () => import("@/views/demandApply/fast.vue"),
+        name: "fastDemandApply",
+        meta: {
+          title: "快速核价需求录入"
+        }
+      },
+      {
         path: "/demandApplyAudit/index",
         component: () => import("@/views/demandApplyAudit/index.vue"),
         name: "demandApplyAudit",

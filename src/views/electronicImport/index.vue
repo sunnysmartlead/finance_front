@@ -60,6 +60,7 @@
           :on-error="handleUploadError"
           show-file-list
           :on-progress="handleGetUploadProgress"
+          v-model:file-list="fileList"
         >
           <el-button :style="{ margin: '15px' }" type="primary" :disabled="!data.canDo">电子料上传</el-button>
         </el-upload>
@@ -114,6 +115,7 @@ const { jumpTodoCenter } = useJump()
 const Host = "ElectronicBomImport"
 const { auditFlowId, productId: solutionId } = getQuery()
 const platePart: any = ref<any>([])
+const fileList = ref<any>([])
 
 watch(
   () => platePart.value,
@@ -226,14 +228,14 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
     const params = {
       auditFlowId: Number(auditFlowId),
       solutionId,
-      electronicBomDtos: data.tableData,
+      electronicBomDtos: map(data.tableData, (item: any) => ({ ...item, fileId: fileList.value.map((item: any) => item.response.result.fileId) })),
       boardDtos: map(platePart.value, item => ({...item, auditFlowId, solutionId })),
       comment,
       opinion,
-      nodeInstanceId
+      nodeInstanceId,
     }
-    let { success }: any = await SaveElectronicBom(params)
     await SaveBoard(params)
+    const { success }: any = await SaveElectronicBom(params)
     loading.close()
     if (success) {
       ElMessage.success(`${label} 成功！`)

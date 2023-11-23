@@ -1,7 +1,12 @@
 <template>
   <el-row align="middle" justify="end" m="2">
     <el-button type="primary" @click="submit(refForm)" v-if="!data.isShowBox" v-havedone>校验</el-button>
-    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="data.isShowBox && data.canDo" v-havedone />
+    <ProcessVertifyBox
+      :onSubmit="handleSubmit"
+      processType="confirmProcessType"
+      v-if="data.isShowBox && data.canDo"
+      v-havedone
+    />
   </el-row>
   <div class="structuralMaterial-import">
     <InterfaceRequiredTime style="float: right" :ProcessIdentifier="Host" />
@@ -9,12 +14,21 @@
     <TrView btnText="查看主方案设计" />
     <customerTargetPrice />
     <el-row class="structuralMaterial-import__btn-container">
-      <el-upload :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'" :on-success="handleSuccess" show-file-list
-        :on-progress="handleGetUploadProgress" :on-error="handleUploadError">
+      <el-upload
+        :action="$baseUrl + 'api/services/app/StructionBom/LoadExcel'"
+        :on-success="handleSuccess"
+        show-file-list
+        :on-progress="handleGetUploadProgress"
+        :on-error="handleUploadError"
+        v-model:file-list="fileList"
+      >
         <el-button type="primary" :disabled="!data.canDo">结构料上传</el-button>
       </el-upload>
-      <el-upload :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess3D"
-        show-file-list>
+      <el-upload
+        :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+        :on-success="handleSuccess3D"
+        show-file-list
+      >
         <el-button class="gap" type="primary" :disabled="!data.canDo">附件上传：3D爆炸图</el-button>
       </el-upload>
       <el-button class="gap" type="primary" @click="downLoadTemplate">结构料模版下载</el-button>
@@ -22,19 +36,19 @@
 
     <h5>结构料导入</h5>
     <el-table :data="data.tableData" border style="width: 100%" height="700">
-      <el-table-column prop="categoryName" label="物料大类"  width="130" fixed="left" />
-      <el-table-column prop="typeName" label="物料种类"  width="130"  fixed="left" />
-      <el-table-column prop="isInvolveItem" label="是否涉及" width="80"  fixed="left" />
-      <el-table-column prop="drawingNumName" label="图号名称"  width="130"  fixed="left" />
-      <el-table-column prop="sapItemNum" label="物料编号"  width="130"  fixed="left" />
-      <el-table-column prop="assemblyQuantity" label="装配数量" width="120"  fixed="left" />
+      <el-table-column prop="categoryName" label="物料大类" width="130" fixed="left" />
+      <el-table-column prop="typeName" label="物料种类" width="130" fixed="left" />
+      <el-table-column prop="isInvolveItem" label="是否涉及" width="80" fixed="left" />
+      <el-table-column prop="drawingNumName" label="图号名称" width="130" fixed="left" />
+      <el-table-column prop="sapItemNum" label="物料编号" width="130" fixed="left" />
+      <el-table-column prop="assemblyQuantity" label="装配数量" width="120" fixed="left" />
       <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="100" />
-      <el-table-column prop="materialName" label="材料名称"  width="130" />
+      <el-table-column prop="materialName" label="材料名称" width="130" />
       <el-table-column prop="weightNumber" label="重量" width="100" />
-      <el-table-column prop="moldingProcess" label="成型工艺"  width="130" />
+      <el-table-column prop="moldingProcess" label="成型工艺" width="130" />
       <el-table-column prop="isNewMouldProduct" label="是否新开模" width="80" />
-      <el-table-column prop="secondaryProcessingMethod" label="二次加工方法"  width="130" />
-      <el-table-column prop="surfaceTreatmentMethod" label="表面处理"  width="130" />
+      <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="130" />
+      <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="130" />
       <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="200" />
     </el-table>
 
@@ -114,7 +128,11 @@
           </el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="data.logisticsForm.remarks" type="textarea" placeholder="若无具体包装数据,填写参考的具体项目及产品" />
+          <el-input
+            v-model="data.logisticsForm.remarks"
+            type="textarea"
+            placeholder="若无具体包装数据,填写参考的具体项目及产品"
+          />
         </el-form-item>
       </el-form>
     </el-card>
@@ -142,6 +160,7 @@ import { customerTargetPrice } from "@/views/demandApply"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import TrView from "@/components/TrView/index.vue"
 import { isEmpty, map } from "lodash"
+const fileList = ref<any>([])
 
 let Host = "StructBomImport"
 const refForm = ref<FormInstance>()
@@ -188,7 +207,7 @@ onMounted(async () => {
   auditFlowId = Number(query.auditFlowId) || 0
   productId = Number(query.productId) || 0
   data.auditFlowId = Number(query.auditFlowId) || null // 用来做数据绑定
-  console.log(query, '结构料导入')
+  console.log(query, "结构料导入")
   if (auditFlowId && productId) {
     getRole()
     let { success, result }: any = await GetStructionBom({ auditFlowId, solutionId: productId })
@@ -200,7 +219,10 @@ onMounted(async () => {
 })
 
 const initFetchProductDevelopmentInput = async (query: any) => {
-  let { success, result }: any = await getProductDevelopmentInput({ auditFlowId: query.auditFlowId, solutionId: productId })
+  let { success, result }: any = await getProductDevelopmentInput({
+    auditFlowId: query.auditFlowId,
+    solutionId: productId
+  })
   if (success && !isEmpty(result)) {
     map(result, (val, key) => {
       data.logisticsForm[key] = val
@@ -268,8 +290,8 @@ const getRole = async () => {
     data.canDo = result
     if (!result) {
       ElMessage({
-        message: '您当前暂无操作权限！',
-        type: 'error',
+        message: "您当前暂无操作权限！",
+        type: "error",
         grouping: true,
         zIndex: 1
       })
@@ -284,7 +306,15 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     background: "rgba(0, 0, 0, 0.7)"
   })
   try {
-    let params: SaveBOM = { ...data.logisticsForm, auditFlowId, solutionId: productId, structureBomDtos: data.tableData, comment, opinion, nodeInstanceId }
+    let params: SaveBOM = {
+      ...data.logisticsForm,
+      auditFlowId,
+      solutionId: productId,
+      structureBomDtos: map(data.tableData, item => ({ ...item,  fileId: fileList.value.map((item: any) => item.response.result.fileId) })),
+      comment,
+      opinion,
+      nodeInstanceId,
+    }
     let res: any = await SaveStructionBom(params)
     await SaveProductDevelopmentInput(params)
     loading.close()

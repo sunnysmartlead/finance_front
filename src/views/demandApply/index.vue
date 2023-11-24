@@ -185,7 +185,7 @@
                 @change="yearChange"
                 :min="0"
                 :disabled="isDisabled || right === '1'"
-                :max="20"
+                :max="8"
               />
             </el-form-item>
           </el-col>

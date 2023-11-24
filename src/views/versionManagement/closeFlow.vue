@@ -29,6 +29,7 @@
                 </el-button>
               </template>
             </el-table-column>
+            <el-table-column prop="versionBasicInfo.number" label="单据号" />
             <el-table-column prop="versionBasicInfo.version" label="版本号" />
             <el-table-column prop="versionBasicInfo.auditFlowId" label="流程单号" />
             <el-table-column label="拟稿时间">
@@ -77,6 +78,7 @@
           <el-table :data="data.AuditFlowDeleteList" style="width: 100%" height="650">
             <el-table-column prop="auditFlowId" label="流程id" />
             <el-table-column prop="auditFlowName" label="项目名称" />
+            <el-table-column prop="number" label="单据号" />
             <el-table-column prop="auditFlowVersion" label="版本" />
             <el-table-column prop="deleteReason" label="删除理由" />
           </el-table>
@@ -141,7 +143,8 @@ const data = reactive<any>({
       key: "ProjectName",
       role: "select",
       options: [],
-      onchange: getAllAuditFlowVersion
+      onchange: getAllAuditFlowVersion,
+      filterable:true
     },
     {
       label: "版本号",

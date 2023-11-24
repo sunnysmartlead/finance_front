@@ -9,6 +9,22 @@
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="24">
+            <el-form-item v-if="isFast" label="普通核报价流程:" prop="quoteAuditFlowId">
+            <el-select
+              v-model="state.quoteForm.quoteAuditFlowId"
+              remote-show-suffix
+              reserve-keyword
+              filterable
+              placeholder="Select"
+              :disabled="right === '1'"
+              remote
+              :remote-method="fetchWorkflowOvered"
+            >
+              <el-option v-for="item in projectOptions" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          </el-col>
+          <el-col :span="24">
             <el-form-item label="标题:" prop="title">
               <el-input v-model="state.quoteForm.title" :disabled="isDisabled || right === '1'">
                 <template #append v-if="!isDisabled">
@@ -1425,7 +1441,7 @@ import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
-import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion } from "./service"
+import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
@@ -1444,12 +1460,17 @@ const props = defineProps({
   isDisabled: {
     type: Boolean,
     default: false
-  }
+  },
+  isFast: {
+    type: Boolean,
+    default: false
+  },
 })
 
 //客户目标价
 var customerTargetPrice: any = ref([])
 const projectCodeOptions = ref<any>([])
+const projectOptions = ref<any>([])
 const refForm = ref<FormInstance>()
 
 interface Options {
@@ -1505,6 +1526,7 @@ const isFirstShow = ref(false)
 const state = reactive({
   taebleLoading: false,
   quoteForm: {
+    quoteAuditFlowId: null, // 流程id
     shareCount: [],
     countryType: "", // 国家类型
     isHasNre: false,
@@ -1598,7 +1620,7 @@ const state = reactive({
     { id: "2", displayName: "二供" },
     { id: "3", displayName: "三供" },
     { id: "4", displayName: "四供" }
-  ]
+  ],
 })
 
 const projectSubCodeOptions = ref([])
@@ -2699,8 +2721,68 @@ const SensorChange = (val: any, row: any, key: string) => {
   })
 }
 
-onMounted(async () => {
-  right = Number(right)
+
+const handleChangekvPricingData = (type: string, index?: number) => {
+  if (type === "add") {
+    kvPricingData.value.push({ gradientValue: 0, displayGradientValue: 0, index: 0 })
+  } else {
+    kvPricingData.value.splice(index, 1)
+  }
+}
+
+const initCountry = async () => {
+  let params: any = {
+    maxResultCount: 500,
+    skipCount: 0
+  }
+  const { result } = ((await getCountryLibraryList(params)) as any) || {}
+  state.countryOptions = result?.items || []
+  if (!state.quoteForm.countryType && result?.items.length) {
+    changeCountry(result?.items[0]?.nationalType)
+  }
+}
+
+const changeCountry = (country: string) => {
+  const findData = state.countryOptions.find((val) => val.country === country)
+  if (findData) {
+    state.quoteForm.countryType = findData.nationalType
+  }
+  console.log(findData, state.countryOptions, "选择国家")
+}
+
+const changeExchangRate = (val: string, index: number) => {
+  if (index === 0) {
+    customerTargetPrice.value.forEach((item: any) => {
+      item.exchangeRate = val
+    })
+  }
+}
+
+const changeProjectName = async (val: string) => {
+  const res: any = await GetAllProjectSelf({
+    code: val || "",
+    skipCount: 0,
+    maxResultCount: 100
+  })
+  projectSubCodeOptions.value = res.result?.items || []
+  const findItem = projectCodeOptions.value.find((item: any) => item.code === val)
+  if (findItem) {
+    state.quoteForm.projectName = findItem.description
+  }
+  const { result } = await GetQuoteVersion({ projectCode: val })
+  if (result) {
+    state.quoteForm.quoteVersion = result
+  }
+  console.log(findItem)
+}
+
+const changeCode = (v: string, row: any) => {
+  const filterData = projectSubCodeOptions.value.find((item) => item.subCode === v)
+  console.log(filterData, "filterData")
+  row.product = filterData.subDescription
+}
+
+const init = async () => {
   let query = getQuery()
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
   state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
@@ -2821,67 +2903,18 @@ onMounted(async () => {
     isFirstShow.value = true
   }, 2000)
   state.taebleLoading = false
+}
+
+const fetchWorkflowOvered = async (filter: string) => {
+  const { result }: any  = await getWorkflowOvered({ filter, skipCount: 1, maxResultCount: 100 }) || {}
+  const items = result || []
+  projectOptions.value = items
+}
+
+onMounted(() => {
+  init()
+
 })
-
-const handleChangekvPricingData = (type: string, index?: number) => {
-  if (type === "add") {
-    kvPricingData.value.push({ gradientValue: 0, displayGradientValue: 0, index: 0 })
-  } else {
-    kvPricingData.value.splice(index, 1)
-  }
-}
-
-const initCountry = async () => {
-  let params: any = {
-    maxResultCount: 500,
-    skipCount: 0
-  }
-  const { result } = ((await getCountryLibraryList(params)) as any) || {}
-  state.countryOptions = result?.items || []
-  if (!state.quoteForm.countryType && result?.items.length) {
-    changeCountry(result?.items[0]?.nationalType)
-  }
-}
-
-const changeCountry = (country: string) => {
-  const findData = state.countryOptions.find((val) => val.country === country)
-  if (findData) {
-    state.quoteForm.countryType = findData.nationalType
-  }
-  console.log(findData, state.countryOptions, "选择国家")
-}
-
-const changeExchangRate = (val: string, index: number) => {
-  if (index === 0) {
-    customerTargetPrice.value.forEach((item: any) => {
-      item.exchangeRate = val
-    })
-  }
-}
-
-const changeProjectName = async (val: string) => {
-  const res: any = await GetAllProjectSelf({
-    code: val || "",
-    skipCount: 0,
-    maxResultCount: 100
-  })
-  projectSubCodeOptions.value = res.result?.items || []
-  const findItem = projectCodeOptions.value.find((item: any) => item.code === val)
-  if (findItem) {
-    state.quoteForm.projectName = findItem.description
-  }
-  const { result } = await GetQuoteVersion({ projectCode: val })
-  if (result) {
-    state.quoteForm.quoteVersion = result
-  }
-  console.log(findItem)
-}
-
-const changeCode = (v: string, row: any) => {
-  const filterData = projectSubCodeOptions.value.find((item) => item.subCode === v)
-  console.log(filterData, "filterData")
-  row.product = filterData.subDescription
-}
 
 defineExpose({
   ...toRefs(state)

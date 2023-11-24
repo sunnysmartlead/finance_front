@@ -330,25 +330,6 @@ export function saveApplyInfo(data: InputModal) {
   })
 }
 
-// 查询已有流程
-export function getWorkflowOvered(data: InputModal) {
-  return request({
-    url: "/api/services/app/WorkflowInstance/GetWorkflowOvered",
-    method: "post",
-    data
-  })
-}
-
-// 快速核价
-export function priceEvaluationStart(data: InputModal) {
-  return request({
-    url: "/api/services/app/QuickQuotationReview/PriceEvaluationStart",
-    method: "post",
-    data
-  })
-}
-
-
 export interface RatePage {
   /**
    * 货币币种

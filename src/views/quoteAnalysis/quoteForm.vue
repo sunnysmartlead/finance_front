@@ -1,16 +1,16 @@
 <!-- 报价单 -->
 <template>
   <div>
-    <el-row class="m-2">
+    <el-card m="2">
       <el-radio-group v-model="data.solutionId" @change="init">
-        <template v-for="item in data.solutionIdList" :key="item.title">
-          <el-radio :label="item.id" size="large" border>
-            方案{{ item.version }}
-          </el-radio>
-        </template>
-      </el-radio-group>
-    </el-row>
-    <el-card>
+      <template v-for="item in data.solutionIdList" :key="item.title">
+        <el-radio :label="item.id" size="large" border>
+          方案{{ item.version }}
+        </el-radio>
+      </template>
+    </el-radio-group>
+    </el-card>
+    <el-card m="2" >
       <el-row justify="end">
         <el-button type="primary" @click="submit" m="2">提交</el-button>
         <el-button type="primary" @click="downLoad" m="2">下载报价单</el-button>

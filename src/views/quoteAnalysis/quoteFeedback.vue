@@ -433,7 +433,7 @@
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
+      <!-- <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button> -->
     </el-card>
     <el-button @click="save">保存</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
@@ -551,7 +551,8 @@ import {
   getStatementAnalysisBoardSecond,
   PostIsOfferSecondOnlySave,
   GeCatalogue,
-  GetSoltionGradPriceList
+  GetSoltionGradPriceList,
+  PostQuotationFeedback
 } from "./service"
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
@@ -1203,6 +1204,10 @@ const selectVersion = async (row: any) => {
     })
     data.allRes = res.result
     fullscreenLoading.value = false
+
+    // let resbj = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
+    // let resfk = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
+    // console.log(resbj, resfk)
   } catch (error) {
     fullscreenLoading.value = false
   }
@@ -1527,6 +1532,28 @@ const postOffer = async (isOffer: boolean) => {
     console.log(res)
   }
 }
+const save = async () => {
+  let saveData = {
+    ...data.allRes,
+    auditFlowId,
+    version: versionChosen.version,
+    ntime: versionChosen.ntime,
+    isOffer: true
+  }
+  delete saveData.isSuccess
+  delete saveData.message
+  delete saveData.mes
+  let res: any = await PostQuotationFeedback(saveData)
+  let resbj = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
+  let resfk = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
+  console.log(resbj, resfk)
+  if (res.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+  }
+}
 const toMarketingApproval = () => {
   router.push({
     path: "/quoteAnalysis/marketingApproval",
@@ -1559,9 +1586,7 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   if (auditFlowId) {
-    //solutionList
     let { result }: any = await GeCatalogue({ auditFlowId })
-    // getVersionData = result
     result.forEach((item: any) => {
       versionList.push(item)
     })

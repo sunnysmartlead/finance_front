@@ -5,6 +5,7 @@
       <h4 mb-20px>已保存的方案版本</h4>
       <div mb-20px>
         <el-table :data="versionList" border max-height="300px">
+          <el-table-column type="selection" width="55" />
           <el-table-column label="版本号" width="200" align="center" prop="version" />
           <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
           <el-table-column label="组合方案" width="300" align="center">
@@ -73,6 +74,7 @@
     <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
       <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
+      <el-button type="primary" @click="submitProcess(true)" v-havedone>提交流程</el-button>
     </el-button-group>
     <!-- nre -->
     <h3>NRE</h3>
@@ -371,9 +373,8 @@
         </el-table-column>
       </el-table>
     </el-card>
-
+   <!-- projectBoard -->
     <el-card class="card">
-      <!-- projectBoard -->
       <div v-for="item in data.allRes.projectBoard" :key="item.title">
         <p>{{ item.title }}</p>
         <el-table :data="item.projectBoardModels" border>
@@ -418,7 +419,6 @@
           </el-table-column>
         </el-table>
       </div>
-
       <div v-for="(value, key) in gradientTableMap" :key="key">
         <div :id="'unitpriceChart' + key" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + key" class="h-400px" />
@@ -430,7 +430,6 @@
       <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
       <el-button @click="toMarketingApproval" type="primary" float-right my-20px mr-20px>生成审批表</el-button>
     </el-card>
-
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -548,8 +547,6 @@ import {
   GeCatalogue
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
-import { Decipher } from "crypto"
-import { flatMap } from "lodash"
 /**
  * 路由对象
  */
@@ -1419,7 +1416,11 @@ const offerCoefficientChange = (row: any, index: number) => {
     } else if (item.formName === "其他费用") {
       item.offerMoney = rqtf
     }
-    item.offerCoefficient = item.offerMoney / item.pricingMoney
+    if (Number(item.offerMoney) && Number(item.pricingMoney)) {
+      item.offerCoefficient = Number(item.offerMoney) / Number(item.pricingMoney)
+    } else {
+      item.offerCoefficient = 0
+    }
   })
 }
 
@@ -1652,6 +1653,9 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
+/**
+ * 保存版本号，如当前没有版本从1开始，后面保存版本版本号保持不变
+ */
 const save = async () => {
   if (auditFlowId) {
     let saveData = {
@@ -1670,13 +1674,17 @@ const save = async () => {
     delete saveData.message
     delete saveData.mes
     let res = await PostIsOfferSecondOnlySave(saveData)
-    console.log(res, "saveData")
+    if (res.success) {
+      ElMessage({
+        type: "success",
+        message: "操作成功"
+      })
+      getVersionList()
+    }
   }
-
-  console.log(productList, planListArr, data.allRes)
 }
 /**
- * 报价
+ * 报价和不报价 结合流程接口
  */
 const postOffer = async (isOffer: boolean) => {
   if (auditFlowId) {
@@ -1694,60 +1702,63 @@ const postOffer = async (isOffer: boolean) => {
       saveData.ntime = versionChosen.ntime + 1 // 提交次数+1
       saveData.solutions = versionChosen.solutionList
     }
-
     delete saveData.isSuccess
     delete saveData.message
     delete saveData.mes
     let res = await PostIsOfferSecond(saveData)
-    //是否报价
-    const baseProcessType = [
-      //YesOrNo
-      {
-        label: "不同意",
-        val: "YesOrNo_No"
-      },
-      {
-        label: "同意",
-        val: "YesOrNo_Yes"
-      },
-      {
-        label: "保存",
-        val: "YesOrNo_Save"
-      }
-    ]
-    // 报价分析看板选择方案
-    const confirmProcessType = [
-      //Done
-      {
-        label: "提交",
-        val: "Done"
-      },
-      {
-        label: "保存",
-        val: "Save"
-      }
-    ]
-    let FangAnres: any = await SubmitNode({
-      comment: "",
-      nodeInstanceId,
-      financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0]
-    })
-    // let FangAnres: any = await SubmitNode({
-    //   comment: "",
-    //   nodeInstanceId,
-    //   financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
-    // })
-    if (FangAnres.success) {
-      ElMessage({
-        type: "success",
-        message: "操作成功"
-      })
+    if (!isOffer) {
+      // 点不报价的话，调完报价接口以后直接走拒绝归档流程
+      submitProcess(isOffer)
     }
-    console.log(res)
   }
 }
+/**
+ * 拆开来是因为有多个报价，都执行完让他再执行提交
+ */
+const submitProcess = async (isOffer: boolean) => {
+  const baseProcessType = [
+    //YesOrNo
+    {
+      label: "不同意",
+      val: "YesOrNo_No"
+    },
+    {
+      label: "同意",
+      val: "YesOrNo_Yes"
+    },
+    {
+      label: "保存",
+      val: "YesOrNo_Save"
+    }
+  ]
+  // // 报价分析看板选择方案
+  // const confirmProcessType = [
+  //   //Done
+  //   {
+  //     label: "提交",
+  //     val: "Done"
+  //   },
+  //   {
+  //     label: "保存",
+  //     val: "Save"
+  //   }
+  // ]
+  let FangAnres: any = await SubmitNode({
+    comment: "",
+    nodeInstanceId,
+    financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0]
+  })
+  if (FangAnres.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+  }
+}
+/**
+ * 生成审批表
+ */
 const toMarketingApproval = () => {
-  debugger
   router.push({
     path: "/quoteAnalysis/marketingApproval",
     query: {
@@ -1756,35 +1767,26 @@ const toMarketingApproval = () => {
     }
   })
 }
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
-  let res: any = await SubmitNode({
-    comment,
-    nodeInstanceId,
-    financeDictionaryDetailId: opinion
-    // AuditFlowId: auditFlowId,
-    // opinionDescription: comment,
-    // isAgree: opinion.includes("Done") ? true : false,
-  })
-  if (res.success) {
-    ElMessage({
-      type: "success",
-      message: "操作成功"
-    })
-    // postOffer
-  }
-}
-onBeforeMount(() => {
-  //console.log('2.组件挂载页面之前执行----onBeforeMount')
-})
-onMounted(async () => {
-  //console.log('3.-组件挂载到页面之后执行-------onMounted')
-
+// const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+//   let res: any = await SubmitNode({
+//     comment,
+//     nodeInstanceId,
+//     financeDictionaryDetailId: opinion
+//   })
+//   if (res.success) {
+//     ElMessage({
+//       type: "success",
+//       message: "操作成功"
+//     })
+//     // postOffer
+//   }
+// }
+/**
+ * 获取版本号
+ */
+const getVersionList = async () => {
   if (auditFlowId) {
-    await GetSolution(auditFlowId)
-    const resp: any = await getProductByAuditFlowId(auditFlowId)
-    productList.value = resp.result
     let { result }: any = await GeCatalogue({ auditFlowId })
-
     //如果方案组合接口没有那么就从初始1开始计数
     if (result.length === 0) {
       version.value = 1
@@ -1795,12 +1797,17 @@ onMounted(async () => {
         versionList.push(item)
       })
     }
-    console.log(result, "res")
   }
-  // if (right === "1") {
-  //   let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: 0 })
-  //   console.log(res, "getStatementAnalysisBoardSecond")
-  // }
+}
+onBeforeMount(() => {
+  //console.log('2.组件挂载页面之前执行----onBeforeMount')
+})
+onMounted(async () => {
+  //console.log('3.-组件挂载到页面之后执行-------onMounted')
+  // await GetSolution(auditFlowId)
+  const resp: any = await getProductByAuditFlowId(auditFlowId)
+  productList.value = resp.result
+  getVersionList()
 })
 watchEffect(() => {})
 // 使用toRefs解构

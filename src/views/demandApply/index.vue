@@ -10,19 +10,20 @@
         <el-row :gutter="20">
           <el-col :span="24">
             <el-form-item v-if="isFast" label="普通核报价流程:" prop="quoteAuditFlowId">
-            <el-select
-              v-model="state.quoteForm.quoteAuditFlowId"
-              remote-show-suffix
-              reserve-keyword
-              filterable
-              placeholder="Select"
-              :disabled="right === '1'"
-              remote
-              :remote-method="fetchWorkflowOvered"
-            >
-              <el-option v-for="item in projectOptions" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </el-form-item>
+              <el-select
+                v-model="state.quoteForm.quoteAuditFlowId"
+                remote-show-suffix
+                reserve-keyword
+                filterable
+                placeholder="Select"
+                :disabled="right === '1'"
+                remote
+                :remote-method="fetchWorkflowOvered"
+                style="width: 300px"
+              >
+                <el-option v-for="item in projectOptions" :key="item.id" :label="item.title" :value="item.id" />
+              </el-select>
+            </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="标题:" prop="title">
@@ -2906,8 +2907,8 @@ const init = async () => {
 }
 
 const fetchWorkflowOvered = async (filter: string) => {
-  const { result }: any  = await getWorkflowOvered({ filter, skipCount: 1, maxResultCount: 100 }) || {}
-  const items = result || []
+  const { result }: any  = await getWorkflowOvered({ filter, skipCount: 0, maxResultCount: 100 }) || {}
+  const { items } = result || []
   projectOptions.value = items
 }
 

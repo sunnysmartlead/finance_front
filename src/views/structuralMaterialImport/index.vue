@@ -20,7 +20,6 @@
         show-file-list
         :on-progress="handleGetUploadProgress"
         :on-error="handleUploadError"
-        v-model:file-list="fileList"
       >
         <el-button type="primary" :disabled="!data.canDo">结构料上传</el-button>
       </el-upload>
@@ -160,7 +159,6 @@ import { customerTargetPrice } from "@/views/demandApply"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import TrView from "@/components/TrView/index.vue"
 import { isEmpty, map } from "lodash"
-const fileList = ref<any>([])
 
 let Host = "StructBomImport"
 const refForm = ref<FormInstance>()
@@ -187,6 +185,7 @@ const data = reactive<any>({
   isShowBox: false,
   canDo: false
 })
+const fileId = ref('')
 const rules = reactive<FormRules>({
   outerPackagingLength: [{ required: true, message: "请输入该值", trigger: "blur" }],
   outerPackagingWidth: [{ required: true, message: "请输入该值", trigger: "blur" }],
@@ -234,6 +233,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   console.log(res)
   if (res.success) {
     data.tableData = res.result.structureBomDtos
+    data.fileId = res.result.stuFileId
   } else {
     ElMessage({
       message: res.error.message,
@@ -242,7 +242,6 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   }
 }
 const handleSuccess3D: UploadProps["onSuccess"] = (res: any) => {
-  console.log(res)
   if (res.success) {
     data.logisticsForm.picture3DFileId = res.result.fileId
     ElMessage({
@@ -299,7 +298,7 @@ const getRole = async () => {
   }
 }
 
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   const loading = ElLoading.service({
     lock: true,
     text: "加载中",
@@ -310,7 +309,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
       ...data.logisticsForm,
       auditFlowId,
       solutionId: productId,
-      structureBomDtos: map(data.tableData, item => ({ ...item,  fileId: fileList.value.map((item: any) => item.response.result.fileId) })),
+      structureBomDtos: map(data.tableData, item => ({ ...item, fileId: fileId.value || item.fileId })),
       comment,
       opinion,
       nodeInstanceId,
@@ -320,7 +319,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     loading.close()
     if (res.success) {
       ElMessage({
-        message: "保存成功",
+        message: `${label}成功！`,
         type: "success"
       })
     }

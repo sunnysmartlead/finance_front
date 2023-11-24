@@ -60,7 +60,6 @@
           :on-error="handleUploadError"
           show-file-list
           :on-progress="handleGetUploadProgress"
-          v-model:file-list="fileList"
         >
           <el-button :style="{ margin: '15px' }" type="primary" :disabled="!data.canDo">电子料上传</el-button>
         </el-upload>
@@ -115,7 +114,7 @@ const { jumpTodoCenter } = useJump()
 const Host = "ElectronicBomImport"
 const { auditFlowId, productId: solutionId } = getQuery()
 const platePart: any = ref<any>([])
-const fileList = ref<any>([])
+const fileId = ref<any>("")
 
 watch(
   () => platePart.value,
@@ -161,6 +160,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   if (res.success) {
     // data.tableDataList[data.activeIndex] = res.result
     data.tableData = res.result.electronicBomDtos
+    fileId.value = res.result.elcFileId
   } else {
     ElMessage({
       message: res.error.message,
@@ -228,7 +228,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
     const params = {
       auditFlowId: Number(auditFlowId),
       solutionId,
-      electronicBomDtos: map(data.tableData, (item: any) => ({ ...item, fileId: fileList.value.map((item: any) => item.response.result.fileId) })),
+      electronicBomDtos: map(data.tableData, (item: any) => ({ ...item, fileId: fileId.value || item.fileId })),
       boardDtos: map(platePart.value, item => ({...item, auditFlowId, solutionId })),
       comment,
       opinion,

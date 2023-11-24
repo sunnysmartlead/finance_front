@@ -25,9 +25,9 @@
         height="500px"
       >
         <el-table-column prop="projectName" label="项目名称" />
-        <el-table-column prop="unitPrice" label="单价" />
-        <el-table-column prop="number" label="数量" width="100" />
-        <el-table-column prop="rate" label="汇率" width="100" />
+        <el-table-column prop="unitPrice" label="单价" :formatter="formatNum" />
+        <el-table-column prop="number" label="数量" width="100" :formatter="formatNum" />
+        <el-table-column prop="rate" label="汇率" width="100" :formatter="formatNum" />
         <el-table-column prop="sum" label="合计" />
       </el-table>
     </el-card>
@@ -173,6 +173,11 @@ const getPriceEvaluationTableInputCount = async () => {
   }: any = await GetPriceEvaluationTableInputCount(auditFlowId)
   data.priceEvaluationTableInputCount = items
   console.log(items, "getPriceEvaluationTableInputCount")
+}
+
+const formatNum = (_r: any, _c: any, val: any) => {
+  if (!val) return '/'
+  return val
 }
 
 onMounted(async () => {

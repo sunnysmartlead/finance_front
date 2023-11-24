@@ -2914,7 +2914,7 @@ const fetchWorkflowOvered = async (filter: string) => {
 
 onMounted(() => {
   init()
-
+  fetchWorkflowOvered('')
 })
 
 defineExpose({

@@ -4,7 +4,7 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "首次核价",
-        id: ""
+        id: "EvalReason_Schj"
       },
       {
         name: "方案变更",
@@ -12,7 +12,7 @@ export const PROCESS_EUNM = [
       },
       {
         name: "量产样品",
-        id: ""
+        id: "EvalReason_Lcyp"
       },
       {
         name: "其他",
@@ -25,7 +25,7 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "节点成本评估",
-        id: ""
+        id: "EvalReason_Jdcbpg"
       },
       {
         name: "项目变更",
@@ -33,7 +33,7 @@ export const PROCESS_EUNM = [
       },
       {
         name: "下年年降",
-        id: ""
+        id: "EvalReason_Xnnj"
       }
     ]
   },
@@ -42,11 +42,11 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "非方案变更",
-        id: "EvalReason_Ffabg"
+        id: ""// EvalReason_Ffabg
       },
       {
         name: "其他引用流程",
-        id: "EvalReason_Qt"
+        id: "" // EvalReason_Qt
       }
     ]
   },
@@ -55,15 +55,15 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "售后件",
-        id: "EvalReason_Shj"
+        id: "" //EvalReason_Shj
       },
       {
         name: "本年年降",
-        id: "EvalReason_Nj"
+        id: ""//EvalReason_Nj
       },
       {
         name: "其他上传流程",
-        id: ""
+        id: ""//EvalReason_Qtsclc
       }
     ]
   },
@@ -76,7 +76,7 @@ export const PROCESS_EUNM = [
       },
       {
         name: "其他零星报价",
-        id: ""
+        id: "EvalReason_Qtlxbj"
       }
     ]
   }

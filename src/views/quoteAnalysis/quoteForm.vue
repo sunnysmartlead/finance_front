@@ -226,6 +226,8 @@ const downLoad = async () => {
 const fetchList = async () => {
   const { result }: any = await GeCatalogue({ auditFlowId: Number(auditFlowId) })
   data.solutionIdList = result
+  data.solutionId = result[0]?.id
+  init(result[0]?.id)
 }
 </script>
 <style scoped></style>

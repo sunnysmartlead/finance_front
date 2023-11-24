@@ -2,12 +2,36 @@
 <template>
   <div>
     <div style="margin: 10px 0; float: right">
-      <!-- 总经理查看流程为Done,财务确认为yesOrNo -->
+      <!-- 财务确认为yesOrNo -->
       <ProcessVertifyBox
         :onSubmit="handleSubmit"
         :processType="data.pageType === 3 ? 'baseProcessType' : 'confirmProcessType'"
       />
     </div>
+    <div v-if="pageType !== 1">
+      <h4 mb-20px>已保存的方案版本</h4>
+      <div mb-20px>
+        <el-table :data="versionList" border max-height="300px">
+          <el-table-column label="版本号" width="200" align="center" prop="version" />
+          <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+          <el-table-column label="组合方案" width="300" align="center">
+            <template #default="scope">
+              <div v-for="item in scope.row.solutionList" :key="item.product">
+                {{ item.product }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button @click="selectVersion(scope.row)" type="primary" v-loading.fullscreen.lock="fullscreenLoading">
+                加载该版本</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+
     <el-card header="">
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
@@ -267,9 +291,11 @@ const query = useJump()
 const route = useRoute()
 const { closeSelectedTag, jumpPage } = query
 
-const { auditFlowId } = getQuery()
+const { auditFlowId, version } = getQuery()
 const dialogVisible = ref(false)
 const ProductByAuditFlowId = ref<any>({})
+let versionList = reactive<any[]>([])
+let fullscreenLoading = ref(false)
 /**
  * 数据部分
  */
@@ -539,13 +565,11 @@ const data = reactive<any>({
 })
 
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  PostAuditQuotationList
   let res: any = await SubmitNode({
     comment,
     nodeInstanceId,
     financeDictionaryDetailId: opinion
-    // AuditFlowId: auditFlowId,
-    // opinionDescription: comment,
-    // isAgree: opinion.includes("Done") ? true : false,
   })
   if (res.success) {
     ElMessage({
@@ -555,7 +579,26 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     // postOffer
   }
   if (data.pageType === 3) {
-    // FinancialFiling({})
+  }
+}
+const selectVersion = async (row: any) => {
+  fullscreenLoading.value = true
+  try {
+    /**
+     * 根据版本号查询该版本数据
+     */
+    if (data.pageType === 2) {
+      // 总经理中标查看
+      const { result } = await GetBidView({ auditFlowId, version: row.version })
+      data.allRes = result
+    } else if (data.pageType === 3) {
+      // 财务中标确认
+      const { result } = await GetAcceptanceBid({ auditFlowId, version: row.version })
+      data.allRes = result
+    }
+    fullscreenLoading.value = false
+  } catch (error) {
+    fullscreenLoading.value = false
   }
 }
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
@@ -583,15 +626,13 @@ onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   console.log(route.path)
   if (route.path === "/marketingQuotation/indexSecond") {
-    data.pageType = 1
-    // if (route.query.right === "1") {
-    //   data.pageType = 2
-    // }
+    data.pageType = 1 // 正常的总经理审批页面 从总经理审批1跳转过来 需要带上当前版本号
+  } else if (route.path === "/marketingQuotation/confirmWinningBid") {
+    data.pageType = 2 // 总经理审查看中标确认 无需操作，可以选择版本
   } else if (route.path === "/marketingQuotation/bidWinningConfirmation") {
-    data.pageType = 3
+    data.pageType = 3 // 财务中标确认
   }
   initFetch()
-  // fetchSopYear()
 })
 const jumpToAnalysis = () => {
   jumpPage("/quoteAnalysis/index", {
@@ -655,23 +696,11 @@ const typeMapGetText = (key: any, id: any) => {
 }
 const initFetch = async () => {
   if (auditFlowId) {
-    // 总经理审批2
+    // 获取版本数据，只有在中标查看 和 确认里面才会显示
     let res: any = await GeCatalogue({ auditFlowId })
-    let version = res.result.length
-    let selectResult = null
-    if (data.pageType === 1) {
-      const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version })
-      selectResult = result
-    } else if (data.pageType === 2) {
-      // 总经理中标查看
-      const { result } = await GetBidView({ auditFlowId, version: version })
-      selectResult = result
-    } else if (data.pageType === 3) {
-      // 中标确认
-      const { result } = await GetAcceptanceBid({ auditFlowId, version: version })
-      selectResult = result
-    }
-    data.resa = selectResult
+    res.result.forEach((item: any) => {
+      versionList.push(item)
+    })
     let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
     typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
 
@@ -683,11 +712,10 @@ const initFetch = async () => {
 
     let tradeMethodType: any = await getDictionaryAndDetail("TradeMethod") //贸易方式
     typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
-    if (auditFlowId) {
-      const loadingInstance = ElLoading.service({ fullscreen: true })
-      const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: 0 })
+    if (data.pageType === 1 && version) {
+      //version 是从总经理审批1带过来的参数
+      const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version })
       data.resa = result
-      loadingInstance.close()
     }
   }
 }

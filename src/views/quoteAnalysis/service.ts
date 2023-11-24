@@ -369,6 +369,20 @@ export function GetDownloadList(data: any) {
 export function GetSoltionGradPriceList(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetSoltionGradPriceList",
+    method: "get",
+    data
+  })
+}
+
+/**
+ *
+ * @param data 报价方案反馈 保存
+ * @returns
+ */
+
+export function PostQuotationFeedback(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostQuotationFeedback",
     method: "post",
     data
   })

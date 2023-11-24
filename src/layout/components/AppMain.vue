@@ -14,9 +14,9 @@ const key = computed(() => {
     <el-scrollbar style="height: 100%" native>
       <router-view v-slot="{ Component }">
         <transition name="fade-transform" mode="out-in">
-          <!-- <keep-alive> -->
-          <component :is="Component" :key="key" />
-          <!-- </keep-alive> -->
+          <keep-alive>
+            <component :is="Component" :key="key" />
+          </keep-alive>
         </transition>
       </router-view>
     </el-scrollbar>

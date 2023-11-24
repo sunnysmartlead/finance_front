@@ -433,7 +433,7 @@
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button>
+      <!-- <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button> -->
     </el-card>
     <el-button @click="save">保存</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
@@ -551,10 +551,18 @@ import {
   getStatementAnalysisBoardSecond,
   PostIsOfferSecondOnlySave,
   GeCatalogue,
-  GetSoltionGradPriceList
+  GetSoltionGradPriceList,
+  PostQuotationFeedback
 } from "./service"
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
+
+//报价反馈
+//标识符：QuoteFeedback
+// EvalFeedback_Js, DisplayName="接受报价",},
+// EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新核价",},
+// EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
+// EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",},
 /**
  * 路由对象
  */
@@ -1178,25 +1186,28 @@ const selectVersion = async (row: any) => {
   fullscreenLoading.value = true
   try {
     versionChosen = row
-
-    let res = await PostStatementAnalysisBoardSecond({
-      ...versionChosen,
-      solutionTables: versionChosen.solutionList
-    })
-    fullscreenLoading.value = false
-    data.allRes = res.result
+    // let res = await PostStatementAnalysisBoardSecond({
+    //   ...versionChosen,
+    //   solutionTables: versionChosen.solutionList
+    // })
+    // fullscreenLoading.value = false
+    // data.allRes = res.result
 
     /**
      * 根据版本号查询该版本数据
      */
 
-    // let res: any = await getQuotationFeedback({
-    //   auditFlowId,
-    //   version: versionChosen.version,
-    //   ntime: versionChosen.ntime
-    // })
+    let res: any = await getQuotationFeedback({
+      auditFlowId,
+      version: versionChosen.version,
+      ntime: versionChosen.ntime
+    })
     data.allRes = res.result
     fullscreenLoading.value = false
+
+    // let resbj = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
+    // let resfk = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
+    // console.log(resbj, resfk)
   } catch (error) {
     fullscreenLoading.value = false
   }
@@ -1521,6 +1532,28 @@ const postOffer = async (isOffer: boolean) => {
     console.log(res)
   }
 }
+const save = async () => {
+  let saveData = {
+    ...data.allRes,
+    auditFlowId,
+    version: versionChosen.version,
+    ntime: versionChosen.ntime,
+    isOffer: true
+  }
+  delete saveData.isSuccess
+  delete saveData.message
+  delete saveData.mes
+  let res: any = await PostQuotationFeedback(saveData)
+  let resbj = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
+  let resfk = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
+  console.log(resbj, resfk)
+  if (res.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+  }
+}
 const toMarketingApproval = () => {
   router.push({
     path: "/quoteAnalysis/marketingApproval",
@@ -1553,9 +1586,7 @@ onBeforeMount(() => {
 onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   if (auditFlowId) {
-    //solutionList
     let { result }: any = await GeCatalogue({ auditFlowId })
-    // getVersionData = result
     result.forEach((item: any) => {
       versionList.push(item)
     })

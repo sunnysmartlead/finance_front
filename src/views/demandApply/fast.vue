@@ -1,6 +1,6 @@
 <template>
   <div>
-    <demandApply />
+    <demandApply :isFast="true" />
   </div>
 </template>
 <script lang="ts" setup>

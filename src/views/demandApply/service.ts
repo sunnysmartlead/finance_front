@@ -54,3 +54,21 @@ export function GetQuoteVersion(data: any) {
     data
   })
 }
+
+// 查询已有流程
+export function getWorkflowOvered(data: any) {
+  return request({
+    url: "/api/services/app/WorkflowInstance/GetWorkflowOvered",
+    method: "get",
+    data
+  })
+}
+
+// 快速核价
+export function priceEvaluationStart(data: any) {
+  return request({
+    url: "/api/services/app/QuickQuotationReview/PriceEvaluationStart",
+    method: "post",
+    data
+  })
+}

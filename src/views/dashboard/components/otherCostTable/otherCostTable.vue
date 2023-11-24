@@ -7,7 +7,7 @@
         <el-input v-if="isEdit" v-model="row.itemName" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="total" label="总费用" :formatter="formatThousandths">
+    <el-table-column align="center" prop="total" width="175" label="总费用" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
       </template>

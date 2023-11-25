@@ -90,6 +90,32 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
   if (userRoles.includes("项目经理")) {
     roles.push("closeFlow")
   }
+
+  if (userRoles.includes("成本拆分员")) {
+    roles.push("成本拆分员")
+  }
+  if (userRoles.includes("报价审核表")) {
+    roles.push("报价审核表")
+  }
+  if (userRoles.includes("报价单归档管理员")) {
+    roles.push("报价单归档管理员")
+  }
+  if (userRoles.includes("单价库管理员")) {
+    roles.push("单价库管理员")
+  }
+  if (userRoles.includes("环境实验库管理员")) {
+    roles.push("环境实验库管理员")
+  }
+  if (userRoles.includes("EMC实验库管理员")) {
+    roles.push("EMC实验库管理员")
+  }
+  if (userRoles.includes("工程部-基础库管理员")) {
+    roles.push("工程部-基础库管理员")
+  }
+  if (userRoles.includes("财务部-财务参数录入员")) {
+    roles.push("财务部-财务参数录入员")
+  }
+
   permissionStore.setRoutes(roles)
   permissionStore.dynamicRoutes.forEach((route: any) => {
     router.addRoute(route)

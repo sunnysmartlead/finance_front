@@ -9,6 +9,15 @@ export function saveApplyInfo(data: any) {
   })
 }
 
+/** 保存录入 */
+export function priceEvaluationStartSave(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/PriceEvaluationStartSave",
+    method: "post",
+    data
+  })
+}
+
 /** 查询汇率 */
 export function getExchangeRate(data: RatePage) {
   return request({

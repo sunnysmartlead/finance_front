@@ -429,3 +429,11 @@ export function GetQuotationFeedbackManagerApprovalOfferTwo(data: any) {
     data
   })
 }
+
+export function GetExternalQuotationNumberOfQuotations(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetExternalQuotationNumberOfQuotations",
+    method: "get",
+    data
+  })
+}

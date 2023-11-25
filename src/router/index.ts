@@ -909,7 +909,6 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "工序工时"
-      // roles: ["工程部-基础库管理员"]
     },
     children: [
       {
@@ -927,8 +926,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "processLib",
         meta: {
-          title: "工序库",
-          roles: ["工程部-基础库管理员"]
+          title: "工序库"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -937,8 +936,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "workingHours",
         meta: {
-          title: "工时库",
-          roles: ["工程部-基础库管理员"]
+          title: "工时库"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -947,8 +946,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "environment",
         meta: {
-          title: "环境实验库",
-          roles: ["环境实验库管理员"]
+          title: "环境实验库"
+          // roles: ["环境实验库管理员"]
         }
       },
       {
@@ -957,8 +956,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "emc",
         meta: {
-          title: "EMC实验费",
-          roles: ["EMC实验库管理员"]
+          title: "EMC实验费"
+          // roles: ["EMC实验库管理员"]
         }
       },
       {
@@ -966,8 +965,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/workClothes.vue"),
         name: "baseLibLog",
         meta: {
-          title: "工装库",
-          roles: ["工程部-基础库管理员"]
+          title: "工装库"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -975,8 +974,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/deviceLib.vue"),
         name: "deviceLib",
         meta: {
-          title: "设备库",
-          roles: ["工程部-基础库管理员"]
+          title: "设备库"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -984,8 +983,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/fixture.vue"),
         name: "fixture",
         meta: {
-          title: "治具检具",
-          roles: ["工程部-基础库管理员"]
+          title: "治具检具"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -993,8 +992,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/softwareHardware.vue"),
         name: "softwareHardware",
         meta: {
-          title: "硬件及软件",
-          roles: ["工程部-基础库管理员"]
+          title: "硬件及软件"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -1002,8 +1001,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/logisticsCost.vue"),
         name: "logisticsCost",
         meta: {
-          title: "物流成本录入",
-          roles: ["工程部-基础库管理员"]
+          title: "物流成本录入"
+          // roles: ["工程部-基础库管理员"]
         }
       },
 
@@ -1012,8 +1011,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/standardProcess.vue"),
         name: "standardProcess",
         meta: {
-          title: "标准工艺库",
-          roles: ["工程部-基础库管理员"]
+          title: "标准工艺库"
+          // roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -1021,8 +1020,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
         name: "COBManufactureCost",
         meta: {
-          title: "COB制造成本录入",
-          roles: ["工程部-基础库管理员"]
+          title: "COB制造成本录入"
+          // roles: ["工程部-基础库管理员"]
         }
       }
     ]

@@ -78,7 +78,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
               @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
-              @change="offerCoefficientChange(scope.row, index)"
+              @change="offerCoefficientChange(scope.row, index,scope.$index)"
               :precision="2"
               :min="0"
             />
@@ -114,7 +114,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
         <el-table-column prop="name" label="样品阶段" width="200" align="center" />
         <el-table-column prop="pcs" label="需求量（pcs）" width="200" align="center">
           <template #default="scope">
-            <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row)" />
+            <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row, index, scope.$index)" />
           </template>
         </el-table-column>
         <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="right" />
@@ -124,7 +124,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
               @mousewheel.native.prevent
               v-model="scope.row.unitPrice"
               controls-position="right"
-              @change="unitPriceChange(scope.row)"
+              @change="unitPriceChange(scope.row, index, scope.$index)"
               :precision="2"
             />
           </template>
@@ -1265,12 +1265,16 @@ const downLoad = async () => {
   }
 }
 //报价值change
-const offerCoefficientChange = (row: any, index: number) => {
+const offerCoefficientChange = (row: any, index: number, rowIndex: number) => {
   let length = data.allRes.nres.length
   if (index === length - 1) {
     return false
   }
   row.offerMoney = row.offerCoefficient * row.pricingMoney
+  /**
+   * hack数据，scope的值无法取得
+   */
+  data.allRes.nres[index].models[rowIndex].offerMoney = row.offerCoefficient * row.pricingMoney
   let sbjf: any = []
   let mjf: any = []
   let scsbf: any = []
@@ -1431,16 +1435,18 @@ const offerCoefficientChange = (row: any, index: number) => {
 const getNreChange = () => {
   let row = data.allRes.nres[0].models[0]
   let index = 0
-  offerCoefficientChange(row, index)
+  offerCoefficientChange(row, index, 0)
 }
-const unitPriceChange = (row: any) => {
+const unitPriceChange = (row: any, index: number, rowIndex: number) => {
   row.grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
-  row.salesRevenue = row.pcs * row.salesRevenue
+  row.salesRevenue = row.pcs * row.unitPrice
+  data.allRes.sampleOffer[index][rowIndex].grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
+  data.allRes.sampleOffer[index][rowIndex].salesRevenue = row.pcs * row.unitPrice
 }
-const pcsChange = (row: any) => {
-  row.salesRevenue = row.pcs * row.salesRevenue
+const pcsChange = (row: any, index: number, rowIndex: number) => {
+  row.salesRevenue = row.pcs * row.unitPrice
+  data.allRes.sampleOffer[index][rowIndex].salesRevenue = row.pcs * row.unitPrice
 }
-
 const calculateFullGrossMarginNew = async (row: any, index: any) => {
   let { result } = await PostGrossMarginForGradient({
     auditFlowId: auditFlowId,
@@ -1784,9 +1790,6 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     nodeInstanceId,
     financeDictionaryDetailId: opinion
-    // AuditFlowId: auditFlowId,
-    // opinionDescription: comment,
-    // isAgree: opinion.includes("Done") ? true : false,
   })
   if (res.success) {
     ElMessage({
@@ -1805,34 +1808,14 @@ onMounted(async () => {
   if (auditFlowId) {
     let { result }: any = await GeCatalogue({ auditFlowId })
     result.forEach((item: any) => {
+      versionList.push(item)
       // if (item.isQuotation) {
       //   versionList.push(item)
       // }
-      if (item.isFirst) {
+      if (!item.isFirst) {
         versionList.push(item)
       }
     })
-    //auditFlowId
-    //solutionTables
-    //version
-    //ntime
-    // let versions = getVersionData.map((item: any) => item.version)
-    // let maxVersion = Math.max(...versions)
-    // let maxVersionIndex = 0
-    // getVersionData.forEach((item: any, index: number) => {
-    //   if (maxVersion === item.version) {
-    //     maxVersionIndex = index
-    //   }
-    // })
-    // versionData = getVersionData[maxVersionIndex]
-    // let res: any = await getQuotationFeedback({
-    //   auditFlowId,
-    //   version: maxVersion,
-    //   ntime: versionData.ntime,
-    //   solutionTables: versionData.solutionList
-    // })
-    // data.allRes = res.result
-    // console.log(res)
   }
 })
 watchEffect(() => {})

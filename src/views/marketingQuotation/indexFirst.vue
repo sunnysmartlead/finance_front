@@ -50,8 +50,8 @@
       <p>NRE报价汇总</p>
       <el-table :data="data.resa.nreUnitSumModels" border>
         <el-table-column label="产品名称" prop="product" />
-        <el-table-column label="花费" prop="cost" />
-        <el-table-column label="数量" prop="number" />
+        <el-table-column label="核价金额" prop="cost" />
+        <el-table-column label="报价金额" prop="number" />
       </el-table>
       <!-- nre -->
       <el-card>
@@ -93,21 +93,21 @@
           <el-table-column label="序号" type="index" />
           <el-table-column prop="formName" label="费用名称" />
           <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
-          <el-table-column label="报价系数">
-            <template #default="scope">
+          <el-table-column label="报价系数" prop="offerCoefficient">
+            <!-- <template #default="scope">
               <el-input-number
                 @mousewheel.native.prevent
                 v-model="scope.row.offerCoefficient"
                 controls-position="right"
-                @change="offerCoefficientChange(scope.row)"
+                @change="offerCoefficientChange(scope.row, scope.$index)"
               />
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
-          <el-table-column label="备注">
-            <template #default="scope">
+          <el-table-column label="备注" prop="remark">
+            <!-- <template #default="scope">
               <el-input v-model="scope.row.remark" type="textarea" />
-            </template>
+            </template> -->
           </el-table-column>
         </el-table>
         <p>专用设备</p>
@@ -513,7 +513,9 @@ const initFetch = async () => {
   if (auditFlowId) {
     let res: any = await GeCatalogue({ auditFlowId })
     res.result.forEach((item: any) => {
-      versionList.push(item)
+      if (!item.isFirst) {
+        versionList.push(item)
+      }
     })
   }
 }
@@ -533,19 +535,10 @@ const selectVersion = async (row: any) => {
   }
 }
 //报价值change
-const offerCoefficientChange = (row: any) => {
-  row.offerMoney = row.offerCoefficient * row.pricingMoney
-}
-// 计算含佣金的毛利率
-const changeCommission = (row: any, index: number) => {
-  console.log(row, index, "changeCommission")
-  data.resa.biddingStrategy[index].grossMarginCommission = (1 - (row.commission + row.cost) / row.price) * 100
-}
-
-const fetchSopYear = async () => {
-  const { result } = (await getYears(auditFlowId)) || {}
-  columns.sopData = result || []
-}
+// const offerCoefficientChange = (row: any, index: number) => {
+//   row.offerMoney = row.offerCoefficient * row.pricingMoney
+//   data.resa.nre.models[index].offerMoney = row.offerCoefficient * row.pricingMoney
+// }
 
 /**
  * 总经理页面1保存

@@ -57,15 +57,16 @@
           {{ typeMapGetText("terminalNatureOptions", data.resa.terminalClientNature) }}
         </el-descriptions-item>
         <el-descriptions-item label="开发计划">
-          <el-input v-model="data.resa.developmentPlan" />
+          {{ data.resa.developmentPlan }}
+          <!-- <el-input v-model="data.resa.developmentPlan" /> -->
         </el-descriptions-item>
-        <el-descriptions-item label="SOP时间">
+        <!-- <el-descriptions-item label="SOP时间">
           <el-input v-model="data.resa.sopTime" />
         </el-descriptions-item>
         <el-descriptions-item label="项目生命周期">
           <el-input v-model="data.resa.projectCycle" />
-        </el-descriptions-item>
-        <el-descriptions-item label="销售类型">
+        </el-descriptions-item> -->
+        <!-- <el-descriptions-item label="销售类型">
           {{ typeMapGetText("salesTypeOptions", data.resa.forSale) }}
         </el-descriptions-item>
         <el-descriptions-item label="贸易方式">
@@ -76,7 +77,7 @@
         </el-descriptions-item>
         <el-descriptions-item label="报价币种">
           <el-input v-model="data.resa.quoteCurrency" />
-        </el-descriptions-item>
+        </el-descriptions-item> -->
         <el-descriptions-item label="汇率"> {{ data.resa.exchangeRate }} </el-descriptions-item>
       </el-descriptions>
       <!-- sop走量信息 -->
@@ -189,6 +190,49 @@
           <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
           <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
           <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+          <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
+            <template #default="{ row }">
+              {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率" prop="clientGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+      <el-card header="报价策略-实际数量：" m="2">
+        <el-table :data="data.resa.biddingStrategySecondModelsAct" border>
+          <el-table-column type="index" width="100" />
+          <el-table-column label="梯度" prop="gradient" />
+          <el-table-column label="产品" prop="product" />
+          <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
+          <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
+          <el-table-column label="毛利率" prop="grossMargin">
+            <template #default="{ row }">
+              {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+          <el-table-column label="销售收入" prop="salesRevenue" :formatter="formatThousandths" />
+          <el-table-column label="销售成本" prop="sellingCost" :formatter="formatThousandths" />
+          <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" />
+          <el-table-column label="含佣金毛利率" prop="grossMarginCommission ">
+            <template #default="{ row }">
+              {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
           <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
             <template #default="{ row }">
               {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
@@ -701,7 +745,7 @@ const initFetch = async () => {
       /**
        * 总经理2看的数据
        */
-      if (data.pageType === 1 && item.isFirst) {
+      if (data.pageType === 1 && !item.isFirst) {
         versionList.push(item)
       }
       /**

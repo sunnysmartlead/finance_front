@@ -1442,7 +1442,7 @@ import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
-import { saveApplyInfo, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
+import { saveApplyInfo,priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
@@ -1882,9 +1882,8 @@ const save = debounce(async (formEl: FormInstance | undefined, isSubmit: boolean
     return true
   })
   checkModuleTableDataV2Data()
-  if (isSubmit) {
-    checkCustomerTargetPrice()
-  }
+  checkCustomerTargetPrice()
+
   if (!isPass || !isPassTwo) {
     ElMessage({
       type: "error",
@@ -1893,16 +1892,21 @@ const save = debounce(async (formEl: FormInstance | undefined, isSubmit: boolean
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
-    if (valid) {
-      handleSubmitData(isSubmit)
-    } else {
-      saveloading.value = false
-      console.log("error submit!", fields)
-      ElMessage.warning('请填写完整的表单！')
-      console.log(state.quoteForm, "quoteForm")
-    }
-  })
+  if (isSubmit) {
+    await formEl.validate(async (valid, fields) => {
+      if (valid) {
+        handleSubmitData(isSubmit)
+      } else {
+        saveloading.value = false
+        console.log("error submit!", fields)
+        ElMessage.warning('请填写完整的表单！')
+        console.log(state.quoteForm, "quoteForm")
+      }
+    })
+  } else {
+    handleSubmitData(isSubmit)
+  }
+
 }, 300)
 
 const handleSubmitData = async (isSubmit: boolean) => {
@@ -1933,8 +1937,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
       number: Array.isArray(c.number) ? c.number.join(",") : c.number
     }))
   ).flat(2)
-  try {
-    let res: any = await saveApplyInfo({
+  const params = {
       ...quoteForm,
       // comment,
       opinion,
@@ -1942,7 +1945,14 @@ const handleSubmitData = async (isSubmit: boolean) => {
       gradientModel: gradientModel,
       isSubmit,
       nodeInstanceId: nodeInstanceId || 0
-    })
+    }
+  try {
+    let res: any = {}
+    if (isSubmit) {
+      res = await saveApplyInfo(params)
+    } else {
+      res = await priceEvaluationStartSave(params)
+    }
     if (res.success) {
       ElMessage({
         type: "success",

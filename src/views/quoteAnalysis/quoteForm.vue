@@ -201,7 +201,7 @@ const submit = async (IsSubmit:boolean) => {
   })
   if (success) {
     ElMessage.success('提交成功！')
-    closeSelectedTag(route.path)
+    // closeSelectedTag(route.path)
   }
 }
 

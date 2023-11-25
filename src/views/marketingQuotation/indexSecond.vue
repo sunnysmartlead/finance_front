@@ -32,8 +32,10 @@
         </div>
       </div>
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
-        <ThreeDImage m="2" />
-        <SORDonwload />
+        <!-- <ThreeDImage m="2" />
+        <SORDonwload /> -->
+        <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
+        <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
         <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
         <el-button type="primary" @click="jumpToAnalysis">点击查看报价分析看板</el-button>
         <el-button class="m-2" type="primary" @click="jumpToElec">点击查看电子料返利金额</el-button>

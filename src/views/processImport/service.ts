@@ -77,7 +77,7 @@ export function GetPicture3DByAuditFlowId(auditFlowId: number, productId: any) {
     method: "get",
     data: {
       auditFlowId,
-      productId
+      solutionId: productId
     }
   })
 }

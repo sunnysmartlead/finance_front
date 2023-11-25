@@ -809,6 +809,33 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       }
     ]
+  },
+  {
+    path: "/timeliness",
+    redirect: "/timeliness/index",
+    component: Layout,
+    meta: {
+      // roles: ["timeliness"]
+    },
+    children: [
+      {
+        path: "/timeliness/index",
+        component: () => import("@/views/versionManagement/timeliness.vue"),
+        name: "timeliness",
+        meta: {
+          title: "时效性查询"
+        }
+      },
+      {
+        path: "/timeliness/operationRecord",
+        component: () => import("@/views/versionManagement/operationRecord.vue"),
+        name: "timelinessOperationRecord",
+        meta: {
+          title: "时效性管理",
+          hidden: false
+        }
+      }
+    ]
   }
 ]
 

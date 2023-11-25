@@ -2,7 +2,7 @@
   <!-- 营销部审批 -->
 
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
-    <ProcessVertifyBox :onSubmit="handleSubmit" />
+    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
     <h4 mb-20px>已保存的方案版本</h4>
     <div mb-20px>
       <el-table :data="versionList" border max-height="300px">
@@ -220,9 +220,9 @@
         <el-table-column prop="salesRevenue" label="销售收入" />
       </el-table>
     </el-card>
-    <el-row justify="end" style="margin-top: 20px">
+    <!-- <el-row justify="end" style="margin-top: 20px">
       <el-button type="primary" @click="save">保存</el-button>
-    </el-row>
+    </el-row> -->
   </el-card>
 </template>
 
@@ -917,7 +917,7 @@ const downLoadTable = async () => {
 }
 const save = async () => {
   try {
-    let res: any = await PostQuotationApprovedMarketingSave(data.resa)
+    let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
     console.log(res)
     if (res.success) {
       ElMessage.success("保存成功")
@@ -927,6 +927,11 @@ const save = async () => {
   }
 }
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  if (!versionChosen) {
+    ElMessage.warning("选择数据后再执行")
+    return false
+  }
+  await save()
   let res: any = await SubmitNode({
     comment,
     nodeInstanceId,

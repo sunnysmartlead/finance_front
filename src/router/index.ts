@@ -615,15 +615,15 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "财务中标确认"
         }
-      },
-      {
-        path: "/marketingQuotation/confirmWinningBid",
-        component: () => import("@/views/marketingQuotation/indexSecond.vue"),
-        name: "confirmWinningBid",
-        meta: {
-          title: "总经理中标确认"
-        }
       }
+      // {
+      //   path: "/marketingQuotation/confirmWinningBid",
+      //   component: () => import("@/views/marketingQuotation/indexSecond.vue"),
+      //   name: "confirmWinningBid",
+      //   meta: {
+      //     title: "总经理中标确认"
+      //   }
+      // }
     ]
   },
   {

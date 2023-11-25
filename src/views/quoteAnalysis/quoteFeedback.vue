@@ -431,9 +431,10 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
         <div :id="'unitpriceChart' + 'shiji'" class="h-400px" />
         <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
       </div>
+      <el-button @click="save" float-right my-20px type="primary">保存</el-button>
+
       <!-- <el-button @click="toMarketingApproval" type="primary" float-right my-20px>生成审批表</el-button> -->
     </el-card>
-    <el-button @click="save">保存</el-button>
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
@@ -583,7 +584,7 @@ const router = useRouter()
  * 数据部分
  */
 let { auditFlowId, nodeInstanceId } = getQuery()
-
+let isSave = false
 const version = ref(1)
 const confirmText = ref("")
 const productList = ref<any[]>([])
@@ -1719,6 +1720,10 @@ const postOffer = async (isOffer: boolean) => {
   }
 }
 const setSubmitType = (type: string) => {
+  if (!isSave) {
+    ElMessage.warning("保存后再执行")
+    return false
+  }
   submitType.value = type
   opinionVisible.value = true
 }
@@ -1729,7 +1734,6 @@ const agreeConfirm = async () => {
   /**
    * 保存数据需要确认
    */
-  // save
   let res = await SubmitNode({
     comment: confirmText.value,
     nodeInstanceId,
@@ -1756,6 +1760,7 @@ const save = async () => {
   delete saveData.mes
   let res: any = await PostQuotationFeedback(saveData)
   if (res.success) {
+    isSave = true
     ElMessage({
       type: "success",
       message: "操作成功"
@@ -1773,7 +1778,7 @@ const save = async () => {
       }
     }
   }
-  if (!isSubmit.value) {
+  if (isSubmit.value === false) {
     ElMessage.warning(`${versionChosen.version}版本报价金额较小，无法提交`)
     console.log(resbj, resfk)
   }
@@ -1809,10 +1814,6 @@ onMounted(async () => {
   if (auditFlowId) {
     let { result }: any = await GeCatalogue({ auditFlowId })
     result.forEach((item: any) => {
-      versionList.push(item)
-      // if (item.isQuotation) {
-      //   versionList.push(item)
-      // }
       if (!item.isFirst) {
         versionList.push(item)
       }

@@ -197,7 +197,7 @@
       >
         <template #default="scope">
           <div>
-            {{ formatThousandths(null, null, scope.row.grossMarginList[index].grossMarginNumber) }}
+            {{ formatThousandths(null, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
           </div>
         </template>
       </el-table-column>
@@ -831,6 +831,9 @@ const deletePlanListArr = (index: number) => {
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
+    if (_row && (_row.projectName === "销售毛利" || _row.projectName === "毛利率")) {
+      return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,") + "%"
+    }
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
     return 0
@@ -1467,6 +1470,7 @@ const getNreChange = () => {
 }
 const unitPriceChange = (row: any) => {
   row.grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
+  row.salesRevenue = row.pcs * row.salesRevenue
 }
 const pcsChange = (row: any) => {
   row.salesRevenue = row.pcs * row.salesRevenue

@@ -24,7 +24,7 @@
 
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
-    <!-- EvalFeedback_Js, DisplayName="接受报价",},
+      <!-- EvalFeedback_Js, DisplayName="接受报价",},
 EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新核价",},
  EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
  EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",}, -->
@@ -170,7 +170,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
       >
         <template #default="scope">
           <div>
-            {{ formatThousandths(null, null, scope.row.grossMarginList[index].grossMarginNumber) }}
+            {{ formatThousandths(null,  scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
           </div>
         </template>
       </el-table-column>
@@ -793,6 +793,9 @@ let gradientTableMapResult = ref([])
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
+    if (_row && (_row.projectName === "销售毛利" || _row.projectName === "毛利率")) {
+      return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,") + "%"
+    }
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
     return 0
@@ -1432,6 +1435,7 @@ const getNreChange = () => {
 }
 const unitPriceChange = (row: any) => {
   row.grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
+  row.salesRevenue = row.pcs * row.salesRevenue
 }
 const pcsChange = (row: any) => {
   row.salesRevenue = row.pcs * row.salesRevenue

@@ -1,6 +1,25 @@
 <template>
   <!-- 营销部审批 -->
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
+    <h4 mb-20px>已保存的方案版本</h4>
+    <div mb-20px>
+      <el-table :data="versionList" border max-height="300px">
+        <el-table-column label="版本号" width="200" align="center" prop="version" />
+        <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+        <el-table-column label="组合方案" width="300" align="center">
+          <template #default="scope">
+            <div v-for="item in scope.row.solutionList" :key="item.product">
+              {{ item.product }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <div float-right mb-20px>
       <el-button type="primary" @click="downLoadTable">审批表下载</el-button>
     </div>
@@ -181,6 +200,11 @@
             {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
+        <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
+          <template #default="{ row }">
+            {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
           <template #default="scope">
             <el-input-number @mousewheel.native.prevent
@@ -200,11 +224,6 @@
         <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin">
           <template #default="{ row }">
             {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
-          </template>
-        </el-table-column>
-        <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
-          <template #default="{ row }">
-            {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
       </el-table>
@@ -248,8 +267,7 @@ import {
   getQuotationApprovedMarketing,
   GeCatalogue,
   GetDownloadAuditQuotationList,
-  PostQuotationApprovedMarketingSave,
-  GetDownloadList
+  PostQuotationApprovedMarketingSave
 } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
@@ -261,6 +279,8 @@ const { auditFlowId, version }: any = getQuery()
 /**
  * 数据部分
  */
+let versionList = reactive<any[]>([])
+let versionChosen: any = null // 选中的以前版本
 const data = reactive<any>({
   // projectName: "",
   // developmentPlan: "",
@@ -898,16 +918,20 @@ const getSummaries = (param) => {
 
   return sums
 }
-const columns = reactive({
-  sopData: []
-})
 
 /**
  * 营销部报价审批 报价审核表 下载
  */
 const downLoadTable = async () => {
   try {
-    let res: any = await GetDownloadAuditQuotationList({ auditFlowId: Number(auditFlowId), version: data.version })
+    if (!versionChosen) {
+      ElMessage.warning("请先选择数据")
+      return false
+    }
+    let res: any = await GetDownloadAuditQuotationList({
+      auditFlowId: Number(auditFlowId),
+      version: versionChosen.version
+    })
     const blob = res
     const reader = new FileReader()
     reader.readAsDataURL(blob)
@@ -965,8 +989,16 @@ const typeMapGetText = (key: any, id: any) => {
   return text
 }
 const initFetch = async () => {
-  let res: any = await GeCatalogue({ auditFlowId })
-  data.version = res.result.length
+  let { result }: any = await GeCatalogue({ auditFlowId })
+  result.forEach((item: any) => {
+    versionList.push(item)
+    // if (item.isQuotation) {
+    //   versionList.push(item)
+    // }
+    // if (item.isFirst) {
+    //   versionList.push(item)
+    // }
+  })
   let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
   typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
   debugger
@@ -979,26 +1011,24 @@ const initFetch = async () => {
 
   let tradeMethodType: any = await getDictionaryAndDetail("TradeMethod") //贸易方式
   typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
-  if (auditFlowId) {
-    const loadingInstance = ElLoading.service({ fullscreen: true })
-    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
+}
+/**
+ * 加载之前的版本
+ */
+const selectVersion = async (row: any) => {
+  // fullscreenLoading.value = true
+  const loadingInstance = ElLoading.service({ fullscreen: true })
+  try {
+    versionChosen = row
+    /**
+     * 根据版本号查询该版本数据
+     */
+    const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: versionChosen.version })
     data.resa = result
     loadingInstance.close()
-    let fileRes = await GetDownloadList({ auditFlowId })
-    debugger
-    console.log(fileRes)
+  } catch (error) {
+    loadingInstance.close()
   }
-}
-
-// 计算含佣金的毛利率
-const changeCommission = (row: any, index: number) => {
-  console.log(row, index, "changeCommission")
-  data.resa.biddingStrategy[index].grossMarginCommission = (1 - (row.commission + row.cost) / row.price) * 100
-}
-
-const fetchSopYear = async () => {
-  const { result } = (await getYears(auditFlowId)) || {}
-  columns.sopData = result || []
 }
 
 watchEffect(() => {})

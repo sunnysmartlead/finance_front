@@ -4,7 +4,7 @@ import { useRoute } from "vue-router"
 
 const route = useRoute()
 const key = computed(() => {
-  return route.path
+  return route.name
 })
 </script>
 
@@ -14,7 +14,7 @@ const key = computed(() => {
     <el-scrollbar style="height: 100%" native>
       <router-view v-slot="{ Component }">
         <transition name="fade-transform" mode="out-in">
-          <keep-alive>
+          <keep-alive :include="['quoteAnalysis', 'indexSecond']">
             <component :is="Component" :key="key" />
           </keep-alive>
         </transition>

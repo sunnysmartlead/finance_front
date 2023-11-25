@@ -192,6 +192,11 @@
               {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
+          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
+            <template #default="{ row }">
+              {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
           <el-table-column label="增加客供料毛利率" prop="clientGrossMargin">
             <template #default="{ row }">
               {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
@@ -200,11 +205,6 @@
           <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin">
             <template #default="{ row }">
               {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
-            </template>
-          </el-table-column>
-          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
-            <template #default="{ row }">
-              {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
         </el-table>

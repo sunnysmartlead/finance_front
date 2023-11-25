@@ -335,130 +335,6 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   },
 
   {
-    path: "/processHoursExport",
-    redirect: "/processHoursExport/index",
-    component: Layout,
-    meta: {
-      title: "工序工时"
-    },
-    children: [
-      {
-        path: "/processHoursExport/index",
-        component: () => import("@/views/processHoursExport/index.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "processHoursExport",
-        meta: {
-          title: "工序工时导入",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/processLib",
-        component: () => import("@/views/processHoursExport/processLib.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "processLib",
-        meta: {
-          title: "工序库",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/workingHours",
-        component: () => import("@/views/processHoursExport/workingHours.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "workingHours",
-        meta: {
-          title: "工时库",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/environment",
-        component: () => import("@/views/processHoursExport/environment.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "environment",
-        meta: {
-          title: "环境实验库",
-          roles: ["环境实验库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/emc",
-        component: () => import("@/views/processHoursExport/emc.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "emc",
-        meta: {
-          title: "EMC实验费",
-          roles: ["EMC实验库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/workClothes",
-        component: () => import("@/views/processHoursExport/workClothes.vue"),
-        name: "baseLibLog",
-        meta: {
-          title: "工装库",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/deviceLib",
-        component: () => import("@/views/processHoursExport/deviceLib.vue"),
-        name: "deviceLib",
-        meta: {
-          title: "设备库",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/fixture",
-        component: () => import("@/views/processHoursExport/fixture.vue"),
-        name: "fixture",
-        meta: {
-          title: "治具检具",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/softwareHardware",
-        component: () => import("@/views/processHoursExport/softwareHardware.vue"),
-        name: "softwareHardware",
-        meta: {
-          title: "硬件及软件",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/logisticsCost",
-        component: () => import("@/views/processHoursExport/logisticsCost.vue"),
-        name: "logisticsCost",
-        meta: {
-          title: "物流成本录入",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-
-      {
-        path: "/processHoursExport/standardProcess",
-        component: () => import("@/views/processHoursExport/standardProcess.vue"),
-        name: "standardProcess",
-        meta: {
-          title: "标准工艺库",
-          roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/COBManufactureCost",
-        component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
-        name: "COBManufactureCost",
-        meta: {
-          title: "COB制造成本录入",
-          roles: ["工程部-基础库管理员"]
-        }
-      }
-    ]
-  },
-  {
     path: "/nre",
     redirect: "/nre/nreProjectManageMent",
     component: Layout,
@@ -905,18 +781,141 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
+  // {
+  //   path: "/processHoursExport",
+  //   redirect: "/processHoursExport/index",
+  //   component: Layout,
+  //   meta: {
+  //     //roles: ["admin"]
+  //     title: "工序工时"
+  //   },
+  //   children: [
+  //     {
+  //       path: "/processHoursExport/index",
+  //       component: () => import("@/views/processHoursExport/index.vue"),
+  //       name: "processHoursExport",
+  //       meta: {
+  //         title: "工序工时导入",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/processLib",
+  //       component: () => import("@/views/processHoursExport/processLib.vue"),
+  //       name: "processLib",
+  //       meta: {
+  //         title: "工序库",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/workingHours",
+  //       component: () => import("@/views/processHoursExport/workingHours.vue"),
+  //       //component: () => import("@/views/processImport/index.vue"),
+  //       name: "workingHours",
+  //       meta: {
+  //         title: "工时库",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/environment",
+  //       component: () => import("@/views/processHoursExport/environment.vue"),
+  //       //component: () => import("@/views/processImport/index.vue"),
+  //       name: "environment",
+  //       meta: {
+  //         title: "环境",
+  //         roles: ["环境实验库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/emc",
+  //       component: () => import("@/views/processHoursExport/emc.vue"),
+  //       //component: () => import("@/views/processImport/index.vue"),
+  //       name: "emc",
+  //       meta: {
+  //         title: "emc",
+  //         roles: ["EMC实验库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/workClothes",
+  //       component: () => import("@/views/processHoursExport/workClothes.vue"),
+  //       name: "baseLibLog",
+  //       meta: {
+  //         title: "工装库",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/deviceLib",
+  //       component: () => import("@/views/processHoursExport/deviceLib.vue"),
+  //       name: "deviceLib",
+  //       meta: {
+  //         title: "设备库",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/fixture",
+  //       component: () => import("@/views/processHoursExport/fixture.vue"),
+  //       name: "fixture",
+  //       meta: {
+  //         title: "治具检具",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/softwareHardware",
+  //       component: () => import("@/views/processHoursExport/softwareHardware.vue"),
+  //       name: "softwareHardware",
+  //       meta: {
+  //         title: "硬件及软件",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/logisticsCost",
+  //       component: () => import("@/views/processHoursExport/logisticsCost.vue"),
+  //       name: "logisticsCost",
+  //       meta: {
+  //         title: "物流成本录入",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/standardProcess",
+  //       component: () => import("@/views/processHoursExport/standardProcess.vue"),
+  //       name: "standardProcess",
+  //       meta: {
+  //         title: "标准工艺库",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     },
+  //     {
+  //       path: "/processHoursExport/COBManufactureCost",
+  //       component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
+  //       name: "COBManufactureCost",
+  //       meta: {
+  //         title: "COB制造成本录入",
+  //         roles: ["工程部-基础库管理员"]
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: "/processHoursExport",
     redirect: "/processHoursExport/index",
     component: Layout,
     meta: {
-      //roles: ["admin"]
       title: "工序工时"
+      // roles: ["工程部-基础库管理员"]
     },
     children: [
       {
         path: "/processHoursExport/index",
         component: () => import("@/views/processHoursExport/index.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
         name: "processHoursExport",
         meta: {
           title: "工序工时导入",
@@ -926,6 +925,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       {
         path: "/processHoursExport/processLib",
         component: () => import("@/views/processHoursExport/processLib.vue"),
+        //component: () => import("@/views/processImport/index.vue"),
         name: "processLib",
         meta: {
           title: "工序库",
@@ -948,7 +948,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "environment",
         meta: {
-          title: "环境",
+          title: "环境实验库",
           roles: ["环境实验库管理员"]
         }
       },
@@ -958,7 +958,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "emc",
         meta: {
-          title: "emc",
+          title: "EMC实验费",
           roles: ["EMC实验库管理员"]
         }
       },
@@ -1007,6 +1007,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
           roles: ["工程部-基础库管理员"]
         }
       },
+
       {
         path: "/processHoursExport/standardProcess",
         component: () => import("@/views/processHoursExport/standardProcess.vue"),

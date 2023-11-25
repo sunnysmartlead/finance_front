@@ -186,7 +186,7 @@ const data = reactive({
     customerAdd: "",
     creationTime: "",
     recordNo: "",
-    numberOfQuotations: 0,
+    numberOfQuotations: 1,
     accountName: "",
     make: "",
     isSubmit: false,
@@ -214,7 +214,7 @@ const init = async (solutionId: any) => {
 onMounted(async () => {
   await fetchList()
   await fetchOptions()
-  init(data.solutionId)
+  await init(data.solutionId)
 })
 
 const submit = async (IsSubmit: boolean) => {
@@ -260,7 +260,9 @@ const fetchList = async () => {
 const fetchOptions = async () => {
   const { result } = await GetExternalQuotationNumberOfQuotations({ auditFlowId: Number(auditFlowId) }) || {}
   data.versionList = result || {}
-  data.form.numberOfQuotations = result[0]
+  if (result[0]) {
+    data.form.numberOfQuotations = result[0]
+  }
 }
 
 </script>

@@ -81,13 +81,14 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
               @change="offerCoefficientChange(scope.row, index,scope.$index)"
               :precision="2"
               :min="0"
+              :disabled="index === data.allRes.nres.length - 1"
             />
           </template>
         </el-table-column>
         <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" width="200" align="right" />
         <el-table-column label="备注" align="center">
           <template #default="scope">
-            <el-input v-model="scope.row.remark" type="textarea" autosize />
+            <el-input v-model="scope.row.remark" type="textarea" autosize  :disabled="index === data.allRes.nres.length - 1"/>
           </template>
         </el-table-column>
       </el-table>

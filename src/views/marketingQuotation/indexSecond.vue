@@ -88,8 +88,7 @@
         </el-table>
         <el-table :data="data.resa.sops" border>
           <el-table-column type="index" width="100" />
-          <el-table-column prop="year" label="梯度" />
-          <el-table-column prop="motion" label="年份" />
+          <el-table-column prop="year" label="年份" />
           <el-table-column prop="annualDeclineRate" label="年降率" />
           <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
           <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />
@@ -101,7 +100,6 @@
         <el-table :data="data.resa.componenSocondModels" border>
           <el-table-column label="型号" prop="model" />
           <el-table-column label="核心部件" prop="partsName" />
-          <el-table-column label="方案名" prop="solutionName" />
           <el-table-column label="类型" prop="type" />
           <el-table-column label="备注" prop="remark" />
         </el-table>

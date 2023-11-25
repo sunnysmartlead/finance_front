@@ -69,12 +69,6 @@
     </el-descriptions>
     <!-- sop走量信息 -->
     <el-card header="sop走量信息" m="2">
-      <!-- {
-        gradient: "",
-        key: "",
-        value: ""
-      } -->
-      <!-- <p>{{ item.messageName }}</p> -->
       <el-table :data="data.resa.motion" border>
         <el-table-column type="index" width="100" />
         <el-table-column prop="gradient" label="梯度" />
@@ -84,7 +78,6 @@
       <el-table :data="data.resa.sops" border>
         <el-table-column type="index" width="100" />
         <el-table-column prop="year" label="年份" />
-        <!-- <el-table-column prop="motion" label="" /> -->
         <el-table-column prop="annualDeclineRate" label="年降率" />
         <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
         <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />

@@ -32,8 +32,6 @@
         </div>
       </div>
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
-        <!-- <ThreeDImage m="2" />
-        <SORDonwload /> -->
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
         <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
         <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
@@ -123,16 +121,16 @@
           <el-table-column type="index" />
           <el-table-column prop="formName" label="费用名称" />
           <el-table-column prop="pricingMoney" label="核价金额" />
-          <el-table-column label="报价系数">
-            <template #default="scope">
+          <el-table-column label="报价系数" prop="offerCoefficient">
+            <!-- <template #default="scope">
               <el-input v-model="scope.row.offerCoefficient" type="number" />
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="offerMoney" label="报价金额" />
-          <el-table-column label="备注">
-            <template #default="scope">
+          <el-table-column label="备注" prop="remark">
+            <!-- <template #default="scope">
               <el-input v-model="scope.row.remark" type="textarea" />
-            </template>
+            </template> -->
           </el-table-column>
         </el-table>
         <p>专用设备</p>
@@ -780,7 +778,8 @@ const toProductPriceList = () => {
       auditFlowId,
       productId,
       right,
-      nodeInstanceId
+      nodeInstanceId,
+      showBtn: "false"
     }
   })
 }
@@ -898,9 +897,5 @@ watchEffect(() => {})
 <style scoped lang="scss">
 .demandApply-result-page {
   margin: 10px;
-}
-
-* {
-  font-size: 20px;
 }
 </style>

@@ -522,13 +522,11 @@ const selectVersion = async (row: any) => {
   try {
     versionChosen = row
     const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: versionChosen.version }) //暂时先减1 针对337
-    data.allRes = result
+    data.resa = result
     console.log(result, "result")
     /**
      * 根据版本号查询该版本数据
      */
-    // let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: row.version })
-    // data.allRes = res.result
     fullscreenLoading.value = false
   } catch (error) {
     fullscreenLoading.value = false
@@ -556,7 +554,6 @@ const save = async () => {
   let query = route.query
   let res = await PostManagerApprovalOfferOneSave(data.resa)
   console.log(res)
-  debugger
   router.push({ path: "/marketingQuotation/indexSecond", query: { ...query, version: versionChosen.version } })
 }
 

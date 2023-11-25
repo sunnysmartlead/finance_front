@@ -28,19 +28,19 @@ export function PostIsOffer(data: {
   })
 }
 
-// 报价审核
-export function PostAuditQuotationList(data: {
-  /**
-   * 流程Id
-   */
-  Id?: number
-}): any {
-  return request({
-    url: "/api/services/app/AnalyseBoard/PostAuditQuotationList",
-    method: "post",
-    data
-  })
-}
+// // 报价审核
+// export function PostAuditQuotationList(data: {
+//   /**
+//    * 流程Id
+//    */
+//   Id?: number
+// }): any {
+//   return request({
+//     url: "/api/services/app/AnalyseBoard/PostAuditQuotationList",
+//     method: "post",
+//     data
+//   })
+// }
 
 // 报价审核
 export function PostAuditQuotationListSave(data: {
@@ -107,10 +107,10 @@ export function GetBidView(data: any): any {
   })
 }
 
-// 归档
-export function FinancialFiling(data: any): any {
+// 报价审核表 审批归档
+export function PostAuditQuotationList(data: any): any {
   return request({
-    url: "/api/services/app/AnalyseBoardSecond/FinancialFiling",
+    url: "/api/services/app/AnalyseBoardSecond/PostAuditQuotationList",
     method: "post",
     data
   })

@@ -387,3 +387,45 @@ export function PostQuotationFeedback(data: any) {
     data
   })
 }
+
+/**
+ *
+ * @param data 报价反馈到 总经理报价审批界面一
+ * @returns
+ */
+
+export function GeQuotationFeedbacktManagerOne(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GeQuotationFeedbacktManagerOne",
+    method: "post",
+    data
+  })
+}
+
+/**
+ *
+ * @param data 报价反馈到 总经理报价审批界面一保存/修改
+ * @returns
+ */
+
+export function PostQuotationFeedbackManagerOneSave(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostQuotationFeedbackManagerOneSave",
+    method: "post",
+    data
+  })
+}
+
+/**
+ *
+ * @param data 报价反馈到 总经理报价审批界面二
+ * @returns
+ */
+
+export function GetQuotationFeedbackManagerApprovalOfferTwo(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedbackManagerApprovalOfferTwo",
+    method: "post",
+    data
+  })
+}

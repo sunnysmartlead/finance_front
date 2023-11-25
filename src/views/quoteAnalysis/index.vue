@@ -390,7 +390,8 @@
               <div v-if="row.projectName !== '毛利率'">
                 {{ formatThousandths(null, null, row.interiorTarget) }}
               </div>
-              <div v-else>{{ row.interiorTarget.toFixed(2) }}%</div>
+              <div v-else>{{ row.interiorTarget?.toFixed(2) }}%</div>
+              <!-- <div v-else>{{ row.interiorTarget}}%</div> -->
             </template>
           </el-table-column>
           <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right">
@@ -398,7 +399,8 @@
               <div v-if="row.projectName !== '毛利率'">
                 {{ formatThousandths(null, null, row.clientTarget) }}
               </div>
-              <div v-else>{{ row.clientTarget.toFixed(2) }}%</div>
+              <div v-else>{{ row.clientTarget?.toFixed(2) }}%</div>
+              <!-- <div v-else>{{ row.clientTarget}}%</div> -->
             </template>
           </el-table-column>
           <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right">
@@ -406,7 +408,8 @@
               <div v-if="row.projectName !== '毛利率'">
                 {{ formatThousandths(null, null, row.offer) }}
               </div>
-              <div v-else>{{ row.offer.toFixed(2) }}%</div>
+              <div v-else>{{ row.offer?.toFixed(2) }}%</div>
+              <!-- <div v-else>{{ row.offer}}%</div> -->
             </template>
           </el-table-column>
           <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right">
@@ -414,7 +417,8 @@
               <div v-if="row.projectName !== '毛利率'">
                 {{ formatThousandths(null, null, row.oldOffer) }}
               </div>
-              <div v-else>{{ row.oldOffer.toFixed(2) }}%</div>
+              <div v-else>{{ row.oldOffer?.toFixed(2) }}%</div>
+              <!-- <div v-else>{{ row.oldOffer }}%</div> -->
             </template>
           </el-table-column>
         </el-table>
@@ -787,6 +791,10 @@ const selectVersion = async (row: any) => {
      */
     let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: row.version })
     data.allRes = res.result
+    /**
+     * 触发nre汇总计算
+     */
+    getNreChange()
     fullscreenLoading.value = false
   } catch (error) {
     fullscreenLoading.value = false
@@ -1242,23 +1250,50 @@ const downLoad = async () => {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })
-  try {
-    let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables })
-    const blob = res
-    const reader = new FileReader()
-    reader.readAsDataURL(blob)
-    reader.onload = function () {
-      let url = URL.createObjectURL(new Blob([blob]))
-      let a = document.createElement("a")
-      document.body.appendChild(a) //此处增加了将创建的添加到body当中
-      a.href = url
-      a.download = "成本信息表.xlsx"
-      a.target = "_blank"
-      a.click()
-      a.remove() //将a标签移除
+  if (versionChosen && solutionTables.length === 0) {
+    try {
+      let res: any = await PostDownloadMessageSecond({
+        auditFlowId,
+        version: versionChosen.version,
+        ntype: 0,
+        ntime: versionChosen.ntime,
+        solutionTables: []
+      })
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = "成本信息表.xlsx"
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } catch (error) {
+      console.log(error)
     }
-  } catch (error) {
-    console.log(error)
+  } else {
+    try {
+      let res: any = await PostDownloadMessageSecond({ auditFlowId, solutionTables })
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = "成本信息表.xlsx"
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 //报价值change
@@ -1268,7 +1303,6 @@ const offerCoefficientChange = (row: any, index: number) => {
     return false
   }
   row.offerMoney = row.offerCoefficient * row.pricingMoney
-
   let sbjf: any = []
   let mjf: any = []
   let scsbf: any = []
@@ -1279,7 +1313,7 @@ const offerCoefficientChange = (row: any, index: number) => {
   let csrjf: any = []
   let clf: any = []
   let qtf: any = []
-  for (let i = 0; i < data.allRes.nres.length; i++) {
+  for (let i = 0; i < data.allRes.nres.length - 1; i++) {
     data.allRes.nres[i].models.forEach((item: any) => {
       if (item.formName === "手板件费") {
         sbjf.push(item.offerMoney)
@@ -1395,6 +1429,7 @@ const offerCoefficientChange = (row: any, index: number) => {
     return pre + cur
   })
   data.allRes.nres[length - 1].models.forEach((item) => {
+    item.offerMoney = 0
     if (item.formName === "手板件费") {
       item.offerMoney = rsbjf
     } else if (item.formName === "模具费") {
@@ -1416,6 +1451,7 @@ const offerCoefficientChange = (row: any, index: number) => {
     } else if (item.formName === "其他费用") {
       item.offerMoney = rqtf
     }
+
     if (Number(item.offerMoney) && Number(item.pricingMoney)) {
       item.offerCoefficient = Number(item.offerMoney) / Number(item.pricingMoney)
     } else {
@@ -1423,7 +1459,12 @@ const offerCoefficientChange = (row: any, index: number) => {
     }
   })
 }
-
+//主动触发nre汇总计算
+const getNreChange = () => {
+  let row = data.allRes.nres[0].models[0]
+  let index = 0
+  offerCoefficientChange(row, index)
+}
 const unitPriceChange = (row: any) => {
   row.grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
 }
@@ -1706,6 +1747,9 @@ const postOffer = async (isOffer: boolean) => {
     delete saveData.message
     delete saveData.mes
     let res = await PostIsOfferSecond(saveData)
+    if (res.success) {
+      ElMessage.success("操作成功")
+    }
     if (!isOffer) {
       // 点不报价的话，调完报价接口以后直接走拒绝归档流程
       submitProcess(isOffer)
@@ -1758,14 +1802,25 @@ const submitProcess = async (isOffer: boolean) => {
 /**
  * 生成审批表
  */
-const toMarketingApproval = () => {
-  router.push({
-    path: "/quoteAnalysis/marketingApproval",
-    query: {
-      auditFlowId,
-      version: versionChosen.version
-    }
-  })
+const toMarketingApproval = async () => {
+  if (!versionChosen) {
+    await save()
+    router.push({
+      path: "/quoteAnalysis/marketingApproval",
+      query: {
+        auditFlowId,
+        version: version.value
+      }
+    })
+  } else {
+    router.push({
+      path: "/quoteAnalysis/marketingApproval",
+      query: {
+        auditFlowId,
+        version: versionChosen.version
+      }
+    })
+  }
 }
 // const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
 //   let res: any = await SubmitNode({

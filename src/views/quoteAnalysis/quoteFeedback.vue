@@ -24,8 +24,30 @@
 
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
-      <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
-      <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
+    <!-- EvalFeedback_Js, DisplayName="接受报价",},
+EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新核价",},
+ EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
+ EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",}, -->
+      <el-button type="primary" @click="setSubmitType(`EvalFeedback_Js`)" v-havedone>接受报价</el-button>
+      <el-popover placement="top-start" :width="200" trigger="hover" content="不接受此价，但接受降价，不用重新核价">
+        <template #reference>
+          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjsbzc`)" v-havedone>不接受报价</el-button>
+        </template>
+      </el-popover>
+      <el-popover placement="top-start" :width="200" trigger="hover" content="不接受此价，但接受降价，不用重新核价">
+        <template #reference>
+          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjsdjsjj`)" v-havedone>
+            不接受此价（接受降价）</el-button
+          >
+        </template>
+      </el-popover>
+      <el-popover placement="top-start" :width="200" trigger="hover" content="报价金额小于审批金额">
+        <template #reference>
+          <el-button type="primary" @click="postOffer(`EvalFeedback_Bjxysp`)" v-havedone>
+            报价金额小于审批金额</el-button
+          >
+        </template>
+      </el-popover>
     </el-button-group>
     <!-- nre -->
     <h3>NRE</h3>
@@ -56,7 +78,7 @@
               @mousewheel.native.prevent
               v-model="scope.row.offerCoefficient"
               controls-position="right"
-              @change="offerCoefficientChange(scope.row)"
+              @change="offerCoefficientChange(scope.row, index)"
               :precision="2"
               :min="0"
             />
@@ -348,33 +370,8 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <!-- <el-table-column :label="'第' + (index + 1) + '轮'"
-          v-for="(item, index) in table.quotedGrossMarginSimple.length > 0 ? table.quotedGrossMarginSimple[0].oldOffer : []" :key="index"
-          width="300"
-        >
-          <el-table-column label="单价" :prop="`oldOffer[${index}].unitPrice`" :formatter="formatThousandths">
-          </el-table-column>
-          <el-table-column label="毛利率">
-            <template #default="{ row }">
-              <div>{{ `${row.oldOffer[index].grossMargin.toFixed(2)} %` }}</div>
-            </template>
-          </el-table-column>
-        </el-table-column> -->
-    <!-- <el-card class="card">
-      <div v-for="(table, index) in data.allRes.gradientGrossMarginModels" :key="index">
-        <p>{{ table.gradient }}</p>
-        <el-table :data="table._itemGrossMarginModels" border>
-          <el-table-column label="产品" prop="item" />
-          <el-table-column label="目标价（内部）" width="300" prop="interior" />
-          <el-table-column label="目标价（客户）" prop="client" />
-          <el-table-column label="本次报价" prop="thisQuotation" />
-          <el-table-column label="上轮报价" prop="lastRound" />
-        </el-table>
-      </div>
-    </el-card> -->
-
+    <!-- projectBoard -->
     <el-card class="card">
-      <!-- projectBoard -->
       <div v-for="item in data.allRes.projectBoard" :key="item.title">
         <p>{{ item.title }}</p>
         <el-table :data="item.projectBoardModels" border>
@@ -524,6 +521,15 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="opinionVisible" title="审批意见" width="30%" :before-close="handleClose">
+      <el-input type="textarea" rows="4" v-model="confirmText" />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="opinionVisible = false">取消</el-button>
+          <el-button type="primary" @click="agreeConfirm"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -578,6 +584,7 @@ const router = useRouter()
 let { auditFlowId, nodeInstanceId } = getQuery()
 
 const version = ref(1)
+const confirmText = ref("")
 const productList = ref<any[]>([])
 const fullscreenLoading = ref(false)
 const dialogVisible = ref(false)
@@ -585,6 +592,9 @@ let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
 let getVersionData = null
 let versionData: any = null
+let isSubmit = ref(true)
+const opinionVisible = ref(false)
+let submitType = ref("")
 const yearDimension = ref({
   numk: [],
   prices: [],
@@ -760,7 +770,9 @@ const data = reactive({
     ]
   } as any
 })
-
+const handleClose = () => {
+  confirmText.value = ""
+}
 // 过滤相同梯度的数据
 interface stringKeyObj {
   [propName: string]: any
@@ -1185,14 +1197,13 @@ const initCharts = (id: string, chartOption: any) => {
 const selectVersion = async (row: any) => {
   fullscreenLoading.value = true
   try {
-    versionChosen = row
     // let res = await PostStatementAnalysisBoardSecond({
     //   ...versionChosen,
     //   solutionTables: versionChosen.solutionList
     // })
     // fullscreenLoading.value = false
     // data.allRes = res.result
-
+    versionChosen = row
     /**
      * 根据版本号查询该版本数据
      */
@@ -1204,10 +1215,10 @@ const selectVersion = async (row: any) => {
     })
     data.allRes = res.result
     fullscreenLoading.value = false
-
-    // let resbj = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
-    // let resfk = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
-    // console.log(resbj, resfk)
+    /**
+     * 触发nre汇总计算
+     */
+    getNreChange()
   } catch (error) {
     fullscreenLoading.value = false
   }
@@ -1251,10 +1262,174 @@ const downLoad = async () => {
   }
 }
 //报价值change
-const offerCoefficientChange = (row: any) => {
+const offerCoefficientChange = (row: any, index: number) => {
+  let length = data.allRes.nres.length
+  if (index === length - 1) {
+    return false
+  }
   row.offerMoney = row.offerCoefficient * row.pricingMoney
-}
+  let sbjf: any = []
+  let mjf: any = []
+  let scsbf: any = []
+  let gzf: any = []
+  let zjf: any = []
+  let jjf: any = []
+  let syf: any = []
+  let csrjf: any = []
+  let clf: any = []
+  let qtf: any = []
+  for (let i = 0; i < data.allRes.nres.length - 1; i++) {
+    data.allRes.nres[i].models.forEach((item: any) => {
+      if (item.formName === "手板件费") {
+        sbjf.push(item.offerMoney)
+      } else if (item.formName === "模具费") {
+        mjf.push(item.offerMoney)
+      } else if (item.formName === "生产设备费") {
+        scsbf.push(item.offerMoney)
+      } else if (item.formName === "工装费") {
+        gzf.push(item.offerMoney)
+      } else if (item.formName === "治具费") {
+        zjf.push(item.offerMoney)
+      } else if (item.formName === "检具费") {
+        jjf.push(item.offerMoney)
+      } else if (item.formName === "实验费") {
+        syf.push(item.offerMoney)
+      } else if (item.formName === "测试软件费") {
+        csrjf.push(item.offerMoney)
+      } else if (item.formName === "差旅费") {
+        clf.push(item.offerMoney)
+      } else if (item.formName === "其他费用") {
+        qtf.push(item.offerMoney)
+      }
+    })
+  }
+  let rsbjf = sbjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rmjf = mjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rscsbf = scsbf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rgzf = gzf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rzjf = zjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rjjf = jjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rsyf = syf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rcsrjf = csrjf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rclf = clf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  let rqtf = qtf.reduce((pre: any, cur: any) => {
+    if (!pre) {
+      pre = 0
+    }
+    if (!cur) {
+      cur = 0
+    }
+    return pre + cur
+  })
+  data.allRes.nres[length - 1].models.forEach((item) => {
+    item.offerMoney = 0
+    if (item.formName === "手板件费") {
+      item.offerMoney = rsbjf
+    } else if (item.formName === "模具费") {
+      item.offerMoney = rmjf
+    } else if (item.formName === "生产设备费") {
+      item.offerMoney = rscsbf
+    } else if (item.formName === "工装费") {
+      item.offerMoney = rgzf
+    } else if (item.formName === "治具费") {
+      item.offerMoney = rzjf
+    } else if (item.formName === "检具费") {
+      item.offerMoney = rjjf
+    } else if (item.formName === "实验费") {
+      item.offerMoney = rsyf
+    } else if (item.formName === "测试软件费") {
+      item.offerMoney = rcsrjf
+    } else if (item.formName === "差旅费") {
+      item.offerMoney = rclf
+    } else if (item.formName === "其他费用") {
+      item.offerMoney = rqtf
+    }
 
+    if (Number(item.offerMoney) && Number(item.pricingMoney)) {
+      item.offerCoefficient = Number(item.offerMoney) / Number(item.pricingMoney)
+    } else {
+      item.offerCoefficient = 0
+    }
+  })
+}
+//主动触发nre汇总计算
+const getNreChange = () => {
+  let row = data.allRes.nres[0].models[0]
+  let index = 0
+  offerCoefficientChange(row, index)
+}
 const unitPriceChange = (row: any) => {
   row.grossMargin = (((row.unitPrice - row.cost) / row.unitPrice) * 100).toFixed(2)
 }
@@ -1532,6 +1707,31 @@ const postOffer = async (isOffer: boolean) => {
     console.log(res)
   }
 }
+const setSubmitType = (type: string) => {
+  submitType.value = type
+  opinionVisible.value = true
+}
+/**
+ * 同意提交流程
+ */
+const agreeConfirm = async () => {
+  /**
+   * 保存数据需要确认
+   */
+  // save
+  let res = await SubmitNode({
+    comment: confirmText.value,
+    nodeInstanceId,
+    financeDictionaryDetailId: submitType.value
+  })
+  if (res.success) {
+    ElMessage.success("操作成功")
+    opinionVisible.value = false
+  }
+}
+/**
+ * 报价反馈提交
+ */
 const save = async () => {
   let saveData = {
     ...data.allRes,
@@ -1544,14 +1744,27 @@ const save = async () => {
   delete saveData.message
   delete saveData.mes
   let res: any = await PostQuotationFeedback(saveData)
-  let resbj = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
-  let resfk = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
-  console.log(resbj, resfk)
   if (res.success) {
     ElMessage({
       type: "success",
       message: "操作成功"
     })
+  }
+  /**报价金额比大小  报价反馈的报价 要大于等于报价分析看板的报价才能下一个节点*/
+  let resbj: any = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 0 }) //报价分析看板0
+  let resfk: any = await GetSoltionGradPriceList({ auditFlowId, version: versionChosen.version, ntype: 1 }) //报价反馈1
+
+  if (resbj.result.length && resfk.result.length) {
+    let length = resbj.result.length
+    for (let i = 0; i < length; i++) {
+      if (resbj.result[i].unitPrice > resfk.result[i].unitPrice) {
+        isSubmit.value = false
+      }
+    }
+  }
+  if (!isSubmit.value) {
+    ElMessage.warning(`${versionChosen.version}版本报价金额较小，无法提交`)
+    console.log(resbj, resfk)
   }
 }
 const toMarketingApproval = () => {
@@ -1588,7 +1801,12 @@ onMounted(async () => {
   if (auditFlowId) {
     let { result }: any = await GeCatalogue({ auditFlowId })
     result.forEach((item: any) => {
-      versionList.push(item)
+      // if (item.isQuotation) {
+      //   versionList.push(item)
+      // }
+      if (item.isFirst) {
+        versionList.push(item)
+      }
     })
     //auditFlowId
     //solutionTables

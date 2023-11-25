@@ -1,38 +1,36 @@
 <!-- 财务中标确认、总经理中标查看、总经理审批2的界面是一样的 -->
 <template>
   <div>
-    <div style="margin: 10px 0; float: right">
-      <!-- 财务确认为yesOrNo -->
-      <ProcessVertifyBox
-        :onSubmit="handleSubmit"
-        :processType="data.pageType === 3 ? 'baseProcessType' : 'confirmProcessType'"
-      />
-    </div>
-    <div v-if="pageType !== 1">
-      <h4 mb-20px>已保存的方案版本</h4>
-      <div mb-20px>
-        <el-table :data="versionList" border max-height="300px">
-          <el-table-column label="版本号" width="200" align="center" prop="version" />
-          <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
-          <el-table-column label="组合方案" width="300" align="center">
-            <template #default="scope">
-              <div v-for="item in scope.row.solutionList" :key="item.product">
-                {{ item.product }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template #default="scope">
-              <el-button @click="selectVersion(scope.row)" type="primary" v-loading.fullscreen.lock="fullscreenLoading">
-                加载该版本</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+    <el-card>
+      <!-- 财务中标确认才会存在流程组件 -->
+      <ProcessVertifyBox :onSubmit="handleSubmit" v-if="data.pageType === 3" />
+      <div v-if="data.pageType !== 1">
+        <h4 mb-20px>已保存的方案版本</h4>
+        <div mb-20px>
+          <el-table :data="versionList" border max-height="300px">
+            <el-table-column label="版本号" width="200" align="center" prop="version" />
+            <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+            <el-table-column label="组合方案" width="300" align="center">
+              <template #default="scope">
+                <div v-for="item in scope.row.solutionList" :key="item.product">
+                  {{ item.product }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template #default="scope">
+                <el-button
+                  @click="selectVersion(scope.row)"
+                  type="primary"
+                  v-loading.fullscreen.lock="fullscreenLoading"
+                >
+                  加载该版本</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
-    </div>
-
-    <el-card header="">
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
         <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
@@ -67,11 +65,9 @@
         </el-descriptions-item>
         <el-descriptions-item label="销售类型">
           {{ typeMapGetText("salesTypeOptions", data.resa.forSale) }}
-          <!-- <el-input v-model="data.resa.forSale" /> -->
         </el-descriptions-item>
         <el-descriptions-item label="贸易方式">
           {{ typeMapGetText("TradeMethodOptions", data.resa.modeOfTrade) }}
-          <!-- <el-input v-model="data.resa.modeOfTrade" /> -->
         </el-descriptions-item>
         <el-descriptions-item label="付款方式">
           <el-input v-model="data.resa.paymentMethod" />
@@ -83,14 +79,6 @@
       </el-descriptions>
       <!-- sop走量信息 -->
       <el-card header="sop走量信息" m="2">
-        <!-- <div v-for="item in data.resa.motionMessage" :key="item.messageName">
-          <p>{{ item.messageName }}</p>
-          <el-table :data="item.yearValues" border>
-            <el-table-column type="index" width="100" />
-            <el-table-column prop="key" label="年份" />
-            <el-table-column prop="value" />
-          </el-table>
-        </div> -->
         <el-table :data="data.resa.motion" border>
           <el-table-column type="index" width="100" />
           <el-table-column prop="gradient" label="梯度" />
@@ -113,12 +101,10 @@
           <el-table-column label="型号" prop="model" />
           <el-table-column label="核心部件" prop="partsName" />
           <el-table-column label="方案名" prop="solutionName" />
-          <!-- <el-table-column label="型号" prop="model" /> -->
           <el-table-column label="类型" prop="type" />
           <el-table-column label="备注" prop="remark" />
         </el-table>
       </el-card>
-
       <h3>NRE</h3>
       <el-card v-for="(nre, index) in data.resa.nres" :key="index">
         <p>{{ nre.solutionName }}</p>
@@ -236,12 +222,18 @@
           <el-table-column prop="salesRevenue" label="销售收入" />
         </el-table>
       </el-card>
-      <el-row justify="end" style="margin-top: 20px">
-        <div v-if="data.userInfo.userJobs === '总经理'">
-          <!-- <el-button type="primary" @click="handleGeneralManagerQuoteCheck(true)" v-havedone>同意</el-button>
-          <el-button type="danger" @click="handleGeneralManagerQuoteCheck(false)" v-havedone>拒绝</el-button> -->
-          <!-- <ProcessVertifyBox :onSubmit="handleSubmit" /> -->
-        </div>
+      <!-- 总经理审批 -->
+      <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 1">
+        <el-button type="primary" @click="save" v-havedone>保存</el-button>
+      </el-row>
+      <!-- 财务中标确认 -->
+      <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 3">
+        <el-button-group>
+          <el-button type="primary" @click="cwSave(true)" v-havedone>财务中标确认</el-button>
+          <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认拒绝</el-button>
+          <!-- <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认提交</el-button>
+          <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认提交拒绝</el-button> -->
+        </el-button-group>
       </el-row>
     </el-card>
     <el-dialog v-model="dialogVisible" title="3D爆炸图下载(请选择零件)" width="40%" align-center>
@@ -262,15 +254,14 @@
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 
-// import { getYears } from "../pmDepartment/service"
 import { ElMessageBox, ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRouter } from "vue-router"
 
 import { ElLoading } from "element-plus"
 import { useRoute } from "vue-router"
-import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { CommonDownloadFile } from "@/api/bom"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { GetPicture3DByAuditFlowId, getProductByAuditFlowId } from "../processImport/service"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
 import { downloadFile, getAuditFlowVersion } from "../trAudit/service"
@@ -281,7 +272,7 @@ import {
   GetManagerApprovalOfferTwo,
   GetAcceptanceBid,
   GetBidView,
-  FinancialFiling
+  PostManagerApprovalOfferTwoSave
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
@@ -295,6 +286,8 @@ const { auditFlowId, version } = getQuery()
 const dialogVisible = ref(false)
 const ProductByAuditFlowId = ref<any>({})
 let versionList = reactive<any[]>([])
+let versionChosen: any = null // 选中的版本
+
 let fullscreenLoading = ref(false)
 /**
  * 数据部分
@@ -565,7 +558,6 @@ const data = reactive<any>({
 })
 
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
-  PostAuditQuotationList
   let res: any = await SubmitNode({
     comment,
     nodeInstanceId,
@@ -576,13 +568,11 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
       type: "success",
       message: "操作成功"
     })
-    // postOffer
-  }
-  if (data.pageType === 3) {
   }
 }
 const selectVersion = async (row: any) => {
   fullscreenLoading.value = true
+  versionChosen = row
   try {
     /**
      * 根据版本号查询该版本数据
@@ -590,11 +580,11 @@ const selectVersion = async (row: any) => {
     if (data.pageType === 2) {
       // 总经理中标查看
       const { result } = await GetBidView({ auditFlowId, version: row.version })
-      data.allRes = result
+      data.resa = result
     } else if (data.pageType === 3) {
       // 财务中标确认
       const { result } = await GetAcceptanceBid({ auditFlowId, version: row.version })
-      data.allRes = result
+      data.resa = result
     }
     fullscreenLoading.value = false
   } catch (error) {
@@ -699,7 +689,18 @@ const initFetch = async () => {
     // 获取版本数据，只有在中标查看 和 确认里面才会显示
     let res: any = await GeCatalogue({ auditFlowId })
     res.result.forEach((item: any) => {
-      versionList.push(item)
+      /**
+       * 总经理2看的数据
+       */
+      if (data.pageType === 1 && item.isFirst) {
+        versionList.push(item)
+      }
+      /**
+       * 确认中标查看的
+       */
+      if (data.pageType === 3 && item.isQuotation) {
+        versionList.push(item)
+      }
     })
     let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
     typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
@@ -719,48 +720,6 @@ const initFetch = async () => {
     }
   }
 }
-const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) => {
-  if (record.messageName.includes("%")) return `${cellValue.toFixed(2)} %`
-  return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
-}
-
-const handleGeneralManagerQuoteCheck = (isAgree: boolean) => {
-  let text = isAgree ? "您确定要同意嘛？" : "请输入拒绝理由"
-  ElMessageBox[!isAgree ? "prompt" : "confirm"](text, "报价审核", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async (val) => {
-    if (!isAgree && !val?.value) {
-      ElMessage.warning("拒绝理由必填")
-      return
-    }
-    // const { success } = await PostAuditQuotationList({
-    //   ...data.marketingQuotationData,
-    //   isPass: isAgree,
-    //   auditFlowId,
-    //   backReason: !isAgree ? val?.value : ""
-    // })
-    // if (success) {
-    //   ElMessage.success("操作成功")
-    //   closeSelectedTag(route.path)
-    // }
-  })
-}
-// const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
-//   const { success } = await PostAuditQuotationList({
-//     ...data.marketingQuotationData,
-//     isPass: !opinion.includes("_No"),
-//     auditFlowId,
-//     backReason: comment,
-//     comment,
-//     nodeInstanceId
-//   })
-//   if (success) {
-//     ElMessage.success("操作成功")
-//     closeSelectedTag(route.path)
-//   }
-// }
 const toProductPriceList = () => {
   router.push({
     path: "/nupriceManagement/productPriceList",
@@ -863,6 +822,22 @@ const toNREPriceList = () => {
   })
 }
 
+/**
+ * 总经理审批2保存
+ */
+const save = async () => {
+  let res = await PostManagerApprovalOfferTwoSave({ ...data.resa, auditFlowId, version })
+  if (res.success) {
+    ElMessage.success("操作成功")
+  }
+}
+/**
+ * 财务中标确认
+ */
+const cwSave = async (isPass: boolean) => {
+  let res = await PostAuditQuotationList({ ...data.resa, auditFlowId, version: versionChosen.version, isPass })
+  console.log(res)
+}
 watchEffect(() => {})
 </script>
 <style scoped lang="scss">

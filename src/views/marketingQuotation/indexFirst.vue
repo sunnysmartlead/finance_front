@@ -11,6 +11,27 @@
           </el-button-group>
         </div>
       </template>
+      <h4 mb-20px>已保存的方案版本</h4>
+      <div mb-20px>
+        <el-table :data="versionList" border max-height="300px">
+          <el-table-column label="版本号" width="200" align="center" prop="version" />
+          <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
+          <el-table-column label="组合方案" width="300" align="center">
+            <template #default="scope">
+              <div v-for="item in scope.row.solutionList" :key="item.product">
+                {{ item.product }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button @click="selectVersion(scope.row)" type="primary" v-loading.fullscreen.lock="fullscreenLoading">
+                加载该版本</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <!-- 单价汇总 -->
       <p>单价汇总</p>
       <el-table :data="data.resa.unitPriceSum" border>
@@ -425,7 +446,9 @@ const getSummaries = (param: any) => {
 const columns = reactive({
   sopData: []
 })
-
+let versionChosen: any = null // 选中的以前版本
+const fullscreenLoading = ref(false)
+let versionList = reactive<any[]>([])
 const dialogVisible = ref(false)
 const dialogVisibleR = ref(false)
 const confirmText = ref("")
@@ -449,13 +472,23 @@ const refuseConfirm = async () => {
   }
 }
 
+/**
+ * 同意提交流程
+ */
 const agreeConfirm = async () => {
-  await SubmitNode({
+  /**
+   * 保存数据需要确认
+   */
+  // save
+  let res = await SubmitNode({
     comment: confirmText.value,
     nodeInstanceId,
     financeDictionaryDetailId: "Spbjclyhjb_Yes"
   })
-  dialogVisibleR.value = false
+  if (res.success) {
+    ElMessage.success("操作成功")
+    dialogVisibleR.value = false
+  }
 }
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
@@ -479,10 +512,26 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
 const initFetch = async () => {
   if (auditFlowId) {
     let res: any = await GeCatalogue({ auditFlowId })
-    let version = res.result.length
-    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: version }) //暂时先减1 针对337
-    data.resa = result
+    res.result.forEach((item: any) => {
+      versionList.push(item)
+    })
+  }
+}
+const selectVersion = async (row: any) => {
+  fullscreenLoading.value = true
+  try {
+    versionChosen = row
+    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: versionChosen.version }) //暂时先减1 针对337
+    data.allRes = result
     console.log(result, "result")
+    /**
+     * 根据版本号查询该版本数据
+     */
+    // let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: row.version })
+    // data.allRes = res.result
+    fullscreenLoading.value = false
+  } catch (error) {
+    fullscreenLoading.value = false
   }
 }
 //报价值change
@@ -507,7 +556,8 @@ const save = async () => {
   let query = route.query
   let res = await PostManagerApprovalOfferOneSave(data.resa)
   console.log(res)
-  router.push({ path: "/marketingQuotation/indexSecond", query })
+  debugger
+  router.push({ path: "/marketingQuotation/indexSecond", query: { ...query, version: versionChosen.version } })
 }
 
 watchEffect(() => {})

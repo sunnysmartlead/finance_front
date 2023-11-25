@@ -30,8 +30,8 @@ const { auditFlowId }: any = getQuery()
 
 //console.log('1-开始创建组件-setup')
 const init = async () => {
-  const { result } = await GetDownloadList(auditFlowId)
-  data.tableData = result || []
+  const res: any = await GetDownloadList({ auditFlowId })
+  data.tableData = res.result || []
 }
 
 const fullscreenLoading = ref(false)

@@ -160,3 +160,14 @@ export function DelRateEntryInput(data: any): Promise<any> {
     data
   })
 }
+
+
+// 下载核心器件、Nre费用拆分
+export function GetDownloadCoreComponentAndNre(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadCoreComponentAndNre",
+    method: "get",
+    data,
+    responseType: "blob"
+  })
+}

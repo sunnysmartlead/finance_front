@@ -15,9 +15,10 @@
       </el-select>
     </el-form-item>
     </el-form>
+     <el-button type="primary" class="m-2" @click="downFile" v-if="!hideBtn">核心器件、Nre费用拆分下载</el-button>
   </el-row>
   <div>
-    <el-card header="核价看板" m="2">
+    <el-card header="核心器件" m="2">
       <el-table
         :data="data.productAndGradients"
         style="width: 100%"
@@ -51,9 +52,13 @@ import {
   GetPricingPanelTimeSelectList,
   GetPriceEvaluationTableInputCount,
 } from "../dashboard/service"
+import {GetDownloadCoreComponentAndNre} from "./service"
+import {downloadFileExcel } from "@/utils"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
 import map from 'lodash/map'
+import { ElMessage, ElMessageBox } from "element-plus"
+
 
 enum upDownEnum {
   "全年",
@@ -81,7 +86,7 @@ const columns = {
 /**
  * 数据部分
  */
-let { auditFlowId, productId: solutionId } = getQuery()
+let { auditFlowId, productId: solutionId ,hideBtn} = getQuery()
 /**
  * 路由对象
  */
@@ -178,6 +183,22 @@ const getPriceEvaluationTableInputCount = async () => {
 const formatNum = (_r: any, _c: any, val: any) => {
   if (!val) return '/'
   return val
+}
+
+
+// 下载核心器件、Nre费用拆分
+const downFile = async () => {
+  const params = { auditFlowId, inputCount: inputCount.value, ...data.form, solutionId, ...filterYearData.value }
+  try {
+    let res: any = await GetDownloadCoreComponentAndNre(params)
+    downloadFileExcel(res, "核心器件、Nre费用拆分")
+    ElMessage.success("下载成功！")
+    console.log(res, "NreTableDownload")
+  } catch (err: any) {
+    console.log(err, "[ NRE核价表下载 失败 ]")
+  }
+
+
 }
 
 onMounted(async () => {

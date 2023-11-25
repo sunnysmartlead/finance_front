@@ -12,7 +12,8 @@
     </el-card>
     <el-card m="2" >
       <el-row justify="end">
-        <el-button type="primary" @click="submit" m="2">提交</el-button>
+        <el-button type="primary" @click="submit(false)" m="2">保存</el-button>
+         <el-button type="primary" @click="submit(true)" m="2">提交</el-button>
         <el-button type="primary" @click="downLoad" m="2">下载报价单</el-button>
       </el-row>
       <el-descriptions >
@@ -168,6 +169,7 @@ const data = reactive({
     numberOfQuotations: "",
     accountName: "",
     make: "",
+    isSubmit:false,
   },
   auditFlowId: 0,
   solutionId: null,
@@ -192,7 +194,8 @@ onMounted(() => {
 })
 
 
-const submit = async () => {
+const submit = async (IsSubmit:boolean) => {
+  data.form.isSubmit= IsSubmit
   const { success } = await SaveExternalQuotation({
     ...data.form,
   })

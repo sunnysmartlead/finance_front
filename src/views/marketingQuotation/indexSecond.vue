@@ -32,8 +32,8 @@
         </div>
       </div>
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
-        <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
-        <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
+        <ThreeDImage m="2" />
+        <SORDonwload />
         <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
         <el-button type="primary" @click="jumpToAnalysis">点击查看报价分析看板</el-button>
         <el-button class="m-2" type="primary" @click="jumpToElec">点击查看电子料返利金额</el-button>
@@ -253,6 +253,8 @@
 
 <script setup lang="ts">
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
+import ThreeDImage from "@/components/ThreeDImage/index.vue"
+import SORDonwload from "@/components/SORDonwload/index.vue"
 
 import { ElMessageBox, ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
@@ -282,7 +284,7 @@ const query = useJump()
 const route = useRoute()
 const { closeSelectedTag, jumpPage } = query
 
-const { auditFlowId, version } = getQuery()
+const { auditFlowId, version, productId, right, nodeInstanceId } = getQuery()
 const dialogVisible = ref(false)
 const ProductByAuditFlowId = ref<any>({})
 let versionList = reactive<any[]>([])
@@ -626,13 +628,18 @@ onMounted(async () => {
 })
 const jumpToAnalysis = () => {
   jumpPage("/quoteAnalysis/index", {
-    auditFlowId
+    auditFlowId,
+    productId,
+    right,
+    nodeInstanceId
   })
 }
 const jumpToElec = () => {
   jumpPage("/bomVerify/electronic", {
     auditFlowId,
-    right: 1
+    right: 1,
+    productId,
+    nodeInstanceId
   })
 }
 const jumpToStru = () => {
@@ -722,10 +729,12 @@ const initFetch = async () => {
 }
 const toProductPriceList = () => {
   router.push({
-    path: "/nupriceManagement/productPriceList",
+    path: "/dashboard/index",
     query: {
       auditFlowId,
-      disabled: 1
+      productId,
+      right,
+      nodeInstanceId
     }
   })
 }

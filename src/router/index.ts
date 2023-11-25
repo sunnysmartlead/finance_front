@@ -918,8 +918,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "processHoursExport",
         meta: {
-          title: "工序工时导入",
-          roles: ["工程部-基础库管理员"]
+          title: "工序工时导入"
         }
       },
       {

@@ -4,7 +4,7 @@
     <el-card m="2">
       <div>
         <el-select v-model="data.form.numberOfQuotations" placeholder="选择版本" style="margin-bottom: 10px">
-          <el-option v-for="item in data.versionList" :key="item" :label="item"
+          <el-option v-for="item in data.versionList" :key="item" :label="`报价次数：${item}`"
             :value="item" />
         </el-select>
       </div>

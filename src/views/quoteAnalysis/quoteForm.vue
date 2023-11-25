@@ -1,10 +1,18 @@
 <!-- 报价单 -->
 <template>
-  <div>
+  <div class="wrap">
     <el-card m="2">
+      <div>
+        <el-select v-model="data.form.numberOfQuotations" placeholder="选择版本" style="margin-bottom: 10px">
+          <el-option v-for="item in data.versionList" :key="item" :label="item"
+            :value="item" />
+        </el-select>
+      </div>
       <el-radio-group v-model="data.solutionId" @change="init">
         <template v-for="item in data.solutionIdList" :key="item.title">
-          <el-radio :label="item.id" size="large" border> 方案{{ item.version }} </el-radio>
+          <el-radio :label="item.id" size="large" border>
+            方案{{ item.version }}
+          </el-radio>
         </template>
       </el-radio-group>
     </el-card>
@@ -59,12 +67,12 @@
       </el-descriptions>
       <el-card style="margin-top: 10px" header="产品报价清单">
         <el-table :data="data.form.productQuotationListDtos" style="width: 100%" border height="500px">
-          <el-table-column type="index" label="序号" width="80" fixed="left" />
-          <el-table-column prop="productName" label="产品名称" />
-          <el-table-column prop="year" label="年份" />
-          <el-table-column prop="travelVolume" label="走量" />
-          <el-table-column prop="unitPrice" label="单价（未税）" />
-          <el-table-column prop="remark" label="备注">
+          <el-table-column type="index" label="序号" width="80" fixed="left" align="center" />
+          <el-table-column prop="productName" label="产品名称" align="center" />
+          <el-table-column prop="year" label="年份" align="center" />
+          <el-table-column prop="travelVolume" label="走量" align="center" />
+          <el-table-column prop="unitPrice" label="单价（未税）" align="center" />
+          <el-table-column prop="remark" label="备注" align="center">
             <template #default="{ row }">
               <el-input v-model="row.remark" />
             </template>
@@ -74,13 +82,19 @@
       <el-card style="margin-top: 10px" header="NRE报价清单">
         <el-table :data="data.form.nreQuotationListDtos" style="width: 100%" border height="500px">
           <el-table-column type="index" label="序号" width="80" fixed="left" />
-          <el-table-column prop="productName" label="产品名称" />
-          <el-table-column prop="travelVolume" label="走量" />
-          <el-table-column prop="handmadePartsFee" label="手板件费" />
-          <el-table-column prop="myPropMoldCosterty" label="模具费" />
-          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" />
-          <el-table-column prop="experimentalFees" label="实验费" />
-          <el-table-column prop="remark" label="备注">
+          <el-table-column prop="productName" label="产品名称" align="center" />
+          <el-table-column label="单价（未税）" align="center">
+            <el-table-column prop="travelVolume" width="175" label="走量" align="center">
+            <template #default="{ row }">
+              <el-input-number :min="0" v-model="row.travelVolume" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="handmadePartsFee" label="手板件费" align="center"/>
+          <el-table-column prop="myPropMoldCosterty" label="模具费" align="center" />
+          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" align="center" />
+          <el-table-column prop="experimentalFees" label="研发费" align="center" />
+          </el-table-column>
+          <el-table-column prop="remark" label="备注" align="center">
             <template #default="{ row }">
               <el-input v-model="row.remark" />
             </template>
@@ -93,46 +107,63 @@
         </el-descriptions-item>
         <el-descriptions-item label=" " :span="2"> * 无公司公章报价单为无效报价单 </el-descriptions-item>
       </el-descriptions>
-      <el-descriptions style="margin-top: 20px" title="开票资料" :column="2" border>
-        <el-descriptions-item label="制作">
-          <el-input v-model="data.form.make" />
-        </el-descriptions-item>
-        <el-descriptions-item label="审核">
-          <el-input v-model="data.form.toExamine" />
-        </el-descriptions-item>
-        <el-descriptions-item label="户名">
-          <el-input v-model="data.form.accountName" />
-        </el-descriptions-item>
-        <el-descriptions-item label="税号">
-          <el-input v-model="data.form.dutyParagraph" />
-        </el-descriptions-item>
-        <el-descriptions-item label="开户行">
-          <el-input v-model="data.form.bankOfDeposit" />
-        </el-descriptions-item>
-        <el-descriptions-item label="账号">
-          <el-input v-model="data.form.quotationLink" />
-        </el-descriptions-item>
-        <el-descriptions-item label="地址">
-          <el-input v-model="data.form.address" />
-        </el-descriptions-item>
-      </el-descriptions>
-      <el-row style="margin-top: 20px" justify="end"> 表单编号：ZL-232-01-02 </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-descriptions style="margin-top: 20px;" title="审核" :column="1" border>
+            <el-descriptions-item label="制作" :span="2">
+              <el-input v-model="data.form.make" />
+            </el-descriptions-item>
+            <el-descriptions-item label="审核" :span="2">
+              <el-input v-model="data.form.toExamine" />
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-col>
+        <el-col :span="12">
+          <el-descriptions style="margin-top: 20px;" title="开票资料：" :column="1" border>
+            <el-descriptions-item label="户名">
+              <el-input v-model="data.form.accountName" />
+            </el-descriptions-item>
+            <el-descriptions-item label="税号">
+              <el-input v-model="data.form.dutyParagraph" />
+            </el-descriptions-item>
+            <el-descriptions-item label="开户行">
+              <el-input v-model="data.form.bankOfDeposit" />
+            </el-descriptions-item>
+            <el-descriptions-item label="账号">
+              <el-input v-model="data.form.accountNumber" />
+            </el-descriptions-item>
+            <el-descriptions-item label="地址">
+              <el-input v-model="data.form.address" />
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-col>
+      </el-row>
+
+      <el-row style="margin-top: 20px;" justify="end">
+        表单编号：ZL-232-01-02
+      </el-row>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive, onMounted, watch } from "vue"
-import { GetExternalQuotation, SaveExternalQuotation, DownloadExternalQuotation, GeCatalogue } from "./service"
+import {
+  GetExternalQuotation,
+  SaveExternalQuotation,
+  DownloadExternalQuotation,
+  GeCatalogue,
+  GetExternalQuotationNumberOfQuotations,
+} from "./service"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
 
-const { closeSelectedTag } = useJump()
+// const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId, numberOfQuotations = 1, nodeInstanceId }: any = getQuery()
+const { auditFlowId, nodeInstanceId }: any = getQuery()
 
 const data = reactive({
   form: {
@@ -155,23 +186,24 @@ const data = reactive({
     customerAdd: "",
     creationTime: "",
     recordNo: "",
-    numberOfQuotations: "",
+    numberOfQuotations: 1,
     accountName: "",
     make: "",
-    isSubmit: false
+    isSubmit: false,
+    accountNumber: "",
   },
   auditFlowId: 0,
   solutionId: null,
-  solutionIdList: []
+  solutionIdList: [],
+  versionList: []
 })
 
 const init = async (solutionId: any) => {
-  const { result } =
-    (await GetExternalQuotation({
-      auditFlowId,
-      solutionId,
-      numberOfQuotations
-    })) || {}
+  const { result } = await GetExternalQuotation({
+    auditFlowId,
+    solutionId,
+    numberOfQuotations: data.form.numberOfQuotations,
+  }) || {}
   data.form = {
     ...result,
     productQuotationListDtos: result.productQuotationListDtos || [],
@@ -179,8 +211,10 @@ const init = async (solutionId: any) => {
   }
 }
 
-onMounted(() => {
-  fetchList()
+onMounted(async () => {
+  await fetchList()
+  await fetchOptions()
+  await init(data.solutionId)
 })
 
 const submit = async (IsSubmit: boolean) => {
@@ -200,7 +234,7 @@ const downLoad = async () => {
   let res: any = await DownloadExternalQuotation({
     auditFlowId,
     solutionId: data.solutionId,
-    numberOfQuotations
+    numberOfQuotations: data.form.numberOfQuotations,
   })
   const blob = res
   const reader = new FileReader()
@@ -210,7 +244,7 @@ const downLoad = async () => {
     let a = document.createElement("a")
     document.body.appendChild(a) //此处增加了将创建的添加到body当中
     a.href = url
-    a.download = "成本信息表.xlsx"
+    a.download = "对外报价单.xlsx"
     a.target = "_blank"
     a.click()
     a.remove() //将a标签移除
@@ -221,7 +255,22 @@ const fetchList = async () => {
   const { result }: any = await GeCatalogue({ auditFlowId: Number(auditFlowId) })
   data.solutionIdList = result
   data.solutionId = result[0]?.id
-  init(result[0]?.id)
 }
+
+const fetchOptions = async () => {
+  const { result } = await GetExternalQuotationNumberOfQuotations({ auditFlowId: Number(auditFlowId) }) || {}
+  data.versionList = result || {}
+  if (result[0]) {
+    data.form.numberOfQuotations = result[0]
+  }
+}
+
 </script>
-<style scoped></style>
+<style scoped>
+.wrap {
+  >>> .el-radio {
+    margin-bottom: 10px;
+  }
+}
+
+</style>

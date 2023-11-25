@@ -63,7 +63,7 @@ function createService() {
       console.log(status, error, "error@@@@")
       switch (status) {
         case 400:
-          error.message = "请求错误"
+          error.message = "您录入的参数有问题，请仔细检查录入数据！"
           break
         case 401:
           error.message = "未授权，请登录"

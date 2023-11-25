@@ -67,7 +67,7 @@ const notShowRoutes = [
   "/fnDepartment/qualityCost",
   "/fnDepartment/exchangeRate",
   "/fnDepartment/grossProfitMargin",
-  "/fnDepartment/unitPriceImport",
+  "/unitPriceImport/index",
   "/fnDepartment/rateEntry",
   "/engineeringParameters/followLineTangent"
 ]

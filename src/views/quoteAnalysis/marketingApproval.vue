@@ -1,6 +1,8 @@
 <template>
   <!-- 营销部审批 -->
+
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
+    <ProcessVertifyBox :onSubmit="handleSubmit" />
     <h4 mb-20px>已保存的方案版本</h4>
     <div mb-20px>
       <el-table :data="versionList" border max-height="300px">
@@ -81,8 +83,8 @@
       </el-table>
       <el-table :data="data.resa.sops" border>
         <el-table-column type="index" width="100" />
-        <el-table-column prop="year" label="梯度" />
-        <el-table-column prop="motion" label="年份" />
+        <el-table-column prop="year" label="年份" />
+        <!-- <el-table-column prop="motion" label="" /> -->
         <el-table-column prop="annualDeclineRate" label="年降率" />
         <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
         <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />
@@ -190,11 +192,6 @@
         <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
         <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
         <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
-        <!-- <el-table-column label="毛利率" prop="grossMargin">
-          <template #default="{ row }">
-            {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
-          </template>
-        </el-table-column> -->
         <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
           <template #default="{ row }">
             {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
@@ -205,17 +202,6 @@
             {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
           </template>
         </el-table-column>
-        <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" width="180">
-          <template #default="scope">
-            <el-input-number @mousewheel.native.prevent
-              controls-position="right"
-              v-model="scope.row.commission"
-              placeholder="请输入佣金"
-              @change="(val: any) => changeCommission(scope.row, scope.$index)"
-              :min="0"
-            />
-          </template>
-        </el-table-column> -->
         <el-table-column label="增加客供料毛利率" prop="clientGrossMargin">
           <template #default="{ row }">
             {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
@@ -241,19 +227,9 @@
         <el-table-column prop="salesRevenue" label="销售收入" />
       </el-table>
     </el-card>
-    <!-- <el-card header="费用表：" m="2">
-      <el-table :data="data.resa.expensesStatement" border>
-        <el-table-column type="index" width="100" />
-        <el-table-column label="费用类别" prop="formName" />
-        <el-table-column label="核价金额" prop="pricingMoney" :formatter="formatThousandths" />
-        <el-table-column label="报价系数" prop="offerCoefficient" :formatter="formatThousandths" />
-        <el-table-column label="报价金额" prop="offerMoney" :formatter="formatThousandths" />
-        <el-table-column label="备注" prop="remark" />
-      </el-table>
-    </el-card> -->
-    <div float-right>
+    <el-row justify="end" style="margin-top: 20px">
       <el-button type="primary" @click="save">保存</el-button>
-    </div>
+    </el-row>
   </el-card>
 </template>
 
@@ -267,12 +243,13 @@ import {
   getQuotationApprovedMarketing,
   GeCatalogue,
   GetDownloadAuditQuotationList,
-  PostQuotationApprovedMarketingSave
+  PostQuotationApprovedMarketingSave,
+  SubmitNode
 } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
-
 import { ElMessage } from "element-plus"
+import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 // import { ElMessageBox } from "element-plus"
 
 const { auditFlowId, version }: any = getQuery()
@@ -282,10 +259,6 @@ const { auditFlowId, version }: any = getQuery()
 let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
 const data = reactive<any>({
-  // projectName: "",
-  // developmentPlan: "",
-  // marketingQuotationData: {},
-  // motionMessageSop: [],
   resa: {
     date: "2023-09-13T01:04:17.6054181+08:00",
     recordNumber: "BJHJ-ZL20230831-001",
@@ -960,6 +933,19 @@ const save = async () => {
     console.log(error)
   }
 }
+const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  let res: any = await SubmitNode({
+    comment,
+    nodeInstanceId,
+    financeDictionaryDetailId: opinion
+  })
+  if (res.success) {
+    ElMessage({
+      type: "success",
+      message: "操作成功"
+    })
+  }
+}
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -991,17 +977,15 @@ const typeMapGetText = (key: any, id: any) => {
 const initFetch = async () => {
   let { result }: any = await GeCatalogue({ auditFlowId })
   result.forEach((item: any) => {
-    versionList.push(item)
     // if (item.isQuotation) {
     //   versionList.push(item)
     // }
-    // if (item.isFirst) {
-    //   versionList.push(item)
-    // }
+    if (!item.isFirst) {
+      versionList.push(item)
+    }
   })
   let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
   typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
-  debugger
 
   let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
   typeMap.terminalNatureOptions = terminalNature.result.financeDictionaryDetailList

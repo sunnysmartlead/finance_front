@@ -1,13 +1,18 @@
 <template>
   <div>
-    <el-row justify="end">
+    <el-row justify="end" v-if="isShowBtn">
       <ProcessVertifyBox :onSubmit="handleSetBomState" title="同意" processType="confirm" />
       <el-button type="danger" m="2" @Click="dialogVisible = true">退回</el-button>
     </el-row>
     <bulletinBoard ref="bulletinBoardRef" />
     <el-dialog v-model="dialogVisible" title="退回选择">
       <el-checkbox-group v-model="checkList">
-        <el-checkbox v-for="item in PROGRESSTYPE.priceEvaluationBoard" :label="item.val" :disabled="checkList.some(v => item.notHas.includes(v) && v !== item.val)">{{ item.label }}</el-checkbox>
+        <el-checkbox
+          v-for="item in PROGRESSTYPE.priceEvaluationBoard"
+          :label="item.val"
+          :disabled="checkList.some((v) => item.notHas.includes(v) && v !== item.val)"
+          >{{ item.label }}</el-checkbox
+        >
       </el-checkbox-group>
       <div>
         <div style="margin: 10px 0">拒绝理由：</div>
@@ -23,7 +28,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch } from "vue"
 import bulletinBoard from "../components/bulletinBoard/index.vue"
 import { SetBomState, panelSubmitNode } from "@/api/bom"
 import getQuery from "@/utils/getQuery"
@@ -31,18 +36,21 @@ import useJump from "@/hook/useJump"
 import { ElMessage, ElMessageBox } from "element-plus"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { useRoute } from "vue-router"
-import { filter } from 'lodash'
+import { filter } from "lodash"
 import PROGRESSTYPE from "@/constant/approvalProcess"
 const route = useRoute()
 
 const bulletinBoardRef = ref()
-const { auditFlowId, productId, nodeInstanceId }: any = getQuery()
+const { auditFlowId, productId, nodeInstanceId, showBtn }: any = getQuery()
 const { closeSelectedTag } = useJump()
 
 const dialogVisible = ref(false)
 let checkList = ref([""])
 let opinionDescription = ref("")
-
+const isShowBtn = ref(true)
+if (showBtn === "false") {
+  isShowBtn.value = false
+}
 watch(
   () => dialogVisible.value,
   (val) => {
@@ -54,8 +62,8 @@ watch(
 
 const handleSetBomState = async ({ comment, opinion }: any) => {
   const fileList = bulletinBoardRef.value.getFileList()
-  if (opinion === 'HjkbSelect_Yes' && !fileList.length) {
-    return ElMessage.warning('请先上传TR方案！')
+  if (opinion === "HjkbSelect_Yes" && !fileList.length) {
+    return ElMessage.warning("请先上传TR方案！")
   }
   let res: any = await SetBomState({
     auditFlowId: auditFlowId,
@@ -81,18 +89,18 @@ const setPriceBoardStateAgree = async (isAgree: boolean) => {
   }).then(async () => {
     let res: any
     if (opinionDescription.value) {
-        res = await panelSubmitNode({
-          auditFlowId,
-          opinionDescription: opinionDescription.value,
-          financeDictionaryDetailIds: filter(checkList.value, v => !!v),
-          nodeInstanceId
-        })
-      } else {
-        ElMessage({
-          type: "warning",
-          message: "拒绝理由必填"
-        })
-      }
+      res = await panelSubmitNode({
+        auditFlowId,
+        opinionDescription: opinionDescription.value,
+        financeDictionaryDetailIds: filter(checkList.value, (v) => !!v),
+        nodeInstanceId
+      })
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "拒绝理由必填"
+      })
+    }
     if (res.success) {
       closeSelectedTag(route.path)
       ElMessage({

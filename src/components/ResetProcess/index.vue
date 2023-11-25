@@ -45,7 +45,7 @@ import getQuery from "@/utils/getQuery"
 const route = useRoute()
 
 const loading = ref(false)
-let { nodeInstanceId } = getQuery()
+let { nodeInstanceId, showBtn } = getQuery()
 const dpartName = ref("")
 const name = ref("")
 const notShowRoutes = [
@@ -72,6 +72,9 @@ const notShowRoutes = [
   "/engineeringParameters/followLineTangent"
 ]
 let notShow = computed(() => {
+  if (showBtn === "false") {
+    return true
+  }
   if (notShowRoutes.includes(route.path)) {
     return true
   } else {

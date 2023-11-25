@@ -65,7 +65,7 @@
           <el-input v-model="data.form.currency" />
         </el-descriptions-item>
       </el-descriptions>
-      <el-card style="margin-top: 10px;" header="产品报价清单">
+      <el-card style="margin-top: 10px" header="产品报价清单">
         <el-table :data="data.form.productQuotationListDtos" style="width: 100%" border height="500px">
           <el-table-column type="index" label="序号" width="80" fixed="left" align="center" />
           <el-table-column prop="productName" label="产品名称" align="center" />
@@ -79,7 +79,7 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <el-card style="margin-top: 10px;" header="NRE报价清单">
+      <el-card style="margin-top: 10px" header="NRE报价清单">
         <el-table :data="data.form.nreQuotationListDtos" style="width: 100%" border height="500px">
           <el-table-column type="index" label="序号" width="80" fixed="left" />
           <el-table-column prop="productName" label="产品名称" align="center" />
@@ -105,9 +105,7 @@
         <el-descriptions-item label="备注">
           <el-input v-model="data.form.remark" />
         </el-descriptions-item>
-        <el-descriptions-item label=" " :span="2">
-          * 无公司公章报价单为无效报价单
-        </el-descriptions-item>
+        <el-descriptions-item label=" " :span="2"> * 无公司公章报价单为无效报价单 </el-descriptions-item>
       </el-descriptions>
       <el-row :gutter="20">
         <el-col :span="12">
@@ -162,10 +160,10 @@ import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
 
-const { closeSelectedTag } = useJump()
+// const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId }: any = getQuery()
+const { auditFlowId, nodeInstanceId }: any = getQuery()
 
 const data = reactive({
   form: {
@@ -209,7 +207,7 @@ const init = async (solutionId: any) => {
   data.form = {
     ...result,
     productQuotationListDtos: result.productQuotationListDtos || [],
-    nreQuotationListDtos: result.nreQuotationListDtos || [],
+    nreQuotationListDtos: result.nreQuotationListDtos || []
   }
 }
 
@@ -219,14 +217,15 @@ onMounted(async () => {
   init(data.solutionId)
 })
 
-
 const submit = async (IsSubmit: boolean) => {
   data.form.isSubmit = IsSubmit
   const { success } = await SaveExternalQuotation({
     ...data.form,
+    opinion: IsSubmit ? "Done" : "Save",
+    nodeInstanceId: nodeInstanceId
   })
   if (success) {
-    ElMessage.success('提交成功！')
+    ElMessage.success("提交成功！")
     // closeSelectedTag(route.path)
   }
 }

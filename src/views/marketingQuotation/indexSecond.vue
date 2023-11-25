@@ -32,8 +32,6 @@
         </div>
       </div>
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
-        <!-- <ThreeDImage m="2" />
-        <SORDonwload /> -->
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
         <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
         <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
@@ -57,15 +55,16 @@
           {{ typeMapGetText("terminalNatureOptions", data.resa.terminalClientNature) }}
         </el-descriptions-item>
         <el-descriptions-item label="开发计划">
-          <el-input v-model="data.resa.developmentPlan" />
+          {{ data.resa.developmentPlan }}
+          <!-- <el-input v-model="data.resa.developmentPlan" /> -->
         </el-descriptions-item>
-        <el-descriptions-item label="SOP时间">
+        <!-- <el-descriptions-item label="SOP时间">
           <el-input v-model="data.resa.sopTime" />
         </el-descriptions-item>
         <el-descriptions-item label="项目生命周期">
           <el-input v-model="data.resa.projectCycle" />
-        </el-descriptions-item>
-        <el-descriptions-item label="销售类型">
+        </el-descriptions-item> -->
+        <!-- <el-descriptions-item label="销售类型">
           {{ typeMapGetText("salesTypeOptions", data.resa.forSale) }}
         </el-descriptions-item>
         <el-descriptions-item label="贸易方式">
@@ -76,7 +75,7 @@
         </el-descriptions-item>
         <el-descriptions-item label="报价币种">
           <el-input v-model="data.resa.quoteCurrency" />
-        </el-descriptions-item>
+        </el-descriptions-item> -->
         <el-descriptions-item label="汇率"> {{ data.resa.exchangeRate }} </el-descriptions-item>
       </el-descriptions>
       <!-- sop走量信息 -->
@@ -122,16 +121,16 @@
           <el-table-column type="index" />
           <el-table-column prop="formName" label="费用名称" />
           <el-table-column prop="pricingMoney" label="核价金额" />
-          <el-table-column label="报价系数">
-            <template #default="scope">
+          <el-table-column label="报价系数" prop="offerCoefficient">
+            <!-- <template #default="scope">
               <el-input v-model="scope.row.offerCoefficient" type="number" />
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="offerMoney" label="报价金额" />
-          <el-table-column label="备注">
-            <template #default="scope">
+          <el-table-column label="备注" prop="remark">
+            <!-- <template #default="scope">
               <el-input v-model="scope.row.remark" type="textarea" />
-            </template>
+            </template> -->
           </el-table-column>
         </el-table>
         <p>专用设备</p>
@@ -189,6 +188,49 @@
           <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
           <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
           <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+          <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin">
+            <template #default="{ row }">
+              {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="增加客供料毛利率" prop="clientGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin">
+            <template #default="{ row }">
+              {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+      <el-card header="报价策略-实际数量：" m="2">
+        <el-table :data="data.resa.biddingStrategySecondModelsAct" border>
+          <el-table-column type="index" width="100" />
+          <el-table-column label="梯度" prop="gradient" />
+          <el-table-column label="产品" prop="product" />
+          <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
+          <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
+          <el-table-column label="毛利率" prop="grossMargin">
+            <template #default="{ row }">
+              {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
+          <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+          <el-table-column label="销售收入" prop="salesRevenue" :formatter="formatThousandths" />
+          <el-table-column label="销售成本" prop="sellingCost" :formatter="formatThousandths" />
+          <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" />
+          <el-table-column label="含佣金毛利率" prop="grossMarginCommission ">
+            <template #default="{ row }">
+              {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
+            </template>
+          </el-table-column>
           <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
             <template #default="{ row }">
               {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
@@ -701,7 +743,7 @@ const initFetch = async () => {
       /**
        * 总经理2看的数据
        */
-      if (data.pageType === 1 && item.isFirst) {
+      if (data.pageType === 1 && !item.isFirst) {
         versionList.push(item)
       }
       /**
@@ -736,7 +778,8 @@ const toProductPriceList = () => {
       auditFlowId,
       productId,
       right,
-      nodeInstanceId
+      nodeInstanceId,
+      showBtn: "false"
     }
   })
 }
@@ -854,9 +897,5 @@ watchEffect(() => {})
 <style scoped lang="scss">
 .demandApply-result-page {
   margin: 10px;
-}
-
-* {
-  font-size: 20px;
 }
 </style>

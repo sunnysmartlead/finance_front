@@ -1216,13 +1216,21 @@ const selectVersion = async (row: any) => {
     /**
      * 根据版本号查询该版本数据
      */
-
-    let res: any = await getQuotationFeedback({
-      auditFlowId,
-      version: versionChosen.version,
-      ntime: versionChosen.ntime
-    })
-    data.allRes = res.result
+    if (versionChosen.isQuotation) {
+      let res = getStatementAnalysisBoardSecond({
+        auditFlowId,
+        version: versionChosen.version,
+        ntype: 1
+      })
+      data.allRes = res.result
+    } else {
+      let res: any = await getQuotationFeedback({
+        auditFlowId,
+        version: versionChosen.version,
+        ntime: versionChosen.ntime
+      })
+      data.allRes = res.result
+    }
     loading.close()
     /**
      * 触发nre汇总计算

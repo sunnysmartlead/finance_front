@@ -815,7 +815,7 @@ const selectVersion = async (row: any) => {
 const deleteVersion = async (row: any) => {
   ElMessageBox.confirm("是否确认删除!")
     .then(async function () {
-      await PostIsOfferSecondDelete({ auditFlowId, version: row.version })
+      await PostIsOfferSecondDelete({ auditFlowId, version: row.version, isFirst: row.isFirst })
     })
     .then(() => {
       getVersionList()

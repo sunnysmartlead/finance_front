@@ -138,7 +138,12 @@ import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import getQuery from "@/utils/getQuery"
-import { GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
+import {
+  GetManagerApprovalOfferOne,
+  PostManagerApprovalOfferOneSave,
+  GeQuotationFeedbacktManagerOne,
+  PostQuotationFeedbackManagerOneSave
+} from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 
 // import { ElMessageBox } from "element-plus"
@@ -497,9 +502,15 @@ const selectVersion = async (row: any) => {
   fullscreenLoading.value = true
   try {
     versionChosen = row
-    const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: versionChosen.version }) //暂时先减1 针对337
-    data.resa = result
-    console.log(result, "result")
+    if (versionChosen.isQuotation) {
+      const { result } = await GeQuotationFeedbacktManagerOne({ auditFlowId, version: versionChosen.version })
+      data.resa = result
+    } else {
+      const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: versionChosen.version })
+      data.resa = result
+      console.log(result, "result")
+    }
+
     /**
      * 根据版本号查询该版本数据
      */
@@ -523,8 +534,13 @@ const save = async () => {
     return false
   }
   let query = route.query
-  let res = await PostManagerApprovalOfferOneSave(data.resa)
-  console.log(res)
+  if (versionChosen.isQuotation) {
+    await PostQuotationFeedbackManagerOneSave(data.resa)
+  } else {
+    let res = await PostManagerApprovalOfferOneSave(data.resa)
+    console.log(res)
+  }
+
   router.push({ path: "/marketingQuotation/indexSecond", query: { ...query, version: versionChosen.version } })
 }
 

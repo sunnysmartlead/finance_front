@@ -115,3 +115,21 @@ export function PostAuditQuotationList(data: any): any {
     data
   })
 }
+
+// 报价反馈到 总经理报价审批界面一获取数据
+export function GeQuotationFeedbacktManagerOne(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GeQuotationFeedbacktManagerOne",
+    method: "post",
+    data
+  })
+}
+
+// 报价反馈到 总经理报价审批界面一保存/修改
+export function PostQuotationFeedbackManagerOneSave(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostQuotationFeedbackManagerOneSave",
+    method: "post",
+    data
+  })
+}

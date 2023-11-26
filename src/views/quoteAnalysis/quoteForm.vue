@@ -20,7 +20,7 @@
       </el-radio-group> -->
 
       <div mb-20px>
-        <el-table :data=" data.solutionIdList" border max-height="300px">
+        <el-table :data="data.solutionIdList" border max-height="300px">
           <el-table-column label="版本号" width="200" align="center" prop="version" />
           <!-- <el-table-column label="提交次数" width="200" align="center" prop="ntime" /> -->
           <el-table-column label="组合方案" width="300" align="center">
@@ -119,6 +119,7 @@
               align="center"
               :formatter="formatThousandths"
             />
+            <el-table-column prop="experimentalFees" label="实验费" align="center" :formatter="formatThousandths" />
             <el-table-column prop="rdExpenses" label="研发费" align="center" :formatter="formatThousandths" />
           </el-table-column>
           <el-table-column prop="remark" label="备注" align="center">
@@ -224,7 +225,7 @@ const data = reactive({
 })
 
 const init = async (solutionId: any) => {
-  data.solutionId=solutionId
+  data.solutionId = solutionId
   const { result } =
     (await GetExternalQuotation({
       auditFlowId,

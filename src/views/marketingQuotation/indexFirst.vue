@@ -23,6 +23,14 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column label="是否反馈返回" width="300" align="center">
+            <template #default="scope">
+              <div>
+                {{ scope.row.isQuotation ? "是" : "否" }}
+              </div>
+            </template>
+          </el-table-column>
+
           <el-table-column label="操作">
             <template #default="scope">
               <el-button @click="selectVersion(scope.row)" type="primary" v-loading.fullscreen.lock="fullscreenLoading">

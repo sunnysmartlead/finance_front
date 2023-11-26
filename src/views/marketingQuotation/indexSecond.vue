@@ -216,11 +216,11 @@
           <el-table-column label="产品" prop="product" />
           <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
           <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
-          <el-table-column label="毛利率" prop="grossMargin">
+          <!-- <el-table-column label="毛利率" prop="grossMargin">
             <template #default="{ row }">
               {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
           <el-table-column label="销售收入" prop="salesRevenue" :formatter="formatThousandths" />
           <el-table-column label="销售成本" prop="sellingCost" :formatter="formatThousandths" />

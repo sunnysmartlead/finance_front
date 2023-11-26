@@ -539,7 +539,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import * as echarts from "echarts"
-import { ElMessage } from "element-plus"
+import { ElMessage, ElLoading } from "element-plus"
 // import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
@@ -1200,7 +1200,11 @@ const initCharts = (id: string, chartOption: any) => {
  * 加载之前的版本
  */
 const selectVersion = async (row: any) => {
-  fullscreenLoading.value = true
+  const loading = ElLoading.service({
+    lock: true,
+    text: "加载中",
+    background: "rgba(0, 0, 0, 0.7)"
+  })
   try {
     // let res = await PostStatementAnalysisBoardSecond({
     //   ...versionChosen,
@@ -1219,13 +1223,13 @@ const selectVersion = async (row: any) => {
       ntime: versionChosen.ntime
     })
     data.allRes = res.result
-    fullscreenLoading.value = false
+    loading.close()
     /**
      * 触发nre汇总计算
      */
     getNreChange()
   } catch (error) {
-    fullscreenLoading.value = false
+    loading.close()
   }
 }
 //成本信息表
@@ -1648,77 +1652,6 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
-/**
- * 报价
- */
-const postOffer = async (isOffer: boolean) => {
-  if (auditFlowId) {
-    let saveData = {
-      version: version.value,
-      ntime: 1,
-      solutions: [], // 明天改
-      ...data.allRes,
-      isOffer,
-      auditFlowId
-    }
-    //如果存在选择过的版本对象，那么提交的就是该版本
-    if (versionChosen) {
-      saveData.version = versionChosen.version // 版本不变
-      saveData.ntime = versionChosen.ntime + 1 // 提交次数+1
-      saveData.solutions = versionChosen.solutionList
-    }
-
-    delete saveData.isSuccess
-    delete saveData.message
-    delete saveData.mes
-    let res = await PostIsOfferSecond(saveData)
-    //是否报价
-    const baseProcessType = [
-      //YesOrNo
-      {
-        label: "不同意",
-        val: "YesOrNo_No"
-      },
-      {
-        label: "同意",
-        val: "YesOrNo_Yes"
-      },
-      {
-        label: "保存",
-        val: "YesOrNo_Save"
-      }
-    ]
-    // 报价分析看板选择方案
-    const confirmProcessType = [
-      //Done
-      {
-        label: "提交",
-        val: "Done"
-      },
-      {
-        label: "保存",
-        val: "Save"
-      }
-    ]
-    let FangAnres: any = await SubmitNode({
-      comment: "",
-      nodeInstanceId,
-      financeDictionaryDetailId: confirmProcessType[1].val
-    })
-    // let FangAnres: any = await SubmitNode({
-    //   comment: "",
-    //   nodeInstanceId,
-    //   financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
-    // })
-    if (FangAnres.success) {
-      ElMessage({
-        type: "success",
-        message: "操作成功"
-      })
-    }
-    console.log(res)
-  }
-}
 const setSubmitType = (type: string) => {
   if (!isSave) {
     ElMessage.warning("保存后再执行")
@@ -1748,6 +1681,7 @@ const agreeConfirm = async () => {
  * 报价反馈提交
  */
 const save = async () => {
+  isSubmit.value = true
   let saveData = {
     ...data.allRes,
     auditFlowId,

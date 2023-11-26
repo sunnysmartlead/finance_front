@@ -1846,7 +1846,8 @@ const toMarketingApproval = async () => {
       path: "/quoteAnalysis/marketingApproval",
       query: {
         auditFlowId,
-        version: version.value
+        version: version.value,
+        showBtn: "false"
       }
     })
   } else {
@@ -1854,7 +1855,8 @@ const toMarketingApproval = async () => {
       path: "/quoteAnalysis/marketingApproval",
       query: {
         auditFlowId,
-        version: versionChosen.version
+        version: versionChosen.version,
+        showBtn: "false"
       }
     })
   }

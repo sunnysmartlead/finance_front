@@ -2,7 +2,7 @@
   <!-- 营销部审批 -->
 
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
-    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
+    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="isShowBtn" />
     <h4 mb-20px>已保存的方案版本</h4>
     <div mb-20px>
       <el-table :data="versionList" border max-height="300px">
@@ -227,7 +227,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onBeforeMount, onMounted, watchEffect } from "vue"
+import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 // import { GetQuotationList } from "../marketingQuotation/service"
 import getQuery from "@/utils/getQuery"
 import { getYears } from "../pmDepartment/service"
@@ -245,12 +245,16 @@ import { ElMessage } from "element-plus"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 // import { ElMessageBox } from "element-plus"
 
-const { auditFlowId, version }: any = getQuery()
+const { auditFlowId, version, showBtn }: any = getQuery()
 /**
  * 数据部分
  */
 let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
+const isShowBtn = ref(true)
+if (showBtn === "false") {
+  isShowBtn.value = false
+}
 const data = reactive<any>({
   resa: {
     date: "2023-09-13T01:04:17.6054181+08:00",

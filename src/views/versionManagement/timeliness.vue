@@ -33,12 +33,6 @@
             {{ formatDateTime(row.versionBasicInfo.finishedTime || "") }}
           </template>
         </el-table-column>
-        <el-table-column label="重置时间">
-          <template #default="{ row }">
-            {{ formatDateTime(row.versionBasicInfo.resetTime || "") }}
-          </template>
-        </el-table-column>
-
         <!-- <el-table-column label="操作" fixed="right">
           <template #default="{ row }">
             <el-button

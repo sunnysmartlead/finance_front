@@ -49,6 +49,11 @@
             {{ fomatterDat1e(scope.row.auditFlowOperateTimes[scope.row.auditFlowOperateTimes.length - 1]?.startTime) }}
           </template>
         </el-table-column>
+        <el-table-column label="重置时间" prop="resetTime" :formatter="fomatterDate">
+          <!-- <template #default="{ row }">
+            {{ formatDateTime(row.versionBasicInfo.resetTime || "") }}
+          </template> -->
+        </el-table-column>
         <el-table-column prop="requiredTime" label="期望日期" :formatter="fomatterDate" />
         <el-table-column prop="roleName" label="修改人角色" />
         <el-table-column label="更新时间">

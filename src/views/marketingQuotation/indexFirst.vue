@@ -141,7 +141,7 @@ import getQuery from "@/utils/getQuery"
 import {
   GetManagerApprovalOfferOne,
   PostManagerApprovalOfferOneSave,
-  GeQuotationFeedbacktManagerOne,
+  GetQuotationFeedbacktManagerOne,
   PostQuotationFeedbackManagerOneSave
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
@@ -503,7 +503,7 @@ const selectVersion = async (row: any) => {
   try {
     versionChosen = row
     if (versionChosen.isQuotation) {
-      const { result } = await GeQuotationFeedbacktManagerOne({ auditFlowId, version: versionChosen.version })
+      const { result } = await GetQuotationFeedbacktManagerOne({ auditFlowId, version: versionChosen.version })
       data.resa = result
     } else {
       const { result } = await GetManagerApprovalOfferOne({ auditFlowId, version: versionChosen.version })

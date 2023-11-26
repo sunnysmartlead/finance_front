@@ -117,9 +117,9 @@ export function PostAuditQuotationList(data: any): any {
 }
 
 // 报价反馈到 总经理报价审批界面一获取数据
-export function GeQuotationFeedbacktManagerOne(data: any): any {
+export function GetQuotationFeedbacktManagerOne(data: any): any {
   return request({
-    url: "/api/services/app/AnalyseBoardSecond/GeQuotationFeedbacktManagerOne",
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedbacktManagerOne",
     method: "post",
     data
   })

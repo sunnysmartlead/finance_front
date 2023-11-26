@@ -801,7 +801,7 @@ const selectVersion = async (row: any) => {
     /**
      * 根据版本号查询该版本数据
      */
-    let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: row.version })
+    let res = await getStatementAnalysisBoardSecond({ auditFlowId, version: row.version, ntype: 0 })
     data.allRes = res.result
     /**
      * 触发nre汇总计算

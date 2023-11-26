@@ -1217,7 +1217,7 @@ const selectVersion = async (row: any) => {
      * 根据版本号查询该版本数据
      */
     if (versionChosen.isQuotation) {
-      let res = getStatementAnalysisBoardSecond({
+      let res = await getStatementAnalysisBoardSecond({
         auditFlowId,
         version: versionChosen.version,
         ntype: 1

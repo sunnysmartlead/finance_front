@@ -4,22 +4,44 @@
     <el-card m="2">
       <div>
         <el-select v-model="data.numberOfQuotations" placeholder="选择版本" style="margin-bottom: 10px">
-          <el-option v-for="item in data.versionList" :key="item" :label="`报价次数：${item}`"
-            :value="item"  @click="init(data.solutionId)"/>
+          <el-option
+            v-for="item in data.versionList"
+            :key="item"
+            :label="`报价次数：${item}`"
+            :value="item"
+            @click="init(data.solutionId)"
+          />
         </el-select>
       </div>
-      <el-radio-group v-model="data.solutionId" @change="init">
+      <!-- <el-radio-group v-model="data.solutionId" @change="init">
         <template v-for="item in data.solutionIdList" :key="item.title">
-          <el-radio :label="item.id" size="large" border>
-            方案{{ item.version }}
-          </el-radio>
+          <el-radio :label="item.id" size="large" border> 方案{{ item.version }} </el-radio>
         </template>
-      </el-radio-group>
+      </el-radio-group> -->
+
+      <div mb-20px>
+        <el-table :data=" data.solutionIdList" border max-height="300px">
+          <el-table-column label="版本号" width="200" align="center" prop="version" />
+          <!-- <el-table-column label="提交次数" width="200" align="center" prop="ntime" /> -->
+          <el-table-column label="组合方案" width="300" align="center">
+            <template #default="scope">
+              <div v-for="item in scope.row.solutionList" :key="item.product">
+                {{ item.product }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button @click="init(scope.row.id)" type="primary">加载该版本</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-card>
     <el-card m="2">
       <el-row justify="end">
-        <el-button type="primary" @click="submit(false)" m="2">保存</el-button>
-        <el-button type="primary" @click="submit(true)" m="2">提交</el-button>
+        <el-button type="primary" @click="submit(false)" v-if="right == 2" m="2">保存</el-button>
+        <el-button type="primary" @click="submit(true)" v-if="right == 2" m="2">提交</el-button>
         <el-button type="primary" @click="downLoad" m="2">下载报价单</el-button>
       </el-row>
       <el-descriptions>
@@ -85,14 +107,19 @@
           <el-table-column prop="productName" label="产品名称" align="center" />
           <el-table-column label="单价（未税）" align="center">
             <el-table-column prop="travelVolume" width="175" label="走量" align="center">
-            <template #default="{ row }">
-              <el-input-number :min="0" v-model="row.travelVolume" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="handmadePartsFee" label="手板件费" align="center" :formatter="formatThousandths" />
-          <el-table-column prop="myPropMoldCosterty" label="模具费" align="center" :formatter="formatThousandths" />
-          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" align="center" :formatter="formatThousandths"  />
-          <el-table-column prop="rdExpenses" label="研发费" align="center" :formatter="formatThousandths" />
+              <template #default="{ row }">
+                <el-input-number :min="0" v-model="row.travelVolume" />
+              </template>
+            </el-table-column>
+            <el-table-column prop="handmadePartsFee" label="手板件费" align="center" :formatter="formatThousandths" />
+            <el-table-column prop="myPropMoldCosterty" label="模具费" align="center" :formatter="formatThousandths" />
+            <el-table-column
+              prop="costOfToolingAndFixtures"
+              label="工装治具费"
+              align="center"
+              :formatter="formatThousandths"
+            />
+            <el-table-column prop="rdExpenses" label="研发费" align="center" :formatter="formatThousandths" />
           </el-table-column>
           <el-table-column prop="remark" label="备注" align="center">
             <template #default="{ row }">
@@ -109,7 +136,7 @@
       </el-descriptions>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-descriptions style="margin-top: 20px;" title="审核" :column="1" border>
+          <el-descriptions style="margin-top: 20px" title="审核" :column="1" border>
             <el-descriptions-item label="制作" :span="2">
               <el-input v-model="data.form.make" />
             </el-descriptions-item>
@@ -119,7 +146,7 @@
           </el-descriptions>
         </el-col>
         <el-col :span="12">
-          <el-descriptions style="margin-top: 20px;" title="开票资料：" :column="1" border>
+          <el-descriptions style="margin-top: 20px" title="开票资料：" :column="1" border>
             <el-descriptions-item label="户名">
               <el-input v-model="data.form.accountName" />
             </el-descriptions-item>
@@ -139,9 +166,7 @@
         </el-col>
       </el-row>
 
-      <el-row style="margin-top: 20px;" justify="end">
-        表单编号：ZL-232-01-02
-      </el-row>
+      <el-row style="margin-top: 20px" justify="end"> 表单编号：ZL-232-01-02 </el-row>
     </el-card>
   </div>
 </template>
@@ -152,18 +177,18 @@ import {
   SaveExternalQuotation,
   DownloadExternalQuotation,
   GeCatalogue,
-  GetExternalQuotationNumberOfQuotations,
+  GetExternalQuotationNumberOfQuotations
 } from "./service"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
-import { formatThousandths } from '@/utils/number'
+import { formatThousandths } from "@/utils/number"
 
 // const { closeSelectedTag } = useJump()
 const route = useRoute()
 
-const { auditFlowId, nodeInstanceId }: any = getQuery()
+const { auditFlowId, nodeInstanceId, right }: any = getQuery()
 
 const data = reactive({
   form: {
@@ -189,7 +214,7 @@ const data = reactive({
     accountName: "",
     make: "",
     isSubmit: false,
-    accountNumber: "",
+    accountNumber: ""
   },
   numberOfQuotations: 0,
   auditFlowId: 0,
@@ -199,11 +224,13 @@ const data = reactive({
 })
 
 const init = async (solutionId: any) => {
-  const { result } = await GetExternalQuotation({
-    auditFlowId,
-    solutionId,
-    numberOfQuotations: data.numberOfQuotations,
-  }) || {}
+  data.solutionId=solutionId
+  const { result } =
+    (await GetExternalQuotation({
+      auditFlowId,
+      solutionId,
+      numberOfQuotations: data.numberOfQuotations
+    })) || {}
   data.form = {
     ...result,
     productQuotationListDtos: result.productQuotationListDtos || [],
@@ -235,7 +262,7 @@ const downLoad = async () => {
   let res: any = await DownloadExternalQuotation({
     auditFlowId,
     solutionId: data.solutionId,
-    numberOfQuotations: data.numberOfQuotations,
+    numberOfQuotations: data.numberOfQuotations
   })
   const blob = res
   const reader = new FileReader()
@@ -259,13 +286,16 @@ const fetchList = async () => {
 }
 
 const fetchOptions = async () => {
-  const { result } = await GetExternalQuotationNumberOfQuotations({ auditFlowId: Number(auditFlowId),solutionId: Number(data.solutionId) }) || {}
+  const { result } =
+    (await GetExternalQuotationNumberOfQuotations({
+      auditFlowId: Number(auditFlowId),
+      solutionId: Number(data.solutionId)
+    })) || {}
   data.versionList = result || {}
   if (result[0]) {
     data.numberOfQuotations = result[0]
   }
 }
-
 </script>
 <style scoped>
 .wrap {
@@ -273,5 +303,4 @@ const fetchOptions = async () => {
     margin-bottom: 10px;
   }
 }
-
 </style>

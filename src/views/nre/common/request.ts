@@ -504,7 +504,7 @@ export function FastSaveNreExecl(data: any): any {
 export function FastQueryNreExecl(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/FastQueryNreExecl",
-    method: "post",
+    method: "get",
     data,
   })
 }

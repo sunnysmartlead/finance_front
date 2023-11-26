@@ -120,7 +120,7 @@ export function PostAuditQuotationList(data: any): any {
 export function GetQuotationFeedbacktManagerOne(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedbacktManagerOne",
-    method: "post",
+    method: "get",
     data
   })
 }

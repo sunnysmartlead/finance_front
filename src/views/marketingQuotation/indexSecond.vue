@@ -317,7 +317,8 @@ import {
   GetManagerApprovalOfferTwo,
   GetAcceptanceBid,
   GetBidView,
-  PostManagerApprovalOfferTwoSave
+  PostManagerApprovalOfferTwoSave,
+  GetQuotationFeedbackManagerApprovalOfferTwo
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
@@ -327,7 +328,7 @@ const query = useJump()
 const route = useRoute()
 const { closeSelectedTag, jumpPage } = query
 
-const { auditFlowId, version, productId, right, nodeInstanceId } = getQuery()
+const { auditFlowId, version, productId, right, nodeInstanceId, isQuotation } = getQuery()
 const dialogVisible = ref(false)
 const ProductByAuditFlowId = ref<any>({})
 let versionList = reactive<any[]>([])
@@ -703,6 +704,7 @@ const getSummaries = (param) => {
             return prev
           }
         }, 0)}`
+        sums[index] = (Number(sums[index]).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
       } else {
         sums[index] = "N/A"
       }
@@ -756,7 +758,23 @@ const initFetch = async () => {
 
     let tradeMethodType: any = await getDictionaryAndDetail("TradeMethod") //贸易方式
     typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
-    if (data.pageType === 1 && version) {
+
+    if (data.pageType === 1 && version && isQuotation === "true") {
+      const loading = ElLoading.service({
+        lock: true,
+        text: "加载中...",
+        background: "rgba(0, 0, 0, 0.7)"
+      })
+      try {
+        //version 是从总经理审批1带过来的参数
+        const { result } = await GetQuotationFeedbackManagerApprovalOfferTwo({ auditFlowId, version: version })
+        data.resa = result
+        loading.close()
+      } catch (error) {
+        loading.close()
+      }
+    }
+    if (data.pageType === 1 && version && isQuotation === "false") {
       const loading = ElLoading.service({
         lock: true,
         text: "加载中...",

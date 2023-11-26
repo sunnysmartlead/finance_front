@@ -133,3 +133,12 @@ export function PostQuotationFeedbackManagerOneSave(data: any): any {
     data
   })
 }
+
+// 报价反馈到 总经理报价审批界面二获取数据
+export function GetQuotationFeedbackManagerApprovalOfferTwo(data: any): any {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotationFeedbackManagerApprovalOfferTwo",
+    method: "get",
+    data
+  })
+}

@@ -549,7 +549,10 @@ const save = async () => {
     console.log(res)
   }
 
-  router.push({ path: "/marketingQuotation/indexSecond", query: { ...query, version: versionChosen.version } })
+  router.push({
+    path: "/marketingQuotation/indexSecond",
+    query: { ...query, version: versionChosen.version, isQuotation: versionChosen.isQuotation }
+  })
 }
 
 watchEffect(() => {})

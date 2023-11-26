@@ -2,7 +2,7 @@
   <!-- 营销部审批 -->
 
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
-    <ProcessVertifyBox :onSubmit="handleSubmit" />
+    <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" />
     <h4 mb-20px>已保存的方案版本</h4>
     <div mb-20px>
       <el-table :data="versionList" border max-height="300px">
@@ -69,12 +69,6 @@
     </el-descriptions>
     <!-- sop走量信息 -->
     <el-card header="sop走量信息" m="2">
-      <!-- {
-        gradient: "",
-        key: "",
-        value: ""
-      } -->
-      <!-- <p>{{ item.messageName }}</p> -->
       <el-table :data="data.resa.motion" border>
         <el-table-column type="index" width="100" />
         <el-table-column prop="gradient" label="梯度" />
@@ -84,7 +78,6 @@
       <el-table :data="data.resa.sops" border>
         <el-table-column type="index" width="100" />
         <el-table-column prop="year" label="年份" />
-        <!-- <el-table-column prop="motion" label="" /> -->
         <el-table-column prop="annualDeclineRate" label="年降率" />
         <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
         <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />
@@ -227,9 +220,9 @@
         <el-table-column prop="salesRevenue" label="销售收入" />
       </el-table>
     </el-card>
-    <el-row justify="end" style="margin-top: 20px">
+    <!-- <el-row justify="end" style="margin-top: 20px">
       <el-button type="primary" @click="save">保存</el-button>
-    </el-row>
+    </el-row> -->
   </el-card>
 </template>
 
@@ -924,7 +917,7 @@ const downLoadTable = async () => {
 }
 const save = async () => {
   try {
-    let res: any = await PostQuotationApprovedMarketingSave(data.resa)
+    let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
     console.log(res)
     if (res.success) {
       ElMessage.success("保存成功")
@@ -934,6 +927,11 @@ const save = async () => {
   }
 }
 const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
+  if (!versionChosen) {
+    ElMessage.warning("选择数据后再执行")
+    return false
+  }
+  await save()
   let res: any = await SubmitNode({
     comment,
     nodeInstanceId,

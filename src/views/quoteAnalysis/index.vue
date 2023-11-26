@@ -108,13 +108,19 @@
               @change="offerCoefficientChange(scope.row, index, scope.$index)"
               :precision="2"
               :min="0"
+              :disabled="index === data.allRes.nres.length - 1"
             />
           </template>
         </el-table-column>
         <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" width="200" align="right" />
         <el-table-column label="备注" align="center">
           <template #default="scope">
-            <el-input v-model="scope.row.remark" type="textarea" autosize />
+            <el-input
+              v-model="scope.row.remark"
+              type="textarea"
+              autosize
+              :disabled="index === data.allRes.nres.length - 1"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -151,7 +157,7 @@
               @mousewheel.native.prevent
               v-model="scope.row.unitPrice"
               controls-position="right"
-              @change="unitPriceChange(scope.row,index, scope.$index)"
+              @change="unitPriceChange(scope.row, index, scope.$index)"
               :precision="2"
             />
           </template>
@@ -294,7 +300,11 @@
       <p>{{ item.project }}</p>
       <el-table :data="item.quotedGrossMarginActualList" border>
         <el-table-column label="产品" prop="product" />
-        <el-table-column label="单车产品数量" prop="carNum" />
+        <el-table-column
+          label="单车产品数量"
+          prop="carNum"
+          v-if="index !== data.allRes.quotedGrossMargins.length - 1"
+        />
         <el-table-column label="目标价（内部）" width="300">
           <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" />
           <el-table-column label="毛利率">
@@ -1853,6 +1863,7 @@ const toMarketingApproval = async () => {
 const getVersionList = async () => {
   if (auditFlowId) {
     let { result }: any = await GeCatalogue({ auditFlowId })
+    versionList.length = 0
     //如果方案组合接口没有那么就从初始1开始计数
     if (result.length === 0) {
       version.value = 1

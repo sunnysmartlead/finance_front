@@ -35,14 +35,6 @@
       <!-- 单价汇总 -->
       <p>单价汇总</p>
       <el-table :data="data.resa.unitPriceSum" border>
-        <!-- <el-table-column type="expand">
-        <template #default="props">
-          <el-table :data="props.row.solutuionAndValues" border>
-            <el-table-column label="solutionId" prop="solutionId" />
-            <el-table-column label="value" prop="value" />
-          </el-table>
-        </template>
-      </el-table-column> -->
         <el-table-column label="产品名称" prop="product" />
         <el-table-column label="价格" prop="price" />
       </el-table>
@@ -93,22 +85,9 @@
           <el-table-column label="序号" type="index" />
           <el-table-column prop="formName" label="费用名称" />
           <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
-          <el-table-column label="报价系数" prop="offerCoefficient">
-            <!-- <template #default="scope">
-              <el-input-number
-                @mousewheel.native.prevent
-                v-model="scope.row.offerCoefficient"
-                controls-position="right"
-                @change="offerCoefficientChange(scope.row, scope.$index)"
-              />
-            </template> -->
-          </el-table-column>
+          <el-table-column label="报价系数" prop="offerCoefficient" />
           <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
-          <el-table-column label="备注" prop="remark">
-            <!-- <template #default="scope">
-              <el-input v-model="scope.row.remark" type="textarea" />
-            </template> -->
-          </el-table-column>
+          <el-table-column label="备注" prop="remark" />
         </el-table>
         <p>专用设备</p>
         <el-table :data="data.resa.nre.devices" style="width: 100%" border max-height="500px">
@@ -118,9 +97,6 @@
           <el-table-column prop="equipmentMoney" label="设备金额" />
         </el-table>
       </el-card>
-      <!-- <el-row justify="end" m="2">
-      <el-button @click="save" type="primary">保存</el-button>
-    </el-row> -->
       <el-row justify="end" m="2">
         <el-button @click="save" type="primary">总经理审批2</el-button>
       </el-row>
@@ -162,8 +138,7 @@ import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import getQuery from "@/utils/getQuery"
-import { getYears } from "../pmDepartment/service"
-import { PostAuditQuotationListSave, GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
+import { GetManagerApprovalOfferOne, PostManagerApprovalOfferOneSave } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 
 // import { ElMessageBox } from "element-plus"
@@ -479,7 +454,6 @@ const agreeConfirm = async () => {
   /**
    * 保存数据需要确认
    */
-  // save
   let res = await SubmitNode({
     comment: confirmText.value,
     nodeInstanceId,
@@ -544,6 +518,10 @@ const selectVersion = async (row: any) => {
  * 总经理页面1保存
  */
 const save = async () => {
+  if (!versionChosen) {
+    ElMessage.warning("请先选择版本数据")
+    return false
+  }
   let query = route.query
   let res = await PostManagerApprovalOfferOneSave(data.resa)
   console.log(res)

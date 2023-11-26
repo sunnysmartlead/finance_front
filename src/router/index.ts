@@ -623,15 +623,15 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "财务中标确认"
         }
-      },
-      {
-        path: "/marketingQuotation/confirmWinningBid",
-        component: () => import("@/views/marketingQuotation/indexSecond.vue"),
-        name: "confirmWinningBid",
-        meta: {
-          title: "总经理中标确认"
-        }
       }
+      // {
+      //   path: "/marketingQuotation/confirmWinningBid",
+      //   component: () => import("@/views/marketingQuotation/indexSecond.vue"),
+      //   name: "confirmWinningBid",
+      //   meta: {
+      //     title: "总经理中标确认"
+      //   }
+      // }
     ]
   },
   {
@@ -934,8 +934,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "processLib",
         meta: {
-          title: "工序库"
-          // roles: ["工程部-基础库管理员"]
+          title: "工序库",
+          roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -944,28 +944,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "workingHours",
         meta: {
-          title: "工时库"
-          // roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/environment",
-        component: () => import("@/views/processHoursExport/environment.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "environment",
-        meta: {
-          title: "环境实验库"
-          // roles: ["环境实验库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/emc",
-        component: () => import("@/views/processHoursExport/emc.vue"),
-        //component: () => import("@/views/processImport/index.vue"),
-        name: "emc",
-        meta: {
-          title: "EMC实验费"
-          // roles: ["EMC实验库管理员"]
+          title: "工时库",
+          roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -973,8 +953,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/workClothes.vue"),
         name: "baseLibLog",
         meta: {
-          title: "工装库"
-          // roles: ["工程部-基础库管理员"]
+          title: "工装库",
+          roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -982,8 +962,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/deviceLib.vue"),
         name: "deviceLib",
         meta: {
-          title: "设备库"
-          // roles: ["工程部-基础库管理员"]
+          title: "设备库",
+          roles: ["工程部-基础库管理员"]
         }
       },
       {
@@ -991,26 +971,36 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/fixture.vue"),
         name: "fixture",
         meta: {
-          title: "治具检具"
-          // roles: ["工程部-基础库管理员"]
+          title: "治具检具",
+          roles: ["工程部-基础库管理员"]
         }
       },
+      {
+        path: "/processHoursExport/environment",
+        component: () => import("@/views/processHoursExport/environment.vue"),
+        name: "environment",
+        meta: {
+          title: "环境实验库",
+          roles: ["环境实验库管理员"]
+        }
+      },
+      {
+        path: "/processHoursExport/emc",
+        component: () => import("@/views/processHoursExport/emc.vue"),
+        name: "emc",
+        meta: {
+          title: "EMC实验费",
+          roles: ["EMC实验库管理员"]
+        }
+      },
+
       {
         path: "/processHoursExport/softwareHardware",
         component: () => import("@/views/processHoursExport/softwareHardware.vue"),
         name: "softwareHardware",
         meta: {
-          title: "硬件及软件"
-          // roles: ["工程部-基础库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/logisticsCost",
-        component: () => import("@/views/processHoursExport/logisticsCost.vue"),
-        name: "logisticsCost",
-        meta: {
-          title: "物流成本录入"
-          // roles: ["工程部-基础库管理员"]
+          title: "硬件及软件",
+          roles: ["工程部-基础库管理员"]
         }
       },
 
@@ -1019,17 +1009,62 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/standardProcess.vue"),
         name: "standardProcess",
         meta: {
-          title: "标准工艺库"
-          // roles: ["工程部-基础库管理员"]
+          title: "标准工艺库",
+          roles: ["工程部-基础库管理员"]
         }
       },
+      {
+        path: "/processHoursExport/logisticsCost",
+        component: () => import("@/views/processHoursExport/logisticsCost.vue"),
+        name: "logisticsCost",
+        meta: {
+          title: "物流成本录入",
+          roles: ["工程部-基础库管理员"]
+        }
+      },
+
       {
         path: "/processHoursExport/COBManufactureCost",
         component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
         name: "COBManufactureCost",
         meta: {
-          title: "COB制造成本录入"
-          // roles: ["工程部-基础库管理员"]
+          title: "COB制造成本录入",
+          roles: ["工程部-基础库管理员"]
+        }
+      }
+    ]
+  },
+  {
+    path: "/engineeringDepartment",
+    redirect: "/engineeringDepartment/lossRate",
+    component: Layout,
+    children: [
+      {
+        path: "lossRate",
+        component: () => import("@/views/engineeringDepartment/lossRate.vue"),
+        name: "lossRate",
+        meta: {
+          title: "损耗率-参数",
+          roles: ["工程部-基础库管理员"]
+        }
+      }
+    ]
+  },
+  {
+    path: "/engineeringParameters",
+    redirect: "/engineeringParameters/followLineTangent",
+    component: Layout,
+    meta: {
+      title: "工程部维护参数"
+    },
+    children: [
+      {
+        path: "followLineTangent",
+        component: () => import("@/views/tangentHours/index.vue"),
+        name: "followLineTangent",
+        meta: {
+          title: "切线工时",
+          roles: ["工程部-基础库管理员"]
         }
       }
     ]
@@ -1170,12 +1205,31 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/unitPriceImport",
+    redirect: "/unitPriceImport/index",
+    component: Layout,
+    meta: {
+      title: "单价库导入",
+      roles: ["单价库管理员"]
+    },
+    children: [
+      {
+        path: "/unitPriceImport/index",
+        component: () => import("@/views/fnDepartment/unitPriceImport.vue"),
+        name: "unitPriceImport",
+        meta: {
+          title: "单价库导入"
+        }
+      }
+    ]
+  },
+  {
     path: "/fnDepartment",
     redirect: "/fnDepartment/index",
     component: Layout,
     meta: {
       title: "财务参数管理",
-      roles: ["finance"]
+      roles: ["财务部-财务参数录入员"]
     },
     name: "fnDepartment",
     children: [
@@ -1215,15 +1269,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
           roles: ["财务部-财务参数录入员"]
         }
       },
-      {
-        path: "/fnDepartment/unitPriceImport",
-        component: () => import("@/views/fnDepartment/unitPriceImport.vue"),
-        name: "unitPriceImport",
-        meta: {
-          title: "单价库导入",
-          roles: ["单价库管理员"]
-        }
-      },
+
       {
         path: "/fnDepartment/fulllifeCycle",
         component: () => import("@/views/fnDepartment/fulllifeCycle.vue"),
@@ -1287,21 +1333,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  {
-    path: "/engineeringDepartment",
-    redirect: "/engineeringDepartment/lossRate",
-    component: Layout,
-    children: [
-      {
-        path: "lossRate",
-        component: () => import("@/views/engineeringDepartment/lossRate.vue"),
-        name: "lossRate",
-        meta: {
-          title: "损耗率-参数"
-        }
-      }
-    ]
-  },
+
   {
     path: "/",
     redirect: "/UpdateLogInfo/index",
@@ -1320,24 +1352,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  {
-    path: "/engineeringParameters",
-    redirect: "/engineeringParameters/followLineTangent",
-    component: Layout,
-    meta: {
-      title: "工程部维护参数"
-    },
-    children: [
-      {
-        path: "followLineTangent",
-        component: () => import("@/views/tangentHours/index.vue"),
-        name: "followLineTangent",
-        meta: {
-          title: "切线工时"
-        }
-      }
-    ]
-  },
+
   // {
   //   path: "/permission",
   //   component: Layout,

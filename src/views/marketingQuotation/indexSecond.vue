@@ -88,8 +88,7 @@
         </el-table>
         <el-table :data="data.resa.sops" border>
           <el-table-column type="index" width="100" />
-          <el-table-column prop="year" label="梯度" />
-          <el-table-column prop="motion" label="年份" />
+          <el-table-column prop="year" label="年份" />
           <el-table-column prop="annualDeclineRate" label="年降率" />
           <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
           <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />
@@ -101,7 +100,6 @@
         <el-table :data="data.resa.componenSocondModels" border>
           <el-table-column label="型号" prop="model" />
           <el-table-column label="核心部件" prop="partsName" />
-          <el-table-column label="方案名" prop="solutionName" />
           <el-table-column label="类型" prop="type" />
           <el-table-column label="备注" prop="remark" />
         </el-table>
@@ -181,7 +179,7 @@
         </el-table>
       </el-card>
       <el-card header="报价策略：" m="2">
-        <el-table :data="data.resa.biddingStrategySecondModels" border>
+        <el-table :data="data.resa.biddingStrategySecondModelsGradent" border>
           <el-table-column type="index" width="100" />
           <el-table-column label="梯度" prop="gradient" />
           <el-table-column label="产品" prop="product" />
@@ -640,13 +638,6 @@ const selectVersion = async (row: any) => {
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
-// 计算含佣金的毛利率
-const changeCommission = (row: any, index: number) => {
-  console.log(row, index, "changeCommission")
-  // data.marketingQuotationData.biddingStrategy[index].grossMarginCommission =
-  //   (1 - (row.commission + row.cost) / row.price) * 100
-}
-
 onBeforeMount(() => {
   if (data.userInfo.userJobs === "总经理") {
     data.isShowBtn = true
@@ -765,9 +756,20 @@ const initFetch = async () => {
     let tradeMethodType: any = await getDictionaryAndDetail("TradeMethod") //贸易方式
     typeMap.TradeMethodOptions = tradeMethodType.result.financeDictionaryDetailList
     if (data.pageType === 1 && version) {
-      //version 是从总经理审批1带过来的参数
-      const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version })
-      data.resa = result
+      const loading = ElLoading.service({
+        lock: true,
+        text: "加载中...",
+        background: "rgba(0, 0, 0, 0.7)"
+      })
+      try {
+        //version 是从总经理审批1带过来的参数
+
+        const { result } = await GetManagerApprovalOfferTwo({ auditFlowId, version: version })
+        data.resa = result
+        loading.close()
+      } catch (error) {
+        loading.close()
+      }
     }
   }
 }

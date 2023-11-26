@@ -5,7 +5,7 @@
       <div>
         <el-select v-model="data.numberOfQuotations" placeholder="选择版本" style="margin-bottom: 10px">
           <el-option v-for="item in data.versionList" :key="item" :label="`报价次数：${item}`"
-            :value="item" />
+            :value="item"  @click="init(data.solutionId)"/>
         </el-select>
       </div>
       <el-radio-group v-model="data.solutionId" @change="init">

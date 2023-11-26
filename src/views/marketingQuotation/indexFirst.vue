@@ -474,7 +474,7 @@ const agreeConfirm = async () => {
   })
   if (res.success) {
     ElMessage.success("操作成功")
-    dialogVisibleR.value = false
+    dialogVisible.value = false
   }
 }
 onBeforeMount(() => {

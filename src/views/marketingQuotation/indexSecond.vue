@@ -909,8 +909,8 @@ const save = async () => {
 /**
  * 财务中标确认
  */
-const cwSave = async (isPass: boolean) => {
-  let res = await PostAuditQuotationList({ ...data.resa, auditFlowId, version: versionChosen.version, isPass })
+const cwSave = async (isQuotation: boolean) => {
+  let res = await PostAuditQuotationList({ ...data.resa, auditFlowId, version: versionChosen.version, isQuotation })
   console.log(res)
 }
 watchEffect(() => {})

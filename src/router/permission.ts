@@ -91,8 +91,8 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
     roles.push("closeFlow")
   }
 
-  if (userRoles.includes("成本拆分员")) {
-    roles.push("成本拆分员")
+  if (userRoles.includes("营销部-业务员")) {
+    roles.push("营销部-业务员")
   }
   if (userRoles.includes("报价审核表")) {
     roles.push("报价审核表")
@@ -114,6 +114,9 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
   }
   if (userRoles.includes("财务部-财务参数录入员")) {
     roles.push("财务部-财务参数录入员")
+  }
+  if (userRoles.includes("成本拆分员")) {
+    roles.push("成本拆分员")
   }
 
   permissionStore.setRoutes(roles)

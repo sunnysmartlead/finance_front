@@ -43,7 +43,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
       </el-popover>
       <el-popover placement="top-start" :width="200" trigger="hover" content="报价金额小于审批金额">
         <template #reference>
-          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjxysp`)" v-havedone :disabled="!isSubmit">
+          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjxysp`)" v-havedone :disabled="isSubmit">
             报价金额小于审批金额</el-button
           >
         </template>

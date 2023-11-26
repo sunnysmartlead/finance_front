@@ -480,3 +480,31 @@ export function GetPricingFormDownload(data: any): any {
     data,
   })
 }
+
+
+// NRE核价表快速上传-快速核报价之直接上传
+export function FastUploadNreExecl(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/FastUploadNreExecl",
+    method: "get",
+    data,
+  })
+}
+
+// NRE核价表保存-快速核报价之直接上传
+export function FastSaveNreExecl(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/FastSaveNreExecl",
+    method: "get",
+    data,
+  })
+}
+
+// 查询NRE保存的数据-快速核报价之直接上传
+export function FastQueryNreExecl(data: any): any {
+  return request({
+    url: "/api/services/app/NrePricing/FastQueryNreExecl",
+    method: "get",
+    data,
+  })
+}

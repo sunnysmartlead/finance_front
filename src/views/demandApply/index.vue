@@ -9,23 +9,6 @@
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item v-if="isFast" label="普通核报价流程:" prop="quoteAuditFlowId">
-              <el-select
-                v-model="state.quoteForm.quoteAuditFlowId"
-                remote-show-suffix
-                reserve-keyword
-                filterable
-                placeholder="Select"
-                :disabled="right === '1'"
-                remote
-                :remote-method="fetchWorkflowOvered"
-                style="width: 300px"
-              >
-                <el-option v-for="item in projectOptions" :key="item.id" :label="item.title" :value="item.id" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
             <el-form-item label="标题:" prop="title">
               <el-input v-model="state.quoteForm.title" :disabled="isDisabled || right === '1'">
                 <template #append v-if="!isDisabled">
@@ -1442,7 +1425,7 @@ import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
-import { saveApplyInfo,priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
+import { saveApplyInfo,priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
@@ -1459,10 +1442,6 @@ let { right } = getQuery()
 //整个页面是否可以编辑
 const props = defineProps({
   isDisabled: {
-    type: Boolean,
-    default: false
-  },
-  isFast: {
     type: Boolean,
     default: false
   },
@@ -2916,15 +2895,8 @@ const init = async () => {
   state.taebleLoading = false
 }
 
-const fetchWorkflowOvered = async (filter: string) => {
-  const { result }: any  = await getWorkflowOvered({ filter, skipCount: 0, maxResultCount: 100 }) || {}
-  const { items } = result || []
-  projectOptions.value = items
-}
-
 onMounted(() => {
   init()
-  fetchWorkflowOvered('')
 })
 
 defineExpose({

@@ -437,3 +437,16 @@ export function GetExternalQuotationNumberOfQuotations(data: any) {
     data
   })
 }
+
+/**
+ *
+ * @param data 删除方案
+ * @returns
+ */
+export function PostIsOfferSecondDelete(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostIsOfferSecondDelete",
+    method: "post",
+    data
+  })
+}

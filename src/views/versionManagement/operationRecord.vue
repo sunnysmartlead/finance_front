@@ -90,7 +90,7 @@ import { update } from "lodash"
 import { CommonDownloadFile } from "@/api/bom"
 import { downloadFile, getAuditFlowVersion } from "../trAudit/service"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
-const { AuditFlowId, projectName, version, projectManager }: any = getQuery()
+const { auditFlowId, projectName, version, projectManager }: any = getQuery()
 // 系统版本操作记录表-table数据
 const data = reactive<any>({
   operationRecordData: [],
@@ -108,7 +108,7 @@ const formInline = reactive({
 const Timeliness = reactive<any>([])
 
 const onSubmit = async () => {
-  let { success } = await SetTimeliness({ auditFlowId: AuditFlowId, data: Timeliness.values })
+  let { success } = await SetTimeliness({ auditFlowId: auditFlowId, data: Timeliness.values })
   if (success) {
     ElMessage.success("保存成功")
   } else {
@@ -144,7 +144,7 @@ const downLoadSOR = async () => {
 }
 // TR主方案下载
 const downTrFile = async () => {
-  let res: any = (await getAuditFlowVersion(Number(AuditFlowId))) || {}
+  let res: any = (await getAuditFlowVersion(Number(auditFlowId))) || {}
   const trFileId = res.result?.solutionFileIdentifier
   const solutionFileName = res.result?.solutionFileName
   if (trFileId) {
@@ -319,14 +319,15 @@ onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 const getSORFileName = async () => {
-  const { result }: any = await getSorByAuditFlowId(AuditFlowId)
+  const { result }: any = await getSorByAuditFlowId(auditFlowId)
   data.sorFileName = result.sorFileName
   data.fileId = result.sorFileId
 }
 onMounted(async () => {
   init()
   getSORFileName()
-  let { result } = await GetTimeliness({ auditFlowId: AuditFlowId })
+  debugger
+  let { result } = await GetTimeliness({ auditFlowId: auditFlowId })
   if (result) {
     Timeliness.values = result.data
   }
@@ -334,7 +335,7 @@ onMounted(async () => {
 })
 
 const init = async () => {
-  const { result } = await GetAuditFlowOperateReocrd({ flowId: AuditFlowId })
+  const { result } = await GetAuditFlowOperateReocrd({ flowId: auditFlowId })
   data.operationRecordData = result
   if (data.operationRecordData.length) {
     data.operationRecordData.forEach((item: any) => {
@@ -342,7 +343,7 @@ const init = async () => {
       item.title = nameMap[item.processName as keyof typeof nameMap]?.title
     })
   }
-  await sortChange()
+  // await sortChange()
 }
 
 const tableRowClassName = ({ row, rowIndex }: { row: any; rowIndex: number }) => {

@@ -12,7 +12,7 @@ export function GetVersionInfos(data: {
   Number: number
 }): any {
   return request({
-    url: "/api/services/app/VersionManagment/GetVersionInfos",
+    url: "/api/services/app/VersionManagment/GetVersionInfosSelf",
     method: "get",
     data
   })

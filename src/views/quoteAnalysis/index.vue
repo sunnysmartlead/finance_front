@@ -18,6 +18,7 @@
           <el-table-column label="操作">
             <template #default="scope">
               <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+              <el-button @click="deleteVersion(scope.row)" type="danger" :disabled="!scope.row.isFirst">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -539,7 +540,7 @@
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import * as echarts from "echarts"
-import { ElMessage } from "element-plus"
+import { ElMessage, ElMessageBox } from "element-plus"
 // import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { useProductStore } from "@/store/modules/productList"
@@ -558,7 +559,8 @@ import {
   SubmitNode,
   getStatementAnalysisBoardSecond,
   PostIsOfferSecondOnlySave,
-  GeCatalogue
+  GeCatalogue,
+  PostIsOfferSecondDelete
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 /**
@@ -809,6 +811,20 @@ const selectVersion = async (row: any) => {
   } catch (error) {
     fullscreenLoading.value = false
   }
+}
+const deleteVersion = async (row: any) => {
+  ElMessageBox.confirm("是否确认删除!")
+    .then(async function () {
+      await PostIsOfferSecondDelete({ auditFlowId, version: row.version })
+    })
+    .then(() => {
+      getVersionList()
+      ElMessage({
+        type: "success",
+        message: "删除成功"
+      })
+    })
+    .catch(() => {})
 }
 // 过滤相同梯度的数据
 interface stringKeyObj {

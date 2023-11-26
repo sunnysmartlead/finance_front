@@ -29,7 +29,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
  EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
  EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",}, -->
       <el-button type="primary" @click="setSubmitType(`EvalFeedback_Js`)" v-havedone>接受报价</el-button>
-      <el-popover placement="top-start" :width="200" trigger="hover" content="不接受此价，但接受降价，不用重新核价">
+      <el-popover placement="top-start" :width="200" trigger="hover" content="接受此此价，不用再次报价/重新核价">
         <template #reference>
           <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjsbzc`)" v-havedone>不接受报价</el-button>
         </template>
@@ -43,7 +43,7 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
       </el-popover>
       <el-popover placement="top-start" :width="200" trigger="hover" content="报价金额小于审批金额">
         <template #reference>
-          <el-button type="primary" @click="postOffer(`EvalFeedback_Bjxysp`)" v-havedone>
+          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjxysp`)" v-havedone>
             报价金额小于审批金额</el-button
           >
         </template>

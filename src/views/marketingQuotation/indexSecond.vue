@@ -89,7 +89,7 @@
         <el-table :data="data.resa.sops" border>
           <el-table-column type="index" width="100" />
           <el-table-column prop="year" label="年份" />
-          <el-table-column prop="annualDeclineRate" label="年降率" />
+          <el-table-column prop="annualDeclineRate" label="年降率(%)" />
           <el-table-column prop="annualRebateRequirements" label="年度返利要求" />
           <el-table-column prop="oneTimeDiscountRate" label="一次性折让" />
           <el-table-column prop="commissionRate" label="年度佣金比例" />
@@ -98,8 +98,9 @@
       <!-- 核心部件 -->
       <el-card header="核心部件：" m="2">
         <el-table :data="data.resa.componenSocondModels" border>
-          <el-table-column label="型号" prop="model" />
+          <el-table-column label="方案名称" prop="solutionName" />
           <el-table-column label="核心部件" prop="partsName" />
+          <el-table-column label="型号" prop="model" />
           <el-table-column label="类型" prop="type" />
           <el-table-column label="备注" prop="remark" />
         </el-table>
@@ -224,11 +225,11 @@
           <el-table-column label="销售收入" prop="salesRevenue" :formatter="formatThousandths" />
           <el-table-column label="销售成本" prop="sellingCost" :formatter="formatThousandths" />
           <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" />
-          <el-table-column label="含佣金毛利率" prop="grossMarginCommission ">
+          <!-- <el-table-column label="含佣金毛利率" prop="grossMarginCommission ">
             <template #default="{ row }">
               {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="Sop年毛利率" prop="sopGrossMargin">
             <template #default="{ row }">
               {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}

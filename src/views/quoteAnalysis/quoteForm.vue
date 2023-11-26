@@ -3,7 +3,7 @@
   <div class="wrap">
     <el-card m="2">
       <div>
-        <el-select v-model="data.form.numberOfQuotations" placeholder="选择版本" style="margin-bottom: 10px">
+        <el-select v-model="data.numberOfQuotations" placeholder="选择版本" style="margin-bottom: 10px">
           <el-option v-for="item in data.versionList" :key="item" :label="`报价次数：${item}`"
             :value="item" />
         </el-select>
@@ -25,7 +25,7 @@
       <el-descriptions>
         <el-descriptions-item label="日期：">{{ formatDateTime(data.form.creationTime) }} </el-descriptions-item>
         <el-descriptions-item label="记录编号：">{{ data.form.recordNo }}</el-descriptions-item>
-        <el-descriptions-item label="版本：">V{{ data.form.numberOfQuotations }}</el-descriptions-item>
+        <el-descriptions-item label="版本：">V{{ data.numberOfQuotations }}</el-descriptions-item>
       </el-descriptions>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="客户名称">
@@ -186,12 +186,12 @@ const data = reactive({
     customerAdd: "",
     creationTime: "",
     recordNo: "",
-    numberOfQuotations: 1,
     accountName: "",
     make: "",
     isSubmit: false,
     accountNumber: "",
   },
+  numberOfQuotations: 0,
   auditFlowId: 0,
   solutionId: null,
   solutionIdList: [],
@@ -202,7 +202,7 @@ const init = async (solutionId: any) => {
   const { result } = await GetExternalQuotation({
     auditFlowId,
     solutionId,
-    numberOfQuotations: data.form.numberOfQuotations,
+    numberOfQuotations: data.numberOfQuotations,
   }) || {}
   data.form = {
     ...result,
@@ -234,7 +234,7 @@ const downLoad = async () => {
   let res: any = await DownloadExternalQuotation({
     auditFlowId,
     solutionId: data.solutionId,
-    numberOfQuotations: data.form.numberOfQuotations,
+    numberOfQuotations: data.numberOfQuotations,
   })
   const blob = res
   const reader = new FileReader()
@@ -261,7 +261,7 @@ const fetchOptions = async () => {
   const { result } = await GetExternalQuotationNumberOfQuotations({ auditFlowId: Number(auditFlowId) }) || {}
   data.versionList = result || {}
   if (result[0]) {
-    data.form.numberOfQuotations = result[0]
+    data.numberOfQuotations = result[0]
   }
 }
 

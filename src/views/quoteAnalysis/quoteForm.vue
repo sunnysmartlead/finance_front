@@ -259,7 +259,7 @@ const fetchList = async () => {
 }
 
 const fetchOptions = async () => {
-  const { result } = await GetExternalQuotationNumberOfQuotations({ auditFlowId: Number(auditFlowId) }) || {}
+  const { result } = await GetExternalQuotationNumberOfQuotations({ auditFlowId: Number(auditFlowId),solutionId: Number(data.solutionId) }) || {}
   data.versionList = result || {}
   if (result[0]) {
     data.numberOfQuotations = result[0]

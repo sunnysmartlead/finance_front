@@ -221,6 +221,7 @@ const submit = async (IsSubmit: boolean) => {
   data.form.isSubmit = IsSubmit
   const { success } = await SaveExternalQuotation({
     ...data.form,
+    numberOfQuotations: data.numberOfQuotations,
     opinion: IsSubmit ? "Done" : "Save",
     nodeInstanceId: nodeInstanceId
   })

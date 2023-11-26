@@ -1,17 +1,17 @@
 <template>
   <el-card m="2">
     <el-row justify="end">
-      <!-- <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button> -->
       <el-upload
-        :action="$baseUrl + 'api/services/app/NrePricing/FastQueryNreExecl'"
+        :action="$baseUrl + 'api/services/app/NrePricing/FastUploadNreExecl'"
         :on-success="handleSuccess"
         :on-error="handleUploadError"
         show-file-list
         :on-progress="handleGetUploadProgress"
+        name="filename"
       >
         <el-button :style="{ margin: '7px' }" type="primary">上传Nre核价表</el-button>
       </el-upload>
-      <el-button type="primary" class="m-2" @click="handleSave">提交</el-button>
+      <el-button type="primary" class="m-2" @click="handleSave">保存</el-button>
     </el-row>
     <el-descriptions m="2" border>
       <el-descriptions-item label="项目名称">{{ data.projectName }}</el-descriptions-item>
@@ -176,14 +176,13 @@
 <script lang="ts" setup>
 import { onBeforeMount, onMounted, watchEffect, ref, watch, reactive } from "vue"
 import {
-  NreTableDownload,
   GetPricingFormDownload,
   FastSaveNreExecl,
   FastQueryNreExecl,
 } from "./common/request"
 import { getMouldSummaries } from "./common/mouldSummaries"
 import getQuery from "@/utils/getQuery"
-import { formatDateTime, downloadFileExcel } from "@/utils"
+import { formatDateTime } from "@/utils"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
@@ -238,22 +237,6 @@ const getPricingFormDownload = async () => {
   }
 }
 
-// NRE核价表下载
-const handleFethNreTableDownload = async () => {
-  try {
-    const res: any = await NreTableDownload({
-      // Year: year,
-      AuditFlowId: auditFlowId,
-      SolutionId: productId
-    })
-    downloadFileExcel(res, "NRE核价表")
-    ElMessage.success("下载成功！")
-    console.log(res, "NreTableDownload")
-  } catch (err: any) {
-    console.log(err, "[ NRE核价表下载 失败 ]")
-  }
-}
-
 const handleSuccess = (res: any) => {
   const { result } = res || {}
   if (res.success) {
@@ -275,7 +258,8 @@ const getResonOptions = async () => {
 
 const handleSave = async () => {
   const { success } = await FastSaveNreExecl({
-    ...data.value
+    auditFlowId, solutionId: productId,
+    pricingFormDto: data.value
   })
   if (success) {
     ElMessage({
@@ -284,10 +268,6 @@ const handleSave = async () => {
     })
   }
 }
-
-onBeforeMount(() => {
-  //console.log('2.组件挂载页面之前执行----onBeforeMount')
-})
 
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')

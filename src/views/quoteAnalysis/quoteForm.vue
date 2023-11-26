@@ -89,10 +89,10 @@
               <el-input-number :min="0" v-model="row.travelVolume" />
             </template>
           </el-table-column>
-          <el-table-column prop="handmadePartsFee" label="手板件费" align="center"/>
-          <el-table-column prop="myPropMoldCosterty" label="模具费" align="center" />
-          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" align="center" />
-          <el-table-column prop="experimentalFees" label="研发费" align="center" />
+          <el-table-column prop="handmadePartsFee" label="手板件费" align="center" :formatter="formatThousandths" />
+          <el-table-column prop="myPropMoldCosterty" label="模具费" align="center" :formatter="formatThousandths" />
+          <el-table-column prop="costOfToolingAndFixtures" label="工装治具费" align="center" :formatter="formatThousandths"  />
+          <el-table-column prop="rdExpenses" label="研发费" align="center" :formatter="formatThousandths" />
           </el-table-column>
           <el-table-column prop="remark" label="备注" align="center">
             <template #default="{ row }">
@@ -156,9 +156,9 @@ import {
 } from "./service"
 import getQuery from "@/utils/getQuery"
 import { ElMessage } from "element-plus"
-import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
+import { formatThousandths } from '@/utils/number'
 
 // const { closeSelectedTag } = useJump()
 const route = useRoute()

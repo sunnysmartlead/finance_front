@@ -495,7 +495,7 @@ export function FastUploadNreExecl(data: any): any {
 export function FastSaveNreExecl(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/FastSaveNreExecl",
-    method: "get",
+    method: "post",
     data,
   })
 }
@@ -504,7 +504,7 @@ export function FastSaveNreExecl(data: any): any {
 export function FastQueryNreExecl(data: any): any {
   return request({
     url: "/api/services/app/NrePricing/FastQueryNreExecl",
-    method: "get",
+    method: "post",
     data,
   })
 }

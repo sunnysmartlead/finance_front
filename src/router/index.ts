@@ -973,8 +973,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/logisticsCost.vue"),
         name: "logisticsCost",
         meta: {
-          title: "物流成本录入",
-          roles: ["工程部-基础库管理员"]
+          title: "物流成本录入"
         }
       },
 
@@ -983,8 +982,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
         name: "COBManufactureCost",
         meta: {
-          title: "COB制造成本录入",
-          roles: ["工程部-基础库管理员"]
+          title: "COB制造成本录入"
         }
       }
     ]

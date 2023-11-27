@@ -1890,7 +1890,9 @@ const getVersionList = async () => {
       version.value = 1
     } else {
       // 如果不是，那么当前默认从之前的开始
-      version.value = result.length + 1
+      let versions = result.map((item: any) => Number(item.version))
+      let maxVersion = Math.max(...versions)
+      version.value = maxVersion + 1
       result.forEach((item: any) => {
         versionList.push(item)
       })

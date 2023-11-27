@@ -74,8 +74,8 @@
               {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
             </template>
           </el-table-column>
-          <el-table-column prop="salesRevenue" label="销售收入" :formatter="formatThousandths" />
-          <el-table-column prop="sellingCost" label="销售成本" :formatter="formatThousandths" />
+          <el-table-column prop="salesRevenue" label="销售收入（千元）" :formatter="formatThousandths" />
+          <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" />
           <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
           <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
           <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
@@ -123,7 +123,7 @@
         <el-form-item label="退回因素">
           <el-select v-model="refuseReason">
             <el-option label="价格因素-退回到报价分析看板" value="Spbjclyhjb_Bjfxkb" />
-            <el-option label="价格因素-退回到核价看板" value="Spbjclyhjb_Hjkb" />
+            <el-option label="成本因素-退回到核价看板" value="Spbjclyhjb_Hjkb" />
           </el-select>
         </el-form-item>
         <el-form-item label="退回原因">

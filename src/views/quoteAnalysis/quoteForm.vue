@@ -300,7 +300,7 @@ const fetchOptions = async () => {
 </script>
 <style scoped>
 .wrap {
-  >>> .el-radio {
+  /deep/ .el-radio {
     margin-bottom: 10px;
   }
 }

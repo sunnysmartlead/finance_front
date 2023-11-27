@@ -1,5 +1,5 @@
 <template>
-  <div class="demand-apply" v-loading="state.taebleLoading">
+  <div class="demand-apply" v-loading="state.tableLoading">
     <el-row justify="end" v-if="!isDisabled" v-havedone>
       <el-button @click="save(refForm, false)" type="primary">保存</el-button>
       <el-button @click="save(refForm, true)" type="primary">提交</el-button>
@@ -8,6 +8,33 @@
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="普通核报价流程:" prop="quickQuoteAuditFlowId" v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
+              <el-select
+                v-model="state.quickQuoteAuditFlowId"
+                remote-show-suffix
+                reserve-keyword
+                filterable
+                placeholder="Select"
+                :disabled="!opinion"
+                remote
+                :remote-method="fetchWorkflowOvered"
+                style="width: 300px"
+                @change="init"
+              >
+                <el-option v-for="item in projectOptions" :key="item.id" :label="item.title" :value="item.id" />
+              </el-select>
+            </el-form-item>
+            <!-- <el-upload
+              :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+              :on-success="handleBomimportSuccess"
+              show-file-list
+              :on-progress="handleGetUploadProgress"
+              :on-error="handleUploadError"
+            >
+              <el-button type="primary">导入bom成本</el-button>
+            </el-upload> -->
+          </el-col>
           <el-col :span="24">
             <el-form-item label="标题:" prop="title">
               <el-input v-model="state.quoteForm.title" :disabled="isDisabled || right === '1'">
@@ -1425,7 +1452,7 @@ import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
-import { saveApplyInfo,priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion } from "./service"
+import { saveApplyInfo,priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
@@ -1437,7 +1464,7 @@ import dayjs from "dayjs"
 import { CountryTypeEnum } from "./common/util"
 import { debounce } from "lodash"
 
-let { right } = getQuery()
+let { right, opinion, auditFlowId } = getQuery()
 
 //整个页面是否可以编辑
 const props = defineProps({
@@ -1503,10 +1530,10 @@ const getRowSum = (row: any, key?: string, childkey?: string) => {
 const kvPricingData = ref<any>([])
 const shareCountTable = ref<any>([])
 const isFirstShow = ref(false)
-const state = reactive({
-  taebleLoading: false,
+const state = reactive<any>({
+  tableLoading: false,
+  quickQuoteAuditFlowId: null, // 流程id
   quoteForm: {
-    quoteAuditFlowId: null, // 流程id
     shareCount: [],
     countryType: "", // 国家类型
     isHasNre: false,
@@ -1564,7 +1591,6 @@ const state = reactive({
     sorFile: [] as any, //SOR附件上传
     reason: "", //核价原因
     quoteVersion: "", //核报价流程版本
-    auditFlowId: null as any,
     priceEvalType: null, //核价类型(二开新增)
     isHasSample: false, //是否包含样品核价(二开新增)
     carModelCount: []
@@ -1601,6 +1627,7 @@ const state = reactive({
     { id: "3", displayName: "三供" },
     { id: "4", displayName: "四供" }
   ],
+  opinion,
 })
 
 const projectSubCodeOptions = ref([])
@@ -1889,11 +1916,10 @@ const save = debounce(async (formEl: FormInstance | undefined, isSubmit: boolean
 }, 300)
 
 const handleSubmitData = async (isSubmit: boolean) => {
-  const opinion = ""
   let { auditFlowId, nodeInstanceId } = route.query
   saveloading.value = true
   let { quoteForm } = state
-  quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
+  state.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
   if (quoteForm.isHasSample || quoteForm.priceEvalType == "PriceEvalType_Sample") {
     quoteForm.sample = specimenData //样品
   }
@@ -1923,23 +1949,36 @@ const handleSubmitData = async (isSubmit: boolean) => {
       gradient: kvPricingData.value,
       gradientModel: gradientModel,
       isSubmit,
-      nodeInstanceId: nodeInstanceId || 0
+      nodeInstanceId: nodeInstanceId || 0,
     }
   try {
     let res: any = {}
-    if (isSubmit) {
-      res = await saveApplyInfo(params)
+    if (['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)) {
+      priceEvaluationStart({
+        ...params,
+        quickQuoteAuditFlowId: state.quickQuoteAuditFlowId
+      })
     } else {
-      res = await priceEvaluationStartSave(params)
+      if (isSubmit) {
+        res = await saveApplyInfo(params)
+      } else {
+        res = await priceEvaluationStartSave(params)
+      }
     }
     if (res.success) {
       ElMessage({
         type: "success",
         message: `提交成功`
       })
-      router.push({
-        path: "/todoCenter/index"
-      })
+      if (['EvalReason_Ffabg', 'EvalReason_Qt'].includes(opinion)) {
+        router.push({
+          path: `/dashboard/index?auditFlowId=${res.auditFlowId}&nodeInstanceId=${nodeInstanceId}`,
+        })
+      } else {
+        router.push({
+          path: "/todoCenter/index"
+        })
+      }
       saveloading.value = false
     }
   } catch (error) {
@@ -2772,22 +2811,10 @@ const changeCode = (v: string, row: any) => {
   row.product = filterData.subDescription
 }
 
-const init = async () => {
-  let query = getQuery()
-  state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
-  state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
-  state.quoteForm.quoteVersion = query.quoteVersion ? query.quoteVersion + "" : ""
-  state.quoteForm.drafter = userInfo.name
-  state.quoteForm.drafterNumber = userInfo.userNumber || "未成功获取"
-  state.quoteForm.draftingCompany = userInfo.userCompany?.name || "未成功获取"
-  state.quoteForm.draftingDepartment = userInfo.userDepartment?.name || "未成功获取"
-  state.taebleLoading = true
-  // 设置单据编号
-  setNumber()
-  try {
-    getProjectCodeOptions()
+const fetchOptions = async () => {
+  getProjectCodeOptions()
     initCountry()
-    let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
+  let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
     state.updateFrequencyOptions = UpdateFrequency.result?.financeDictionaryDetailList
 
     let priceEvalType: any = await getDictionaryAndDetail("PriceEvalType") //核价类型
@@ -2826,22 +2853,15 @@ const init = async () => {
 
     let typeSelect: any = await getDictionaryAndDetail("TypeSelect") //类型
     state.TypeSelectOptions = typeSelect.result.financeDictionaryDetailList
-    console.log(state.TypeSelectOptions, "state.TypeSelectOptions")
+
     let tradeMethodSelect: any = await getDictionaryAndDetail("TradeMethod") //类型
     state.TradeMethodOptions = tradeMethodSelect.result.financeDictionaryDetailList
+}
 
-    let exchangeSelect: any = await getExchangeRate({
-      maxResultCount: 100,
-      skipCount: 0
-    })
-    state.ExchangeSelectOptions = exchangeSelect.result.items
-  } catch (error) {
-    console.log(error)
-  }
-  if (query.auditFlowId) {
-    // 查看
-    let viewDataRes: any = await getPriceEvaluationStartData(query.auditFlowId)
-    if (viewDataRes.result) {
+const handleDealWithData = async () => {
+  console.log(state.quickQuoteAuditFlowId, "state.quoteAuditFlowId111")
+  let viewDataRes: any = await getPriceEvaluationStartData(state.quickQuoteAuditFlowId || auditFlowId)
+  if (viewDataRes.result) {
       isEdit = true
       state.quoteForm = viewDataRes.result
       const sopTime: any = [viewDataRes.result.sopTime]
@@ -2864,6 +2884,7 @@ const init = async () => {
           }, {})
         )
       }
+      if (viewDataRes.result.opinion) state.opinion = viewDataRes.result.opinion
       console.log("第一次渲染: ", moduleTableDataV2.value)
       requireTableData.value = viewDataRes.result.requirement // 要求
       specimenData.value = viewDataRes.result.sample //样品
@@ -2881,22 +2902,57 @@ const init = async () => {
       })
       kvPricingData.value = viewDataRes.result.gradient
       generateCustomTable()
-    }
+  }
+}
 
+const init = async () => {
+  let query = getQuery() || {}
+  state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
+  state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
+  state.quoteForm.quoteVersion = query.quoteVersion ? query.quoteVersion + "" : ""
+  state.quoteForm.drafter = userInfo.name
+  state.quoteForm.drafterNumber = userInfo.userNumber || "未成功获取"
+  state.quoteForm.draftingCompany = userInfo.userCompany?.name || "未成功获取"
+  state.quoteForm.draftingDepartment = userInfo.userDepartment?.name || "未成功获取"
 
+  // 设置单据编号
+  setNumber()
+  try {
+    state.tableLoading = true
+    let exchangeSelect: any = await getExchangeRate({
+      maxResultCount: 100,
+      skipCount: 0
+    })
+    state.ExchangeSelectOptions = exchangeSelect.result.items
+  } catch (error) {
+    console.log(error)
+    state.tableLoading = false
+  }
+  if (auditFlowId || state.quickQuoteAuditFlowId) {
+    console.log(query.auditFlowId, "query.auditFlowId")
+    // 查看
+    await handleDealWithData()
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
-    }, 2000)
+    }, 1000)
   }
   setTimeout(() => {
     isFirstShow.value = true
-  }, 2000)
-  state.taebleLoading = false
+  }, 1000)
+  state.tableLoading = false
+}
+
+const fetchWorkflowOvered = async (filter: string) => {
+  const { result }: any  = await getWorkflowOvered({ filter, skipCount: 0, maxResultCount: 100 }) || {}
+  const { items } = result || []
+  projectOptions.value = items
 }
 
 onMounted(() => {
   init()
+  fetchOptions()
+  fetchWorkflowOvered('')
 })
 
 defineExpose({

@@ -13,15 +13,19 @@
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
+        <el-upload
+          :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+          :on-success="handleBomimportSuccess"
+          show-file-list
+          :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError"
+          v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(data.opinion)"
+        >
+          <el-button type="primary">导入bom成本</el-button>
+        </el-upload>
       </el-row>
       <el-row class="m-2">
         <el-form inline :model="data.form" ref="refForm" :rules="data.rules">
-          <!-- <el-form-item label="项目代码:" prop="projectCode">
-            <el-input v-model="data.form.projectCode" />
-          </el-form-item>
-          <el-form-item label="项目名称:" prop="projectName">
-            <el-input v-model="data.form.projectCode" />
-          </el-form-item> -->
           <el-form-item label="梯度:" prop="gradientId">
             <el-select v-model="data.form.gradientId" placeholder="请选择梯度" @change="initGradientId">
               <el-option v-for="item in data.gradientList" :key="item.id" :label="`${item.gradientValue} ${item.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
@@ -107,7 +111,6 @@ import {
   GetGoTable,
   addPricingPanelTrProgrammeId,
   GetPriceEvaluationTableInputCount,
-  SetPriceEvaluationTableInputCount,
   CreatePriceEvaluationTable,
   GetIsTradeCompliance,
   PriceEvaluationTableDownload,
@@ -115,7 +118,7 @@ import {
 import { getPriceEvaluationTable } from '../../../demandApply/service'
 import getQuery from "@/utils/getQuery"
 import type { UploadProps, UploadUserFile, FormInstance } from "element-plus"
-import { ElMessage, ElMessageBox, ElLoading } from "element-plus"
+import { ElMessage, ElLoading } from "element-plus"
 import debounce from "lodash/debounce"
 import * as echarts from "echarts"
 import router from "@/router"
@@ -131,6 +134,7 @@ import useJump from "@/hook/useJump"
 import SchemeCompare from "@/components/SchemeCompare/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import { formatThousandths } from '@/utils/number'
+import { getPriceEvaluationStartData } from "../../../demandApply/service"
 
 enum upDownEnum {
   "全年",
@@ -170,7 +174,8 @@ const data = reactive<any>({
     projectName: [{ required: true, message: "请输入该值", trigger: "blur" }],
     projectCode: [{ required: true, message: "请输入该值", trigger: "blur" }]
   },
-  priceEvaluationTableInputCount: [] //核价表投入量和年份
+  priceEvaluationTableInputCount: [], //核价表投入量和年份
+  opinion: null,
 })
 
 const filterYearData = computed(() => {
@@ -185,7 +190,6 @@ const filterYearData = computed(() => {
 const getTotal = async () => {
   const { upDown, year } = filterYearData.value
   if (!productId || !auditFlowId || !year) return
-  console.log('运行了111')
   const { result } = await getPriceEvaluationTable({
     InputCount: data.productInputs,
     Year: year,
@@ -217,6 +221,7 @@ const queryGradientList = async () => {
   }
   console.log(res, "[获取梯度]")
 }
+
 const handleFileChange: UploadProps["onChange"] = (file, uploadFiles) => {
   console.log(uploadFiles)
   // fileList.value = [{...file. fileName: file.value.filename}]
@@ -250,8 +255,9 @@ const initGradientId = async () => {
     background: 'rgba(0, 0, 0, 0.7)',
   })
   try {
-    await getGoTableChartData()
     await fetchAllData()
+    await getGoTableChartData()
+
     loading.close()
   } catch {
     loading.close()
@@ -306,25 +312,13 @@ const getPriceEvaluationTableInputCount = async () => {
     result: { items = [] }
   }: any = await GetPriceEvaluationTableInputCount(auditFlowId)
   data.priceEvaluationTableInputCount = items
-  console.log(items, "getPriceEvaluationTableInputCount")
 }
 
 // 初始化下拉项数据
 const fetchOptionsData = async () => {
   await getPricingPanelTimeSelectList()
   await queryGradientList()
-  // getPricingPanelProductSelectList()
 }
-
-// 核价看板-【产品选择】下拉框下拉数据
-// const getPricingPanelProductSelectList = async () => {
-//   try {
-//     const ProductSelectRes: any = await GetPricingPanelProductSelectList({ AuditFlowId: auditFlowId })
-//     data.productOptions = ProductSelectRes?.result?.items
-//   } catch (err: any) {
-//     console.log(err, "[ 获取下拉数据失败 ]")
-//   }
-// }
 
 // 核价看板-[时间选择]下拉框下拉数据
 const getPricingPanelTimeSelectList = async () => {
@@ -489,25 +483,23 @@ const fetchAllData = async () => {
   getPricingPanelProfit()
 }
 
-// 生成核价表
-const handleCreatePriceEvaluation = debounce(async () => {
-  await CreatePriceEvaluationTable(auditFlowId).then((data: any) => {
-    if (data.success) {
-      ElMessage.success("生成成功！")
-    }
-  })
-}, 500)
+const fetchPriceEvaluationStartData = async () => {
+  const { result, success } = await getPriceEvaluationStartData({ auditFlowId })
+  if (success) {
+    data.opinion = result.opinion
+  }
+}
 
-// 设置投入量和年份
-const handleSetPriceEvaluationTableInputCount = debounce(async () => {
-  await SetPriceEvaluationTableInputCount({
-    auditFlowId,
-    modelCountInputCount: data.priceEvaluationTableInputCount.map((item: any) => ({ ...item, modelCountId: item.id }))
-  })
-  ElMessage.success("设置成功！")
-  isHandleCreatePriceEvaluation = false
-  getPriceEvaluationTableInputCount()
-}, 500)
+const handleBomimportSuccess: UploadProps["onSuccess"] = (res: any) => {
+  console.log(res)
+  if (res.success) {
+
+    ElMessage({
+      message: "上传成功",
+      type: "success"
+    })
+  }
+}
 
 defineExpose({
   getFileList: () => fileList.value

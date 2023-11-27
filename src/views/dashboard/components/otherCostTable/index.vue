@@ -3,7 +3,7 @@
     <el-card m="2" header="其他成本" v-loading="loading">
       <otherCostTable :otherCostData="otherCostData" :hideEdit="hideEdit" :onEdit="handleEdit" />
     </el-card>
-    <el-card m="2" v-if="!hideEdit">
+    <el-card m="2">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>

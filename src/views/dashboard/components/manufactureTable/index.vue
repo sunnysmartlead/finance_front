@@ -3,7 +3,7 @@
     <el-card m="2" header="制造成本" v-loading="loading">
       <manufactureTable :manufactureData="manufactureData" :onEdit="handleEdit" :hideEdit="hideEdit" />
     </el-card>
-    <el-card m="2" v-if="!hideEdit">
+    <el-card m="2">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>

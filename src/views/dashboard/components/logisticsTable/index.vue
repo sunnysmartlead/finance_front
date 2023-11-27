@@ -3,7 +3,7 @@
     <el-card m="2" header="物流成本">
       <logisticsTable :logisticsData="logisticsData" :hideEdit="hideEdit" :on-edit="handleEdit" />
     </el-card>
-    <el-card m="2" v-if="!hideEdit">
+    <el-card m="2">
       <template #header>
         <el-row justify-between>
           <span>修改项：</span>

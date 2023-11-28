@@ -10,7 +10,7 @@
         <el-row :gutter="20">
           <el-col :span="24">
             <el-form-item label="引用核报价流程:" prop="quoteAuditFlowId"
-              v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
+              v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)">
               <el-select v-model="state.quoteAuditFlowId" remote-show-suffix reserve-keyword filterable
                 placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px" @change="init">
                 <el-option v-for="item in projectOptions" :disabled="!opinion" :key="item.id" :label="`${item.title} （流程号：${item.id}）`"
@@ -492,25 +492,25 @@
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.annualRebateRequirements"
-                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
+                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.oneTimeDiscountRate"
-                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
+                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.commissionRate"
-                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
+                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
         </el-table>
         <el-form-item label="是否有NRE费用分摊至模组:" prop="isHasNre">
           <el-select v-model="state.quoteForm.isHasNre" placeholder="Select"
-            :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
+            :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)">
             <el-option :value="true" label="是" />
             <el-option :value="false" label="否" />
           </el-select>
@@ -1030,11 +1030,11 @@ const props = defineProps({
 console.log('', '')
 
 const notEdit = computed(() => {
-  return props.isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion) || right === '1'
+  return props.isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion) || right === '1'
 })
 
 const isQuote = computed(() => {
-  return props.isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)
+  return props.isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)
 })
 
 //客户目标价
@@ -1508,7 +1508,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
   const params = {
     ...quoteForm,
     // comment,
-    opinion,
+    opinion: state.opinion,
     gradient: kvPricingData.value,
     gradientModel: gradientModel,
     isSubmit,
@@ -1516,7 +1516,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
   }
   try {
     let res: any = {}
-    if (['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)) {
+    if (['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)) {
       res = await priceEvaluationStart({
         ...params,
         quoteAuditFlowId: state.quoteAuditFlowId

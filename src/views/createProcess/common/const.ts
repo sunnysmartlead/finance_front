@@ -42,11 +42,11 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "非方案变更",
-        id: "EvalReason_Ffabg"//
+        id: "EvalReason_Ffabg"
       },
       {
         name: "其他引用流程",
-        id: "EvalReason_Qt" //
+        id: "EvalReason_Qtyylc"
       }
     ]
   },
@@ -55,15 +55,15 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "售后件",
-        id: "" //EvalReason_Shj
+        id: "EvalReason_Shj"
       },
       {
         name: "本年年降",
-        id: ""//EvalReason_Nj
+        id: "EvalReason_Bnnj"
       },
       {
         name: "其他上传流程",
-        id: ""//EvalReason_Qtsclc
+        id: "EvalReason_Qtsclc"
       }
     ]
   },
@@ -72,48 +72,12 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "推广样品",
-        id: ""// EvalReason_Yp
+        id: "EvalReason_Tgyp"
       },
       {
         name: "其他零星报价",
-        id: ""// EvalReason_Qtlxbj
+        id: "EvalReason_Qtlxbj"
       }
     ]
   }
-  // {
-  //   name: "样品",
-  //   id: "EvalReason_Yp"
-  // },
-  // {
-  //   name: "非方案变更",
-  //   id: "EvalReason_Ffabg"
-  // },
-  // {
-  //   name: "年降",
-  //   id: "EvalReason_Nj"
-  // },
-  // {
-  //   name: "售后件",
-  //   id: "EvalReason_Shj"
-  // },
-  // {
-  //   name: "版本1",
-  //   id: "EvalReason_Bb1"
-  // },
-  // {
-  //   name: "方案变更",
-  //   id: "EvalReason_Fabg"
-  // },
-  // {
-  //   name: "其他",
-  //   id: "EvalReason_Qt"
-  // },
-  // {
-  //   name: "节点成本预估",
-  //   id: "EvalReason_Jdcbpg"
-  // },
-  // {
-  //   name: "项目变更",
-  //   id: "EvalReason_Xmbg"
-  // }
 ]

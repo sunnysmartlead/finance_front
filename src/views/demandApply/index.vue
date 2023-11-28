@@ -1521,36 +1521,21 @@ const handleSubmitData = async (isSubmit: boolean) => {
         ...params,
         quoteAuditFlowId: state.quoteAuditFlowId
       })
-      ElMessage({
-        type: "success",
-        message: `${isSubmit ? '提交' : '保存'}成功！`
-      })
-      if (isSubmit) {
-        router.push({
-          path: `/dashboard/index?auditFlowId=${res.auditFlowId}`,
-          query: {
-            auditFlowId: res.auditFlowId,
-          }
-        })
-      }
-      saveloading.value = false
     } else {
       if (isSubmit) {
         res = await saveApplyInfo(params)
       } else {
         res = await priceEvaluationStartSave(params)
       }
-      ElMessage({
-        type: "success",
-        message: `${isSubmit ? '提交' : '保存'}成功！`
-      })
-      if (isSubmit) {
-        router.push({
-          path: "/todoCenter/index"
-        })
-      }
       saveloading.value = false
     }
+    ElMessage({
+      type: "success",
+      message: `${isSubmit ? '提交' : '保存'}成功！`
+    })
+    router.push({
+      path: "/todoCenter/index"
+    })
   } catch (error) {
     console.log(error, "[参数错误]")
     saveloading.value = false

@@ -2475,7 +2475,9 @@ const init = async (tempAuditFlowId?: any) => {
       requireTableData.value = viewDataRes.result.requirement // 要求
       specimenData.value = viewDataRes.result.sample //样品
       customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价
-      state.opinion = viewDataRes.result.opinion
+      if (viewDataRes.result.opinion) {
+        state.opinion = viewDataRes.result.opinion
+      }
       state.quoteAuditFlowId = viewDataRes.result.quickQuoteAuditFlowId
       fileList.value = viewDataRes.result.files.map((item: any) => {
         return {

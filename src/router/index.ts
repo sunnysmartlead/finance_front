@@ -413,14 +413,6 @@ export const constantRoutes: Array<RouteRecordRaw> = [
           title: "核价表NRE"
         }
       },
-      {
-        path: "/nre/fastNrePricelist",
-        component: () => import("@/views/nre/fastNrePricelist.vue"),
-        name: "fastNrePricelist",
-        meta: {
-          title: "快速核价表NRE"
-        }
-      }
       // {
       //   path: "/nre/engineeringDepartment",
       //   component: () => import("@/views/nre/engineeringDepartment.vue"),

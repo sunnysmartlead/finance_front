@@ -1527,7 +1527,10 @@ const handleSubmitData = async (isSubmit: boolean) => {
       })
       if (isSubmit) {
         router.push({
-          path: `/dashboard/index?auditFlowId=${res.auditFlowId}&nodeInstanceId=${nodeInstanceId}`,
+          path: `/dashboard/index?auditFlowId=${res.auditFlowId}`,
+          query: {
+            auditFlowId: res.auditFlowId,
+          }
         })
       }
       saveloading.value = false

@@ -4,6 +4,15 @@
     <el-card>
       <!-- 财务中标确认才会存在流程组件 -->
       <ProcessVertifyBox :onSubmit="handleSubmit" v-if="data.pageType === 3" />
+      <!-- 财务中标确认 -->
+      <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 3">
+        <el-button-group>
+          <el-button type="primary" @click="cwSave(true)" v-havedone>财务中标确认</el-button>
+          <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认拒绝</el-button>
+          <!-- <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认提交</el-button>
+          <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认提交拒绝</el-button> -->
+        </el-button-group>
+      </el-row>
       <div v-if="data.pageType !== 1">
         <h4 mb-20px>已保存的方案版本</h4>
         <div mb-20px>
@@ -265,20 +274,11 @@
           <el-table-column prop="salesRevenue" label="销售收入" />
         </el-table>
       </el-card>
-      <!-- 总经理审批 -->
-      <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 1">
-        <el-button type="primary" @click="save" v-havedone>保存</el-button>
-      </el-row>
-      <!-- 财务中标确认 -->
-      <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 3">
-        <el-button-group>
-          <el-button type="primary" @click="cwSave(true)" v-havedone>财务中标确认</el-button>
-          <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认拒绝</el-button>
-          <!-- <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认提交</el-button>
-          <el-button type="primary" @click="cwSave(false)" v-havedone>财务中标确认提交拒绝</el-button> -->
-        </el-button-group>
-      </el-row>
     </el-card>
+    <!-- 总经理审批 -->
+    <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 1">
+      <el-button type="primary" @click="save" v-havedone>保存</el-button>
+    </el-row>
     <el-dialog v-model="dialogVisible" title="3D爆炸图下载(请选择零件)" width="40%" align-center>
       <el-space wrap>
         <div v-for="prop in ProductByAuditFlowId" :key="prop">

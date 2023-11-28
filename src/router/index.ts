@@ -871,7 +871,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "工序工时",
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -944,7 +944,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/emc.vue"),
         name: "emc",
         meta: {
-          title: "EMC实验费",
+          title: "EMC实验库",
           roles: ["EMC实验库管理员"]
         }
       },
@@ -1269,14 +1269,16 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     path: "/financeDepartment",
     redirect: "/financeDepartment/selfBuilt",
     component: Layout,
+    meta: {
+      roles: ["财务部-财务参数录入员"]
+    },
     children: [
       {
         path: "selfBuilt",
         component: () => import("@/views/financeDepartment/selfBuiltTable.vue"),
         name: "selfBuilt",
         meta: {
-          title: "自建项目表",
-          roles: ["财务部-财务参数录入员"]
+          title: "自建项目表"
         }
       }
     ]

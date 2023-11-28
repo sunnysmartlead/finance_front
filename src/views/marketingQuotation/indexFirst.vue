@@ -153,12 +153,14 @@ import {
   PostQuotationFeedbackManagerOneSave
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
-
+import useJump from "@/hook/useJump"
+const { closeSelectedTag } = useJump()
 // import { ElMessageBox } from "element-plus"
 
 const router = useRouter()
 const route = useRoute()
 const { auditFlowId, nodeInstanceId } = getQuery()
+
 /**
  * 数据部分
  */
@@ -454,7 +456,9 @@ const refuseConfirm = async () => {
       nodeInstanceId,
       financeDictionaryDetailId: refuseReason.value
     })
+    ElMessage.success("操作成功")
     dialogVisibleR.value = false
+    closeSelectedTag(route.path)
   } else {
     ElMessage.warning("退回原因必填！")
   }
@@ -474,6 +478,7 @@ const agreeConfirm = async () => {
   })
   if (res.success) {
     ElMessage.success("操作成功")
+    closeSelectedTag(route.path)
     dialogVisible.value = false
   }
 }

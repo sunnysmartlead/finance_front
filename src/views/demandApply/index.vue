@@ -9,11 +9,11 @@
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="普通核报价流程:" prop="quoteAuditFlowId"
+            <el-form-item label="引用核报价流程:" prop="quoteAuditFlowId"
               v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
               <el-select v-model="state.quoteAuditFlowId" remote-show-suffix reserve-keyword filterable
                 placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px" @change="init">
-                <el-option v-for="item in projectOptions" :key="item.id" :label="`${item.title} （流程号：${item.id}）`"
+                <el-option v-for="item in projectOptions" :disabled="!opinion" :key="item.id" :label="`${item.title} （流程号：${item.id}）`"
                   :value="item.id" />
               </el-select>
             </el-form-item>
@@ -297,9 +297,9 @@
             <el-row justify="space-between" align="middle">
               <h6 class="mx-1" size="large">{{ item[0].carModel }} - 模组数量K</h6>
               <div>
-                <el-button type="primary" @click="addProduct(Findex)" v-havedone v-if="!isDisabled">新增模组</el-button>
+                <el-button type="primary" @click="addProduct(Findex)" v-havedone v-if="!isDisabled" :disabled="notEdit">新增模组</el-button>
                 <el-button type="primary" @click="syncModuleTableDataV2(Findex)" v-havedone
-                  v-if="!isDisabled || (right === '1' && Findex === 0)">一键同步</el-button>
+                  v-if="!isDisabled || (right === '1' && Findex === 0)" :disabled="notEdit">一键同步</el-button>
               </div>
             </el-row>
             <el-table :data="item" style="width: 100%" border>
@@ -377,8 +377,8 @@
                   {{ price(row) }}
                 </template>
               </el-table-column>
-              <el-table-column label="操作" fixed="right" width="85">
-                <template #default="{ $index }" v-if="!isDisabled">
+              <el-table-column label="操作" fixed="right" width="85" v-if="!notEdit">
+                <template #default="{ $index }" >
                   <el-button @click="deleteProduct(Findex, $index)" type="danger"
                     :disabled="moduleTableDataV2[Findex].length === 1" v-havedone>删除</el-button>
                 </template>
@@ -432,12 +432,12 @@
             <el-table-column prop="displayGradientValue" label="梯度" width="250">
               <template #default="{ row }">
                 <el-input-number @mousewheel.native.prevent controls-position="right" v-model="row.displayGradientValue"
-                  :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
+                  :disabled="isDisabled || !state.quoteForm.isHasGradient || notEdit" :min="0" />
               </template>
             </el-table-column>
             <el-table-column prop="gradientValue" label="系统取梯度" width="250" />
-            <el-table-column label="操作" fixed="right">
-              <template #default="{ $index }" v-if="!isDisabled">
+            <el-table-column label="操作" fixed="right"  v-if="!notEdit">
+              <template #default="{ $index }">
                 <el-button type="danger" :disabled="kvPricingData.length === 1"
                   @click="handleChangekvPricingData('delete', $index)" v-havedone>
                   删除
@@ -1017,7 +1017,7 @@ import dayjs from "dayjs"
 import { CountryTypeEnum } from "./common/util"
 import { debounce } from "lodash"
 
-let { right, opinion, auditFlowId } = getQuery()
+let { right, opinion } = getQuery()
 
 //整个页面是否可以编辑
 const props = defineProps({
@@ -2432,56 +2432,6 @@ const fetchOptions = async () => {
   state.TradeMethodOptions = tradeMethodSelect.result.financeDictionaryDetailList
 }
 
-const handleDealWithData = async () => {
-  isFirstShow.value = true
-  console.log(state.quoteAuditFlowId, "state.quoteAuditFlowId111")
-  let viewDataRes: any = await getPriceEvaluationStartData(state.quoteAuditFlowId || auditFlowId)
-  if (viewDataRes.result) {
-    isEdit = true
-    state.quoteForm = viewDataRes.result
-    const sopTime: any = [viewDataRes.result.sopTime]
-    state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
-    pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
-    yearChange(viewDataRes.result.projectCycle)
-    viewDataRes.result.projectCode && changeProjectName(viewDataRes.result.projectCode)
-    productTableData.value = viewDataRes.result.productInformation
-    shareCountTable.value = viewDataRes.result.shareCount
-    gradientModelTable.value = viewDataRes.result.gradientModel
-    if (viewDataRes.result.carModelCount?.length) {
-      moduleTableDataV2.value = Object.values(
-        viewDataRes.result.carModelCount?.reduce((result: any, item: any) => {
-          if (!result[item.carModel]) {
-            result[item.carModel] = []
-          }
-          result[item.carModel].push(item)
-          return result
-        }, {})
-      )
-    }
-    if (viewDataRes.result.opinion) state.opinion = viewDataRes.result.opinion
-    console.log("第一次渲染: ", moduleTableDataV2.value)
-    requireTableData.value = viewDataRes.result.requirement // 要求
-    specimenData.value = viewDataRes.result.sample //样品
-    customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价
-    fileList.value = viewDataRes.result.files.map((item: any) => {
-      return {
-        name: item.fileName,
-        // url: item.fileId
-        response: {
-          result: {
-            fileId: item.fileId
-          }
-        }
-      }
-    })
-    kvPricingData.value = viewDataRes.result.gradient
-    generateCustomTable()
-  }
-  setTimeout(() => {
-    isFirstShow.value = true
-  }, 2000)
-}
-
 const init = async (tempAuditFlowId?: any) => {
   let query = getQuery() || {}
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
@@ -2525,6 +2475,8 @@ const init = async (tempAuditFlowId?: any) => {
       requireTableData.value = viewDataRes.result.requirement // 要求
       specimenData.value = viewDataRes.result.sample //样品
       customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价
+      state.opinion = viewDataRes.result.opinion
+      state.quoteAuditFlowId = viewDataRes.result.quickQuoteAuditFlowId
       fileList.value = viewDataRes.result.files.map((item: any) => {
         return {
           name: item.fileName,

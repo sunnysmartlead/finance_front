@@ -585,7 +585,7 @@ const router = useRouter()
  */
 let { auditFlowId, nodeInstanceId } = getQuery()
 let isSave = false
-let versionMapSubmit: any = {}
+let versionMapSubmit: any = reactive({})
 const version = ref(1)
 const confirmText = ref("")
 const productList = ref<any[]>([])

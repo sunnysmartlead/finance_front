@@ -1,5 +1,5 @@
 <template>
-  <div class="demand-apply" v-loading="state.taebleLoading">
+  <div class="demand-apply" v-loading="state.tableLoading">
     <el-row justify="end" v-if="!isDisabled" v-havedone>
       <el-button @click="save(refForm, false)" type="primary">保存</el-button>
       <el-button @click="save(refForm, true)" type="primary">提交</el-button>
@@ -9,8 +9,27 @@
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="24">
+            <el-form-item label="普通核报价流程:" prop="quoteAuditFlowId"
+              v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
+              <el-select v-model="state.quoteAuditFlowId" remote-show-suffix reserve-keyword filterable
+                placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px"
+                @change="init">
+                <el-option v-for="item in projectOptions" :key="item.id" :label="item.title" :value="item.id" />
+              </el-select>
+            </el-form-item>
+            <!-- <el-upload
+              :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+              :on-success="handleBomimportSuccess"
+              show-file-list
+              :on-progress="handleGetUploadProgress"
+              :on-error="handleUploadError"
+            >
+              <el-button type="primary">导入bom成本</el-button>
+            </el-upload> -->
+          </el-col>
+          <el-col :span="24">
             <el-form-item label="标题:" prop="title">
-              <el-input v-model="state.quoteForm.title" :disabled="isDisabled || right === '1'">
+              <el-input v-model="state.quoteForm.title" :disabled="notEdit">
                 <template #append v-if="!isDisabled">
                   <el-button @click="generateTitle" v-havedone>自动生成</el-button>
                 </template>
@@ -54,28 +73,17 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="项目代码:" prop="projectCode">
-              <el-select
-                v-model="state.quoteForm.projectCode"
-                remote-show-suffix
-                reserve-keyword
-                filterable
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-                remote
-                :remote-method="getProjectCodeOptions"
-                @change="changeProjectName"
-              >
+              <el-select v-model="state.quoteForm.projectCode" remote-show-suffix reserve-keyword filterable
+                placeholder="Select" :disabled="notEdit" remote :remote-method="getProjectCodeOptions"
+                @change="changeProjectName">
                 <el-option v-for="item in projectCodeOptions" :key="item.code" :label="item.code" :value="item.code" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目名称:" prop="projectName">
-              <el-input
-                v-model="state.quoteForm.projectName"
-                placeholder="与PLM系统保持一致"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input v-model="state.quoteForm.projectName" placeholder="与PLM系统保持一致"
+                :disabled="notEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -85,52 +93,32 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="客户名称:" prop="customerName">
-              <el-input
-                v-model="state.quoteForm.customerName"
-                @change="generateTitle"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input v-model="state.quoteForm.customerName" @change="generateTitle"
+                :disabled="notEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="客户类别:" prop="customerNature">
-              <el-select
-                v-model="state.quoteForm.customerNature"
-                placeholder="客户类别"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.customerNatureOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.customerNature" placeholder="客户类别"
+                :disabled="notEdit">
+                <el-option v-for="item in state.customerNatureOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="终端名称:" prop="terminalName">
-              <el-input
-                v-model="state.quoteForm.terminalName"
-                placeholder="终端名称"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input v-model="state.quoteForm.terminalName" placeholder="终端名称"
+                :disabled="notEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="终端类别:" prop="terminalNature">
-              <el-select
-                v-model="state.quoteForm.terminalNature"
-                placeholder="终端类别"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.terminalNatureOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.terminalNature" placeholder="终端类别"
+                :disabled="notEdit">
+                <el-option v-for="item in state.terminalNatureOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -150,81 +138,47 @@
           </el-col>         -->
           <el-col :span="6">
             <el-form-item label="sop时间:" prop="sopTime">
-              <el-date-picker
-                type="year"
-                placeholder="Pick a year"
-                v-model="state.quoteForm.sopTime"
-                value-format="YYYY"
-                :disabled="isDisabled || right === '1'"
-                @change="yearChange"
-                :disabled-date="disabledDate"
-              />
+              <el-date-picker type="year" placeholder="Pick a year" v-model="state.quoteForm.sopTime" value-format="YYYY"
+                :disabled="notEdit" @change="yearChange" :disabled-date="disabledDate" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="价格有效期:" prop="updateFrequency">
-              <el-select
-                v-model="state.quoteForm.updateFrequency"
-                placeholder="价格有效期"
-                :disabled="isDisabled || right === '1'"
-                @change="yearChange(0)"
-              >
-                <el-option
-                  v-for="item in state.updateFrequencyOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.updateFrequency" placeholder="价格有效期"
+                :disabled="notEdit" @change="yearChange(0)">
+                <el-option v-for="item in state.updateFrequencyOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="项目周期:" prop="projectCycle">
-              <el-input-number @mousewheel.native.prevent
-                v-model="state.quoteForm.projectCycle"
-                @change="yearChange"
-                :min="0"
-                :disabled="isDisabled || right === '1'"
-                :max="8"
-              />
+              <el-input-number @mousewheel.native.prevent v-model="state.quoteForm.projectCycle" @change="yearChange"
+                :min="0" :disabled="notEdit" :max="8" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-row :span="15">
             <el-form-item label="核价类型:" prop="updateFrequency">
-              <el-select
-                v-model="state.quoteForm.priceEvalType"
-                placeholder="核价类型"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.priceEvalType" placeholder="核价类型"
+                :disabled="notEdit">
                 <!-- <el-option :value="0" label="量产品核价" />
                 <el-option :value="1" label="样品核价" /> -->
-                <el-option
-                  v-for="item in state.valenceTypeOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+                <el-option v-for="item in state.valenceTypeOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
-            <el-row
-              :span="7"
-              style="color: red; margin: 10px"
-              v-if="state.quoteForm.priceEvalType == 'PriceEvalType_Sample'"
-            >
-              提示:样品核价按量产品核价进行,走量输入量产品走量</el-row
-            >
+            <el-row :span="7" style="color: red; margin: 10px"
+              v-if="state.quoteForm.priceEvalType == 'PriceEvalType_Sample'">
+              提示:样品核价按量产品核价进行,走量输入量产品走量</el-row>
           </el-row>
         </el-row>
         <el-row v-if="state.quoteForm.priceEvalType == 'PriceEvalType_Quantity'">
           <el-col :span="6">
             <el-form-item label="是否包含样品核价:" prop="updateFrequency">
-              <el-select
-                v-model="state.quoteForm.isHasSample"
-                placeholder="是否包含样品核价"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.isHasSample" placeholder="是否包含样品核价"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -233,39 +187,31 @@
         </el-row>
         <div v-if="state.quoteForm.isHasSample || state.quoteForm.priceEvalType == 'PriceEvalType_Sample'">
           <div class="demand-apply__btn-container" v-if="!isDisabled">
-            <el-button  type="primary" class="demand-apply__add-btn" @click="addSpecimen" v-havedone>新增</el-button>
+            <el-button type="primary" class="demand-apply__add-btn" @click="addSpecimen" v-havedone>新增</el-button>
           </div>
           <el-row>
             <el-table :data="specimenData" border style="width: 600px">
               <el-table-column prop="name" label="样品阶段" width="250">
                 <template #default="{ row }">
-                  <el-select v-model="row.name" placeholder="样品阶段" :disabled="isDisabled || right === '1'">
+                  <el-select v-model="row.name" placeholder="样品阶段" :disabled="notEdit">
                     <!-- <el-option :value="0" label="A样" />
                     <el-option :value="1" label="B样" />
                     <el-option :value="2" label="C样" />
                     <el-option :value="3" label="其他" /> -->
-                    <el-option
-                      v-for="item in state.isSpecimenOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                    <el-option v-for="item in state.isSpecimenOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
               </el-table-column>
               <el-table-column prop="pcs" label="需求量(pcs)" width="250">
                 <template #default="{ row }">
-                  <el-input v-model="row.pcs" :disabled="isDisabled || right === '1'" />
+                  <el-input v-model="row.pcs" :disabled="notEdit" />
                 </template>
               </el-table-column>
               <el-table-column label="操作" fixed="right">
                 <template #default="{ $index }" v-if="!isDisabled">
-                  <el-button
-                    @click="deleteSpecimen($index)"
-                    type="danger"
-                    :disabled="specimenData.length === 1"
-                    v-havedone
-                  >
+                  <el-button @click="deleteSpecimen($index)" type="danger" :disabled="specimenData.length === 1"
+                    v-havedone>
                     删除
                   </el-button>
                 </template>
@@ -277,35 +223,24 @@
         <el-card header="项目走量">
           <el-row justify="space-between" align="middle" style="margin: 10px 0px">
             <h6 style="margin: 0px">客户输入终端走量K（台）</h6>
-            <el-button type="primary" @click="addPCS" :disabled="isDisabled || right === '1'" v-havedone
-              >新增车型</el-button
-            >
+            <el-button type="primary" @click="addPCS" :disabled="notEdit" v-havedone>新增车型</el-button>
           </el-row>
           <el-table :data="pcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
             <el-table-column label="车厂" width="180" fixed="left">
               <template #default="{ row }">
-                <el-input v-model="row.carFactory" :disabled="isDisabled || right === '1'" />
+                <el-input v-model="row.carFactory" :disabled="notEdit" />
               </template>
             </el-table-column>
             <el-table-column label="车型" width="180" fixed="left">
               <template #default="{ row }">
-                <el-input v-model="row.carModel" :disabled="isDisabled || right === '1'" />
+                <el-input v-model="row.carModel" :disabled="notEdit" />
               </template>
             </el-table-column>
-            <el-table-column
-              v-for="(year, index) in state.yearCols"
-              :label="year + yearNote(index)"
-              :key="`pcsTableData-${year}-${index}`"
-              width="175"
-              :prop="`pcsYearList[${index}].quantity`"
-            >
+            <el-table-column v-for="(year, index) in state.yearCols" :label="year + yearNote(index)"
+              :key="`pcsTableData-${year}-${index}`" width="175" :prop="`pcsYearList[${index}].quantity`">
               <template #default="{ row }">
-                <el-input-number @mousewheel.native.prevent
-                  controls-position="right"
-                  v-model="row.pcsYearList[index].quantity"
-                  :disabled="isDisabled || right === '1'"
-                  :min="0"
-                />
+                <el-input-number @mousewheel.native.prevent controls-position="right"
+                  v-model="row.pcsYearList[index].quantity" :disabled="notEdit" :min="0" />
               </template>
             </el-table-column>
             <el-table-column prop="rowSum" label="合计">
@@ -327,33 +262,23 @@
               <h6 style="margin: 0px">内部评估后终端走量K（台)</h6>
             </el-form-item>
             <el-form-item label="系数K">
-              <el-input
-                type="number"
-                min="0"
-                v-model="state.quoteForm.kValue"
-                placeholder="手工录入"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input type="number" min="0" v-model="state.quoteForm.kValue" placeholder="手工录入"
+                :disabled="notEdit" />
             </el-form-item>
           </el-form>
           <el-table :data="interiorPcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
             <el-table-column label="车厂" width="180" fixed="left">
               <template #default="{ row }">
-                <el-input v-model="row.carFactory" :disabled="isDisabled || right === '1'" />
+                <el-input v-model="row.carFactory" :disabled="notEdit" />
               </template>
             </el-table-column>
             <el-table-column label="车型" width="180" fixed="left">
               <template #default="{ row }">
-                <el-input v-model="row.carModel" :disabled="isDisabled || right === '1'" />
+                <el-input v-model="row.carModel" :disabled="notEdit" />
               </template>
             </el-table-column>
-            <el-table-column
-              :label="year + yearNote(index)"
-              v-for="(year, index) in state.yearCols"
-              :key="`interiorPcsTableData-${year}-${index}`"
-              width="150"
-              :prop="`pcsYearList[${index}].quantity`"
-            >
+            <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
+              :key="`interiorPcsTableData-${year}-${index}`" width="150" :prop="`pcsYearList[${index}].quantity`">
               <template #default="{ row }">
                 {{ formatThousandths(null, null, row.pcsYearList?.[index]?.quantity) }}
                 <!-- <el-input v-model="row.pcsYearList[index].quantity" @change="pcsYearQuantitySum(row, index)" /> -->
@@ -381,117 +306,76 @@
               <h6 class="mx-1" size="large">{{ item[0].carModel }} - 模组数量K</h6>
               <div>
                 <el-button type="primary" @click="addProduct(Findex)" v-havedone v-if="!isDisabled">新增模组</el-button>
-                <el-button
-                  type="primary"
-                  @click="syncModuleTableDataV2(Findex)"
-                  v-havedone
-                  v-if="!isDisabled || (right === '1' && Findex === 0)"
-                  >一键同步</el-button
-                >
+                <el-button type="primary" @click="syncModuleTableDataV2(Findex)" v-havedone
+                  v-if="!isDisabled || (right === '1' && Findex === 0)">一键同步</el-button>
               </div>
             </el-row>
             <el-table :data="item" style="width: 100%" border>
               <el-table-column type="index" width="80" label="序号" />
               <el-table-column label="客户零件号" width="180">
                 <template #default="{ row }">
-                  <el-input
-                    v-model="row.partNumber"
-                    placeholder="若没有，填写 /"
-                    :disabled="isDisabled || right === '1'"
-                  />
+                  <el-input v-model="row.partNumber" placeholder="若没有，填写 /" :disabled="notEdit" />
                 </template>
               </el-table-column>
               <el-table-column label="子项目代码" width="180">
                 <template #default="{ row }">
-                  <el-select
-                    v-model="row.code"
-                    placeholder="Select"
-                    :disabled="isDisabled || right === '1'"
-                    @change="(v) => changeCode(v, row)"
-                  >
-                    <el-option
-                      v-for="item in projectSubCodeOptions"
-                      :key="item.subCode"
-                      :label="item.subCode"
-                      :value="item.subCode"
-                    />
+                  <el-select v-model="row.code" placeholder="Select" :disabled="notEdit"
+                    @change="(v) => changeCode(v, row)">
+                    <el-option v-for="item in projectSubCodeOptions" :key="item.subCode" :label="item.subCode"
+                      :value="item.subCode" />
                   </el-select>
                 </template>
               </el-table-column>
               <el-table-column label="产品名称" width="180">
                 <template #default="{ row }">
-                  <el-input v-model="row.product" :disabled="isDisabled || right === '1'" @change="productChange" />
+                  <el-input v-model="row.product" :disabled="notEdit" @change="productChange" />
                 </template>
               </el-table-column>
               <el-table-column label="产品大类" width="180">
                 <template #default="{ row }">
-                  <el-select v-model="row.productType" placeholder="产品大类" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.productTypeOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.productType" placeholder="产品大类" :disabled="notEdit">
+                    <el-option v-for="item in state.productTypeOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
               </el-table-column>
               <el-table-column label="像素" width="180">
                 <template #default="{ row }">
-                  <el-input v-model="row.pixel" placeholder="像素" :disabled="isDisabled || right === '1'" />
+                  <el-input v-model="row.pixel" placeholder="像素" :disabled="notEdit" />
                 </template>
               </el-table-column>
               <el-table-column label="我司角色" width="180">
                 <template #default="{ row }">
-                  <el-select v-model="row.ourRole" placeholder="我司角色" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.roleOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.ourRole" placeholder="我司角色" :disabled="notEdit">
+                    <el-option v-for="item in state.roleOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
               </el-table-column>
               <el-table-column label="市场份额" width="180">
                 <template #default="{ row }">
-                  <el-input
-                    v-model="row.marketShare"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                    type="number"
-                  >
+                  <el-input v-model="row.marketShare" oninput="value=value.replace(/[^0-9.]/g,'')"
+                    :disabled="notEdit" type="number">
                     <template #append>%</template>
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column label="模组搭载率" width="180">
                 <template #default="{ row }">
-                  <el-input
-                    v-model="row.moduleCarryingRate"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                    type="number"
-                  >
+                  <el-input v-model="row.moduleCarryingRate" oninput="value=value.replace(/[^0-9.]/g,'')"
+                    :disabled="notEdit" type="number">
                     <template #append>%</template>
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column label="单车产品数量" width="180">
                 <template #default="{ row }">
-                  <el-input
-                    v-model="row.singleCarProductsQuantity"
-                    oninput="value=value.replace(/[^\d]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  />
+                  <el-input v-model="row.singleCarProductsQuantity" oninput="value=value.replace(/[^\d]/g,'')"
+                    :disabled="notEdit" />
                 </template>
               </el-table-column>
-              <el-table-column
-                :label="year + yearNote(index)"
-                v-for="(year, index) in state.yearCols"
-                :key="`${Findex}-${year}-${index}`"
-                width="180"
-                :prop="`modelCountYearList.${index}.quantity`"
-              >
+              <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
+                :key="`${Findex}-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`">
                 <template #default="{ row }">
                   {{ formatThousandths(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
@@ -503,13 +387,8 @@
               </el-table-column>
               <el-table-column label="操作" fixed="right" width="85">
                 <template #default="{ $index }" v-if="!isDisabled">
-                  <el-button
-                    @click="deleteProduct(Findex, $index)"
-                    type="danger"
-                    :disabled="moduleTableDataV2[Findex].length === 1"
-                    v-havedone
-                    >删除</el-button
-                  >
+                  <el-button @click="deleteProduct(Findex, $index)" type="danger"
+                    :disabled="moduleTableDataV2[Findex].length === 1" v-havedone>删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -522,12 +401,8 @@
             <el-table-column label="产品大类" width="180">
               <template #default="{ row }">
                 <el-select v-model="row.productType" placeholder="产品大类" disabled>
-                  <el-option
-                    v-for="item in state.productTypeOptions"
-                    :key="item.id"
-                    :label="item.displayName"
-                    :value="item.id"
-                  />
+                  <el-option v-for="item in state.productTypeOptions" :key="item.id" :label="item.displayName"
+                    :value="item.id" />
                 </el-select>
               </template>
             </el-table-column>
@@ -535,71 +410,45 @@
             <el-table-column label="我司角色" prop="ourRole" width="180">
               <template #default="{ row }">
                 <el-select v-model="row.ourRole" multiple placeholder="我司角色" disabled>
-                  <el-option
-                    v-for="item in state.roleOptions"
-                    :key="item.id"
-                    :label="item.displayName"
-                    :value="item.id"
-                  />
+                  <el-option v-for="item in state.roleOptions" :key="item.id" :label="item.displayName"
+                    :value="item.id" />
                 </el-select>
               </template>
             </el-table-column>
             <!-- <el-table-column label="市场份额" prop="marketShare" width="180" />
             <el-table-column label="模组搭载率" prop="moduleCarryingRate" width="180" />
             <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" /> -->
-            <el-table-column
-              :label="year + yearNote(index)"
-              v-for="(year, index) in state.yearCols"
-              :key="`moduleTableTotal-${year}-${index}`"
-              width="180"
-              :prop="`modelCountYearList.${index}.quantity`"
-              :formatter="formatThousandths"
-            />
+            <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
+              :key="`moduleTableTotal-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`"
+              :formatter="formatThousandths" />
             <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="formatThousandths" />
           </el-table>
           <h6 />
           <el-form-item label="是否分梯度核价：">
-            <el-select
-              v-model="state.quoteForm.isHasGradient"
-              placeholder="是否分梯度核价"
-              :disabled="isDisabled || right === '1'"
-            >
+            <el-select v-model="state.quoteForm.isHasGradient" placeholder="是否分梯度核价"
+              :disabled="notEdit">
               <el-option :value="true" label="是" />
               <el-option :value="false" label="否" />
             </el-select>
           </el-form-item>
           <el-row justify="end" v-if="state.quoteForm.isHasGradient">
-            <el-button
-              type="primary"
-              :disabled="isDisabled || right === '1'"
-              @click="handleChangekvPricingData('add')"
-              v-havedone
-              >新增梯度</el-button
-            >
+            <el-button type="primary" :disabled="notEdit" @click="handleChangekvPricingData('add')"
+              v-havedone>新增梯度</el-button>
           </el-row>
           <h6 />
           <el-table :data="kvPricingData" border style="width: 600px">
             <el-table-column type="index" label="梯度序号" width="100" />
             <el-table-column prop="displayGradientValue" label="梯度" width="250">
               <template #default="{ row }">
-                <el-input-number
-                  @mousewheel.native.prevent
-                  controls-position="right"
-                  v-model="row.displayGradientValue"
-                  :disabled="isDisabled || !state.quoteForm.isHasGradient"
-                  :min="0"
-                />
+                <el-input-number @mousewheel.native.prevent controls-position="right" v-model="row.displayGradientValue"
+                  :disabled="isDisabled || !state.quoteForm.isHasGradient" :min="0" />
               </template>
             </el-table-column>
             <el-table-column prop="gradientValue" label="系统取梯度" width="250" />
             <el-table-column label="操作" fixed="right">
               <template #default="{ $index }" v-if="!isDisabled">
-                <el-button
-                  type="danger"
-                  :disabled="kvPricingData.length === 1"
-                  @click="handleChangekvPricingData('delete', $index)"
-                  v-havedone
-                >
+                <el-button type="danger" :disabled="kvPricingData.length === 1"
+                  @click="handleChangekvPricingData('delete', $index)" v-havedone>
                   删除
                 </el-button>
               </template>
@@ -617,21 +466,13 @@
               <el-table-column label="产品大类" width="180">
                 <template #default="{ row }">
                   <el-select v-model="row.type" placeholder="产品大类" disabled>
-                    <el-option
-                      v-for="item in state.productTypeOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                    <el-option v-for="item in state.productTypeOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
               </el-table-column>
-              <el-table-column
-                :label="year + yearNote(index)"
-                v-for="(year, index) in state.yearCols"
-                :key="`gradientModelTable-${year}-${index}`"
-                width="180"
-              >
+              <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
+                :key="`gradientModelTable-${year}-${index}`" width="180">
                 <template #default="{ row }">
                   {{ formatThousandths(null, null, row.gradientModelYear?.[index]?.count) }}
                 </template>
@@ -654,27 +495,27 @@
           </el-table-column>
           <el-table-column label="客户年降率(%)">
             <template #default="{ row, $index }">
-              <el-input-number v-model="row.annualDeclineRate" :disabled="isDisabled || !$index" :min="0" />
+              <el-input-number v-model="row.annualDeclineRate" :disabled="!canEdit || !$index" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
-              <el-input-number v-model="row.annualRebateRequirements" :disabled="isDisabled || right === '1'" :min="0" />
+              <el-input-number v-model="row.annualRebateRequirements" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
-              <el-input-number v-model="row.oneTimeDiscountRate" :disabled="isDisabled || right === '1'" :min="0" />
+              <el-input-number v-model="row.oneTimeDiscountRate" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
-              <el-input-number v-model="row.commissionRate" :disabled="isDisabled || right === '1'" :min="0" />
+              <el-input-number v-model="row.commissionRate" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
         </el-table>
         <el-form-item label="是否有NRE费用分摊至模组:" prop="isHasNre">
-          <el-select v-model="state.quoteForm.isHasNre" placeholder="Select" :disabled="isDisabled || right === '1'">
+          <el-select v-model="state.quoteForm.isHasNre" placeholder="Select" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
             <el-option :value="true" label="是" />
             <el-option :value="false" label="否" />
           </el-select>
@@ -685,12 +526,8 @@
             <el-table-column prop="name" label="产品名称" width="100" />
             <el-table-column prop="yearCount" label="分摊年数" width="250">
               <template #default="{ row, $index }">
-                <el-select
-                  v-model="row.yearCount"
-                  placeholder="Select"
-                  :disabled="isDisabled || right === '1'"
-                  @change="(val) => changeShareCoutYears(val, row, $index)"
-                >
+                <el-select v-model="row.yearCount" placeholder="Select" :disabled="notEdit"
+                  @change="(val) => changeShareCoutYears(val, row, $index)">
                   <el-option v-for="item in shareCountYears" :value="item.value" :label="item.label" />
                 </el-select>
               </template>
@@ -702,11 +539,8 @@
         <el-row :gutter="20" v-if="state.quoteForm.isHasNre">
           <el-col :span="6">
             <el-form-item label="模具费分摊:" prop="allocationOfMouldCost">
-              <el-select
-                v-model="state.quoteForm.allocationOfMouldCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.allocationOfMouldCost" placeholder="Select"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -714,11 +548,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="治具费分摊:" prop="allocationOfFixtureCost">
-              <el-select
-                v-model="state.quoteForm.allocationOfFixtureCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.allocationOfFixtureCost" placeholder="Select"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -726,11 +557,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="工装分摊:" prop="frockCost">
-              <el-select
-                v-model="state.quoteForm.frockCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.frockCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -738,11 +565,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="专用设备费分摊:" prop="allocationOfEquipmentCost">
-              <el-select
-                v-model="state.quoteForm.allocationOfEquipmentCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.allocationOfEquipmentCost" placeholder="Select"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -750,11 +574,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="检具费用分摊:" prop="fixtureCost">
-              <el-select
-                v-model="state.quoteForm.fixtureCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.fixtureCost" placeholder="Select"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -762,11 +583,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="实验费用分摊:" prop="experimentCost">
-              <el-select
-                v-model="state.quoteForm.experimentCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.experimentCost" placeholder="Select"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -774,11 +592,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="测试软件费分摊:" prop="testCost">
-              <el-select
-                v-model="state.quoteForm.testCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.testCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -786,11 +600,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="差旅费分摊:" prop="travelCost">
-              <el-select
-                v-model="state.quoteForm.travelCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.travelCost" placeholder="Select"
+                :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -798,11 +609,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="其他费用分摊:" prop="otherCost">
-              <el-select
-                v-model="state.quoteForm.otherCost"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-select v-model="state.quoteForm.otherCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -811,17 +618,9 @@
         </el-row>
         <el-col :span="6">
           <el-form-item label="落地工厂:" prop="landingFactory">
-            <el-select
-              v-model="state.quoteForm.landingFactory"
-              placeholder="请选择"
-              :disabled="isDisabled || right === '1'"
-            >
-              <el-option
-                v-for="item in state.landingFactoryOptions"
-                :key="item.id"
-                :label="item.displayName"
-                :value="item.id"
-              />
+            <el-select v-model="state.quoteForm.landingFactory" placeholder="请选择" :disabled="notEdit">
+              <el-option v-for="item in state.landingFactoryOptions" :key="item.id" :label="item.displayName"
+                :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -844,305 +643,178 @@
           </el-table-column> -->
           <el-table-column label="Sensor" width="650">
             <template #default="{ row, $index }">
-              <el-input v-model="row.sensor" placeholder="品牌/型号" :disabled="isDisabled || right === '1'">
+              <el-input v-model="row.sensor" placeholder="品牌/型号" :disabled="!isQuote || right === '1'">
                 <template #prepend>
-                  <el-select v-model="row.sensorTypeSelect" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.TypeSelectOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.sensorTypeSelect" :disabled="!isQuote || right === '1'">
+                    <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
                 <template #append>
-                  <el-input
-                    v-model="row.sensorPrice"
-                    placeholder="单价"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  >
+                  <el-input v-model="row.sensorPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isQuote || right === '1'">
                     <template #append>
-                      <el-select
-                        v-model="row.sensorCurrency"
+                      <el-select v-model="row.sensorCurrency"
                         @change="(val) => SensorChange(val, row, 'sensorExchangeRate')"
-                        :disabled="isDisabled || right === '1'"
-                      >
-                        <el-option
-                          v-for="item in state.ExchangeSelectOptions"
-                          :key="item.id"
-                          :label="item.exchangeRateKind"
-                          :value="item.id"
-                        />
+                        :disabled="!isQuote || right === '1'">
+                        <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
+                          :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <el-input
-                    v-model="row.sensorExchangeRate"
-                    placeholder="汇率:"
-                    :disabled="isDisabled || right === '1'"
-                    style="width: 100px"
-                    type="number"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                  />
+                  <el-input v-model="row.sensorExchangeRate" placeholder="汇率:" :disabled="!isQuote || right === '1'"
+                    style="width: 100px" type="number" oninput="value=value.replace(/[^0-9.]/g,'')" />
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="Lens" width="650">
             <template #default="{ row, $index }">
-              <el-input v-model="row.lens" placeholder="品牌/型号" :disabled="isDisabled || right === '1'">
+              <el-input v-model="row.lens" placeholder="品牌/型号" :disabled="!isQuote || right === '1'">
                 <template #prepend>
-                  <el-select v-model="row.lensTypeSelect" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.TypeSelectOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.lensTypeSelect">
+                    <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
                 <template #append>
-                  <el-input
-                    v-model="row.lensPrice"
-                    placeholder="单价"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  >
+                  <el-input v-model="row.lensPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isQuote || right === '1'">
                     <template #append>
-                      <el-select
-                        v-model="row.lensCurrency"
-                        @change="(val) => SensorChange(val, row, 'lensExchangeRate')"
-                        :disabled="isDisabled || right === '1'"
-                      >
-                        <el-option
-                          v-for="item in state.ExchangeSelectOptions"
-                          :key="item.id"
-                          :label="item.exchangeRateKind"
-                          :value="item.id"
-                        />
+                      <el-select v-model="row.lensCurrency" @change="(val) => SensorChange(val, row, 'lensExchangeRate')"
+                        :disabled="!isQuote || right === '1'">
+                        <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
+                          :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <el-input
-                    v-model="row.lensExchangeRate"
-                    placeholder="汇率:"
-                    :disabled="isDisabled || right === '1'"
-                    style="width: 100px"
-                    type="number"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                  />
+                  <el-input v-model="row.lensExchangeRate" placeholder="汇率:" :disabled="!isQuote || right === '1'"
+                    style="width: 100px" type="number" oninput="value=value.replace(/[^0-9.]/g,'')" />
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="ISP" width="650">
             <template #default="{ row, $index }">
-              <el-input v-model="row.isp" placeholder="品牌/型号" :disabled="isDisabled || right === '1'">
+              <el-input v-model="row.isp" placeholder="品牌/型号" :disabled="!isQuote || right === '1'">
                 <template #prepend>
-                  <el-select v-model="row.ispTypeSelect" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.TypeSelectOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.ispTypeSelect" :disabled="!isQuote || right === '1'">
+                    <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
                 <template #append>
-                  <el-input
-                    v-model="row.ispPrice"
-                    placeholder="单价"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  >
+                  <el-input v-model="row.ispPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isQuote || right === '1'">
                     <template #append>
-                      <el-select
-                        v-model="row.ispCurrency"
-                        @change="(val) => SensorChange(val, row, 'ispExchangeRate')"
-                        :disabled="isDisabled || right === '1'"
-                      >
-                        <el-option
-                          v-for="item in state.ExchangeSelectOptions"
-                          :key="item.id"
-                          :label="item.exchangeRateKind"
-                          :value="item.id"
-                        />
+                      <el-select v-model="row.ispCurrency" @change="(val) => SensorChange(val, row, 'ispExchangeRate')"
+                        :disabled="!isQuote || right === '1'">
+                        <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
+                          :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <el-input
-                    v-model="row.ispExchangeRate"
-                    placeholder="汇率:"
-                    :disabled="isDisabled || right === '1'"
-                    style="width: 100px"
-                    type="number"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                  />
+                  <el-input v-model="row.ispExchangeRate" placeholder="汇率:" :disabled="!isQuote || right === '1'"
+                    style="width: 100px" type="number" oninput="value=value.replace(/[^0-9.]/g,'')" />
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="串行芯片" width="650">
             <template #default="{ row, $index }">
-              <el-input v-model="row.serialChip" placeholder="品牌/型号" :disabled="isDisabled || right === '1'">
+              <el-input v-model="row.serialChip" placeholder="品牌/型号" :disabled="!isQuote || right === '1'">
                 <template #prepend>
-                  <el-select v-model="row.serialChipTypeSelect" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.TypeSelectOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.serialChipTypeSelect" :disabled="!isQuote || right === '1'">
+                    <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
                 <template #append>
-                  <el-input
-                    v-model="row.serialChipPrice"
-                    placeholder="单价"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  >
+                  <el-input v-model="row.serialChipPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isQuote || right === '1'">
                     <template #append>
-                      <el-select
-                        v-model="row.serialChipCurrency"
+                      <el-select v-model="row.serialChipCurrency"
                         @change="(val) => SensorChange(val, row, 'serialChipExchangeRate')"
-                        :disabled="isDisabled || right === '1'"
-                      >
-                        <el-option
-                          v-for="item in state.ExchangeSelectOptions"
-                          :key="item.id"
-                          :label="item.exchangeRateKind"
-                          :value="item.id"
-                        />
+                        :disabled="!isQuote || right === '1'">
+                        <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
+                          :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <el-input
-                    v-model="row.serialChipExchangeRate"
-                    placeholder="汇率:"
-                    :disabled="isDisabled || right === '1'"
-                    style="width: 100px"
-                    type="number"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                  />
+                  <el-input v-model="row.serialChipExchangeRate" placeholder="汇率:" :disabled="!isQuote || right === '1'"
+                    style="width: 100px" type="number" oninput="value=value.replace(/[^0-9.]/g,'')" />
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="线缆" width="650">
             <template #default="{ row, $index }">
-              <el-input v-model="row.cable" placeholder="品牌/型号" :disabled="isDisabled || right === '1'">
+              <el-input v-model="row.cable" placeholder="品牌/型号" :disabled="!isQuote || right === '1'">
                 <template #prepend>
-                  <el-select v-model="row.cableTypeSelect" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.TypeSelectOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.cableTypeSelect" :disabled="!isQuote || right === '1'">
+                    <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
                 <template #append>
-                  <el-input
-                    v-model="row.cablePrice"
-                    placeholder="单价"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  >
+                  <el-input v-model="row.cablePrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isQuote || right === '1'">
                     <template #append>
-                      <el-select
-                        v-model="row.cableCurrency"
+                      <el-select v-model="row.cableCurrency"
                         @change="(val) => SensorChange(val, row, 'cableExchangeRate')"
-                        :disabled="isDisabled || right === '1'"
-                      >
-                        <el-option
-                          v-for="item in state.ExchangeSelectOptions"
-                          :key="item.id"
-                          :label="item.exchangeRateKind"
-                          :value="item.id"
-                        />
+                        :disabled="!isQuote || right === '1'">
+                        <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
+                          :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <el-input
-                    v-model="row.cableExchangeRate"
-                    placeholder="汇率:"
-                    :disabled="isDisabled || right === '1'"
-                    style="width: 100px"
-                    type="number"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                  />
+                  <el-input v-model="row.cableExchangeRate" placeholder="汇率:" :disabled="!isQuote || right === '1'"
+                    style="width: 100px" type="number" oninput="value=value.replace(/[^0-9.]/g,'')" />
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="其它" width="650">
             <template #default="{ row, $index }">
-              <el-input v-model="row.other" placeholder="品牌/型号" :disabled="isDisabled || right === '1'">
+              <el-input v-model="row.other" placeholder="品牌/型号" :disabled="!isQuote || right === '1'">
                 <template #prepend>
-                  <el-select v-model="row.otherTypeSelect" :disabled="isDisabled || right === '1'">
-                    <el-option
-                      v-for="item in state.TypeSelectOptions"
-                      :key="item.id"
-                      :label="item.displayName"
-                      :value="item.id"
-                    />
+                  <el-select v-model="row.otherTypeSelect" :disabled="!isQuote || right === '1'">
+                    <el-option v-for="item in state.TypeSelectOptions" :key="item.id" :label="item.displayName"
+                      :value="item.id" />
                   </el-select>
                 </template>
                 <template #append>
-                  <el-input
-                    v-model="row.otherPrice"
-                    placeholder="单价"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="isDisabled || right === '1'"
-                  >
+                  <el-input v-model="row.otherPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isQuote || right === '1'">
                     <template #append>
-                      <el-select
-                        v-model="row.otherCurrency"
+                      <el-select v-model="row.otherCurrency"
                         @change="(val) => SensorChange(val, row, 'otherExchangeRate')"
-                        :disabled="isDisabled || right === '1'"
-                      >
-                        <el-option
-                          v-for="item in state.ExchangeSelectOptions"
-                          :key="item.id"
-                          :label="item.exchangeRateKind"
-                          :value="item.id"
-                        />
+                        :disabled="!isQuote || right === '1'">
+                        <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id"
+                          :label="item.exchangeRateKind" :value="item.id" />
                       </el-select>
                     </template>
                   </el-input>
-                  <el-input
-                    v-model="row.otherExchangeRate"
-                    placeholder="汇率:"
-                    :disabled="isDisabled || right === '1'"
-                    style="width: 100px"
-                    type="number"
-                    oninput="value=value.replace(/[^0-9.]/g,'')"
-                  />
+                  <el-input v-model="row.otherExchangeRate" placeholder="汇率:" :disabled="!isQuote || right === '1'"
+                    style="width: 100px" type="number" oninput="value=value.replace(/[^0-9.]/g,'')" />
                 </template>
               </el-input>
             </template>
           </el-table-column>
           <el-table-column label="制程" width="180">
             <template #default="{ row }">
-              <el-input v-model="row.manufactureProcess" :disabled="isDisabled || right === '1'" />
+              <el-input v-model="row.manufactureProcess" :disabled="!isQuote || right === '1'" />
             </template>
           </el-table-column>
           <el-table-column label="安装位置" width="180">
             <template #default="{ row }">
-              <el-input v-model="row.installationPosition" :disabled="isDisabled || right === '1'" />
+              <el-input v-model="row.installationPosition" :disabled="!isQuote || right === '1'" />
             </template>
           </el-table-column>
         </el-table>
         <h6>客户指定/供应详情</h6>
-        <el-button
-          @click="customerTargetPriceTable"
-          type="primary"
-          style="margin: 20px 0"
-          :disabled="isDisabled || right === '1'"
-          >点击生成</el-button
-        >
+        <el-button @click="customerTargetPriceTable" type="primary" style="margin: 20px 0"
+        :disabled="!isQuote || right === '1'">点击生成</el-button>
         <el-table :data="specifyTableData" style="width: 100%" border>
           <el-table-column prop="productType" label="类型" />
           <el-table-column prop="productName" label="产品名称" />
@@ -1152,12 +824,8 @@
           <el-table-column prop="currency" label="币别">
             <template #default="{ row }">
               <el-select v-model="row.currency" disabled>
-                <el-option
-                  v-for="item in state.ExchangeSelectOptions"
-                  :key="item.id"
-                  :label="item.exchangeRateKind"
-                  :value="item.id"
-                />
+                <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
+                  :value="item.id" />
               </el-select>
             </template>
           </el-table-column>
@@ -1191,34 +859,23 @@
           </el-table-column>
           <el-table-column prop="目标价" label="目标价">
             <template #default="{ row }">
-              <el-input v-model="row.targetPrice" :disabled="isDisabled || right === '1'" />
+              <el-input v-model="row.targetPrice" :disabled="!isQuote || right === '1'" />
             </template>
           </el-table-column>
           <el-table-column prop="currency" label="报价币种">
             <template #default="{ row, $index }">
-              <el-select
-                v-model="row.currency"
-                @change="(val) => cableTypeSelectChange(val, row, $index)"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.ExchangeSelectOptions"
-                  :key="item.id"
-                  :label="item.exchangeRateKind"
-                  :value="item.id"
-                />
+              <el-select v-model="row.currency" @change="(val) => cableTypeSelectChange(val, row, $index)"
+                :disabled="!isQuote || right === '1'">
+                <el-option v-for="item in state.ExchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
+                  :value="item.id" />
               </el-select>
             </template>
           </el-table-column>
           <el-table-column prop="exchangeRate" label="汇率">
             <template #default="{ row, $index }">
-              <el-input
-                v-model="row.exchangeRate"
-                :disabled="isDisabled || right === '1'"
-                @change="(val) => changeExchangRate(val, $index)"
-                type="number"
-                oninput="value=value.replace(/[^0-9.]/g,'')"
-              />
+              <el-input v-model="row.exchangeRate" :disabled="!isQuote || right === '1'"
+                @change="(val) => changeExchangRate(val, $index)" type="number"
+                oninput="value=value.replace(/[^0-9.]/g,'')" />
             </template>
           </el-table-column>
         </el-table>
@@ -1228,40 +885,24 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="贸易方式:" prop="tradeMode">
-              <el-select
-                v-model="state.quoteForm.tradeMode"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.TradeMethodOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.tradeMode" placeholder="Select" :disabled="!isQuote || right === '1'">
+                <el-option v-for="item in state.TradeMethodOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
               <!-- <el-input v-model="state.quoteForm.tradeMode" /> -->
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="销售类型:" prop="salesType">
-              <el-select
-                v-model="state.quoteForm.salesType"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.salesTypeOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.salesType" placeholder="Select" :disabled="!isQuote || right === '1'">
+                <el-option v-for="item in state.salesTypeOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="付款方式:" prop="paymentMethod">
-              <el-input v-model="state.quoteForm.paymentMethod" :disabled="isDisabled || right === '1'" />
+              <el-input v-model="state.quoteForm.paymentMethod" :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <!-- <el-col :span="6">
@@ -1288,12 +929,8 @@
           </el-col> -->
           <el-col :span="12">
             <el-form-item label="客户特殊性要求:" prop="customerSpecialRequest">
-              <el-input
-                type="textarea"
-                :rows="10"
-                v-model="state.quoteForm.customerSpecialRequest"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input type="textarea" :rows="10" v-model="state.quoteForm.customerSpecialRequest"
+              :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -1303,71 +940,41 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="运输方式:" prop="shippingType">
-              <el-select
-                v-model="state.quoteForm.shippingType"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.shippingTypeOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.shippingType" placeholder="Select"
+              :disabled="!isQuote || right === '1'">
+                <el-option v-for="item in state.shippingTypeOptions" :key="item.id" :label="item.displayName"
+                  :disabled="!isQuote || right === '1'" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="包装方式:" prop="packagingType">
-              <el-select
-                v-model="state.quoteForm.packagingType"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.packagingTypeOptions"
-                  :key="item.id"
-                  :label="item.displayName"
-                  :value="item.id"
-                />
+              <el-select v-model="state.quoteForm.packagingType" placeholder="Select"
+              :disabled="!isQuote || right === '1'">
+                <el-option v-for="item in state.packagingTypeOptions" :key="item.id" :label="item.displayName"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="核价要求完成时间:" prop="deadline">
-              <el-date-picker
-                type="date"
-                placeholder="Pick a day"
-                v-model="state.quoteForm.deadline"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-date-picker type="date" placeholder="Pick a day" v-model="state.quoteForm.deadline"
+              :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="项目经理:" prop="projectManager" :disabled="isDisabled || right === '1'">
+            <el-form-item label="项目经理:" prop="projectManager" :disabled="!isQuote || right === '1'">
               <!-- <SearchPerson v-model="state.quoteForm.projectManager" /> -->
-              <SearchDepartMentPerson
-                v-model="state.quoteForm.projectManager"
-                :roleName="['项目管理部-项目经理', '市场部-项目经理']"
-                :disabled="isDisabled || right === '1'"
-              />
+              <SearchDepartMentPerson v-model="state.quoteForm.projectManager" :roleName="['项目管理部-项目经理', '市场部-项目经理']"
+              :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="出口国家:" prop="country">
-              <el-select
-                filterable
-                v-model="state.quoteForm.country"
-                @change="changeCountry"
-                placeholder="Select"
-                :disabled="isDisabled || right === '1'"
-              >
-                <el-option
-                  v-for="item in state.countryOptions"
-                  :key="item.dbId"
-                  :label="item.country"
-                  :value="item.country"
-                />
+              <el-select filterable v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
+              :disabled="!isQuote || right === '1'">
+                <el-option v-for="item in state.countryOptions" :key="item.dbId" :label="item.country"
+                  :value="item.country" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -1378,37 +985,21 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="交货地点:" prop="placeOfDelivery">
-              <el-input
-                type="textarea"
-                :rows="10"
-                v-model="state.quoteForm.placeOfDelivery"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input type="textarea" :rows="10" v-model="state.quoteForm.placeOfDelivery"
+              :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="核价原因:" prop="reason">
-              <el-input
-                type="textarea"
-                :rows="10"
-                v-model="state.quoteForm.reason"
-                :disabled="isDisabled || right === '1'"
-              />
+              <el-input type="textarea" :rows="10" v-model="state.quoteForm.reason"
+              :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="sorFile">
-              <el-upload
-                v-model:file-list="fileList"
-                :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-                :on-success="handleSuccess"
-                :on-error="handleUploadError"
-                :on-change="handleFileChange"
-                multiple
-                :on-progress="handleGetUploadProgress"
-                show-file-list
-                :disabled="isDisabled || right === '1'"
-              >
+              <el-upload v-model:file-list="fileList" :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+                :on-success="handleSuccess" :on-error="handleUploadError" :on-change="handleFileChange" multiple
+                :on-progress="handleGetUploadProgress" show-file-list :disabled="!isQuote || right === '1'">
                 <el-button>SOR(中文版)文件上传</el-button>
               </el-upload>
             </el-form-item>
@@ -1425,7 +1016,7 @@ import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
-import { saveApplyInfo,priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion } from "./service"
+import { saveApplyInfo, priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage } from "element-plus"
@@ -1437,7 +1028,7 @@ import dayjs from "dayjs"
 import { CountryTypeEnum } from "./common/util"
 import { debounce } from "lodash"
 
-let { right } = getQuery()
+let { right, opinion, auditFlowId } = getQuery()
 
 //整个页面是否可以编辑
 const props = defineProps({
@@ -1445,6 +1036,16 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+})
+
+console.log('', '')
+
+const notEdit = computed(() => {
+  return props.isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion) || right === '1'
+})
+
+const isQuote = computed(() => {
+  return props.isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)
 })
 
 //客户目标价
@@ -1503,10 +1104,10 @@ const getRowSum = (row: any, key?: string, childkey?: string) => {
 const kvPricingData = ref<any>([])
 const shareCountTable = ref<any>([])
 const isFirstShow = ref(false)
-const state = reactive({
-  taebleLoading: false,
+const state = reactive<any>({
+  tableLoading: false,
+  quoteAuditFlowId: null, // 流程id
   quoteForm: {
-    quoteAuditFlowId: null, // 流程id
     shareCount: [],
     countryType: "", // 国家类型
     isHasNre: false,
@@ -1564,7 +1165,6 @@ const state = reactive({
     sorFile: [] as any, //SOR附件上传
     reason: "", //核价原因
     quoteVersion: "", //核报价流程版本
-    auditFlowId: null as any,
     priceEvalType: null, //核价类型(二开新增)
     isHasSample: false, //是否包含样品核价(二开新增)
     carModelCount: []
@@ -1601,6 +1201,7 @@ const state = reactive({
     { id: "3", displayName: "三供" },
     { id: "4", displayName: "四供" }
   ],
+  opinion,
 })
 
 const projectSubCodeOptions = ref([])
@@ -1889,11 +1490,10 @@ const save = debounce(async (formEl: FormInstance | undefined, isSubmit: boolean
 }, 300)
 
 const handleSubmitData = async (isSubmit: boolean) => {
-  const opinion = ""
   let { auditFlowId, nodeInstanceId } = route.query
   saveloading.value = true
   let { quoteForm } = state
-  quoteForm.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
+  state.auditFlowId = auditFlowId ? Number(auditFlowId) : null //审批流程主ID
   if (quoteForm.isHasSample || quoteForm.priceEvalType == "PriceEvalType_Sample") {
     quoteForm.sample = specimenData //样品
   }
@@ -1917,29 +1517,46 @@ const handleSubmitData = async (isSubmit: boolean) => {
     }))
   ).flat(2)
   const params = {
-      ...quoteForm,
-      // comment,
-      opinion,
-      gradient: kvPricingData.value,
-      gradientModel: gradientModel,
-      isSubmit,
-      nodeInstanceId: nodeInstanceId || 0
-    }
+    ...quoteForm,
+    // comment,
+    opinion,
+    gradient: kvPricingData.value,
+    gradientModel: gradientModel,
+    isSubmit,
+    nodeInstanceId: nodeInstanceId || 0,
+  }
   try {
     let res: any = {}
-    if (isSubmit) {
-      res = await saveApplyInfo(params)
-    } else {
-      res = await priceEvaluationStartSave(params)
-    }
-    if (res.success) {
+    if (['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)) {
+      res = await priceEvaluationStart({
+        ...params,
+        quoteAuditFlowId: state.quoteAuditFlowId
+      })
       ElMessage({
         type: "success",
-        message: `提交成功`
+        message: `${isSubmit ? '提交' : '保存'}成功！`
       })
-      router.push({
-        path: "/todoCenter/index"
+      if (isSubmit) {
+        router.push({
+          path: `/dashboard/index?auditFlowId=${res.auditFlowId}&nodeInstanceId=${nodeInstanceId}`,
+        })
+      }
+      saveloading.value = false
+    } else {
+      if (isSubmit) {
+        res = await saveApplyInfo(params)
+      } else {
+        res = await priceEvaluationStartSave(params)
+      }
+      ElMessage({
+        type: "success",
+        message: `${isSubmit ? '提交' : '保存'}成功！`
       })
+      if (isSubmit) {
+        router.push({
+          path: "/todoCenter/index"
+        })
+      }
       saveloading.value = false
     }
   } catch (error) {
@@ -2499,9 +2116,8 @@ const generateTitle = () => {
   let { quoteForm } = state
   let nowDate = dayjs(quoteForm.draftDate ? quoteForm.draftDate : new Date()).format("YYYY-MM-DD")
   let userDepartment = quoteForm.draftingDepartment
-  let title = `${nowDate + userDepartment}关于${
-    quoteForm.customerName + quoteForm.projectName + "第" + state.quoteForm.quoteVersion + "版"
-  }的核价报价申请`
+  let title = `${nowDate + userDepartment}关于${quoteForm.customerName + quoteForm.projectName + "第" + state.quoteForm.quoteVersion + "版"
+    }的核价报价申请`
   state.quoteForm.title = title
 }
 const generateCustomTable = () => {
@@ -2772,8 +2388,106 @@ const changeCode = (v: string, row: any) => {
   row.product = filterData.subDescription
 }
 
+const fetchOptions = async () => {
+  getProjectCodeOptions()
+  initCountry()
+  let exchangeSelect: any = await getExchangeRate({
+    maxResultCount: 100,
+    skipCount: 0
+  })
+  state.ExchangeSelectOptions = exchangeSelect.result.items
+  let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
+  state.updateFrequencyOptions = UpdateFrequency.result?.financeDictionaryDetailList
+
+  let priceEvalType: any = await getDictionaryAndDetail("PriceEvalType") //核价类型
+  state.valenceTypeOptions = priceEvalType.result?.financeDictionaryDetailList
+
+  let isHasSample: any = await getDictionaryAndDetail("SampleName") //核价类型
+  state.isSpecimenOptions = isHasSample.result?.financeDictionaryDetailList
+
+  let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
+  state.customerNatureOptions = customerNature.result.financeDictionaryDetailList
+
+  let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
+  state.terminalNatureOptions = terminalNature.result.financeDictionaryDetailList
+
+  // let quotationType: any = await getDictionaryAndDetail("QuotationType") //报价形式
+  // state.quotationTypeOptions = quotationType.result.financeDictionaryDetailList
+
+  let productType: any = await getDictionaryAndDetail("ProductType") // 产品大类
+  state.productTypeOptions = productType.result.financeDictionaryDetailList
+  // moduleTableDataV2.value[0].productType = state.productTypeOptions[0]?.id
+
+  let landingFactory: any = await getDictionaryAndDetail("LandingFactory") //落地工厂
+  state.landingFactoryOptions = landingFactory.result.financeDictionaryDetailList
+
+  let salesType: any = await getDictionaryAndDetail("SalesType") //销售类型
+  state.salesTypeOptions = salesType.result.financeDictionaryDetailList
+
+  // let currency: any = await getDictionaryAndDetail("Currency") //报价币种
+  // state.currencyOptions = currency.result.financeDictionaryDetailList
+
+  let shippingType: any = await getDictionaryAndDetail("ShippingType") //运输方式
+  state.shippingTypeOptions = shippingType.result.financeDictionaryDetailList
+
+  let packagingType: any = await getDictionaryAndDetail("PackagingType") //包装方式
+  state.packagingTypeOptions = packagingType.result.financeDictionaryDetailList
+
+  let typeSelect: any = await getDictionaryAndDetail("TypeSelect") //类型
+  state.TypeSelectOptions = typeSelect.result.financeDictionaryDetailList
+
+  let tradeMethodSelect: any = await getDictionaryAndDetail("TradeMethod") //类型
+  state.TradeMethodOptions = tradeMethodSelect.result.financeDictionaryDetailList
+}
+
+const handleDealWithData = async () => {
+  console.log(state.quoteAuditFlowId, "state.quoteAuditFlowId111")
+  let viewDataRes: any = await getPriceEvaluationStartData(state.quoteAuditFlowId || auditFlowId)
+  if (viewDataRes.result) {
+    isEdit = true
+    state.quoteForm = viewDataRes.result
+    const sopTime: any = [viewDataRes.result.sopTime]
+    state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
+    pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
+    yearChange(viewDataRes.result.projectCycle)
+    viewDataRes.result.projectCode && changeProjectName(viewDataRes.result.projectCode)
+    productTableData.value = viewDataRes.result.productInformation
+    shareCountTable.value = viewDataRes.result.shareCount
+    gradientModelTable.value = viewDataRes.result.gradientModel
+    if (viewDataRes.result.carModelCount?.length) {
+      moduleTableDataV2.value = Object.values(
+        viewDataRes.result.carModelCount?.reduce((result: any, item: any) => {
+          if (!result[item.carModel]) {
+            result[item.carModel] = []
+          }
+          result[item.carModel].push(item)
+          return result
+        }, {})
+      )
+    }
+    if (viewDataRes.result.opinion) state.opinion = viewDataRes.result.opinion
+    console.log("第一次渲染: ", moduleTableDataV2.value)
+    requireTableData.value = viewDataRes.result.requirement // 要求
+    specimenData.value = viewDataRes.result.sample //样品
+    customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价
+    fileList.value = viewDataRes.result.files.map((item: any) => {
+      return {
+        name: item.fileName,
+        // url: item.fileId
+        response: {
+          result: {
+            fileId: item.fileId
+          }
+        }
+      }
+    })
+    kvPricingData.value = viewDataRes.result.gradient
+    generateCustomTable()
+  }
+}
+
 const init = async () => {
-  let query = getQuery()
+  let query = getQuery() || {}
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
   state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
   state.quoteForm.quoteVersion = query.quoteVersion ? query.quoteVersion + "" : ""
@@ -2781,122 +2495,41 @@ const init = async () => {
   state.quoteForm.drafterNumber = userInfo.userNumber || "未成功获取"
   state.quoteForm.draftingCompany = userInfo.userCompany?.name || "未成功获取"
   state.quoteForm.draftingDepartment = userInfo.userDepartment?.name || "未成功获取"
-  state.taebleLoading = true
+
   // 设置单据编号
   setNumber()
   try {
-    getProjectCodeOptions()
-    initCountry()
-    let UpdateFrequency: any = await getDictionaryAndDetail("UpdateFrequency") //价格有效期
-    state.updateFrequencyOptions = UpdateFrequency.result?.financeDictionaryDetailList
+    state.tableLoading = true
 
-    let priceEvalType: any = await getDictionaryAndDetail("PriceEvalType") //核价类型
-    state.valenceTypeOptions = priceEvalType.result?.financeDictionaryDetailList
-
-    let isHasSample: any = await getDictionaryAndDetail("SampleName") //核价类型
-    state.isSpecimenOptions = isHasSample.result?.financeDictionaryDetailList
-
-    let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
-    state.customerNatureOptions = customerNature.result.financeDictionaryDetailList
-
-    let terminalNature: any = await getDictionaryAndDetail("TerminalNature") //终端性质
-    state.terminalNatureOptions = terminalNature.result.financeDictionaryDetailList
-
-    // let quotationType: any = await getDictionaryAndDetail("QuotationType") //报价形式
-    // state.quotationTypeOptions = quotationType.result.financeDictionaryDetailList
-
-    let productType: any = await getDictionaryAndDetail("ProductType") // 产品大类
-    state.productTypeOptions = productType.result.financeDictionaryDetailList
-    // moduleTableDataV2.value[0].productType = state.productTypeOptions[0]?.id
-
-    let landingFactory: any = await getDictionaryAndDetail("LandingFactory") //落地工厂
-    state.landingFactoryOptions = landingFactory.result.financeDictionaryDetailList
-
-    let salesType: any = await getDictionaryAndDetail("SalesType") //销售类型
-    state.salesTypeOptions = salesType.result.financeDictionaryDetailList
-
-    // let currency: any = await getDictionaryAndDetail("Currency") //报价币种
-    // state.currencyOptions = currency.result.financeDictionaryDetailList
-
-    let shippingType: any = await getDictionaryAndDetail("ShippingType") //运输方式
-    state.shippingTypeOptions = shippingType.result.financeDictionaryDetailList
-
-    let packagingType: any = await getDictionaryAndDetail("PackagingType") //包装方式
-    state.packagingTypeOptions = packagingType.result.financeDictionaryDetailList
-
-    let typeSelect: any = await getDictionaryAndDetail("TypeSelect") //类型
-    state.TypeSelectOptions = typeSelect.result.financeDictionaryDetailList
-    console.log(state.TypeSelectOptions, "state.TypeSelectOptions")
-    let tradeMethodSelect: any = await getDictionaryAndDetail("TradeMethod") //类型
-    state.TradeMethodOptions = tradeMethodSelect.result.financeDictionaryDetailList
-
-    let exchangeSelect: any = await getExchangeRate({
-      maxResultCount: 100,
-      skipCount: 0
-    })
-    state.ExchangeSelectOptions = exchangeSelect.result.items
   } catch (error) {
     console.log(error)
+    state.tableLoading = false
   }
-  if (query.auditFlowId) {
+  if (auditFlowId || state.quoteAuditFlowId) {
+    console.log(query.auditFlowId, "query.auditFlowId")
     // 查看
-    let viewDataRes: any = await getPriceEvaluationStartData(query.auditFlowId)
-    if (viewDataRes.result) {
-      isEdit = true
-      state.quoteForm = viewDataRes.result
-      const sopTime: any = [viewDataRes.result.sopTime]
-      state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
-      pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
-      yearChange(viewDataRes.result.projectCycle)
-      viewDataRes.result.projectCode && changeProjectName(viewDataRes.result.projectCode)
-
-      productTableData.value = viewDataRes.result.productInformation
-      shareCountTable.value = viewDataRes.result.shareCount
-      gradientModelTable.value = viewDataRes.result.gradientModel
-      if (viewDataRes.result.carModelCount?.length) {
-        moduleTableDataV2.value = Object.values(
-          viewDataRes.result.carModelCount?.reduce((result: any, item: any) => {
-            if (!result[item.carModel]) {
-              result[item.carModel] = []
-            }
-            result[item.carModel].push(item)
-            return result
-          }, {})
-        )
-      }
-      console.log("第一次渲染: ", moduleTableDataV2.value)
-      requireTableData.value = viewDataRes.result.requirement // 要求
-      specimenData.value = viewDataRes.result.sample //样品
-      customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价
-      fileList.value = viewDataRes.result.files.map((item: any) => {
-        return {
-          name: item.fileName,
-          // url: item.fileId
-          response: {
-            result: {
-              fileId: item.fileId
-            }
-          }
-        }
-      })
-      kvPricingData.value = viewDataRes.result.gradient
-      generateCustomTable()
-    }
-
-
+    await handleDealWithData()
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
-    }, 2000)
+    }, 1000)
   }
   setTimeout(() => {
     isFirstShow.value = true
-  }, 2000)
-  state.taebleLoading = false
+  }, 1000)
+  state.tableLoading = false
+}
+
+const fetchWorkflowOvered = async (filter: string) => {
+  const { result }: any = await getWorkflowOvered({ filter, skipCount: 0, maxResultCount: 100 }) || {}
+  const { items } = result || []
+  projectOptions.value = items
 }
 
 onMounted(() => {
   init()
+  fetchOptions()
+  fetchWorkflowOvered('')
 })
 
 defineExpose({

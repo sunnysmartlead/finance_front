@@ -81,3 +81,12 @@ export function priceEvaluationStart(data: any) {
     data
   })
 }
+
+// 快速核报价：获取BOM成本导入模板
+export function getBomImportTemplate(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/getBomImportTemplate",
+    method: "get",
+    data
+  })
+}

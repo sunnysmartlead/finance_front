@@ -99,6 +99,7 @@ export function GetGoTable(data: any) {
     data
   })
 }
+
 // 上传tr主方案
 export function addPricingPanelTrProgrammeId(auditFlowId: number, fileManagementId: number) {
   return request({

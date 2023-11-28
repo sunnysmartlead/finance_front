@@ -9,11 +9,6 @@
       <el-row>
         <template :span="4" v-for="item in PROCESS_EUNM" :key="item.title">
         <el-card shadow="hover" class="card"  :header="item.title" m="2">
-          <!-- <img
-            style="width: 100px; height: 100px"
-            src="@/assets/images/mainProcess.png"
-            :style="{ filter: `hue-rotate(${hueRotate}deg)` }"
-          /> -->
           <template v-for="c in item.children">
             <el-button @click="createFlow(c.id)" :disabled="!c.id" type="primary" m="2">{{ c.name }}</el-button>
           </template>
@@ -35,7 +30,7 @@ const createFlow = (id: string) => {
   router.push({
     path: "/demandApply/index",
     query: {
-      processType: id
+      opinion: id
     }
   })
 }

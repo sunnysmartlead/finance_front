@@ -2478,7 +2478,9 @@ const init = async (tempAuditFlowId?: any) => {
       if (viewDataRes.result.opinion) {
         state.opinion = viewDataRes.result.opinion
       }
-      state.quoteAuditFlowId = viewDataRes.result.quickQuoteAuditFlowId
+      if (viewDataRes.result.quickQuoteAuditFlowId) {
+        state.quoteAuditFlowId = viewDataRes.result.quickQuoteAuditFlowId
+      }
       fileList.value = viewDataRes.result.files.map((item: any) => {
         return {
           name: item.fileName,

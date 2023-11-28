@@ -585,6 +585,7 @@ const router = useRouter()
  */
 let { auditFlowId, nodeInstanceId } = getQuery()
 let isSave = false
+let versionMapSubmit: any = {}
 const version = ref(1)
 const confirmText = ref("")
 const productList = ref<any[]>([])
@@ -594,7 +595,7 @@ let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
 let getVersionData = null
 let versionData: any = null
-let isSubmit = ref(true)
+// let isSubmit = ref(true)
 const opinionVisible = ref(false)
 let submitType = ref("")
 const yearDimension = ref({
@@ -790,6 +791,16 @@ const gradientTableMap = computed(() => {
 
   // setChartData(gradientTableMap)
   return gradientTableMap
+})
+const isSubmit = computed(() => {
+  let submit = true
+  let keys = Object.keys(versionMapSubmit)
+  keys.forEach((key) => {
+    if (versionMapSubmit[key] === false) {
+      submit = false
+    }
+  })
+  return submit
 })
 let gradientTableMapResult = ref([])
 
@@ -1689,7 +1700,7 @@ const agreeConfirm = async () => {
  * 报价反馈提交
  */
 const save = async () => {
-  isSubmit.value = true
+  versionMapSubmit[versionChosen.version] = true
   let saveData = {
     ...data.allRes,
     auditFlowId,
@@ -1716,7 +1727,7 @@ const save = async () => {
     let length = resbj.result.length
     for (let i = 0; i < length; i++) {
       if (resbj.result[i].unitPrice > resfk.result[i].unitPrice) {
-        isSubmit.value = false
+        versionMapSubmit[versionChosen.version] = false // 该版本无法提交
       }
     }
   }
@@ -1758,6 +1769,7 @@ onMounted(async () => {
     result.forEach((item: any) => {
       if (!item.isFirst) {
         versionList.push(item)
+        versionMapSubmit[item.version] = true // 默认该版本可提交
       }
     })
   }

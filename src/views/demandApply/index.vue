@@ -12,9 +12,9 @@
             <el-form-item label="普通核报价流程:" prop="quoteAuditFlowId"
               v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
               <el-select v-model="state.quoteAuditFlowId" remote-show-suffix reserve-keyword filterable
-                placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px"
-                @change="init">
-                <el-option v-for="item in projectOptions" :key="item.id" :label="item.title" :value="item.id" />
+                placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px" @change="init">
+                <el-option v-for="item in projectOptions" :key="item.id" :label="`${item.title} （流程号：${item.id}）`"
+                  :value="item.id" />
               </el-select>
             </el-form-item>
             <!-- <el-upload
@@ -82,8 +82,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目名称:" prop="projectName">
-              <el-input v-model="state.quoteForm.projectName" placeholder="与PLM系统保持一致"
-                :disabled="notEdit" />
+              <el-input v-model="state.quoteForm.projectName" placeholder="与PLM系统保持一致" :disabled="notEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -93,14 +92,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="客户名称:" prop="customerName">
-              <el-input v-model="state.quoteForm.customerName" @change="generateTitle"
-                :disabled="notEdit" />
+              <el-input v-model="state.quoteForm.customerName" @change="generateTitle" :disabled="notEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="客户类别:" prop="customerNature">
-              <el-select v-model="state.quoteForm.customerNature" placeholder="客户类别"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.customerNature" placeholder="客户类别" :disabled="notEdit">
                 <el-option v-for="item in state.customerNatureOptions" :key="item.id" :label="item.displayName"
                   :value="item.id" />
               </el-select>
@@ -109,14 +106,12 @@
 
           <el-col :span="6">
             <el-form-item label="终端名称:" prop="terminalName">
-              <el-input v-model="state.quoteForm.terminalName" placeholder="终端名称"
-                :disabled="notEdit" />
+              <el-input v-model="state.quoteForm.terminalName" placeholder="终端名称" :disabled="notEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="终端类别:" prop="terminalNature">
-              <el-select v-model="state.quoteForm.terminalNature" placeholder="终端类别"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.terminalNature" placeholder="终端类别" :disabled="notEdit">
                 <el-option v-for="item in state.terminalNatureOptions" :key="item.id" :label="item.displayName"
                   :value="item.id" />
               </el-select>
@@ -144,8 +139,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="价格有效期:" prop="updateFrequency">
-              <el-select v-model="state.quoteForm.updateFrequency" placeholder="价格有效期"
-                :disabled="notEdit" @change="yearChange(0)">
+              <el-select v-model="state.quoteForm.updateFrequency" placeholder="价格有效期" :disabled="notEdit"
+                @change="yearChange(0)">
                 <el-option v-for="item in state.updateFrequencyOptions" :key="item.id" :label="item.displayName"
                   :value="item.id" />
               </el-select>
@@ -161,8 +156,7 @@
         <el-row>
           <el-row :span="15">
             <el-form-item label="核价类型:" prop="updateFrequency">
-              <el-select v-model="state.quoteForm.priceEvalType" placeholder="核价类型"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.priceEvalType" placeholder="核价类型" :disabled="notEdit">
                 <!-- <el-option :value="0" label="量产品核价" />
                 <el-option :value="1" label="样品核价" /> -->
                 <el-option v-for="item in state.valenceTypeOptions" :key="item.id" :label="item.displayName"
@@ -177,8 +171,7 @@
         <el-row v-if="state.quoteForm.priceEvalType == 'PriceEvalType_Quantity'">
           <el-col :span="6">
             <el-form-item label="是否包含样品核价:" prop="updateFrequency">
-              <el-select v-model="state.quoteForm.isHasSample" placeholder="是否包含样品核价"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.isHasSample" placeholder="是否包含样品核价" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -262,8 +255,7 @@
               <h6 style="margin: 0px">内部评估后终端走量K（台)</h6>
             </el-form-item>
             <el-form-item label="系数K">
-              <el-input type="number" min="0" v-model="state.quoteForm.kValue" placeholder="手工录入"
-                :disabled="notEdit" />
+              <el-input type="number" min="0" v-model="state.quoteForm.kValue" placeholder="手工录入" :disabled="notEdit" />
             </el-form-item>
           </el-form>
           <el-table :data="interiorPcsTableData" show-summary :summary-method="getPcsTableDatSummaries" border>
@@ -354,8 +346,8 @@
               </el-table-column>
               <el-table-column label="市场份额" width="180">
                 <template #default="{ row }">
-                  <el-input v-model="row.marketShare" oninput="value=value.replace(/[^0-9.]/g,'')"
-                    :disabled="notEdit" type="number">
+                  <el-input v-model="row.marketShare" oninput="value=value.replace(/[^0-9.]/g,'')" :disabled="notEdit"
+                    type="number">
                     <template #append>%</template>
                   </el-input>
                 </template>
@@ -425,8 +417,7 @@
           </el-table>
           <h6 />
           <el-form-item label="是否分梯度核价：">
-            <el-select v-model="state.quoteForm.isHasGradient" placeholder="是否分梯度核价"
-              :disabled="notEdit">
+            <el-select v-model="state.quoteForm.isHasGradient" placeholder="是否分梯度核价" :disabled="notEdit">
               <el-option :value="true" label="是" />
               <el-option :value="false" label="否" />
             </el-select>
@@ -500,22 +491,26 @@
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
-              <el-input-number v-model="row.annualRebateRequirements" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
+              <el-input-number v-model="row.annualRebateRequirements"
+                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
-              <el-input-number v-model="row.oneTimeDiscountRate" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
+              <el-input-number v-model="row.oneTimeDiscountRate"
+                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
-              <el-input-number v-model="row.commissionRate" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
+              <el-input-number v-model="row.commissionRate"
+                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
         </el-table>
         <el-form-item label="是否有NRE费用分摊至模组:" prop="isHasNre">
-          <el-select v-model="state.quoteForm.isHasNre" placeholder="Select" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
+          <el-select v-model="state.quoteForm.isHasNre" placeholder="Select"
+            :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(state.opinion)">
             <el-option :value="true" label="是" />
             <el-option :value="false" label="否" />
           </el-select>
@@ -539,8 +534,7 @@
         <el-row :gutter="20" v-if="state.quoteForm.isHasNre">
           <el-col :span="6">
             <el-form-item label="模具费分摊:" prop="allocationOfMouldCost">
-              <el-select v-model="state.quoteForm.allocationOfMouldCost" placeholder="Select"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.allocationOfMouldCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -548,8 +542,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="治具费分摊:" prop="allocationOfFixtureCost">
-              <el-select v-model="state.quoteForm.allocationOfFixtureCost" placeholder="Select"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.allocationOfFixtureCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -565,8 +558,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="专用设备费分摊:" prop="allocationOfEquipmentCost">
-              <el-select v-model="state.quoteForm.allocationOfEquipmentCost" placeholder="Select"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.allocationOfEquipmentCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -574,8 +566,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="检具费用分摊:" prop="fixtureCost">
-              <el-select v-model="state.quoteForm.fixtureCost" placeholder="Select"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.fixtureCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -583,8 +574,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="实验费用分摊:" prop="experimentCost">
-              <el-select v-model="state.quoteForm.experimentCost" placeholder="Select"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.experimentCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -600,8 +590,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="差旅费分摊:" prop="travelCost">
-              <el-select v-model="state.quoteForm.travelCost" placeholder="Select"
-                :disabled="notEdit">
+              <el-select v-model="state.quoteForm.travelCost" placeholder="Select" :disabled="notEdit">
                 <el-option :value="true" label="是" />
                 <el-option :value="false" label="否" />
               </el-select>
@@ -652,7 +641,7 @@
                 </template>
                 <template #append>
                   <el-input v-model="row.sensorPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
-                  :disabled="!isQuote || right === '1'">
+                    :disabled="!isQuote || right === '1'">
                     <template #append>
                       <el-select v-model="row.sensorCurrency"
                         @change="(val) => SensorChange(val, row, 'sensorExchangeRate')"
@@ -679,7 +668,7 @@
                 </template>
                 <template #append>
                   <el-input v-model="row.lensPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
-                  :disabled="!isQuote || right === '1'">
+                    :disabled="!isQuote || right === '1'">
                     <template #append>
                       <el-select v-model="row.lensCurrency" @change="(val) => SensorChange(val, row, 'lensExchangeRate')"
                         :disabled="!isQuote || right === '1'">
@@ -705,7 +694,7 @@
                 </template>
                 <template #append>
                   <el-input v-model="row.ispPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
-                  :disabled="!isQuote || right === '1'">
+                    :disabled="!isQuote || right === '1'">
                     <template #append>
                       <el-select v-model="row.ispCurrency" @change="(val) => SensorChange(val, row, 'ispExchangeRate')"
                         :disabled="!isQuote || right === '1'">
@@ -731,7 +720,7 @@
                 </template>
                 <template #append>
                   <el-input v-model="row.serialChipPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
-                  :disabled="!isQuote || right === '1'">
+                    :disabled="!isQuote || right === '1'">
                     <template #append>
                       <el-select v-model="row.serialChipCurrency"
                         @change="(val) => SensorChange(val, row, 'serialChipExchangeRate')"
@@ -758,7 +747,7 @@
                 </template>
                 <template #append>
                   <el-input v-model="row.cablePrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
-                  :disabled="!isQuote || right === '1'">
+                    :disabled="!isQuote || right === '1'">
                     <template #append>
                       <el-select v-model="row.cableCurrency"
                         @change="(val) => SensorChange(val, row, 'cableExchangeRate')"
@@ -785,7 +774,7 @@
                 </template>
                 <template #append>
                   <el-input v-model="row.otherPrice" placeholder="单价" oninput="value=value.replace(/[^0-9.]/g,'')"
-                  :disabled="!isQuote || right === '1'">
+                    :disabled="!isQuote || right === '1'">
                     <template #append>
                       <el-select v-model="row.otherCurrency"
                         @change="(val) => SensorChange(val, row, 'otherExchangeRate')"
@@ -814,7 +803,7 @@
         </el-table>
         <h6>客户指定/供应详情</h6>
         <el-button @click="customerTargetPriceTable" type="primary" style="margin: 20px 0"
-        :disabled="!isQuote || right === '1'">点击生成</el-button>
+          :disabled="!isQuote || right === '1'">点击生成</el-button>
         <el-table :data="specifyTableData" style="width: 100%" border>
           <el-table-column prop="productType" label="类型" />
           <el-table-column prop="productName" label="产品名称" />
@@ -930,7 +919,7 @@
           <el-col :span="12">
             <el-form-item label="客户特殊性要求:" prop="customerSpecialRequest">
               <el-input type="textarea" :rows="10" v-model="state.quoteForm.customerSpecialRequest"
-              :disabled="!isQuote || right === '1'" />
+                :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -941,7 +930,7 @@
           <el-col :span="6">
             <el-form-item label="运输方式:" prop="shippingType">
               <el-select v-model="state.quoteForm.shippingType" placeholder="Select"
-              :disabled="!isQuote || right === '1'">
+                :disabled="!isQuote || right === '1'">
                 <el-option v-for="item in state.shippingTypeOptions" :key="item.id" :label="item.displayName"
                   :disabled="!isQuote || right === '1'" />
               </el-select>
@@ -950,7 +939,7 @@
           <el-col :span="6">
             <el-form-item label="包装方式:" prop="packagingType">
               <el-select v-model="state.quoteForm.packagingType" placeholder="Select"
-              :disabled="!isQuote || right === '1'">
+                :disabled="!isQuote || right === '1'">
                 <el-option v-for="item in state.packagingTypeOptions" :key="item.id" :label="item.displayName"
                   :value="item.id" />
               </el-select>
@@ -959,20 +948,20 @@
           <el-col :span="6">
             <el-form-item label="核价要求完成时间:" prop="deadline">
               <el-date-picker type="date" placeholder="Pick a day" v-model="state.quoteForm.deadline"
-              :disabled="!isQuote || right === '1'" />
+                :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="项目经理:" prop="projectManager" :disabled="!isQuote || right === '1'">
               <!-- <SearchPerson v-model="state.quoteForm.projectManager" /> -->
               <SearchDepartMentPerson v-model="state.quoteForm.projectManager" :roleName="['项目管理部-项目经理', '市场部-项目经理']"
-              :disabled="!isQuote || right === '1'" />
+                :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="出口国家:" prop="country">
               <el-select filterable v-model="state.quoteForm.country" @change="changeCountry" placeholder="Select"
-              :disabled="!isQuote || right === '1'">
+                :disabled="!isQuote || right === '1'">
                 <el-option v-for="item in state.countryOptions" :key="item.dbId" :label="item.country"
                   :value="item.country" />
               </el-select>
@@ -986,13 +975,13 @@
           <el-col :span="8">
             <el-form-item label="交货地点:" prop="placeOfDelivery">
               <el-input type="textarea" :rows="10" v-model="state.quoteForm.placeOfDelivery"
-              :disabled="!isQuote || right === '1'" />
+                :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="核价原因:" prop="reason">
               <el-input type="textarea" :rows="10" v-model="state.quoteForm.reason"
-              :disabled="!isQuote || right === '1'" />
+                :disabled="!isQuote || right === '1'" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -1710,6 +1699,9 @@ watch(
   (val) => {
     if (isEdit) return
     console.log(state.yearCols, "[监听年数的变化1，对应表格赋值年份]")
+    if (!isFirstShow.value) {
+      return false
+    }
     pcsTableData.value.forEach((row: any) => {
       row.pcsYearList = val.map((item: any, index: number) => {
         return {
@@ -2441,6 +2433,7 @@ const fetchOptions = async () => {
 }
 
 const handleDealWithData = async () => {
+  isFirstShow.value = true
   console.log(state.quoteAuditFlowId, "state.quoteAuditFlowId111")
   let viewDataRes: any = await getPriceEvaluationStartData(state.quoteAuditFlowId || auditFlowId)
   if (viewDataRes.result) {
@@ -2484,9 +2477,12 @@ const handleDealWithData = async () => {
     kvPricingData.value = viewDataRes.result.gradient
     generateCustomTable()
   }
+  setTimeout(() => {
+    isFirstShow.value = true
+  }, 2000)
 }
 
-const init = async () => {
+const init = async (tempAuditFlowId?: any) => {
   let query = getQuery() || {}
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
   state.quoteForm.projectCode = query.projectCode ? query.projectCode + "" : ""
@@ -2495,29 +2491,65 @@ const init = async () => {
   state.quoteForm.drafterNumber = userInfo.userNumber || "未成功获取"
   state.quoteForm.draftingCompany = userInfo.userCompany?.name || "未成功获取"
   state.quoteForm.draftingDepartment = userInfo.userDepartment?.name || "未成功获取"
-
-  // 设置单据编号
-  setNumber()
-  try {
-    state.tableLoading = true
-
-  } catch (error) {
-    console.log(error)
-    state.tableLoading = false
-  }
-  if (auditFlowId || state.quoteAuditFlowId) {
-    console.log(query.auditFlowId, "query.auditFlowId")
+  state.taebleLoading = true
+  isFirstShow.value = false
+  moduleTableDataV2.value = []
+  interiorPcsTableData.value = []
+  if (tempAuditFlowId || query.auditFlowId) {
     // 查看
-    await handleDealWithData()
+    let viewDataRes: any = await getPriceEvaluationStartData(tempAuditFlowId || query.auditFlowId)
+    if (viewDataRes.result) {
+      isEdit = true
+      state.quoteForm = viewDataRes.result
+      const sopTime: any = [viewDataRes.result.sopTime]
+      state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
+      pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
+      yearChange(viewDataRes.result.projectCycle)
+      viewDataRes.result.projectCode && changeProjectName(viewDataRes.result.projectCode)
+
+      productTableData.value = viewDataRes.result.productInformation
+      shareCountTable.value = viewDataRes.result.shareCount
+      gradientModelTable.value = viewDataRes.result.gradientModel
+      if (viewDataRes.result.carModelCount?.length) {
+        moduleTableDataV2.value = Object.values(
+          viewDataRes.result.carModelCount?.reduce((result: any, item: any) => {
+            if (!result[item.carModel]) {
+              result[item.carModel] = []
+            }
+            result[item.carModel].push(item)
+            return result
+          }, {})
+        )
+      }
+      console.log("第一次渲染: ", moduleTableDataV2.value)
+      requireTableData.value = viewDataRes.result.requirement // 要求
+      specimenData.value = viewDataRes.result.sample //样品
+      customerTargetPrice.value = viewDataRes.result.customerTargetPrice // 客户目标价
+      fileList.value = viewDataRes.result.files.map((item: any) => {
+        return {
+          name: item.fileName,
+          // url: item.fileId
+          response: {
+            result: {
+              fileId: item.fileId
+            }
+          }
+        }
+      })
+      kvPricingData.value = viewDataRes.result.gradient
+      generateCustomTable()
+    }
+
+
     // 查看之后还需要编辑 --
     setTimeout(() => {
       isEdit = false
-    }, 1000)
+    }, 2000)
   }
   setTimeout(() => {
     isFirstShow.value = true
-  }, 1000)
-  state.tableLoading = false
+  }, 2000)
+  state.taebleLoading = false
 }
 
 const fetchWorkflowOvered = async (filter: string) => {

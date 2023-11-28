@@ -2,6 +2,19 @@
   <el-card m="2">
     <el-row justify="end">
       <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button>
+      <el-row  v-if="['EvalReason_Ffabg', 'EvalReason_Qt', '', ''].includes(opinion)">
+        <el-upload
+          :action="$baseUrl + 'api/services/app/NrePricing/FastUploadNreExecl'"
+          :on-success="handleSuccess"
+          :on-error="handleUploadError"
+          show-file-list
+          :on-progress="handleGetUploadProgress"
+          name="filename"
+        >
+          <el-button :style="{ margin: '7px' }" type="primary">上传NRE核价表</el-button>
+        </el-upload>
+        <el-button type="primary" class="m-2" @click="handleSave">保存数据</el-button>
+      </el-row>
     </el-row>
     <el-descriptions m="2" border>
       <el-descriptions-item label="项目名称">{{ data.projectName }}</el-descriptions-item>
@@ -11,7 +24,7 @@
     </el-descriptions>
     <el-card class="margin-top" header="手板件费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.handPieceCost" border
         :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary>
@@ -22,7 +35,7 @@
         <el-table-column prop="quantity" label="数量" :formatter="formatThousandths" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'handPieceCostModifyDtos')" type="primary">
               修改
@@ -60,7 +73,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAdditionOfCostModificationItemsForHandBoards(row)" type="primary">
               确认
@@ -75,7 +88,7 @@
     <el-card class="margin-top" header="模具费用">
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('mouldInventoryModifyDtos')"
-          v-if="!Number(hideEdit)">新增</el-button>
+          v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.mouldInventory" border :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
         show-summary>
@@ -86,7 +99,7 @@
         <el-table-column prop="count" label="数量" :formatter="formatThousandths" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'mouldInventoryModifyDtos')" type="primary">
               修改
@@ -124,7 +137,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddMoldCostModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelMoldCostModificationItem(row.id, $index)">
@@ -137,7 +150,7 @@
     <el-card class="margin-top" header="实验费用">
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('experimentalExpensesModifyDtos')"
-          v-if="!Number(hideEdit)">新增</el-button>
+          v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.laboratoryFeeModels" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
@@ -154,7 +167,7 @@
         <el-table-column label="计数-PV" prop="countPV" :formatter="formatThousandths" />
         <el-table-column prop="allCost" label="总费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'experimentalExpensesModifyDtos')" type="primary">
               修改
@@ -205,7 +218,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddExperimentalFeeModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelExperimentalFeeModificationItem(row.id, $index)">
@@ -221,7 +234,7 @@
         <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0) }}%</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.toolingCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary>
@@ -231,7 +244,7 @@
         <el-table-column prop="unitPriceOfTooling" label="工装单价" :formatter="formatThousandths" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'toolingCostsModifyDtos')" type="primary"> 修改 </el-button>
           </template>
@@ -262,7 +275,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddToolingCostModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelToolingCostModificationItem(row.id, $index)"> 删除
@@ -277,7 +290,7 @@
         <el-descriptions-item label="共线分摊率">{{ (uphAndValues.gxftl || 0)}}%</el-descriptions-item>
       </el-descriptions>
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('fixtureCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.fixtureCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '治具费用', 'cost')" show-summary>
@@ -287,7 +300,7 @@
         <el-table-column prop="number" label="治具数量" :formatter="formatThousandthsNoFixed" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'fixtureCostsModifyDtos')" type="primary"> 修改 </el-button>
           </template>
@@ -318,7 +331,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAdditionOfFixtureCostModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelitionOfFixtureCostModificationItem(row.id, $index)"> 删除
@@ -334,7 +347,7 @@
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('inspectionToolCostModifyDtos')"
-          v-if="!Number(hideEdit)">新增</el-button>
+          v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.qaqcDepartments" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '检具费用', 'cost')" show-summary>
@@ -344,7 +357,7 @@
         <el-table-column prop="count" label="检具数量" :formatter="formatThousandthsNoFixed" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'inspectionToolCostModifyDtos')" type="primary">
               修改
@@ -377,7 +390,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddInspectionToolCostModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelInspectionToolCostModificationItem(row.id, $index)">
@@ -394,7 +407,7 @@
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('productionEquipmentCostsModifyDtos')"
-          v-if="!Number(hideEdit)">新增</el-button>
+          v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.productionEquipmentCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '生产设备费用', 'cost')" show-summary>
@@ -405,7 +418,7 @@
         <el-table-column prop="number" label="数量" :formatter="formatThousandthsNoFixed" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'productionEquipmentCostsModifyDtos')" type="primary">
               修改
@@ -438,7 +451,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddProductionEquipmentCostModificationItem(row)" type="primary">
               确认
@@ -457,7 +470,7 @@
       </el-descriptions>
       <el-row justify="end" m="2">
         <el-button type="primary" @click="addTableData('testingSoftwareCostsModifyDtos')"
-          v-if="!Number(hideEdit)">新增</el-button>
+          v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.softwareTestingCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '测试软件费用', 'cost')" show-summary>
@@ -465,7 +478,7 @@
         <el-table-column prop="softwareProject" label="软件项目" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'testingSoftwareCostsModifyDtos')" type="primary">
               修改
@@ -492,7 +505,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddingModificationItemsForTestingSoftwareCosts(row)" type="primary">
               确认
@@ -506,7 +519,7 @@
     </el-card>
     <el-card class="margin-top" header="差旅费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('travelExpenseModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('travelExpenseModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.travelExpense" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '差旅费用', 'cost')" show-summary>
@@ -523,7 +536,7 @@
         <el-table-column prop="skyCount" label="天数" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'travelExpenseModifyDtos')" type="primary">
               修改
@@ -563,7 +576,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddTravelExpenseModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelTravelExpenseModificationItem(row.id, $index)">
@@ -575,7 +588,7 @@
     </el-card>
     <el-card class="margin-top" header="其他费用">
       <el-row justify="end" m="2">
-        <el-button type="primary" @click="addTableData('restsCostModifyDtos')" v-if="!Number(hideEdit)">新增</el-button>
+        <el-button type="primary" @click="addTableData('restsCostModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.restsCost" style="width: 100%" border
         :summary-method="(val: any) => getMouldSummaries(val, '其他费用', 'cost')" show-summary>
@@ -583,7 +596,7 @@
         <el-table-column prop="constName" label="费用类型" />
         <el-table-column prop="cost" label="费用" :formatter="formatThousandths" />
         <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'restsCostModifyDtos')" type="primary"> 修改 </el-button>
           </template>
@@ -608,7 +621,7 @@
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!Number(hideEdit)">
+        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit">
           <template #default="{ row, $index }">
             <el-button link @click="handleOtherExpenseModificationItemsAdded(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelOtherExpenseModificationItemsAdded(row.id, $index)">
@@ -630,7 +643,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, watchEffect, ref, watch, reactive } from "vue"
+import { onBeforeMount, onMounted, watchEffect, ref, watch, reactive, computed } from "vue"
 import {
   GetPricingForm,
   NreTableDownload,
@@ -655,6 +668,8 @@ import {
   DelTravelExpenseModificationItem,
   DelOtherExpenseModificationItemsAdded,
   GetPricingFormDownload,
+  FastSaveNreExecl,
+  FastQueryNreExecl,
 } from "./common/request"
 import { getMouldSummaries } from "./common/mouldSummaries"
 import getQuery from "@/utils/getQuery"
@@ -663,8 +678,14 @@ import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { cloneDeep, omit } from "lodash"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
+import { getPriceEvaluationStartData } from "../demandApply/service"
 
-const { auditFlowId, productId, hideBtn, hideEdit }: any = getQuery()
+const { auditFlowId, productId, hideBtn, hideEdit: isHideEdit }: any = getQuery()
+
+const hideEdit = computed(() => {
+  return Number(isHideEdit) || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(opinion.value)
+})
 
 const data = ref<any>({
   handPieceCost: [],
@@ -678,8 +699,10 @@ const data = ref<any>({
   fixtureCost: [],
   productionEquipmentCost: [],
   softwareTestingCost: [],
-
 })
+
+const opinion = ref<any>(null)
+
 const total = reactive({
   rmbAllCost: 0,
   usdAllCost: 0,
@@ -756,19 +779,6 @@ watch(
 
 const nreResonOptions = ref<any[]>([])
 
-const initFetch = async () => {
-  try {
-    const { success, result } = await GetPricingForm({ auditFlowId, solutionId: productId })
-    if (!success) throw Error()
-    data.value = result
-    uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
-    uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
-
-  } catch (err) {
-    console.log(err, "[ GetPricingForm err ]")
-  }
-}
-
 const getPricingFormDownload = async () => {
   const { success, result } = await GetPricingFormDownload({ auditFlowId, solutionId: productId })
   if (success) {
@@ -804,11 +814,6 @@ const handleEdit = (row: any, index: number, key: string) => {
       modifyId: row.id
     })
   }
-}
-
-const getResonOptions = async () => {
-  let nreReasons: any = await getDictionaryAndDetail("NreReasons") //落地工厂
-  nreResonOptions.value = nreReasons.result.financeDictionaryDetailList
 }
 
 const addTableData = (key: string) => {
@@ -1103,13 +1108,69 @@ const handleDelOtherExpenseModificationItemsAdded = async (id: any, index: numbe
   })
 }
 
-onBeforeMount(() => {
-  //console.log('2.组件挂载页面之前执行----onBeforeMount')
-})
+const handleSuccess = (res: any) => {
+  const { result } = res || {}
+  if (res.success) {
+    data.value = result
+    uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
+    uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
+    ElMessage({
+      message: "上传成功",
+      type: "success"
+    })
+  }
+}
+
+
+const getResonOptions = async () => {
+  let nreReasons: any = await getDictionaryAndDetail("NreReasons") //落地工厂
+  nreResonOptions.value = nreReasons.result.financeDictionaryDetailList
+}
+
+const handleSave = async () => {
+  const { success } = await FastSaveNreExecl({
+    auditFlowId, solutionId: productId,
+    pricingFormDto: data.value
+  })
+  if (success) {
+    ElMessage({
+      message: "保存成功",
+      type: "success"
+    })
+  }
+}
+
+const initFetch = async () => {
+  try {
+    let res: any = {}
+    if (['EvalReason_Ffabg', 'EvalReason_Qt'].includes(opinion)) {
+      await FastQueryNreExecl({ auditFlowId, solutionId: productId })
+    } else {
+      await GetPricingForm({ auditFlowId, solutionId: productId })
+    }
+    const { success, result } = res || {}
+    if (!success) throw Error()
+    data.value = result
+    uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
+    uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
+
+  } catch (err) {
+    console.log(err, "[ FastQueryNreExecl err ]")
+  }
+}
+
+const fetchPriceEvaluationStartData = async () => {
+  const { result, success }: any = await getPriceEvaluationStartData(auditFlowId)
+  if (success) {
+    opinion.value = result.opinion
+    console.log(opinion, "opinion111")
+  }
+}
 
 onMounted(() => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   if (!auditFlowId || !productId) return
+  fetchPriceEvaluationStartData()
   initFetch()
   getResonOptions()
   getPricingFormDownload()

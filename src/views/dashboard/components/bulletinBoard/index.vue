@@ -2,6 +2,17 @@
   <div class="dashboard">
     <el-card class="m-2">
       <el-row justify="end" align="middle">
+        <el-upload
+          :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+          :on-success="handleBomimportSuccess"
+          show-file-list
+          :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError"
+          name="excle"
+          v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(data.opinion)"
+        >
+          <el-button type="primary" style="margin: 10px 10px 0 0;">上传bom成本</el-button>
+        </el-upload>
         <el-upload v-if="!hideEdit" v-model:file-list="fileList" show-file-list
           :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
           :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
@@ -13,16 +24,6 @@
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
-        <el-upload
-          :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
-          :on-success="handleBomimportSuccess"
-          show-file-list
-          :on-progress="handleGetUploadProgress"
-          :on-error="handleUploadError"
-          v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(data.opinion)"
-        >
-          <el-button type="primary">导入bom成本</el-button>
-        </el-upload>
       </el-row>
       <el-row class="m-2">
         <el-form inline :model="data.form" ref="refForm" :rules="data.rules">
@@ -464,7 +465,7 @@ const fetchAllData = async () => {
 }
 
 const fetchPriceEvaluationStartData = async () => {
-  const { result, success } = await getPriceEvaluationStartData({ auditFlowId })
+  const { result, success } = await getPriceEvaluationStartData(auditFlowId)
   if (success) {
     data.opinion = result.opinion
   }

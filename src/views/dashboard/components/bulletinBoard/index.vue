@@ -238,15 +238,6 @@ const initCharts = (id: string, chartOption: any) => {
   }
 }
 
-onBeforeMount(() => { })
-
-onMounted(() => {
-  if (!auditFlowId) return false
-  init()
-  getPriceEvaluationTableInputCount()
-  getIsTradeCompliance()
-})
-
 const initGradientId = async () => {
   if (!productId) return false
   const loading = ElLoading.service({
@@ -271,8 +262,6 @@ const init = async () => {
   await initGradientId()
 }
 
-
-
 const getIsTradeCompliance = async () => {
   const { result }: any = await GetIsTradeCompliance(auditFlowId)
   data.compliance = result
@@ -296,15 +285,6 @@ const initChart = () => {
     costChart.resize()
   }
 }
-
-let isPricing = computed(() => {
-  let Pricing = data.priceEvaluationTableInputCount.map((p: any) => p.year)
-  let inputCount = data.priceEvaluationTableInputCount.map((p: any) => p.inputCount)
-  console.log(data.priceEvaluationTableInputCount, "data.priceEvaluationTableInputCount")
-  let flag = Pricing.every((item: number) => item != null)
-  let flag2 = inputCount.every((item: number) => item != null)
-  return !flag || !flag2
-})
 
 // 获取核价表模组的InputCount（投入量）和年份
 const getPriceEvaluationTableInputCount = async () => {
@@ -500,6 +480,14 @@ const handleBomimportSuccess: UploadProps["onSuccess"] = (res: any) => {
     })
   }
 }
+
+onMounted(() => {
+  if (!auditFlowId) return false
+  fetchPriceEvaluationStartData()
+  init()
+  getPriceEvaluationTableInputCount()
+  getIsTradeCompliance()
+})
 
 defineExpose({
   getFileList: () => fileList.value

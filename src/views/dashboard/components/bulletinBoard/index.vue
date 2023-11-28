@@ -3,13 +3,14 @@
     <el-card class="m-2">
       <el-row justify="end" align="middle">
         <el-upload
-          :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+          :action="$baseUrl + 'api/services/app/PriceEvaluation/BomImport'"
           :on-success="handleBomimportSuccess"
           show-file-list
           :on-progress="handleGetUploadProgress"
           :on-error="handleUploadError"
           name="excle"
-          v-if="['EvalReason_Ffabg', 'EvalReason_Qt'].includes(data.opinion)"
+          v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(data.opinion)"
+          :data="{ gradientId: data.form.gradientId, solutionId: productId }"
         >
           <el-button type="primary" style="margin: 10px 10px 0 0;">上传bom成本</el-button>
         </el-upload>

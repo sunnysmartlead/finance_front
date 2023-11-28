@@ -2,7 +2,7 @@
   <el-card m="2">
     <el-row justify="end">
       <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button>
-      <el-row  v-if="['EvalReason_Ffabg', 'EvalReason_Qt', '', ''].includes(opinion)">
+      <el-row  v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc', '', ''].includes(opinion)">
         <el-upload
           :action="$baseUrl + 'api/services/app/NrePricing/FastUploadNreExecl'"
           :on-success="handleSuccess"
@@ -684,7 +684,7 @@ import { getPriceEvaluationStartData } from "../demandApply/service"
 const { auditFlowId, productId, hideBtn, hideEdit: isHideEdit }: any = getQuery()
 
 const hideEdit = computed(() => {
-  return Number(isHideEdit) || ['EvalReason_Ffabg', 'EvalReason_Qt'].includes(opinion.value)
+  return Number(isHideEdit) || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(opinion.value)
 })
 
 const data = ref<any>({
@@ -1143,7 +1143,7 @@ const handleSave = async () => {
 const initFetch = async () => {
   try {
     let res: any = {}
-    if (['EvalReason_Ffabg', 'EvalReason_Qt'].includes(opinion)) {
+    if (['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(opinion)) {
       await FastQueryNreExecl({ auditFlowId, solutionId: productId })
     } else {
       await GetPricingForm({ auditFlowId, solutionId: productId })

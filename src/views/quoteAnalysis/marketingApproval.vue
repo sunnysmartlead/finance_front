@@ -3,8 +3,8 @@
 
   <el-card class="marketingQuotation-page" header="报价审核表" m="2">
     <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-if="isShowBtn" />
-    <h4 mb-20px>已保存的方案版本</h4>
-    <div mb-20px>
+    <h4 mb-20px v-if="isShowBtn">已保存的方案版本</h4>
+    <div mb-20px v-if="isShowBtn">
       <el-table :data="versionList" border max-height="300px">
         <el-table-column label="版本号" width="200" align="center" prop="version" />
         <el-table-column label="提交次数" width="200" align="center" prop="ntime" />
@@ -986,6 +986,19 @@ const initFetch = async () => {
       versionList.push(item)
     }
   })
+  if (version && !isShowBtn.value) {
+    const loadingInstance = ElLoading.service({ fullscreen: true })
+    try {
+      /**
+       * 根据版本号查询该版本数据
+       */
+      const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
+      data.resa = result
+      loadingInstance.close()
+    } catch (error) {
+      loadingInstance.close()
+    }
+  }
   let customerNature: any = await getDictionaryAndDetail("CustomerNature") //客户性质
   typeMap.customerNatureOptions = customerNature.result.financeDictionaryDetailList
 

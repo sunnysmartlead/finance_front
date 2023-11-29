@@ -46,7 +46,8 @@ const props = defineProps({
   hideEdit: Boolean,
   onRefresh: {
     type: Function as PropType<any>
-  }
+  },
+  isShowBomEdit: Boolean
 })
 
 const loading = ref(false)
@@ -104,7 +105,7 @@ watch(
 const init = () => {
   if (props.gradientId && !isEmpty(props.yearData)) {
     getBomCost()
-    initFechEditData()
+    props.isShowBomEdit && initFechEditData()
   }
 }
 

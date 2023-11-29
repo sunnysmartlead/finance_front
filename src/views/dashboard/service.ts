@@ -362,3 +362,11 @@ export function SaveAfterUpdateSum(data: any) {
   })
 }
 
+// 获取bom上传数据
+export function GetBomImportTemplate(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetBomImportTemplate",
+    method: "get",
+    data,
+  })
+}

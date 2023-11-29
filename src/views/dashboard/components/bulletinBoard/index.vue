@@ -14,6 +14,14 @@
         >
           <el-button type="primary" style="margin: 10px 10px 0 0;">上传bom成本</el-button>
         </el-upload>
+        <el-row justify="end" m="2">
+          <el-upload :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+            :on-success="handleEvalTableImportSuccess" show-file-list :on-progress="handleGetUploadProgress"
+            :on-error="handleUploadError"
+            v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)">
+            <el-button type="primary">上传核价表</el-button>
+          </el-upload>
+        </el-row>
         <el-upload v-if="!hideEdit" v-model:file-list="fileList" show-file-list
           :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
           :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
@@ -56,7 +64,7 @@
     <el-card m="2">
       <!-- Bom成本  -->
       <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" :on-refresh="initPage" />
+        :gradientId="data.form.gradientId" :on-refresh="initPage" ref="" />
       <!-- 损耗成本  -->
       <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" :on-refresh="fetchAllData" />
@@ -137,6 +145,7 @@ import SchemeCompare from "@/components/SchemeCompare/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import { formatThousandths } from '@/utils/number'
 import { getPriceEvaluationStartData } from "../../../demandApply/service"
+const bomTableRef = ref<any>()
 
 enum upDownEnum {
   "全年",
@@ -473,9 +482,8 @@ const fetchPriceEvaluationStartData = async () => {
 }
 
 const handleBomimportSuccess: UploadProps["onSuccess"] = (res: any) => {
-  console.log(res)
   if (res.success) {
-
+    bomTableRef?.value?.initFetch?.()
     ElMessage({
       message: "上传成功",
       type: "success"
@@ -483,12 +491,22 @@ const handleBomimportSuccess: UploadProps["onSuccess"] = (res: any) => {
   }
 }
 
+const handleEvalTableImportSuccess: UploadProps["onSuccess"] = (res: any) => {
+  if (res.success) {
+    ElMessage({
+      message: "上传成功",
+      type: "success"
+    })
+    init()
+  }
+}
+
 onMounted(() => {
   if (!auditFlowId) return false
   fetchPriceEvaluationStartData()
-  init()
   getPriceEvaluationTableInputCount()
   getIsTradeCompliance()
+  init()
 })
 
 defineExpose({

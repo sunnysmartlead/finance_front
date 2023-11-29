@@ -40,8 +40,8 @@
     </el-card>
     <el-card m="2">
       <el-row justify="end">
-        <el-button type="primary" @click="submit(false)" v-if="right == 2" m="2">保存</el-button>
-        <el-button type="primary" @click="submit(true)" v-if="right == 2" m="2">提交</el-button>
+        <el-button type="primary" @click="submit(false)" v-if="right == 2" m="2" :loading="data.loading">保存</el-button>
+        <el-button type="primary" @click="submit(true)" v-if="right == 2" m="2" :loading="data.loading">提交</el-button>
         <el-button type="primary" @click="downLoad" m="2">下载报价单</el-button>
       </el-row>
       <el-descriptions>
@@ -185,6 +185,7 @@ import { ElMessage } from "element-plus"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
 import { formatThousandths } from "@/utils/number"
+import { fa, tr } from "element-plus/es/locale"
 
 // const { closeSelectedTag } = useJump()
 const route = useRoute()
@@ -221,7 +222,8 @@ const data = reactive({
   auditFlowId: 0,
   solutionId: null,
   solutionIdList: [],
-  versionList: []
+  versionList: [],
+  loading:false
 })
 
 const init = async (solutionId: any) => {
@@ -255,6 +257,7 @@ const submit = async (IsSubmit: boolean) => {
   })
   if (success) {
     ElMessage.success("提交成功！")
+    await init(data.solutionId)
     // closeSelectedTag(route.path)
   }
 }

@@ -1167,10 +1167,10 @@ const fetchPriceEvaluationStartData = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
   if (!auditFlowId || !productId) return
-  fetchPriceEvaluationStartData()
+  await fetchPriceEvaluationStartData()
   initFetch()
   getResonOptions()
   getPricingFormDownload()

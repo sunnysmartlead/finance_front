@@ -11,7 +11,7 @@
         </el-row>
       </template>
       <bomTable :bomData="bomData" :hideEdit="hideEdit" :onChange="handleChange" />
-      <el-card v-if="editData.length">
+      <el-card style="margin-top: 20px;" header="上传bom成本" v-if="editData.length">
         <bomTable :bomData="editData" :hideEdit="hideEdit" :onChange="handleChange" />
       </el-card>
       <el-descriptions :column="2" border>
@@ -27,7 +27,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType, ref, onMounted, watch, computed } from "vue"
-import { SetIsCustomerSupply, GetBomCost, GetBomImportTemplate } from "../../service"
+import { SetIsCustomerSupply, GetBomCost, GetImportBomCost } from "../../service"
 import bomTable from "./bomTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
@@ -104,19 +104,22 @@ watch(
 const init = () => {
   if (props.gradientId && !isEmpty(props.yearData)) {
     getBomCost()
+    initFechEditData()
   }
 }
 
 const initFechEditData = async () => {
   try {
-    loading.value = true
-    if (!props.yearData) return
-    const { result }: any = await GetBomImportTemplate({})
+    console.log(props.gradientId, "props.gradientId")
+    // if (!props.gradientId) return
+    const { result }: any = await GetImportBomCost({
+      AuditFlowId: auditFlowId,
+      solutionId,
+      GradientId: props.gradientId,
+    })
     editData.value = result || []
-    loading.value = false
     console.log(result, "获取 bom成本（含损耗）汇总表")
   } catch (err: any) {
-    loading.value = false
     console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
   }
 }
@@ -133,7 +136,6 @@ const goEdit = () => {
 
 onMounted(() => {
   init()
-  initFechEditData()
 })
 
 const handleChange = (val: any, index: number) => {
@@ -161,6 +163,7 @@ const handleSubmit = async () => {
 }
 
 defineExpose({
-  initFetch: () => initFechEditData()
+  initFetch: () => initFechEditData(),
+  init: () => getBomCost(),
 })
 </script>

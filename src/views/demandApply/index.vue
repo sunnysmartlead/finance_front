@@ -2421,6 +2421,7 @@ const init = async (tempAuditFlowId?: any) => {
   isFirstShow.value = false
   moduleTableDataV2.value = []
   interiorPcsTableData.value = []
+  setNumber()
   if (tempAuditFlowId || query.auditFlowId) {
     // 查看
     let viewDataRes: any = await getPriceEvaluationStartData(tempAuditFlowId || query.auditFlowId)
@@ -2489,6 +2490,7 @@ const fetchWorkflowOvered = async (filter: string) => {
 }
 
 onMounted(() => {
+
   init()
   fetchOptions()
   fetchWorkflowOvered('')

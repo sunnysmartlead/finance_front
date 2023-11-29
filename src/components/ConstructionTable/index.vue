@@ -167,7 +167,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onBeforeMount, onMounted, watchEffect, computed, shallowRef, reactive, nextTick, watch } from "vue"
+import { ref, onBeforeMount, onMounted, watchEffect, computed, shallowRef, reactive, nextTick } from "vue"
 import ThreeDImage from "@/components/ThreeDImage/index.vue"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import {

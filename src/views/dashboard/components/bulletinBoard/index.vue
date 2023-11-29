@@ -58,7 +58,7 @@
     <el-card m="2">
       <!-- Bom成本  -->
       <bomTable ref="bomTableRef" :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
-        :gradientId="data.form.gradientId" :on-refresh="initPage" />
+        :gradientId="data.form.gradientId" :on-refresh="initPage" :isShowBomEdit="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(data.opinion)" />
       <!-- 损耗成本  -->
       <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" :on-refresh="fetchAllData" />

@@ -450,3 +450,17 @@ export function PostIsOfferSecondDelete(data: any) {
     data
   })
 }
+
+/**
+ *
+ * @param data 获取报价审批表列表
+
+ * @returns
+ */
+export function GetQuotationList(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotationList",
+    method: "get",
+    data
+  })
+}

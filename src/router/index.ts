@@ -404,7 +404,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "核价表NRE"
         }
-      },
+      }
       // {
       //   path: "/nre/engineeringDepartment",
       //   component: () => import("@/views/nre/engineeringDepartment.vue"),
@@ -714,7 +714,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "关闭流程",
-      roles: ["closeFlow"]
+      roles: ["closeFlow", "项目管理部-项目经理", "市场部-项目经理"]
     },
     children: [
       {

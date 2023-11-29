@@ -22,6 +22,19 @@
         </el-table-column>
       </el-table>
     </div>
+    <div>已保存的审批表（仅查看）</div>
+    <div my-20px>
+      <el-table :data="quotationList" border max-height="300px">
+        <el-table-column label="序号" width="200" align="center" type="index" />
+        <el-table-column label="创建时间" width="200" align="center" prop="creationTime" />
+        <!-- <el-table-column label="提交次数" width="200" align="center" prop="ntime" /> -->
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="selectQuotation(scope.row)" type="primary">查看该审批表</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <div float-right mb-20px>
       <el-button type="primary" @click="downLoadTable">审批表下载</el-button>
     </div>
@@ -237,7 +250,8 @@ import {
   GeCatalogue,
   GetDownloadAuditQuotationList,
   PostQuotationApprovedMarketingSave,
-  SubmitNode
+  SubmitNode,
+  GetQuotationList
 } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
@@ -948,6 +962,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
   }
 }
+const quotationList = reactive<any[]>([])
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -993,7 +1008,16 @@ const initFetch = async () => {
        * 根据版本号查询该版本数据
        */
       const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
+      const res: any = await GetQuotationList({ auditFlowId, version: version })
+
       data.resa = result
+      if (res.result) {
+        res.result.forEach((item: any) => {
+          quotationList.push(item)
+        })
+      }
+
+      console.log(res)
       loadingInstance.close()
     } catch (error) {
       loadingInstance.close()
@@ -1023,13 +1047,27 @@ const selectVersion = async (row: any) => {
      * 根据版本号查询该版本数据
      */
     const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: versionChosen.version })
+    const res: any = await GetQuotationList({ auditFlowId, version: versionChosen.version })
     data.resa = result
+    quotationList.length = 0
+    if (res.result) {
+      res.result.forEach((item: any) => {
+        quotationList.push(item)
+      })
+    }
+    console.log(res)
     loadingInstance.close()
   } catch (error) {
     loadingInstance.close()
   }
 }
-
+/**
+ * 加载审批表
+ */
+const selectQuotation = (row) => {
+  data.resa = JSON.parse(row.auditQuotationListJson)
+  console.log(JSON.parse(row.auditQuotationListJson))
+}
 watchEffect(() => {})
 </script>
 <style scoped lang="scss">

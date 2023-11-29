@@ -65,9 +65,4 @@ const props = defineProps({
   hideEdit: Boolean
 })
 
-const toFixedTwo = (_recoed: any, _row: any, val: any) => {
-  if (typeof val === "number" && val > 0) return val.toFixed(2)
-  return val
-}
-
 </script>

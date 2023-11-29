@@ -90,3 +90,12 @@ export function getBomImportTemplate(data: any) {
     data
   })
 }
+
+// 获取流程是否上传核价版
+export function getIsUplpadEvalTable(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetIsUplpadEvalTable",
+    method: "get",
+    data
+  })
+}

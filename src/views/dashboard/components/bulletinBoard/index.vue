@@ -2,19 +2,21 @@
   <div class="dashboard">
     <el-card class="m-2">
       <el-row justify="end" align="middle">
-        <el-upload
-          :action="$baseUrl + 'api/services/app/PriceEvaluation/BomImport'"
-          :on-success="handleBomimportSuccess"
-          show-file-list
-          :on-progress="handleGetUploadProgress"
-          :on-error="handleUploadError"
-          name="excle"
+        <el-upload :action="$baseUrl + 'api/services/app/PriceEvaluation/BomImport'" :on-success="handleBomimportSuccess"
+          :on-progress="handleGetUploadProgress" :on-error="handleUploadError" name="excle"
           v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(data.opinion)"
-          :data="{ gradientId: data.form.gradientId, solutionId: productId }"
-        >
+          :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }">
           <el-button type="primary" style="margin: 10px 10px 0 0;">上传bom成本</el-button>
         </el-upload>
-        <el-upload v-if="!hideEdit" v-model:file-list="fileList" show-file-list
+        <el-row justify="end" m="2">
+          <el-upload :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+            :on-success="handleEvalTableImportSuccess" :on-progress="handleGetUploadProgress"
+            :on-error="handleUploadError" :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }"
+            v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)" name="excle">
+            <el-button type="primary" style="margin: 10px 10px 0 0;">上传核价表</el-button>
+          </el-upload>
+        </el-row>
+        <el-upload v-if="!hideEdit" v-model:file-list="fileList"
           :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
           :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
           :on-error="handleUploadError">
@@ -30,8 +32,8 @@
         <el-form inline :model="data.form" ref="refForm" :rules="data.rules">
           <el-form-item label="梯度:" prop="gradientId">
             <el-select v-model="data.form.gradientId" placeholder="请选择梯度" @change="initGradientId">
-              <el-option v-for="item in data.gradientList" :key="item.id" :label="`${item.gradientValue} ${item.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
-                :value="item.id" />
+              <el-option v-for="item in data.gradientList" :key="item.id"
+                :label="`${item.gradientValue} ${item.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :value="item.id" />
             </el-select>
           </el-form-item>
           <el-form-item label="年份:" prop="projectName">
@@ -55,7 +57,7 @@
 
     <el-card m="2">
       <!-- Bom成本  -->
-      <bomTable :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
+      <bomTable ref="bomTableRef" :hideEdit="hideEdit" v-if="data.mode === '1'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" :on-refresh="initPage" />
       <!-- 损耗成本  -->
       <lossTable :hideEdit="hideEdit" v-if="data.mode === '2'" :yearData="filterYearData"
@@ -72,12 +74,12 @@
       <!-- 其他成本  -->
       <otherCostTable :hideEdit="hideEdit" v-if="data.mode === '6'" :yearData="filterYearData"
         :gradientId="data.form.gradientId" :on-refresh="fetchAllData" />
-        <el-descriptions :column="1" border m="2">
-          <el-descriptions-item label="总成本：">
-            {{ data.totalCost?.toFixed(2) }}
-          </el-descriptions-item>
-        </el-descriptions>
-      </el-card>
+      <el-descriptions :column="1" border m="2">
+        <el-descriptions-item label="总成本：">
+          {{ data.totalCost?.toFixed(2) }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-card>
     <el-card style="margin-top: 10px" m="2">
       <el-row>
         <el-col :span="12">
@@ -136,7 +138,8 @@ import useJump from "@/hook/useJump"
 import SchemeCompare from "@/components/SchemeCompare/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import { formatThousandths } from '@/utils/number'
-import { getPriceEvaluationStartData } from "../../../demandApply/service"
+import { getPriceEvaluationStartData, getIsUplpadEvalTable } from "../../../demandApply/service"
+const bomTableRef = ref<any>()
 
 enum upDownEnum {
   "全年",
@@ -403,7 +406,7 @@ const getPricingPanelProfit = async () => {
       UpDown: upDown,
       GradientId: data.form.gradientId,
     })
-    const val = result?.items?.map((val: any) => formatThousandths(null,null, val?.proportion) || 0)
+    const val = result?.items?.map((val: any) => formatThousandths(null, null, val?.proportion) || 0)
     console.log(val, "getPricingPanelProfit")
     costChart.setOption({
       ...costChartData,
@@ -469,13 +472,27 @@ const fetchPriceEvaluationStartData = async () => {
   const { result, success } = await getPriceEvaluationStartData(auditFlowId)
   if (success) {
     data.opinion = result.opinion
+    const { upDown, year } = filterYearData.value
+    if (!year) return
+    const res = await getIsUplpadEvalTable({
+      Year: year,
+      AuditFlowId: auditFlowId,
+      SolutionId: productId,
+      UpDown: upDown,
+      GradientId: data.form.gradientId,
+    })
+    if (!res.result && ['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)) {
+      throw Error()
+    }
+  } else {
+    throw Error()
   }
 }
 
 const handleBomimportSuccess: UploadProps["onSuccess"] = (res: any) => {
-  console.log(res)
   if (res.success) {
-
+    console.log(bomTableRef, "bomTableRef?.value")
+    bomTableRef?.value?.initFetch()
     ElMessage({
       message: "上传成功",
       type: "success"
@@ -483,12 +500,24 @@ const handleBomimportSuccess: UploadProps["onSuccess"] = (res: any) => {
   }
 }
 
-onMounted(() => {
+const handleEvalTableImportSuccess: UploadProps["onSuccess"] = (res: any) => {
+  if (res.success) {
+    ElMessage({
+      message: "上传成功",
+      type: "success"
+    })
+    bomTableRef?.value?.init?.()
+    init()
+  }
+}
+
+onMounted(async () => {
   if (!auditFlowId) return false
-  fetchPriceEvaluationStartData()
-  init()
+  await fetchPriceEvaluationStartData()
+
   getPriceEvaluationTableInputCount()
   getIsTradeCompliance()
+  init()
 })
 
 defineExpose({
@@ -512,4 +541,5 @@ defineExpose({
     margin: 10px 0;
     height: 300px;
   }
-}</style>
+}
+</style>

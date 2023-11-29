@@ -11,6 +11,9 @@
         </el-row>
       </template>
       <bomTable :bomData="bomData" :hideEdit="hideEdit" :onChange="handleChange" />
+      <el-card style="margin-top: 20px;" header="上传bom成本" v-if="editData.length">
+        <bomTable :bomData="editData" :hideEdit="hideEdit" :onChange="handleChange" />
+      </el-card>
       <el-descriptions :column="2" border>
       <el-descriptions-item label="材料成本合计：">
         {{ totalCount.totalMoneyCynNoCustomerSupply }}
@@ -24,7 +27,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType, ref, onMounted, watch, computed } from "vue"
-import { SetIsCustomerSupply, GetBomCost } from "../../service"
+import { SetIsCustomerSupply, GetBomCost, GetImportBomCost } from "../../service"
 import bomTable from "./bomTable.vue"
 import getQuery from "@/utils/getQuery"
 import { isEmpty } from "lodash"
@@ -32,7 +35,7 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 const { auditFlowId, productId: solutionId } = getQuery()
-import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
+import { formatThousandths } from '@/utils/number'
 import { ElMessage } from "element-plus"
 
 const props = defineProps({
@@ -47,6 +50,8 @@ const props = defineProps({
 })
 
 const loading = ref(false)
+const bomData = ref<any>([])
+const editData = ref<any>([])
 
 const totalCount = computed(() => {
   let totalMoneyCynNoCustomerSupply = 0
@@ -78,21 +83,16 @@ const getBomCost = async () => {
       Year: yearData.year
     })
     bomData.value = result || []
-    firstShow.value = false
     loading.value = false
     console.log(result, "获取 bom成本（含损耗）汇总表")
   } catch (err: any) {
     loading.value = false
     console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
-    firstShow.value = false
   }
 }
 
-const bomData = ref<any>([])
-const firstShow = ref(false)
-
 watch(
-  () => [props.gradientId, props.yearData, firstShow.value],
+  () => [props.gradientId, props.yearData],
   () => {
     init()
   },
@@ -104,6 +104,23 @@ watch(
 const init = () => {
   if (props.gradientId && !isEmpty(props.yearData)) {
     getBomCost()
+    initFechEditData()
+  }
+}
+
+const initFechEditData = async () => {
+  try {
+    console.log(props.gradientId, "props.gradientId")
+    // if (!props.gradientId) return
+    const { result }: any = await GetImportBomCost({
+      AuditFlowId: auditFlowId,
+      solutionId,
+      GradientId: props.gradientId,
+    })
+    editData.value = result || []
+    console.log(result, "获取 bom成本（含损耗）汇总表")
+  } catch (err: any) {
+    console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
   }
 }
 
@@ -145,4 +162,8 @@ const handleSubmit = async () => {
   }
 }
 
+defineExpose({
+  initFetch: () => initFechEditData(),
+  init: () => getBomCost(),
+})
 </script>

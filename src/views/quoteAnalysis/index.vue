@@ -180,7 +180,7 @@
       <el-table-column prop="product" label="产品" width="150" align="center" />
       <el-table-column
         :label="item.gross + '%'"
-        v-for="(item, index) in data.allRes.sops[0].grossValues"
+        v-for="(item, index) in data.allRes.sops[0]?.grossValues"
         :key="item.gross"
         :formatter="toFixedTwo"
         width="150"
@@ -196,7 +196,7 @@
     <el-table :data="data.allRes.fullLifeCycle" style="width: 100%" border max-height="500px">
       <el-table-column prop="projectName" label="项目名称" width="150" align="center" />
       <el-table-column
-        v-for="(item, index) in data.allRes.fullLifeCycle[0].grossMarginList"
+        v-for="(item, index) in data.allRes?.fullLifeCycle[0]?.grossMarginList"
         :label="item.grossMargin + '%'"
         :key="index"
         width="150"
@@ -633,138 +633,122 @@ const data = reactive({
     grossMarginList: null,
     unitPrice: null,
     nres: [
-      {
-        solutionName: "NRE AR0820",
-        solutionId: 0,
-        auditFlowId: 0,
-        models: [],
-        devices: [],
-        numberLine: 0,
-        collinearAllocationRate: 0
-      }
+      // {
+      //   solutionName: "NRE AR0820",
+      //   solutionId: 0,
+      //   auditFlowId: 0,
+      //   models: [],
+      //   devices: [],
+      //   numberLine: 0,
+      //   collinearAllocationRate: 0
+      // }
     ],
     sampleOffer: [
-      {
-        solutionName: "AR0820",
-        auditFlowId: 0,
-        solutionId: 0,
-        onlySampleModels: []
-      }
+      // {
+      //   solutionName: "AR0820",
+      //   auditFlowId: 0,
+      //   solutionId: 0,
+      //   onlySampleModels: []
+      // }
     ],
     sops: [
-      {
-        gradientValue: "25K/Y",
-        product: "AR0820",
-        grossValues: [
-          {
-            gross: "5",
-            grossvalue: 1961.647296461244
-          }
-        ]
-      }
+      // {
+      //   gradientValue: "25K/Y",
+      //   product: "AR0820",
+      //   grossValues: [
+      //     {
+      //       gross: "5",
+      //       grossvalue: 1961.647296461244
+      //     }
+      //   ]
+      // }
     ],
     quotedGrossMargins: [
-      {
-        quotedGrossMarginActualList: [
-          {
-            carModel: "Y1",
-            solutionId: 0,
-            product: "延锋科技前装车内1M",
-            carNum: 2,
-            id: 0,
-            version: 0,
-            auditFlowId: 337,
-            interiorPrice: 0.0,
-            interiorGrossMargin: 0.0,
-            interiorClientGrossMargin: 0.0,
-            interiorNreGrossMargin: 0.0,
-            clientPrice: 0.0,
-            clientGrossMargin: 0.0,
-            clientClientGrossMargin: 0.0,
-            clientNreGrossMargin: 0.0,
-            thisQuotationPrice: 0.0,
-            thisQuotationGrossMargin: 0.0,
-            thisQuotationClientGrossMargin: 0.0,
-            thisQuotationNreGrossMargin: 0.0,
-            lastRoundPrice: 0.0,
-            lastRoundGrossMargin: 0.0,
-            lastRoundClientGrossMargin: 0.0,
-            lastRoundNreGrossMargin: 0.0
-          }
-        ],
-        project: "报价毛利率测算-实际数量-Y1"
-      }
+      // {
+      //   quotedGrossMarginActualList: [
+      //     {
+      //       carModel: "Y1",
+      //       solutionId: 0,
+      //       product: "延锋科技前装车内1M",
+      //       carNum: 2,
+      //       id: 0,
+      //       version: 0,
+      //       auditFlowId: 337,
+      //       interiorPrice: 0.0,
+      //       interiorGrossMargin: 0.0,
+      //       interiorClientGrossMargin: 0.0,
+      //       interiorNreGrossMargin: 0.0,
+      //       clientPrice: 0.0,
+      //       clientGrossMargin: 0.0,
+      //       clientClientGrossMargin: 0.0,
+      //       clientNreGrossMargin: 0.0,
+      //       thisQuotationPrice: 0.0,
+      //       thisQuotationGrossMargin: 0.0,
+      //       thisQuotationClientGrossMargin: 0.0,
+      //       thisQuotationNreGrossMargin: 0.0,
+      //       lastRoundPrice: 0.0,
+      //       lastRoundGrossMargin: 0.0,
+      //       lastRoundClientGrossMargin: 0.0,
+      //       lastRoundNreGrossMargin: 0.0
+      //     }
+      //   ],
+      //   project: "报价毛利率测算-实际数量-Y1"
+      // }
     ],
     gradientQuotedGrossMargins: [
-      {
-        gradient: "2664.9k/y",
-        gradientId: 599,
-        solutionId: 664,
-        product: "延锋科技前装车内1M",
-        id: 0,
-        version: 0,
-        auditFlowId: 337,
-        interiorPrice: 783.3082529596942, //目标价（内部）单价
-        interiorGrossMargin: 20, // 目标价（内部）毛利率
-        interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
-        interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
-        clientPrice: 1000, // 目标价（客户）单价
-        clientGrossMargin: 0, // 目标价（客户）毛利率
-        clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
-        clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
-        thisQuotationPrice: 1222, /// 本次报价单价
-        thisQuotationGrossMargin: 0, // 本次报价毛利率
-        thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
-        thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
-        lastRoundPrice: 0, // 上轮报价单价
-        lastRoundGrossMargin: 0, // 上轮报价毛利率
-        lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
-        lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
-      }
+      // {
+      //   gradient: "2664.9k/y",
+      //   gradientId: 599,
+      //   solutionId: 664,
+      //   product: "延锋科技前装车内1M",
+      //   id: 0,
+      //   version: 0,
+      //   auditFlowId: 337,
+      //   interiorPrice: 783.3082529596942, //目标价（内部）单价
+      //   interiorGrossMargin: 20, // 目标价（内部）毛利率
+      //   interiorClientGrossMargin: 86.31, // 目标价（内部）增加客供料毛利率
+      //   interiorNreGrossMargin: 86.31, // 目标价（内部）剔除分摊费用毛利率
+      //   clientPrice: 1000, // 目标价（客户）单价
+      //   clientGrossMargin: 0, // 目标价（客户）毛利率
+      //   clientClientGrossMargin: 0, // 目标价（客户）增加客供料毛利率
+      //   clientNreGrossMargin: 0, // 目标价（客户）剔除分摊费用毛利率
+      //   thisQuotationPrice: 1222, /// 本次报价单价
+      //   thisQuotationGrossMargin: 0, // 本次报价毛利率
+      //   thisQuotationClientGrossMargin: 0, // 本次报价增加客供料毛利率
+      //   thisQuotationNreGrossMargin: 0, // 本次报价剔除NRE分摊费用毛利率
+      //   lastRoundPrice: 0, // 上轮报价单价
+      //   lastRoundGrossMargin: 0, // 上轮报价毛利率
+      //   lastRoundClientGrossMargin: 0, // 上轮报价增加客供料毛利率
+      //   lastRoundNreGrossMargin: 0 // 上轮报价剔除NRE分摊费用毛利率
+      // }
     ],
     fullLifeCycle: [
-      {
-        projectName: "数量",
-        grossMarginList: [
-          {
-            grossMargin: 5,
-            grossMarginNumber: 1.05
-          }
-        ]
-      }
+      // {
+      //   projectName: "数量",
+      //   grossMarginList: [
+      //     {
+      //       grossMargin: 5,
+      //       grossMarginNumber: 1.05
+      //     }
+      //   ]
+      // }
     ],
     projectBoard: [
-      {
-        title: "2664.9KV",
-        projectBoardModels: [
-          {
-            version: 0,
-            auditFlowId: 0,
-            id: 0,
-            projectName: "数量",
-            interiorTarget: 21319.2,
-            clientTarget: 21319.2,
-            offer: 0.0,
-            oldOffer: null
-          }
-        ]
-      },
-      {
-        title: "4000KV",
-        projectBoardModels: [
-          {
-            version: 0,
-            auditFlowId: 0,
-            gradientId: 1,
-            id: 0,
-            projectName: "数量",
-            interiorTarget: 32000.0,
-            clientTarget: 32000.0,
-            offer: 0.0,
-            oldOffer: null
-          }
-        ]
-      }
+      // {
+      //   title: "2664.9KV",
+      //   projectBoardModels: [
+      //     {
+      //       version: 0,
+      //       auditFlowId: 0,
+      //       id: 0,
+      //       projectName: "数量",
+      //       interiorTarget: 21319.2,
+      //       clientTarget: 21319.2,
+      //       offer: 0.0,
+      //       oldOffer: null
+      //     }
+      //   ]
+      // },
     ]
   } as any
 })

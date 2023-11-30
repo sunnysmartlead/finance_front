@@ -92,8 +92,8 @@
           <el-table-column type="index" label="序号" width="80" fixed="left" align="center" />
           <el-table-column prop="productName" label="产品名称" align="center" />
           <el-table-column prop="year" label="年份" align="center" />
-          <el-table-column prop="travelVolume" label="走量" align="center" />
-          <el-table-column prop="unitPrice" label="单价（未税）" align="center" />
+          <el-table-column prop="travelVolume" label="走量" :formatter="formatThousandths" align="center" />
+          <el-table-column prop="unitPrice" label="单价（未税）" :formatter="formatThousandths" align="center" />
           <el-table-column prop="remark" label="备注" align="center">
             <template #default="{ row }">
               <el-input v-model="row.remark" />

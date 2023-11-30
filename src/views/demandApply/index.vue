@@ -146,10 +146,8 @@
         </el-row>
         <el-row>
           <el-row :span="15">
-            <el-form-item label="核价类型:" prop="updateFrequency">
+            <el-form-item label="核价类型:" prop="priceEvalType">
               <el-select v-model="state.quoteForm.priceEvalType" placeholder="核价类型" :disabled="notEdit">
-                <!-- <el-option :value="0" label="量产品核价" />
-                <el-option :value="1" label="样品核价" /> -->
                 <el-option v-for="item in state.valenceTypeOptions" :key="item.id" :label="item.displayName"
                   :value="item.id" />
               </el-select>
@@ -478,7 +476,7 @@
           </el-table-column>
           <el-table-column label="客户年降率(%)">
             <template #default="{ row, $index }">
-              <el-input-number v-model="row.annualDeclineRate" :disabled="!canEdit || !$index" :min="0" />
+              <el-input-number v-model="row.annualDeclineRate" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
@@ -1039,6 +1037,7 @@ interface Options {
 
 const rules = reactive<FormRules>({
   projectName: [{ required: true, message: "请输入该值", trigger: "blur" }],
+  priceEvalType: [{ required: true, message: "请输入该值", trigger: "blur" }],
   projectCode: [{ required: true, message: "请输入该值", trigger: "blur" }],
   customerName: [{ required: true, message: "请输入该值", trigger: "blur" }],
   customerNature: [{ required: true, message: "请输入该值", trigger: "blur" }],

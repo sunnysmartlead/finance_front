@@ -572,9 +572,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/marketingQuotation/zbWatch",
+        path: "/marketingQuotation/confirmWinningBid",
         component: () => import("@/views/marketingQuotation/indexSecond.vue"),
-        name: "zbWatch",
+        name: "confirmWinningBid",
         meta: {
           title: "总经理中标查看"
         }

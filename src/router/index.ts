@@ -864,7 +864,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         //component: () => import("@/views/processImport/index.vue"),
         name: "processHoursExport",
         meta: {
-          title: "工序工时导入"
+          title: "工序工时导入",
+          hidden: true
         }
       },
       {
@@ -915,25 +916,6 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/processHoursExport/environment",
-        component: () => import("@/views/processHoursExport/environment.vue"),
-        name: "environment",
-        meta: {
-          title: "环境实验库",
-          roles: ["环境实验库管理员"]
-        }
-      },
-      {
-        path: "/processHoursExport/emc",
-        component: () => import("@/views/processHoursExport/emc.vue"),
-        name: "emc",
-        meta: {
-          title: "EMC实验库",
-          roles: ["EMC实验库管理员"]
-        }
-      },
-
-      {
         path: "/processHoursExport/softwareHardware",
         component: () => import("@/views/processHoursExport/softwareHardware.vue"),
         name: "softwareHardware",
@@ -957,16 +939,51 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/processHoursExport/logisticsCost.vue"),
         name: "logisticsCost",
         meta: {
-          title: "物流成本录入"
+          title: "物流成本录入",
+          hidden: true
         }
       },
-
       {
         path: "/processHoursExport/COBManufactureCost",
         component: () => import("@/views/processHoursExport/COBManufactureCost.vue"),
         name: "COBManufactureCost",
         meta: {
-          title: "COB制造成本录入"
+          title: "COB制造成本录入",
+          hidden: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/environment",
+    component: Layout,
+    meta: {
+      roles: ["环境实验库管理员"]
+    },
+    children: [
+      {
+        path: "/processHoursExport/environment",
+        component: () => import("@/views/processHoursExport/environment.vue"),
+        name: "environment",
+        meta: {
+          title: "环境实验库"
+        }
+      }
+    ]
+  },
+  {
+    path: "/emc",
+    component: Layout,
+    meta: {
+      roles: ["EMC实验库管理员"]
+    },
+    children: [
+      {
+        path: "/processHoursExport/emc",
+        component: () => import("@/views/processHoursExport/emc.vue"),
+        name: "emc",
+        meta: {
+          title: "EMC实验库"
         }
       }
     ]

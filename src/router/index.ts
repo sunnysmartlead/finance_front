@@ -531,8 +531,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import("@/views/quoteAnalysis/quoteForm.vue"),
         name: "quoteForm",
         meta: {
-          title: "报价单",
-          roles: ["报价单归档管理员"]
+          title: "报价单"
+          // roles: ["报价单归档管理员"]
         }
       },
       {

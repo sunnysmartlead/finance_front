@@ -117,7 +117,35 @@
     </el-card>
     <!-- nre -->
     <h3>NRE</h3>
-    <el-card v-for="(nre, index) in data.resa.nres" :key="index">
+
+    <!-- {
+        "solutionName": null,
+        "index": null,
+        "costName": null,
+        "pricingMoney": "线体数量：",
+        "offerCoefficient": "1",
+        "offerMoney": "共线分摊率：",
+        "remark": "24.96"
+      },
+      {
+        "solutionName": "方案名",
+        "index": "序号",
+        "costName": "费用名称",
+        "pricingMoney": "核价金额",
+        "offerCoefficient": "报价系数",
+        "offerMoney": "报价金额",
+        "remark": "备注"
+      }, -->
+    <el-table :data="data.resa.nres" style="width: 100%" border height="400px">
+      <el-table-column prop="solutionName" label="" />
+      <el-table-column prop="index" label="" />
+      <el-table-column prop="costName" label="" />
+      <el-table-column prop="pricingMoney" label="" />
+      <el-table-column prop="offerCoefficient" label="" />
+      <el-table-column prop="offerMoney" label="" />
+      <el-table-column prop="remark" label="" />
+    </el-table>
+    <!-- <el-card v-for="(nre, index) in data.resa.nres" :key="index">
       <p>{{ nre.solutionName }}</p>
       <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
       <el-table
@@ -150,7 +178,7 @@
         <el-table-column prop="number" label="设备数量" />
         <el-table-column prop="equipmentMoney" label="设备金额" />
       </el-table>
-    </el-card>
+    </el-card> -->
     <el-card header="内部核价信息：" m="2">
       <el-table :data="data.resa.pricingMessageSecondModels" border align="center">
         <el-table-column label="序号" type="index" width="50" />
@@ -222,7 +250,17 @@
     </el-card>
     <!-- 样品 -->
     <p>样品报价</p>
-    <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
+
+    <el-table :data="data.resa.samples" style="width: 100%" border height="500px">
+      <el-table-column prop="solutionName" label="方案名" />
+      <el-table-column prop="solutionName" label="样品阶段" />
+      <el-table-column prop="pcs" label="需求量（pcs）" />
+      <el-table-column prop="cost" label="成本" />
+      <el-table-column prop="unitPrice" label="单价" />
+      <el-table-column prop="grossMargin" label="毛利率" />
+      <el-table-column prop="salesRevenue" label="销售收入" />
+    </el-table>
+    <!-- <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
       <div mb-20px>{{ sample.solutionName }}</div>
       <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
         <el-table-column prop="name" label="样品阶段" />
@@ -232,7 +270,7 @@
         <el-table-column prop="grossMargin" label="毛利率" />
         <el-table-column prop="salesRevenue" label="销售收入" />
       </el-table>
-    </el-card>
+    </el-card> -->
     <!-- <el-row justify="end" style="margin-top: 20px">
       <el-button type="primary" @click="save">保存</el-button>
     </el-row> -->
@@ -251,7 +289,10 @@ import {
   GetDownloadAuditQuotationList,
   PostQuotationApprovedMarketingSave,
   SubmitNode,
-  GetQuotationList
+  GetQuotationList,
+  GetQuotation,
+  GetDownloadAuditQuotationExcel,
+  PostQuotationApproved
 } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
@@ -265,6 +306,9 @@ const { auditFlowId, version, showBtn }: any = getQuery()
  */
 let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
+let quotationList = reactive<any[]>([])
+let quotationCur: any = null //当前的报价审批表单项 临时保存
+let quotationChosen: any = null //选中的报价审批表单项
 const isShowBtn = ref(true)
 if (showBtn === "false") {
   isShowBtn.value = false
@@ -524,251 +568,72 @@ const data = reactive<any>({
         devices: [],
         numberLine: 0,
         collinearAllocationRate: 0
-      },
-      {
-        solutionName: "NRE 汇总",
-        solutionId: 0,
-        auditFlowId: 0,
-        models: [
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "手板件费",
-            pricingMoney: 4000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242865+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "模具费",
-            pricingMoney: 193000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.624287+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "生产设备费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242871+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "工装费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242872+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "治具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242874+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "检具费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242878+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "实验费",
-            pricingMoney: 372770,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242879+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "测试软件费",
-            pricingMoney: 0,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242881+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "差旅费",
-            pricingMoney: 800,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242882+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: null,
-            formName: "其他费用",
-            pricingMoney: 50000,
-            offerCoefficient: 0,
-            offerMoney: 0,
-            remark: null,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242885+08:00",
-            creatorUserId: null,
-            id: 0
-          }
-        ],
-        devices: [],
-        numberLine: 0,
-        collinearAllocationRate: 0
       }
     ],
-    sampleOffer: [
-      {
-        solutionName: "AR0820",
-        auditFlowId: 0,
-        solutionId: 0,
-        onlySampleModels: [
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1866.5904956533819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:22.8913946+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_B",
-            pcs: 300,
-            cost: 1866.5904956533819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:22.8919079+08:00",
-            creatorUserId: null,
-            id: 0
-          },
-          {
-            auditFlowId: 0,
-            solutionId: 0,
-            name: "SampleName_C",
-            pcs: 400,
-            cost: 1866.5904956533819,
-            unitPrice: 0,
-            grossMargin: 0,
-            salesRevenue: 0,
-            isDeleted: false,
-            deleterUserId: null,
-            deletionTime: null,
-            lastModificationTime: null,
-            lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:22.8919094+08:00",
-            creatorUserId: null,
-            id: 0
-          }
-        ]
-      }
-    ],
+    samples: [],
+    // sampleOffer: [
+    //   {
+    //     solutionName: "AR0820",
+    //     auditFlowId: 0,
+    //     solutionId: 0,
+    //     onlySampleModels: [
+    //       {
+    //         auditFlowId: 0,
+    //         solutionId: 0,
+    //         name: "SampleName_A",
+    //         pcs: 200,
+    //         cost: 1866.5904956533819,
+    //         unitPrice: 0,
+    //         grossMargin: 0,
+    //         salesRevenue: 0,
+    //         isDeleted: false,
+    //         deleterUserId: null,
+    //         deletionTime: null,
+    //         lastModificationTime: null,
+    //         lastModifierUserId: null,
+    //         creationTime: "2023-09-13T01:04:22.8913946+08:00",
+    //         creatorUserId: null,
+    //         id: 0
+    //       },
+    //       {
+    //         auditFlowId: 0,
+    //         solutionId: 0,
+    //         name: "SampleName_B",
+    //         pcs: 300,
+    //         cost: 1866.5904956533819,
+    //         unitPrice: 0,
+    //         grossMargin: 0,
+    //         salesRevenue: 0,
+    //         isDeleted: false,
+    //         deleterUserId: null,
+    //         deletionTime: null,
+    //         lastModificationTime: null,
+    //         lastModifierUserId: null,
+    //         creationTime: "2023-09-13T01:04:22.8919079+08:00",
+    //         creatorUserId: null,
+    //         id: 0
+    //       },
+    //       {
+    //         auditFlowId: 0,
+    //         solutionId: 0,
+    //         name: "SampleName_C",
+    //         pcs: 400,
+    //         cost: 1866.5904956533819,
+    //         unitPrice: 0,
+    //         grossMargin: 0,
+    //         salesRevenue: 0,
+    //         isDeleted: false,
+    //         deleterUserId: null,
+    //         deletionTime: null,
+    //         lastModificationTime: null,
+    //         lastModifierUserId: null,
+    //         creationTime: "2023-09-13T01:04:22.8919094+08:00",
+    //         creatorUserId: null,
+    //         id: 0
+    //       }
+    //     ]
+    //   }
+    // ],
     componenSocondModels: [
       {
         coreComponent: "Sensor",
@@ -867,6 +732,7 @@ const data = reactive<any>({
       }
     ]
   },
+  curData: null,
   version: 1
 })
 const typeMap = reactive<any>({
@@ -908,14 +774,15 @@ const getSummaries = (param) => {
  */
 const downLoadTable = async () => {
   try {
-    if (!versionChosen) {
+    if (!versionChosen || !quotationChosen) {
       ElMessage.warning("请先选择数据")
       return false
     }
-    let res: any = await GetDownloadAuditQuotationList({
-      auditFlowId: Number(auditFlowId),
-      version: versionChosen.version
-    })
+    // let res: any = await GetDownloadAuditQuotationList({
+    //   auditFlowId: Number(auditFlowId),
+    //   version: versionChosen.version
+    // })
+    let res: any = await GetDownloadAuditQuotationExcel(quotationChosen.id)
     const blob = res
     const reader = new FileReader()
     reader.readAsDataURL(blob)
@@ -935,7 +802,9 @@ const downLoadTable = async () => {
 }
 const save = async () => {
   try {
-    let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
+    // let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
+    let res: any = await PostQuotationApproved({ ...data.resa, version: versionChosen.version })
+
     console.log(res)
     if (res.success) {
       ElMessage.success("保存成功")
@@ -949,7 +818,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     ElMessage.warning("选择数据后再执行")
     return false
   }
-  await save()
+  await save() //保存舍弃
   let res: any = await SubmitNode({
     comment,
     nodeInstanceId,
@@ -962,7 +831,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     })
   }
 }
-const quotationList = reactive<any[]>([])
+
 onBeforeMount(() => {
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -1047,6 +916,9 @@ const selectVersion = async (row: any) => {
      * 根据版本号查询该版本数据
      */
     const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: versionChosen.version })
+    /**
+     * 获取该版本下的报价审批表
+     */
     const res: any = await GetQuotationList({ auditFlowId, version: versionChosen.version })
     data.resa = result
     quotationList.length = 0
@@ -1064,9 +936,12 @@ const selectVersion = async (row: any) => {
 /**
  * 加载审批表
  */
-const selectQuotation = (row) => {
-  data.resa = JSON.parse(row.auditQuotationListJson)
-  console.log(JSON.parse(row.auditQuotationListJson))
+const selectQuotation = async (row: any) => {
+  let res: any = await GetQuotation(row.id)
+  data.resa = res.result
+  quotationChosen = res.result
+  // data.resa = JSON.parse(row.auditQuotationListJson)
+  // console.log(JSON.parse(row.auditQuotationListJson))
 }
 watchEffect(() => {})
 </script>

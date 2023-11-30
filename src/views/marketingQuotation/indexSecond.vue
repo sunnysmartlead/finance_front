@@ -901,7 +901,7 @@ const toNREPriceList = () => {
  * 总经理审批2保存
  */
 const save = async () => {
-  let res = await PostManagerApprovalOfferTwoSave({ ...data.resa, auditFlowId, version })
+  let res = await PostManagerApprovalOfferTwoSave({ ...data.resa, auditFlowId, version }) //保存舍弃
   if (res.success) {
     ElMessage.success("操作成功")
   }

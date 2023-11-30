@@ -464,3 +464,44 @@ export function GetQuotationList(data: any) {
     data
   })
 }
+
+/**
+ *
+ * @param data 根据id获取报价审批表
+
+ * @returns
+ */
+export function GetQuotation(id: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetQuotation",
+    method: "get",
+    data: {
+      id
+    }
+  })
+}
+
+// 根据id下载审批表
+export function GetDownloadAuditQuotationExcel(id: number) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadAuditQuotationExcel",
+    method: "get",
+    responseType: "blob",
+    data: {
+      id
+    }
+  })
+}
+
+/**
+ *
+ * @param data 报价审批表保存
+ * @returns
+ */
+export function PostQuotationApproved(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostQuotationApproved",
+    method: "post",
+    data
+  })
+}

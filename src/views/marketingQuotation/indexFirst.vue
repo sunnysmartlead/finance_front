@@ -550,7 +550,7 @@ const save = async () => {
   if (versionChosen.isQuotation) {
     await PostQuotationFeedbackManagerOneSave(data.resa)
   } else {
-    let res = await PostManagerApprovalOfferOneSave(data.resa)
+    let res = await PostManagerApprovalOfferOneSave(data.resa) //保存舍弃
     console.log(res)
   }
 

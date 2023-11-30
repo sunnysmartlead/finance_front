@@ -2,7 +2,7 @@
   <el-card m="2">
     <el-row justify="end">
       <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button>
-      <el-row  v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc', 'EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion)">
+      <el-row  v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion)">
         <el-upload
           :action="$baseUrl + 'api/services/app/NrePricing/FastUploadNreExecl'"
           :on-success="handleSuccess"
@@ -1143,7 +1143,7 @@ const handleSave = async () => {
 const initFetch = async () => {
   try {
     let res: any = {}
-    if (['EvalReason_Ffabg', 'EvalReason_Qtyylc', 'EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion.value)) {
+    if (['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion.value)) {
       res = await FastQueryNreExecl({ auditFlowId, solutionId: productId })
     } else {
       res = await GetPricingForm({ auditFlowId, solutionId: productId })

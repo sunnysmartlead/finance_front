@@ -37,7 +37,7 @@ export function GetDownloadList(data: any) {
 export function PostDownloadListSave(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostPigeonholeDownload",
-    method: "get",
+    method: "post",
     data
   })
 }

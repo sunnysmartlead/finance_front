@@ -65,7 +65,8 @@
         show-file-list
         style="float: right"
       >
-        <el-button type='primary' :disabled="submitType!=='EvalFeedback_Js'">文件上传</el-button>
+        <!-- <el-button type='primary' :disabled="submitType!=='EvalFeedback_Js'">文件上传</el-button> -->
+        <el-button type='primary'>文件上传</el-button>
       </el-upload>
     <!-- nre -->
     <div v-if="data.allRes.nres">
@@ -689,6 +690,7 @@ const data = reactive({
     message: "调用成功"
   },
   allRes: {
+    productName: null, //文件name
     productld: null, //文件上传id
     product: null, //文件url
     isOffer: false,
@@ -823,7 +825,7 @@ const handleSuccess = (res: any) => {
   if (res.success) {
     data.allRes.productId = fileList.value.map((item: any) => item.response.result.fileId)[0] || null
     data.allRes.product = fileList.value.map((item: any) => item.response.result.fileUrl)[0] || null
-
+    data.allRes.productName = fileList.value.map((item: any) => item.response.result.fileName)[0] || null
     ElMessage({
       message: "上传成功",
       type: "success"

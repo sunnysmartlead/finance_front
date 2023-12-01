@@ -46,21 +46,21 @@ export function GetAllAuditFlowVersion(data: { projectName: string }): any {
 }
 
 // // 根据项目名称获取项目已有核价流程所有版本
-// export function GetAllAuditFlowProjectNameAndVersion(): any {
-//   return request({
-//     url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersion",
-//     method: "get",
-//     data: {}
-//   })
-// }
-// 根据项目名称获取项目已有核价流程所有版本
 export function GetAllAuditFlowProjectNameAndVersion(): any {
   return request({
-    url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersionBySelf",
+    url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersion",
     method: "get",
     data: {}
   })
 }
+// 根据项目名称获取项目已有核价流程所有版本
+// export function GetAllAuditFlowProjectNameAndVersion(): any {
+//   return request({
+//     url: "/api/services/app/VersionManagment/GetAllAuditFlowProjectNameAndVersionBySelf",
+//     method: "get",
+//     data: {}
+//   })
+// }
 
 // 获取所有项目名
 export function GetQuoteProjectNameList(): any {

@@ -25,9 +25,9 @@
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
       <!-- EvalFeedback_Js, DisplayName="接受报价",},
-EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新核价",},
- EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
- EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",}, -->
+      EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新核价",},
+      EvalFeedback_Bjsdjsjj, DisplayName="不接受此价，但接受降价，不用重新核价",},
+      EvalFeedback_Bjxysp, DisplayName="报价金额小于审批金额",}, -->
 
       <el-button type="primary" @click="setSubmitType(`EvalFeedback_Js`)" v-havedone :disabled="!isSubmit"
         >接受报价</el-button
@@ -53,7 +53,20 @@ EvalFeedback_Bjsbzc, DisplayName="不接受此此价，不用再次报价/重新
           >
         </template>
       </el-popover>
+
     </el-button-group>
+    <el-upload
+        v-model:file-list="fileList"
+        :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+        :on-success="handleSuccess"
+        :on-error="handleUploadError"
+        :limit="1"
+        :on-progress="handleGetUploadProgress"
+        show-file-list
+        style="float: right"
+      >
+        <el-button type='primary' :disabled="submitType!=='EvalFeedback_Js'">文件上传</el-button>
+      </el-upload>
     <!-- nre -->
     <div v-if="data.allRes.nres">
       <h3>NRE</h3>
@@ -583,6 +596,8 @@ import * as echarts from "echarts"
 import { ElMessage, ElLoading } from "element-plus"
 // import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
+import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
+
 import { useProductStore } from "@/store/modules/productList"
 import {
   PostStatementAnalysisBoardSecond,
@@ -606,6 +621,7 @@ import {
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
 
+const fileList = ref<any[]>([])
 //报价反馈
 //标识符：QuoteFeedback
 // EvalFeedback_Js, DisplayName="接受报价",},
@@ -673,6 +689,8 @@ const data = reactive({
     message: "调用成功"
   },
   allRes: {
+    productld: null, //文件上传id
+    product: null, //文件url
     isOffer: false,
     noOfferReason: "string",
     auditFlowId: 0,
@@ -801,6 +819,18 @@ const data = reactive({
 const handleClose = () => {
   confirmText.value = ""
 }
+const handleSuccess = (res: any) => {
+  if (res.success) {
+    data.allRes.productId = fileList.value.map((item: any) => item.response.result.fileId)[0] || null
+    data.allRes.product = fileList.value.map((item: any) => item.response.result.fileUrl)[0] || null
+
+    ElMessage({
+      message: "上传成功",
+      type: "success"
+    })
+  }
+}
+
 // 过滤相同梯度的数据
 interface stringKeyObj {
   [propName: string]: any

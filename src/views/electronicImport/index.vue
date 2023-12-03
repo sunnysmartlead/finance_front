@@ -234,12 +234,17 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
       opinion,
       nodeInstanceId,
     }
-    await SaveBoard(params)
-    const { success }: any = await SaveElectronicBom(params)
-    loading.close()
-    if (success) {
-      ElMessage.success(`${label} 成功！`)
-    }
+    const { success }: any = await SaveBoard(params)
+    setTimeout(async () => {
+      let res: any = {}
+      if (success) {
+        res = await SaveElectronicBom(params)
+      }
+      loading.close()
+      if (res.success) {
+        ElMessage.success(`${label} 成功！`)
+      }
+    })
   } catch (error) {
     loading.close()
   }

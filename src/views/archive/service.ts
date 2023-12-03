@@ -38,6 +38,7 @@ export function PostDownloadListSave(data: any) {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/PostPigeonholeDownload",
     method: "post",
+    responseType: "blob",
     data
   })
 }

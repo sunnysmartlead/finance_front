@@ -244,7 +244,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
       if (res.success) {
         ElMessage.success(`${label} 成功！`)
       }
-    })
+    }, 1000)
   } catch (error) {
     loading.close()
   }

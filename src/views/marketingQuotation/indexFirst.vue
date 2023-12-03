@@ -112,7 +112,7 @@
         <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
           <span>{{ sample.solutionName }}</span>
           <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
-            <el-table-column prop="sampleName" label="样品阶段" />
+            <el-table-column prop="name" label="样品阶段" />
             <el-table-column prop="pcs" label="需求量（pcs）" />
             <el-table-column prop="cost" label="成本" />
             <el-table-column prop="unitPrice" label="单价" />

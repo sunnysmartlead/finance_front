@@ -22,19 +22,22 @@
         </el-table-column>
       </el-table>
     </div>
-    <div>已保存的审批表（仅查看）</div>
-    <div my-20px>
-      <el-table :data="quotationList" border max-height="300px">
-        <el-table-column label="序号" width="200" align="center" type="index" />
-        <el-table-column label="创建时间" width="200" align="center" prop="creationTime" />
-        <!-- <el-table-column label="提交次数" width="200" align="center" prop="ntime" /> -->
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button @click="selectQuotation(scope.row)" type="primary">查看该审批表</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <div v-if="isShowBtn">
+      <div>已保存的审批表（仅查看）</div>
+      <div my-20px>
+        <el-table :data="quotationList" border max-height="300px">
+          <el-table-column label="序号" width="200" align="center" type="index" />
+          <el-table-column label="创建时间" width="200" align="center" prop="creationTime" />
+          <!-- <el-table-column label="提交次数" width="200" align="center" prop="ntime" /> -->
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button @click="selectQuotation(scope.row)" type="primary">查看该审批表</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
+
     <div float-right mb-20px>
       <el-button type="primary" @click="downLoadTable">审批表下载</el-button>
     </div>
@@ -82,13 +85,13 @@
     </el-descriptions>
     <!-- sop走量信息 -->
     <el-card header="sop走量信息" m="2">
-      <el-table :data="data.resa.motion" border>
+      <el-table :data="data.resa.mess" border>
         <el-table-column type="index" width="100" />
         <el-table-column prop="gradient" label="梯度" />
         <el-table-column prop="key" label="年份" />
         <el-table-column prop="value" label="走量" />
       </el-table>
-      <el-table :data="data.resa.sops" border>
+      <el-table :data="data.resa.sop" border>
         <el-table-column type="index" width="100" />
         <el-table-column prop="year" label="年份" />
         <el-table-column prop="annualDeclineRate" label="年降率" />
@@ -774,27 +777,44 @@ const getSummaries = (param) => {
  */
 const downLoadTable = async () => {
   try {
-    if (!versionChosen || !quotationChosen) {
-      ElMessage.warning("请先选择数据")
-      return false
-    }
-    // let res: any = await GetDownloadAuditQuotationList({
-    //   auditFlowId: Number(auditFlowId),
-    //   version: versionChosen.version
-    // })
-    let res: any = await GetDownloadAuditQuotationExcel(quotationChosen.id)
-    const blob = res
-    const reader = new FileReader()
-    reader.readAsDataURL(blob)
-    reader.onload = function () {
-      let url = URL.createObjectURL(new Blob([blob]))
-      let a = document.createElement("a")
-      document.body.appendChild(a) //此处增加了将创建的添加到body当中
-      a.href = url
-      a.download = "报价审核表.xlsx"
-      a.target = "_blank"
-      a.click()
-      a.remove() //将a标签移除
+    if (!isShowBtn.value) {
+      let res: any = await GetDownloadAuditQuotationList({
+        auditFlowId: Number(auditFlowId),
+        version: version
+      })
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = "报价审核表.xlsx"
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } else {
+      if (!versionChosen || !quotationChosen) {
+        ElMessage.warning("请先选择数据")
+        return false
+      }
+
+      let res: any = await GetDownloadAuditQuotationExcel(quotationChosen.id)
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = "报价审核表.xlsx"
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
     }
   } catch (error) {
     console.log(error)
@@ -863,31 +883,31 @@ const typeMapGetText = (key: any, id: any) => {
 const initFetch = async () => {
   let { result }: any = await GeCatalogue({ auditFlowId })
   result.forEach((item: any) => {
-    // if (item.isQuotation) {
-    //   versionList.push(item)
-    // }
     if (!item.isFirst) {
       versionList.push(item)
     }
   })
   if (version && !isShowBtn.value) {
+    /**
+     * 报价分析看板跳转过来查看数据 不加载审核列表
+     */
     const loadingInstance = ElLoading.service({ fullscreen: true })
     try {
       /**
        * 根据版本号查询该版本数据
        */
       const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: version })
-      const res: any = await GetQuotationList({ auditFlowId, version: version })
 
       data.resa = result
-      if (res.result) {
-        res.result.forEach((item: any) => {
-          quotationList.push(item)
-        })
-      }
 
-      console.log(res)
       loadingInstance.close()
+      //   const res: any = await GetQuotationList({ auditFlowId, version: version })
+      // if (res.result) {
+      //   res.result.forEach((item: any) => {
+      //     quotationList.push(item)
+      //   })
+      // }
+      // console.log(res)
     } catch (error) {
       loadingInstance.close()
     }

@@ -1849,7 +1849,7 @@ const toMarketingApproval = async () => {
       query: {
         auditFlowId,
         version: version.value,
-        showBtn: "false"
+        showBtn: "false" // 预览报价表
       }
     })
   } else {
@@ -1858,7 +1858,7 @@ const toMarketingApproval = async () => {
       query: {
         auditFlowId,
         version: versionChosen.version,
-        showBtn: "false"
+        showBtn: "false" // 预览报价表
       }
     })
   }

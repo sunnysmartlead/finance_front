@@ -40,72 +40,89 @@
           </el-table-column>
         </el-table>
       </div>
-      <!-- 单价汇总 -->
-      <p>单价汇总</p>
-      <el-table :data="data.resa.unitPriceSum" border>
-        <el-table-column label="产品名称" prop="product" />
-        <el-table-column label="价格" prop="price" />
-      </el-table>
-      <!-- NRE报价汇总 -->
-      <p>NRE报价汇总</p>
-      <el-table :data="data.resa.nreUnitSumModels" border>
-        <el-table-column label="产品名称" prop="product" />
-        <el-table-column label="核价金额" prop="cost" />
-        <el-table-column label="报价金额" prop="number" />
-      </el-table>
-      <!-- nre -->
-      <el-card>
-        <p>报价毛利率测算-实际数量</p>
-        <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
-          <el-table-column prop="solutionName" label="方案名" />
-          <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" />
-          <el-table-column prop="offerGrossMargin" label="本次报价-毛利率">
-            <template #default="{ row }">
-              {{ `${row.offerGrossMargin?.toFixed(2)} %` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率">
-            <template #default="{ row }">
-              {{ `${row.offerClientGrossMargin?.toFixed(2)} %` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率">
-            <template #default="{ row }">
-              {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="salesRevenue" label="销售收入（千元）" :formatter="formatThousandths" />
-          <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" />
-          <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
-          <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
-          <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
+      <div v-if="!data.resa.issample">
+        <!-- 单价汇总 -->
+        <p>单价汇总</p>
+        <el-table :data="data.resa.unitPriceSum" border>
+          <el-table-column label="产品名称" prop="product" />
+          <el-table-column label="价格" prop="price" />
         </el-table>
-        <!-- nre汇总 -->
-        <p>线体数量：{{ data.resa.nre.numberLine }} 共线分摊率：{{ data.resa.nre.collinearAllocationRate }}</p>
-        <el-table
-          :data="data.resa.nre.models"
-          style="width: 100%"
-          border
-          max-height="500px"
-          :summary-method="getSummaries"
-          show-summary
-        >
-          <el-table-column label="序号" type="index" />
-          <el-table-column prop="formName" label="费用名称" />
-          <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
-          <el-table-column label="报价系数" prop="offerCoefficient" />
-          <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
-          <el-table-column label="备注" prop="remark" />
+        <!-- NRE报价汇总 -->
+        <p>NRE报价汇总</p>
+        <el-table :data="data.resa.nreUnitSumModels" border>
+          <el-table-column label="产品名称" prop="product" />
+          <el-table-column label="核价金额" prop="cost" />
+          <el-table-column label="报价金额" prop="number" />
         </el-table>
-        <p>专用设备</p>
-        <el-table :data="data.resa.nre.devices" style="width: 100%" border max-height="500px">
-          <el-table-column prop="deviceName" label="设备名称" />
-          <el-table-column prop="devicePrice" label="设备单价" />
-          <el-table-column prop="number" label="设备数量" />
-          <el-table-column prop="equipmentMoney" label="设备金额" />
-        </el-table>
-      </el-card>
-      <el-row justify="end" m="2">
+        <!-- nre -->
+        <el-card v-if="data.resa.managerApprovalOfferNres">
+          <p>报价毛利率测算-实际数量</p>
+          <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
+            <el-table-column prop="solutionName" label="方案名" />
+            <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" />
+            <el-table-column prop="offerGrossMargin" label="本次报价-毛利率">
+              <template #default="{ row }">
+                {{ `${row.offerGrossMargin?.toFixed(2)} %` }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率">
+              <template #default="{ row }">
+                {{ `${row.offerClientGrossMargin?.toFixed(2)} %` }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率">
+              <template #default="{ row }">
+                {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="salesRevenue" label="销售收入（千元）" :formatter="formatThousandths" />
+            <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" />
+            <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
+            <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
+            <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
+          </el-table>
+          <!-- nre汇总 -->
+          <p>线体数量：{{ data.resa.nre.numberLine }} 共线分摊率：{{ data.resa.nre.collinearAllocationRate }}</p>
+          <el-table
+            :data="data.resa.nre.models"
+            style="width: 100%"
+            border
+            max-height="500px"
+            :summary-method="getSummaries"
+            show-summary
+          >
+            <el-table-column label="序号" type="index" />
+            <el-table-column prop="formName" label="费用名称" />
+            <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
+            <el-table-column label="报价系数" prop="offerCoefficient" />
+            <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
+            <el-table-column label="备注" prop="remark" />
+          </el-table>
+          <p>专用设备</p>
+          <el-table :data="data.resa.nre.devices" style="width: 100%" border max-height="500px">
+            <el-table-column prop="deviceName" label="设备名称" />
+            <el-table-column prop="devicePrice" label="设备单价" />
+            <el-table-column prop="number" label="设备数量" />
+            <el-table-column prop="equipmentMoney" label="设备金额" />
+          </el-table>
+        </el-card>
+      </div>
+      <div v-else>
+        <p>样品报价</p>
+        <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
+          <span>{{ sample.solutionName }}</span>
+          <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
+            <el-table-column prop="sampleName" label="样品阶段" />
+            <el-table-column prop="pcs" label="需求量（pcs）" />
+            <el-table-column prop="cost" label="成本" />
+            <el-table-column prop="unitPrice" label="单价" />
+            <el-table-column prop="grossMargin" label="毛利率" />
+            <el-table-column prop="salesRevenue" label="销售收入" />
+          </el-table>
+        </el-card>
+      </div>
+
+      <el-row justify="end" m="2" v-if="!data.resa.issample">
         <el-button @click="save" type="primary">总经理审批2</el-button>
       </el-row>
     </el-card>
@@ -170,239 +187,78 @@ const data = reactive<any>({
   marketingQuotationData: {},
   motionMessageSop: [],
   resa: {
+    issample: false,
     unitPriceSum: [
       {
-        product: "前视-AR0820",
+        product: "",
         solutuionAndValues: [
           {
-            solutionId: 115,
-            value: 5
+            solutionId: "",
+            value: ""
           }
         ]
       }
     ],
     nreUnitSumModels: [
       {
-        product: "前视-AR0820",
+        product: "",
         solutuionAndValues: [
           {
-            solutionId: 115,
-            value: 5
+            solutionId: "",
+            value: ""
           }
         ]
       }
     ],
     managerApprovalOfferNres: [],
     nre: {
-      solutionName: "汇总",
+      solutionName: "",
       solutionId: null,
       auditFlowId: 0,
       models: [
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "手板件费",
-          pricingMoney: 10739378.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1245986",
-          creatorUserId: null,
-          id: 263
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "模具费",
-          pricingMoney: 514140.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246008",
-          creatorUserId: null,
-          id: 264
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "生产设备费",
-          pricingMoney: 51497385.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246025",
-          creatorUserId: null,
-          id: 265
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "工装费",
-          pricingMoney: 3488767.5,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246042",
-          creatorUserId: null,
-          id: 266
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "治具费",
-          pricingMoney: 5727840.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246058",
-          creatorUserId: null,
-          id: 267
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "检具费",
-          pricingMoney: 0.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246075",
-          creatorUserId: null,
-          id: 268
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "实验费",
-          pricingMoney: 5566242.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246094",
-          creatorUserId: null,
-          id: 269
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "测试软件费",
-          pricingMoney: 2058270.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.124611",
-          creatorUserId: null,
-          id: 270
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "差旅费",
-          pricingMoney: 73048.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246126",
-          creatorUserId: null,
-          id: 271
-        },
-        {
-          auditFlowId: 337,
-          solutionId: null,
-          formName: "其他费用",
-          pricingMoney: 3950000.0,
-          offerCoefficient: 0.0,
-          offerMoney: 0.0,
-          remark: null,
-          numberLine: 0.0,
-          collinearAllocationRate: 0.0,
-          version: 0,
-          isDeleted: false,
-          deleterUserId: null,
-          deletionTime: null,
-          lastModificationTime: null,
-          lastModifierUserId: null,
-          creationTime: "2023-11-12T15:06:04.1246146",
-          creatorUserId: null,
-          id: 272
-        }
+        // {
+        //   auditFlowId: 337,
+        //   solutionId: null,
+        //   formName: "手板件费",
+        //   pricingMoney: 10739378.0,
+        //   offerCoefficient: 0.0,
+        //   offerMoney: 0.0,
+        //   remark: null,
+        //   numberLine: 0.0,
+        //   collinearAllocationRate: 0.0,
+        //   version: 0,
+        //   isDeleted: false,
+        //   deleterUserId: null,
+        //   deletionTime: null,
+        //   lastModificationTime: null,
+        //   lastModifierUserId: null,
+        //   creationTime: "2023-11-12T15:06:04.1245986",
+        //   creatorUserId: null,
+        //   id: 263
+        // }
       ],
       devices: [],
       numberLine: 0.0,
       collinearAllocationRate: 0.0
-    }
+    },
+    sampleOffer: [
+      //样品报价
+      // {
+      //   solutionName: "string",
+      //   auditFlowId: 0,
+      //   solutionId: 0,
+      //   onlySampleModels: [
+      //     {
+      //       sampleName: "string",
+      //       pcs: 0,
+      //       cost: 0,
+      //       unitPrice: 0,
+      //       grossMargin: 0,
+      //       salesRevenue: 0
+      //     }
+      //   ]
+      // }
+    ]
   }
 })
 const getSummaries = (param: any) => {

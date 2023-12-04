@@ -263,7 +263,6 @@ const initGradientId = async () => {
 const init = async () => {
   if (!auditFlowId) return false
   await initChart()
-  await fetchOptionsData()
   await initGradientId()
 }
 
@@ -484,6 +483,7 @@ const fetchPriceEvaluationStartData = async () => {
     if (!res.result && ['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)) {
       throw Error()
     }
+    await init()
   } else {
     throw Error()
   }
@@ -513,11 +513,10 @@ const handleEvalTableImportSuccess: UploadProps["onSuccess"] = (res: any) => {
 
 onMounted(async () => {
   if (!auditFlowId) return false
+  await fetchOptionsData()
+  await getPriceEvaluationTableInputCount()
+  await getIsTradeCompliance()
   await fetchPriceEvaluationStartData()
-
-  getPriceEvaluationTableInputCount()
-  getIsTradeCompliance()
-  init()
 })
 
 defineExpose({

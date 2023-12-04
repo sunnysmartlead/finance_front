@@ -25,6 +25,7 @@
     <div v-if="isShowBtn">
       <div>已保存的审批表（仅查看）</div>
       <div my-20px>
+        <!-- <el-button>切换到当前版本</el-button> -->
         <el-table :data="quotationList" border max-height="300px">
           <el-table-column label="序号" width="200" align="center" type="index" />
           <el-table-column label="创建时间" width="200" align="center" prop="creationTime" />
@@ -269,6 +270,9 @@
       <el-table-column prop="grossMargin" label="" />
       <el-table-column prop="salesRevenue" label="" />
     </el-table>
+    <el-row justify="end" style="margin-top: 20px">
+      <el-button type="primary" @click="save">保存</el-button>
+    </el-row>
     <!-- <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
       <div mb-20px>{{ sample.solutionName }}</div>
       <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
@@ -316,7 +320,7 @@ const { auditFlowId, version, showBtn }: any = getQuery()
 let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的以前版本
 let quotationList = reactive<any[]>([])
-let quotationCur: any = null //当前的报价审批表单项 临时保存
+let quotationCur: any = reactive<any>(null) //当前的报价审批表单项 临时保存
 let quotationChosen: any = null //选中的报价审批表单项
 const isShowBtn = ref(true)
 if (showBtn === "false") {
@@ -750,39 +754,12 @@ const typeMap = reactive<any>({
   salesTypeOptions: [],
   TradeMethodOptions: []
 })
-const getSummaries = (param) => {
-  const { columns, data } = param
-  const sums: string[] = []
-  columns.forEach((column, index) => {
-    if (index === 0) {
-      sums[index] = "合计"
-      return
-    }
-    if (index === 2 || index === 4) {
-      const values = data.map((item) => Number(item[column.property]))
-      if (!values.every((value) => Number.isNaN(value))) {
-        sums[index] = `${values.reduce((prev, curr) => {
-          const value = Number(curr)
-          if (!Number.isNaN(value)) {
-            return prev + curr
-          } else {
-            return prev
-          }
-        }, 0)}`
-      } else {
-        sums[index] = "N/A"
-      }
-    }
-  })
-
-  return sums
-}
-
 /**
  * 营销部报价审批 报价审核表 下载
  */
 const downLoadTable = async () => {
   try {
+    //从报价审批表跳转过来的下载
     if (!isShowBtn.value) {
       let res: any = await GetDownloadAuditQuotationList({
         auditFlowId: Number(auditFlowId),
@@ -802,24 +779,46 @@ const downLoadTable = async () => {
         a.remove() //将a标签移除
       }
     } else {
-      if (!versionChosen || !quotationChosen) {
+      // 流程--营销部审批下载
+      if (!versionChosen) {
         ElMessage.warning("请先选择数据")
         return false
       }
-
-      let res: any = await GetDownloadAuditQuotationExcel(quotationChosen.id)
-      const blob = res
-      const reader = new FileReader()
-      reader.readAsDataURL(blob)
-      reader.onload = function () {
-        let url = URL.createObjectURL(new Blob([blob]))
-        let a = document.createElement("a")
-        document.body.appendChild(a) //此处增加了将创建的添加到body当中
-        a.href = url
-        a.download = "报价审核表.xlsx"
-        a.target = "_blank"
-        a.click()
-        a.remove() //将a标签移除
+      // 如果选中子列表审核数据 通过ID去下载历史审批表
+      if (quotationChosen) {
+        let res: any = await GetDownloadAuditQuotationExcel(quotationChosen.id)
+        const blob = res
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function () {
+          let url = URL.createObjectURL(new Blob([blob]))
+          let a = document.createElement("a")
+          document.body.appendChild(a) //此处增加了将创建的添加到body当中
+          a.href = url
+          a.download = "报价审核表.xlsx"
+          a.target = "_blank"
+          a.click()
+          a.remove() //将a标签移除
+        }
+      } else {
+        // 通过上面加载版本下载数据
+        let res: any = await GetDownloadAuditQuotationList({
+          auditFlowId: Number(auditFlowId),
+          version: versionChosen.version
+        })
+        const blob = res
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function () {
+          let url = URL.createObjectURL(new Blob([blob]))
+          let a = document.createElement("a")
+          document.body.appendChild(a) //此处增加了将创建的添加到body当中
+          a.href = url
+          a.download = "报价审核表.xlsx"
+          a.target = "_blank"
+          a.click()
+          a.remove() //将a标签移除
+        }
       }
     }
   } catch (error) {
@@ -939,14 +938,15 @@ const selectVersion = async (row: any) => {
   try {
     versionChosen = row
     /**
-     * 根据版本号查询该版本数据
+     * 根据版本号查询当前该版本的审批数据
      */
     const { result } = await getQuotationApprovedMarketing({ auditFlowId, version: versionChosen.version })
     /**
-     * 获取该版本下的报价审批表
+     * 获取该版本下的报价审批表历史
      */
     const res: any = await GetQuotationList({ auditFlowId, version: versionChosen.version })
     data.resa = result
+    quotationCur = result //备份当前数据
     quotationList.length = 0
     if (res.result) {
       res.result.forEach((item: any) => {
@@ -960,7 +960,7 @@ const selectVersion = async (row: any) => {
   }
 }
 /**
- * 加载审批表
+ * 加载审批表历史
  */
 const selectQuotation = async (row: any) => {
   let res: any = await GetQuotation(row.id)

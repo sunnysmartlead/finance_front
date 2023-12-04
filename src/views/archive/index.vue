@@ -72,7 +72,8 @@ const handleDownload = async () => {
     downloadFileZip(res, "归档")
     fullscreenLoading.value = false
     // ElMessage.success("下载成功")
-  } catch {
+  } catch (error) {
+    console.error(error)
     fullscreenLoading.value = false
   }
 }

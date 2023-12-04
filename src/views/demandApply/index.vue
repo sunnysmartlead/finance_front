@@ -920,7 +920,7 @@
           <el-col :span="6">
             <el-form-item label="运输方式:" prop="shippingType">
               <el-select v-model="state.quoteForm.shippingType" placeholder="Select" :disabled="!canDo || right === '1'">
-                <el-option v-for="item in state.shippingTypeOptions" :key="item.id" :label="item.displayName"
+                <el-option v-for="item in state.shippingTypeOptions" :value="item.id" :key="item.id" :label="item.displayName"
                   :disabled="!canDo || right === '1'" />
               </el-select>
             </el-form-item>
@@ -2396,6 +2396,7 @@ const fetchOptions = async () => {
 
   let shippingType: any = await getDictionaryAndDetail("ShippingType") //运输方式
   state.shippingTypeOptions = shippingType.result.financeDictionaryDetailList
+  console.log(state.shippingTypeOptions, "state.shippingTypeOptions")
 
   let packagingType: any = await getDictionaryAndDetail("PackagingType") //包装方式
   state.packagingTypeOptions = packagingType.result.financeDictionaryDetailList

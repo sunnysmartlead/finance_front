@@ -255,13 +255,19 @@
     <p>样品报价</p>
 
     <el-table :data="data.resa.samples" style="width: 100%" border height="500px">
-      <el-table-column prop="solutionName" label="方案名" />
+      <!-- <el-table-column prop="solutionName" label="方案名" />
       <el-table-column prop="solutionName" label="样品阶段" />
       <el-table-column prop="pcs" label="需求量（pcs）" />
       <el-table-column prop="cost" label="成本" />
       <el-table-column prop="unitPrice" label="单价" />
       <el-table-column prop="grossMargin" label="毛利率" />
-      <el-table-column prop="salesRevenue" label="销售收入" />
+      <el-table-column prop="salesRevenue" label="销售收入" /> -->
+      <el-table-column prop="solutionName" label="" />
+      <el-table-column prop="pcs" label="" />
+      <el-table-column prop="cost" label="" />
+      <el-table-column prop="unitPrice" label="" />
+      <el-table-column prop="grossMargin" label="" />
+      <el-table-column prop="salesRevenue" label="" />
     </el-table>
     <!-- <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
       <div mb-20px>{{ sample.solutionName }}</div>

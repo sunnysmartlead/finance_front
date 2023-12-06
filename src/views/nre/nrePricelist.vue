@@ -680,6 +680,7 @@ import { cloneDeep, omit } from "lodash"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { getPriceEvaluationStartData } from "../demandApply/service"
+import { el } from "element-plus/es/locale"
 
 const { auditFlowId, productId, hideBtn, hideEdit: isHideEdit }: any = getQuery()
 
@@ -1114,9 +1115,17 @@ const handleSuccess = (res: any) => {
     data.value = result
     uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
     uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
+    total.rmbAllCost = res.result.rmbAllCost
+    total.usdAllCost = res.result.usdAllCost
     ElMessage({
       message: "上传成功",
       type: "success"
+    })
+  }else
+  {
+    ElMessage({
+      message: res.error.message,
+      type: "warning"
     })
   }
 }
@@ -1145,6 +1154,7 @@ const initFetch = async () => {
     let res: any = {}
     if (['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion.value)) {
       res = await FastQueryNreExecl({ auditFlowId, solutionId: productId })
+
     } else {
       res = await GetPricingForm({ auditFlowId, solutionId: productId })
     }

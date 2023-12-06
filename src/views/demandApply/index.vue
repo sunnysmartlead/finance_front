@@ -12,7 +12,7 @@
             <el-form-item label="引用核报价流程:" prop="quoteAuditFlowId"
             v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)">
               <el-select v-model="state.quoteAuditFlowId" remote-show-suffix reserve-keyword filterable
-                placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px" @change="init">
+                placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px" @change="handleSelectProcess">
                 <el-option v-for="item in projectOptions" :disabled="!opinion" :key="item.id"
                   :label="`${item.title} （流程号：${item.id}）`" :value="item.id" />
               </el-select>
@@ -2088,6 +2088,7 @@ const generateTitle = () => {
     }的核价报价申请`
   state.quoteForm.title = title
 }
+
 const generateCustomTable = () => {
   specifyTableData.value.splice(0, specifyTableData.value.length) // 清空数据
   productTableData.value.forEach((item: any) => {
@@ -2487,6 +2488,13 @@ const fetchWorkflowOvered = async (filter: string) => {
   const { result }: any = await getWorkflowOvered({ filter, skipCount: 0, maxResultCount: 100 }) || {}
   const { items } = result || []
   projectOptions.value = items
+}
+
+const handleSelectProcess = async (v: any) => {
+  await init(v)
+  setTimeout(() => {
+    generateTitle()
+  }, 200)
 }
 
 onMounted(() => {

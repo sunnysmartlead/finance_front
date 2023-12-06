@@ -680,6 +680,7 @@ import { cloneDeep, omit } from "lodash"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { getPriceEvaluationStartData } from "../demandApply/service"
+import { el } from "element-plus/es/locale"
 
 const { auditFlowId, productId, hideBtn, hideEdit: isHideEdit }: any = getQuery()
 
@@ -1117,6 +1118,12 @@ const handleSuccess = (res: any) => {
     ElMessage({
       message: "上传成功",
       type: "success"
+    })
+  }else
+  {
+    ElMessage({
+      message: res.error.message,
+      type: "warning"
     })
   }
 }

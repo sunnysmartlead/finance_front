@@ -1152,6 +1152,8 @@ const initFetch = async () => {
     let res: any = {}
     if (['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion.value)) {
       res = await FastQueryNreExecl({ auditFlowId, solutionId: productId })
+      total.rmbAllCost = res.result.rmbAllCost
+      total.usdAllCost = res.result.usdAllCost
     } else {
       res = await GetPricingForm({ auditFlowId, solutionId: productId })
     }

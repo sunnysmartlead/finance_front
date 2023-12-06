@@ -24,6 +24,7 @@
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
         <el-button type="primary" class="m-2" @click="handlePathFethNreTable">NRE核价表</el-button>
+        <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTempleDownload"> 核价表模板下载 </el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
@@ -108,7 +109,7 @@ import { reactive, onMounted, onBeforeUnmount, onBeforeMount, ref, computed } fr
 import { dashboardPannel, percentageCostChartData, costChartData, selectCostChartData } from "../../common/const"
 import {
   GetGradient,
-  // GetPricingPanelProductSelectList,
+  GetBomImportTemplate,
   GetPricingPanelTimeSelectList,
   GetPricingPanelProportionOfProductCost,
   GetPricingPanelProfit,
@@ -341,6 +342,34 @@ const handleFetchPriceEvaluationTableDownload = async () => {
       document.body.appendChild(a) //此处增加了将创建的添加到body当中
       a.href = url
       a.download = '产品核价表.xlsx'
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+    loading.close()
+  } catch {
+    loading.close()
+  }
+}
+
+// 产品核价表模板下载
+const handleFetchPriceEvaluationTempleDownload = async () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '下载中',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+  try {
+    const result: any = await GetBomImportTemplate({})
+    const blob = result
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = '产品核价表模板.xlsx'
       a.target = "_blank"
       a.click()
       a.remove() //将a标签移除

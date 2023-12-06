@@ -1115,6 +1115,8 @@ const handleSuccess = (res: any) => {
     data.value = result
     uphAndValues.xtsl = result.uphAndValues.find((item: any) => item.uph === 'xtsl')?.value
     uphAndValues.gxftl = result.uphAndValues.find((item: any) => item.uph === 'gxftl')?.value
+    total.rmbAllCost = res.result.rmbAllCost
+    total.usdAllCost = res.result.usdAllCost
     ElMessage({
       message: "上传成功",
       type: "success"
@@ -1152,8 +1154,7 @@ const initFetch = async () => {
     let res: any = {}
     if (['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion.value)) {
       res = await FastQueryNreExecl({ auditFlowId, solutionId: productId })
-      total.rmbAllCost = res.result.rmbAllCost
-      total.usdAllCost = res.result.usdAllCost
+
     } else {
       res = await GetPricingForm({ auditFlowId, solutionId: productId })
     }

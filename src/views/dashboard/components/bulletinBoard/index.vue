@@ -24,7 +24,7 @@
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
         <el-button type="primary" class="m-2" @click="handlePathFethNreTable">NRE核价表</el-button>
-        <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTempleDownload"> 核价表模板下载 </el-button>
+        <el-button type="primary" class="m-2" v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)" @click="handleFetchPriceEvaluationTempleDownload"> bom成本模板下载 </el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />
@@ -352,7 +352,7 @@ const handleFetchPriceEvaluationTableDownload = async () => {
   }
 }
 
-// 产品核价表模板下载
+// bom成本模板下载
 const handleFetchPriceEvaluationTempleDownload = async () => {
   const loading = ElLoading.service({
     lock: true,
@@ -369,7 +369,7 @@ const handleFetchPriceEvaluationTempleDownload = async () => {
       let a = document.createElement("a")
       document.body.appendChild(a) //此处增加了将创建的添加到body当中
       a.href = url
-      a.download = '产品核价表模板.xlsx'
+      a.download = 'bom成本模板下载.xlsx'
       a.target = "_blank"
       a.click()
       a.remove() //将a标签移除

@@ -1733,7 +1733,7 @@ const setSubmitType = (type: string) => {
     ElMessage.warning("保存后再执行")
     return false
   }
-  if (!data.allRes.productId) {
+  if (type === "EvalFeedback_Js" && !data.allRes.productId) {
     ElMessage.warning("上传完文件后再执行")
     return false
   }

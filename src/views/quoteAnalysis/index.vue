@@ -803,7 +803,7 @@ const selectVersion = async (row: any) => {
     let res = await getStatementAnalysisBoardSecond({
       auditFlowId,
       version: row.version,
-      ntype: row.isQuotation ? 1 : 0
+      ntype: 0
     })
     data.allRes = res.result
     /**

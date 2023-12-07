@@ -966,6 +966,7 @@ const selectQuotation = async (row: any) => {
   let res: any = await GetQuotation(row.id)
   data.resa = res.result
   quotationChosen = res.result
+  quotationChosen.id = row.id
   // data.resa = JSON.parse(row.auditQuotationListJson)
   // console.log(JSON.parse(row.auditQuotationListJson))
 }

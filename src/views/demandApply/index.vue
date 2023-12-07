@@ -476,31 +476,31 @@
           </el-table-column>
           <el-table-column label="客户年降率(%)">
             <template #default="{ row, $index }">
-              <el-input-number v-model="row.annualDeclineRate" :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
+              <el-input-number v-model="row.annualDeclineRate" :disabled="notEdit" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.annualRebateRequirements"
-                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
+                :disabled="notEdit" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.oneTimeDiscountRate"
-                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
+                :disabled="notEdit" :min="0" />
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.commissionRate"
-                :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)" :min="0" />
+                :disabled="notEdit" :min="0" />
             </template>
           </el-table-column>
         </el-table>
         <el-form-item label="是否有NRE费用分摊至模组:" prop="isHasNre">
           <el-select v-model="state.quoteForm.isHasNre" placeholder="Select"
-            :disabled="isDisabled || ['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)">
+            :disabled="notEdit">
             <el-option :value="true" label="是" />
             <el-option :value="false" label="否" />
           </el-select>

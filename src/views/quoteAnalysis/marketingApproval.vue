@@ -264,6 +264,7 @@
       <el-table-column prop="grossMargin" label="毛利率" />
       <el-table-column prop="salesRevenue" label="销售收入" /> -->
       <el-table-column prop="solutionName" label="" />
+      <el-table-column prop="name" label="" />
       <el-table-column prop="pcs" label="" />
       <el-table-column prop="cost" label="" />
       <el-table-column prop="unitPrice" label="" />

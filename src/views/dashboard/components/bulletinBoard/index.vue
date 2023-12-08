@@ -11,7 +11,7 @@
         <el-upload style="max-width: 150px;" :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
           :on-success="handleEvalTableImportSuccess" :on-progress="handleGetUploadProgress"
           :on-error="handleUploadError" :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }"
-          v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)" name="excle">
+          v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion) && !hideEdit" name="excle">
           <el-button type="primary" class="upload-box">上传核价表</el-button>
         </el-upload>
         <el-upload v-if="!hideEdit" v-model:file-list="fileList"

@@ -489,18 +489,16 @@ const initPage = () => {
 }
 
 const fetchAllData = async () => {
+  await checkUpdateExcel()
   getTotal()
   getPricingPanelProportionOfProductCost()
   getPricingPanelProfit()
 }
 
-const fetchPriceEvaluationStartData = async () => {
-  const { result, success } = await getPriceEvaluationStartData(auditFlowId)
-  if (success) {
-    data.opinion = result.opinion
-    const { upDown, year } = filterYearData.value
+const checkUpdateExcel = async () => {
+  const { upDown, year } = filterYearData.value
     if (!year) return
-    const res = await getIsUplpadEvalTable({
+  const res = await getIsUplpadEvalTable({
       Year: year,
       AuditFlowId: auditFlowId,
       SolutionId: productId,
@@ -510,6 +508,13 @@ const fetchPriceEvaluationStartData = async () => {
     if (!res.result && ['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)) {
       throw Error()
     }
+}
+
+const fetchPriceEvaluationStartData = async () => {
+  const { result, success } = await getPriceEvaluationStartData(auditFlowId)
+  if (success) {
+    data.opinion = result.opinion
+    await checkUpdateExcel()
     await init()
   } else {
     throw Error()

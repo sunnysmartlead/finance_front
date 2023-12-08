@@ -1,26 +1,24 @@
 <template>
   <div class="dashboard">
     <el-card class="m-2">
-      <el-row justify="end" align="middle">
-        <el-upload :action="$baseUrl + 'api/services/app/PriceEvaluation/BomImport'" :on-success="handleBomimportSuccess"
+      <el-row justify="end" align="top">
+        <el-upload style="max-width: 150px;" :action="$baseUrl + 'api/services/app/PriceEvaluation/BomImport'" :on-success="handleBomimportSuccess"
           :on-progress="handleGetUploadProgress" :on-error="handleUploadError" name="excle"
           v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(data.opinion)"
           :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }">
-          <el-button type="primary" style="margin: 10px 10px 0 0;">上传bom成本</el-button>
+          <el-button type="primary"  class="upload-box" >上传bom成本</el-button>
         </el-upload>
-        <el-row justify="end" m="2">
-          <el-upload :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
-            :on-success="handleEvalTableImportSuccess" :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadError" :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }"
-            v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)" name="excle">
-            <el-button type="primary" style="margin: 10px 10px 0 0;">上传核价表</el-button>
-          </el-upload>
-        </el-row>
+        <el-upload style="max-width: 150px;" :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
+          :on-success="handleEvalTableImportSuccess" :on-progress="handleGetUploadProgress"
+          :on-error="handleUploadError" :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }"
+          v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)" name="excle">
+          <el-button type="primary" class="upload-box">上传核价表</el-button>
+        </el-upload>
         <el-upload v-if="!hideEdit" v-model:file-list="fileList"
           :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'" :on-success="handleSuccess"
-          :on-change="handleFileChange" style="float: right" :on-progress="handleGetUploadProgress"
+          :on-change="handleFileChange" style="max-width: 150px;" :on-progress="handleGetUploadProgress"
           :on-error="handleUploadError">
-          <el-button type="primary" style="margin: 10px 10px 0 0;">TR方案上传</el-button>
+          <el-button type="primary"  class="upload-box">TR方案上传</el-button>
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
         <el-button type="primary" class="m-2" @click="handlePathFethNreTable">NRE核价表</el-button>
@@ -537,6 +535,12 @@ const handleEvalTableImportSuccess: UploadProps["onSuccess"] = (res: any) => {
     })
     bomTableRef?.value?.init?.()
     init()
+  } else {
+    ElMessage({
+      message: res.error?.message || '上传失败！',
+      type: "success"
+    })
+    throw Error(res.error?.message || '上传失败！')
   }
 }
 
@@ -569,5 +573,9 @@ defineExpose({
     margin: 10px 0;
     height: 300px;
   }
+
+}
+.upload-box {
+  margin: 8px 10px 0 10px;
 }
 </style>

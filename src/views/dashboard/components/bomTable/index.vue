@@ -88,6 +88,7 @@ const getBomCost = async () => {
     console.log(result, "获取 bom成本（含损耗）汇总表")
   } catch (err: any) {
     loading.value = false
+    bomData.value = []
     console.log(err, "[ 获取 bom成本（含损耗）汇总表数据失败 ]")
   }
 }

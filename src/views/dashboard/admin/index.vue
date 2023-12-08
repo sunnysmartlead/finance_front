@@ -65,13 +65,10 @@ const handleSetBomState = async ({ comment, opinion }: any) => {
   if (opinion === "HjkbSelect_Yes" && !fileList.length) {
     return ElMessage.warning("请先上传TR方案！")
   }
-  let res: any = await SetBomState({
-    auditFlowId: auditFlowId,
-    productId: productId,
-    bomCheckType: 2,
-    isAgree: !opinion.includes("_No"),
-    opinionDescription: comment,
-    opinion,
+  let res: any = await panelSubmitNode({
+    auditFlowId,
+    opinionDescription: opinionDescription.value,
+    financeDictionaryDetailIds: ['HjkbSelect_Yes'],
     nodeInstanceId
   })
   if (res.success) {

@@ -22,7 +22,7 @@
         </el-upload>
         <TrDownLoad v-if="hideEdit" />
         <el-button type="primary" class="m-2" @click="handlePathFethNreTable">NRE核价表</el-button>
-        <el-button type="primary" class="m-2" v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion)" @click="handleFetchPriceEvaluationTempleDownload"> bom成本模板下载 </el-button>
+        <el-button type="primary" class="m-2" v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(data.opinion)" @click="handleFetchPriceEvaluationTempleDownload"> bom成本模板下载 </el-button>
         <el-button type="primary" class="m-2" @click="handleFetchPriceEvaluationTableDownload"> 核价表下载 </el-button>
         <SchemeCompare :upDown="filterYearData.upDown" :year="filterYearData.year" :gradientId="data.form.gradientId" />
         <slot name="header" />

@@ -995,7 +995,7 @@ import _, { uniq, map, cloneDeep } from "lodash"
 import { saveApplyInfo, priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
-import { ElMessage } from "element-plus"
+import { ElMessage, ElLoading } from "element-plus"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
@@ -1503,9 +1503,15 @@ const handleSubmitData = async (isSubmit: boolean) => {
     isSubmit,
     nodeInstanceId: nodeInstanceId || 0,
   }
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在请求中... 请稍等片刻～',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
   try {
     let res: any = {}
     if (['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)) {
+
       res = await priceEvaluationStart({
         ...params,
         quoteAuditFlowId: state.quoteAuditFlowId
@@ -1518,6 +1524,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
       }
       saveloading.value = false
     }
+    loading.close()
     ElMessage({
       type: "success",
       message: `${isSubmit ? '提交' : '保存'}成功！`
@@ -1526,6 +1533,7 @@ const handleSubmitData = async (isSubmit: boolean) => {
       path: "/todoCenter/index"
     })
   } catch (error) {
+    loading.close()
     console.log(error, "[参数错误]")
     saveloading.value = false
   }

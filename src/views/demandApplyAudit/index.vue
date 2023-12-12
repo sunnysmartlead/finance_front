@@ -4,6 +4,7 @@
       <!-- <VertifyBox :onSubmit="handleSetBomState" /> -->
       <ProcessVertifyBox :onSubmit="submit" v-havedone processType="demanApplyVertify" />
     </el-row>
+    <CustomerSpecificity />
     <demandApply :isDisabled="true" />
     <el-card>
       <el-card v-for="(item, index) in schemeTableMap" :key="index">
@@ -282,6 +283,7 @@ import type { UploadProps, UploadUserFile } from "element-plus"
 import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 import { Response, DesignSolutionDto, FileUploadOutputDto, PricingTeamDto, SolutionTableDto, user } from "./data.type"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
 let route = useRoute()
 let router = useRouter()
 let isEdit = false

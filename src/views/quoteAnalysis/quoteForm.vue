@@ -185,7 +185,7 @@ import { ElMessage } from "element-plus"
 import { useRoute } from "vue-router"
 import { formatDateTime } from "@/utils"
 import { formatThousandths } from "@/utils/number"
-import { fa, tr } from "element-plus/es/locale"
+//import { fa, tr } from "element-plus/es/locale"
 
 // const { closeSelectedTag } = useJump()
 const route = useRoute()

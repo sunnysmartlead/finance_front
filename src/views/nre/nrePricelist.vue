@@ -680,7 +680,7 @@ import { cloneDeep, omit } from "lodash"
 import { formatThousandths, formatThousandthsNoFixed } from '@/utils/number'
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { getPriceEvaluationStartData } from "../demandApply/service"
-import { el } from "element-plus/es/locale"
+
 
 const { auditFlowId, productId, hideBtn, hideEdit: isHideEdit }: any = getQuery()
 

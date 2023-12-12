@@ -456,7 +456,7 @@ onMounted(async () => {
     }
   }
   if (!state.quoteForm.trSubmitTime) {
-    state.quoteForm.trSubmitTime = dayjs().toString()
+    state.quoteForm.trSubmitTime = dayjs().format("YYYY-MM-DD")
     upTRData()
   }
   // 查看之后还需要编辑 --

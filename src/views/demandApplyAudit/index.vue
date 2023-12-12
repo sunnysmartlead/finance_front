@@ -11,14 +11,20 @@
         <template #header>
           <div class="card-header">
             <span>{{ item }}</span>
-            <el-button v-havedone type="primary" :style="'float:right'" @click="addScheme(schemeTableData(item))">新增</el-button>
+            <el-button v-havedone type="primary" :style="'float:right'" @click="addScheme(schemeTableData(item))"
+              >新增</el-button
+            >
           </div>
         </template>
         <el-table :data="schemeTableData(item)" border>
           <el-table-column type="index" width="50" />
           <el-table-column prop="solutionName" label="方案">
             <template #default="{ row }">
-              <el-input v-model="row.solutionName" placeholder="请录入方案" @change="(val) => schemeChange(val, row.id)" />
+              <el-input
+                v-model="row.solutionName"
+                placeholder="请录入方案"
+                @change="(val) => schemeChange(val, row.id)"
+              />
             </template>
           </el-table-column>
           <el-table-column prop="product" label="产品名称" />
@@ -54,8 +60,13 @@
           </el-table-column>
           <el-table-column label="操作">
             <template #default="{ row }">
-              <el-button v-havedone type="danger" @click="deleteScheme(row.id)"
-                :disabled="schemeTableData(item)?.length == 1">删除</el-button>
+              <el-button
+                v-havedone
+                type="danger"
+                @click="deleteScheme(row.id)"
+                :disabled="schemeTableData(item)?.length == 1"
+                >删除</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -66,11 +77,20 @@
       <template #header>
         <div class="card-header">
           <span>项目设计方案</span>
-          <el-button type="primary" :style="'float:right;margin:0 10px'" @click="DownloadTemplateClick()">下载模版</el-button>
-          <el-upload :style="'float:right;margin:0 10px'" :v-model:file-list="[]" :show-file-list="false"
-            :action="$baseUrl + 'api/services/app/DemandApplyAudit/ImportData'" :on-success="handleSuccess"
-            :on-change="handleFileChange" name="fileName" :on-progress="handleGetUploadProgress"
-            :on-error="handleUploadTemplateError">
+          <el-button type="primary" :style="'float:right;margin:0 10px'" @click="DownloadTemplateClick()"
+            >下载模版</el-button
+          >
+          <el-upload
+            :style="'float:right;margin:0 10px'"
+            :v-model:file-list="[]"
+            :show-file-list="false"
+            :action="$baseUrl + 'api/services/app/DemandApplyAudit/ImportData'"
+            :on-success="handleSuccess"
+            :on-change="handleFileChange"
+            name="fileName"
+            :on-progress="handleGetUploadProgress"
+            :on-error="handleUploadTemplateError"
+          >
             <el-button v-havedone>导入模版数据</el-button>
           </el-upload>
         </div>
@@ -144,10 +164,16 @@
         </el-table-column>
         <el-table-column prop="fileId" label="TR上传或3D爆炸图、原理框图上传" fixed="right" width="200">
           <template #default="{ row, $index }">
-            <el-upload v-model:file-list="fileList[$index]" class="upload-demo"
+            <el-upload
+              v-model:file-list="fileList[$index]"
+              class="upload-demo"
               :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-              :on-success="(val) => handleSuccess3D(val, row.uuid, $index)" :on-change="handleFileChange3D"
-              :on-progress="handleGetUploadProgress" :on-error="handleUploadTemplateError" show-file-list>
+              :on-success="(val) => handleSuccess3D(val, row.uuid, $index)"
+              :on-change="handleFileChange3D"
+              :on-progress="handleGetUploadProgress"
+              :on-error="handleUploadTemplateError"
+              show-file-list
+            >
               <el-button type="primary" v-havedone>上传</el-button>
             </el-upload>
           </template>
@@ -178,7 +204,10 @@
           <SearchDepartMentPerson v-model="state.quoteForm.productManageTimeId" roleName="生产管理部-物流成本录入员" />
         </el-form-item>
         <el-form-item label="项目核价审核员">
-          <SearchDepartMentPerson v-model="state.quoteForm.auditId" :roleName="['市场部-项目课长', '项目管理部-项目课长']" />
+          <SearchDepartMentPerson
+            v-model="state.quoteForm.auditId"
+            :roleName="['市场部-项目课长', '项目管理部-项目课长']"
+          />
         </el-form-item>
       </el-form>
     </el-card>
@@ -197,8 +226,12 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="TR预计提交时间:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.trSubmitTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.trSubmitTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -209,8 +242,12 @@
 
         <el-col :span="6">
           <el-form-item label="产品部-结构工程师:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.structEngineerTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.structEngineerTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -220,45 +257,73 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="品质保证部-实验费用录入员:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.qualityBenchTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.qualityBenchTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
           <el-form-item label="资源管理部-电子资源开发:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.resourceElecTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.resourceElecTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="资源管理部-结构资源开发:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.resourceStructTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.resourceStructTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="资源部-模具费录入员:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.mouldWorkHourTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.mouldWorkHourTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="工程技术部-工序工时录入员:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.engineerWorkHourTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.engineerWorkHourTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="生产管理部-物流成本录入员:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.productManageTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.productManageTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="制造成本录入员:">
-            <el-date-picker type="date" placeholder="请输入预计提交时间" v-model="state.quoteForm.productCostInputTime"
-              value-format="YYYY-MM-DD" />
+            <el-date-picker
+              type="date"
+              placeholder="请输入预计提交时间"
+              v-model="state.quoteForm.productCostInputTime"
+              value-format="YYYY-MM-DD"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -266,7 +331,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, watch, reactive, onMounted } from "vue"
+import { ref, computed, watch, reactive, onMounted, nextTick } from "vue"
 import { demandApply } from "@/views/demandApply"
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
 import { AuditEntering, AuditExport, DownloadTemplate, ImportData } from "./service"
@@ -390,6 +455,10 @@ onMounted(async () => {
       })
     }
   }
+  if (!state.quoteForm.trSubmitTime) {
+    state.quoteForm.trSubmitTime = dayjs().toString()
+    upTRData()
+  }
   // 查看之后还需要编辑 --
   setTimeout(() => {
     isEdit = false
@@ -400,26 +469,29 @@ const checkDesignSolution = () => {
   let isNotPass = false
   if (!designSolution.value?.length) isNotPass = true
   isNotPass = designSolution.value.some((item: any, index) => {
-    if (!item.solutionName
-      || !item.sensor
-      || !item.serial
-      || !item.lens
-      || !item.isp
-      || !item.vcsel
-      || !item.mcu
-      || !item.connector
-      || !item.harness
-      || !item.stand
-      || !item.transmissionStructure
-      || !item.productType
-      || !item.processProgram || !item.fileId) {
+    if (
+      !item.solutionName ||
+      !item.sensor ||
+      !item.serial ||
+      !item.lens ||
+      !item.isp ||
+      !item.vcsel ||
+      !item.mcu ||
+      !item.connector ||
+      !item.harness ||
+      !item.stand ||
+      !item.transmissionStructure ||
+      !item.productType ||
+      !item.processProgram ||
+      !item.fileId
+    ) {
       return true
     }
   })
   if (isNotPass) {
     ElMessage({
-      type: 'warning',
-      message: '项目设计方案不能有空数据！'
+      type: "warning",
+      message: "项目设计方案不能有空数据！"
     })
     throw Error()
   }
@@ -453,7 +525,7 @@ const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
         type: "success",
         message: `${label}成功！`
       })
-      if (opinion === 'YesOrNo_Yes') {
+      if (opinion === "YesOrNo_Yes") {
         closeSelectedTag(route.path)
       }
     }
@@ -617,19 +689,22 @@ watch(
   (newValue) => {
     if (isEdit) return
     if (!state.quoteForm.trSubmitTime) return
-    state.quoteForm.elecEngineerTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
-    state.quoteForm.emcTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
-    state.quoteForm.structEngineerTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
-    state.quoteForm.qualityBenchTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
-    state.quoteForm.resourceElecTime = dayjs(state.quoteForm.trSubmitTime).add(3, "day").format("YYYY-MM-DD")
-    state.quoteForm.resourceStructTime = dayjs(state.quoteForm.trSubmitTime).add(3, "day").format("YYYY-MM-DD")
-    state.quoteForm.engineerWorkHourTime = dayjs(state.quoteForm.trSubmitTime).add(4, "day").format("YYYY-MM-DD")
-    state.quoteForm.mouldWorkHourTime = dayjs(state.quoteForm.trSubmitTime).add(4, "day").format("YYYY-MM-DD")
-    state.quoteForm.productManageTime = dayjs(state.quoteForm.trSubmitTime).add(3, "day").format("YYYY-MM-DD")
-    state.quoteForm.productCostInputTime = dayjs(state.quoteForm.trSubmitTime).add(5, "day").format("YYYY-MM-DD")
+    upTRData()
   },
   { deep: true }
 )
+const upTRData = () => {
+  state.quoteForm.elecEngineerTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
+  state.quoteForm.emcTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
+  state.quoteForm.structEngineerTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
+  state.quoteForm.qualityBenchTime = dayjs(state.quoteForm.trSubmitTime).add(2, "day").format("YYYY-MM-DD")
+  state.quoteForm.resourceElecTime = dayjs(state.quoteForm.trSubmitTime).add(3, "day").format("YYYY-MM-DD")
+  state.quoteForm.resourceStructTime = dayjs(state.quoteForm.trSubmitTime).add(3, "day").format("YYYY-MM-DD")
+  state.quoteForm.engineerWorkHourTime = dayjs(state.quoteForm.trSubmitTime).add(4, "day").format("YYYY-MM-DD")
+  state.quoteForm.mouldWorkHourTime = dayjs(state.quoteForm.trSubmitTime).add(4, "day").format("YYYY-MM-DD")
+  state.quoteForm.productManageTime = dayjs(state.quoteForm.trSubmitTime).add(3, "day").format("YYYY-MM-DD")
+  state.quoteForm.productCostInputTime = dayjs(state.quoteForm.trSubmitTime).add(5, "day").format("YYYY-MM-DD")
+}
 </script>
 <style lang="scss" scoped>
 .demand-apply {

@@ -230,9 +230,10 @@ const initFetchProductDevelopmentInput = async (query: any) => {
 }
 
 const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
+  console.log(res)
   if (res.success) {
     data.tableData = res.result.structureBomDtos
-    data.fileId = res.result.structureBomDtos?.[0].fileId
+    data.fileId = res.result.stuFileId
   } else {
     ElMessage({
       message: res.error.message,

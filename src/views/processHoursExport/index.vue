@@ -728,7 +728,7 @@
       <div>
         <el-card v-for="(project, index) in dialogProData" :key="index" class="u-m-b-10">
           <template #header>
-            <div style="font-weight: bold">{{ project.sumQuantity }}/KY</div>
+            <div style="font-weight: bold">{{ project.sumQuantity }}</div>
           </template>
           <div>
             <div class="u-flex u-row-left u-col-center">

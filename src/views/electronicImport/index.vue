@@ -160,7 +160,7 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
   if (res.success) {
     // data.tableDataList[data.activeIndex] = res.result
     data.tableData = res.result.electronicBomDtos
-    fileId.value = res.result.elcFileId
+    fileId.value = res.result.electronicBomDtos?.[0].fileId
   } else {
     ElMessage({
       message: res.error.message,

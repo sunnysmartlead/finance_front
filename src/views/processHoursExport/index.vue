@@ -58,11 +58,11 @@
         <!-- 头部区 -->
         <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
           <div class="u-flex u-row-left u-col-center u-text-center">
-            <div class="u-width-300 u-border u-height-60">
+            <div class="u-width-200 u-border u-height-60">
               <span>操作</span>
             </div>
-            <div class="u-width-150 u-border u-height-60"><span>序号</span></div>
-            <div class="u-width-150 u-border u-height-60"><span>工序编号</span></div>
+            <div class="u-width-100 u-border u-height-60"><span>序号</span></div>
+            <div class="u-width-100 u-border u-height-60"><span>工序编号</span></div>
             <div class="u-width-150 u-border u-height-60"><span>工序名称</span></div>
           </div>
 
@@ -271,7 +271,7 @@
                class="u-flex u-row-left u-col-center u-text-center">
             <template v-if="dataIndex == dataArr.length - 1">
               <div class="u-flex u-row-left u-col-center u-text-center">
-                <div class="u-width-750 u-border u-p-t-5 u-p-b-5 u-font-bold">
+                <div class="u-width-550 u-border u-p-t-5 u-p-b-5 u-font-bold">
                   <span>合计</span>
                 </div>
               </div>
@@ -279,7 +279,7 @@
             <template v-else>
               <div class="u-flex u-row-left u-col-center u-text-center">
                 <!-- 操作项 -->
-                <div class="u-width-300 u-flex u-row-around u-col-center u-border u-p-t-2 u-p-b-2">
+                <div class="u-width-200 u-flex u-row-around u-col-center u-border u-p-t-2 u-p-b-2">
                   <template v-if="currentEditIndex == dataIndex">
                     <div class="u-width-100">
                       <el-button size="small" @click="cancalEdit(dataIndex, dataItem)">取消</el-button>
@@ -293,11 +293,11 @@
                   </div>
                 </div>
                 <!--序号  -->
-                <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
+                <div class="u-width-100 u-border u-p-t-5 u-p-b-5">
                   <span>{{ dataIndex + 1 }}</span>
                 </div>
                 <!-- 工序序号 -->
-                <div class="u-width-150 u-border">
+                <div class="u-width-100 u-border">
                   <el-select v-model="dataItem.processNumber" :disabled="isDisable(dataIndex)" filterable remote
                              reserve-keyword :remote-method="remoteMethod"
                              @change="processNumberChange($event, dataIndex)"

@@ -55,7 +55,8 @@
           <template #header>
             <div style="font-weight: bold">
               <span>{{ cardItem.classification }}</span>
-              <span>K/Y</span>
+              <span v-if="cardItem.upDown ==12">K/Y</span>
+              <span v-if="cardItem.upDown ==6">K/HY</span>
             </div>
           </template>
           <div>

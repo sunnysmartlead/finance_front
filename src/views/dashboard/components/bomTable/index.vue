@@ -140,10 +140,11 @@ onMounted(() => {
   init()
 })
 
-const handleChange = (val: any, index: number) => {
+const handleChange = (val: any, index: number,count:number) => {
   bomData.value.forEach((item: any, cIndex: number) => {
     if (cIndex === index) {
-      item.isCustomerSupply = val
+       if(count==1)item.isCustomerSupply = val
+       if(count==2)item.isNewMouldProduct = val
     }
   })
 }

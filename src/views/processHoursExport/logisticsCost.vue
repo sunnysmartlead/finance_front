@@ -156,78 +156,106 @@
         <!-- <h5>物流基础信息</h5> -->
         <h6>镜头参数</h6>
         <el-form-item label="像素" prop="pixel">
-          <el-input v-model="data.logisticsForm.pixel" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.pixel" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>M</template>
           </el-input>
         </el-form-item>
         <el-form-item label="FOV" prop="fov">
-          <el-input v-model="data.logisticsForm.fov" oninput="value=value.replace(/[^0-9.]/g,'')" />
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.fov" disabled oninput="value=value.replace(/[^0-9.]/g,'')" />
         </el-form-item>
         <h6>外包装体积</h6>
         <el-form-item label="外包装长" prop="outerPackagingLength">
-          <el-input v-model="data.logisticsForm.outerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.outerPackagingLength" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>cm</template>
           </el-input>
         </el-form-item>
         <el-form-item label="外包装宽" prop="outerPackagingWidth">
-          <el-input v-model="data.logisticsForm.outerPackagingWidth" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.outerPackagingWidth" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>cm</template>
           </el-input>
         </el-form-item>
         <el-form-item label="外包装高" prop="outerPackagingHeight" oninput="value=value.replace(/[^0-9.]/g,'')">
-          <el-input v-model="data.logisticsForm.outerPackagingHeight">
+          <el-input disabled v-model="data.logisticsForm.postProductDevelopmentInputDto.outerPackagingHeight">
             <template #append>cm</template>
           </el-input>
         </el-form-item>
         <h6>重量</h6>
         <el-form-item label="单个产品重量" prop="singleProductWeight">
-          <el-input v-model="data.logisticsForm.singleProductWeight" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.singleProductWeight" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>kg</template>
           </el-input>
         </el-form-item>
         <el-form-item label="单箱数量" prop="singleBoxQuantity">
-          <el-input v-model="data.logisticsForm.singleBoxQuantity" oninput="value=value.replace(/[^\d]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.singleBoxQuantity" disabled oninput="value=value.replace(/[^\d]/g,'')">
             <template #append>pcs</template>
           </el-input>
         </el-form-item>
         <h5>包装基础信息</h5>
         <h6>内包装体积</h6>
         <el-form-item label="内包装长" prop="innerPackagingLength">
-          <el-input v-model="data.logisticsForm.innerPackagingLength" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.innerPackagingLength" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>mm</template>
           </el-input>
         </el-form-item>
         <el-form-item label="内包装宽" prop="innerPackagingWidth">
-          <el-input v-model="data.logisticsForm.innerPackagingWidth" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.innerPackagingWidth" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>mm</template>
           </el-input>
         </el-form-item>
         <el-form-item label="内包装高" prop="innerPackagingHeight">
-          <el-input v-model="data.logisticsForm.innerPackagingHeight" oninput="value=value.replace(/[^0-9.]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.innerPackagingHeight" disabled oninput="value=value.replace(/[^0-9.]/g,'')">
             <template #append>mm</template>
           </el-input>
         </el-form-item>
         <el-form-item label="是否打托">
-          <el-select v-model="data.logisticsForm.isHit" placeholder="Select">
+          <el-select v-model="data.logisticsForm.postProductDevelopmentInputDto.isHit" disabled placeholder="Select">
             <el-option label="是" value="1" />
             <el-option label="否" value="0" />
           </el-select>
         </el-form-item>
         <el-form-item label="每托盘箱数" prop="boxesPerPallet">
-          <el-input v-model="data.logisticsForm.boxesPerPallet" oninput="value=value.replace(/[^\d]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.boxesPerPallet" disabled oninput="value=value.replace(/[^\d]/g,'')">
             <template #append> 箱/托</template>
           </el-input>
         </el-form-item>
         <el-form-item label="单箱包装数量" prop="quantityPerBox">
-          <el-input v-model="data.logisticsForm.quantityPerBox" oninput="value=value.replace(/[^\d]/g,'')">
+          <el-input v-model="data.logisticsForm.postProductDevelopmentInputDto.quantityPerBox" disabled oninput="value=value.replace(/[^\d]/g,'')">
             <template #append> PCS/箱</template>
           </el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input
-            v-model="data.logisticsForm.remarks"
+            v-model="data.logisticsForm.postProductDevelopmentInputDto.remarks"
             type="textarea"
+            disabled
             placeholder="若无具体包装数据,填写参考的具体项目及产品"
+          />
+        </el-form-item>
+        <br>
+        <el-form-item label="贸易方式:" prop="tradeMode">
+          <el-select v-model="data.logisticsForm.priceEvaluationStartInputResult.tradeMode" placeholder="Select" :disabled="!canDo">
+            <el-option v-for="item in state.TradeMethodOptions" :key="item.id" :label="item.displayName"
+                       :value="item.id" />
+          </el-select>
+          <!-- <el-input v-model="state.quoteForm.tradeMode" /> -->
+        </el-form-item>
+        <el-form-item label="运输方式:" prop="shippingType">
+          <el-select disabled v-model="data.logisticsForm.priceEvaluationStartInputResult.shippingType" placeholder="Select">
+            <el-option v-for="item in state.shippingTypeOptions" :value="item.id" :key="item.id" :label="item.displayName"
+                          />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="包装方式:" prop="packagingType">
+          <el-select v-model="data.logisticsForm.priceEvaluationStartInputResult.packagingType" placeholder="Select" :disabled="!canDo">
+            <el-option v-for="item in state.packagingTypeOptions" :key="item.id" :label="item.displayName"
+                       :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="交货地点" prop="PlaceOfDelivery">
+          <el-input
+            type="textarea"
+            disabled
+            v-model="data.logisticsForm.priceEvaluationStartInputResult.placeOfDelivery"
           />
         </el-form-item>
       </el-form>
@@ -247,15 +275,30 @@ import {
   GetListAll,
   createProcess,
   createSubmit,
-  GetGradientllodelYearByProductId,
-  GetGradientByAuditFlowId,
+  GetPePd,
   viewSOR
 } from "@/api/logisticsCost"
 import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service";
-import {CommonDownloadFile,getProductDevelopmentInput} from "@/api/bom";
+import {CommonDownloadFile} from "@/api/bom";
 import {isEmpty, map} from "lodash";
 import {round} from "lodash-es";
+import dayjs from "dayjs";
+import {updateFrequency} from "@/views/demandApply/data.type";
+import {getDictionaryAndDetail} from "@/api/dictionary";
 
+interface Options {
+  id: number
+  displayName: string
+}
+
+const state = reactive<any>({
+  quoteForm: {
+  TradeMethodOptions: [] as unknown as Options[],
+    shippingTypeOptions: [] as unknown as Options[],
+    packagingTypeOptions: [] as unknown as Options[]
+
+}
+})
 const data = reactive({
   editDisabled: true,
   logisticsForm: {
@@ -305,7 +348,14 @@ const cardData = ref([])
 let tempCardData: any = []
 const dialogFormVisible = ref(false)
 const initFetchProductDevelopmentInput = async () => {
-  let { success, result }: any = await getProductDevelopmentInput({ auditFlowId: auditFlowId, solutionId: productId })
+  let shippingType: any = await getDictionaryAndDetail("ShippingType") //运输方式
+  state.shippingTypeOptions = shippingType.result.financeDictionaryDetailList
+  console.log(state.shippingTypeOptions, "state.shippingTypeOptions")
+  let tradeMethodSelect: any = await getDictionaryAndDetail("TradeMethod") //类型
+  state.TradeMethodOptions = tradeMethodSelect.result.financeDictionaryDetailList
+  let packagingType: any = await getDictionaryAndDetail("PackagingType") //包装方式
+  state.packagingTypeOptions = packagingType.result.financeDictionaryDetailList
+  let { success, result }: any = await GetPePd({ auditFlowId: auditFlowId, solutionId: productId })
   if (success && !isEmpty(result)) {
     dialogFormVisible.value = true
     data.logisticsForm = result;

@@ -3,7 +3,7 @@ import { request,baseDomain} from "@/utils/service"
 export interface QueryParams {
   AuditFlowId?: number
   ProductId?:number
-  
+
 }
   /**
 /** 列表 */
@@ -13,6 +13,14 @@ export function GetListAll(data: QueryParams) {
       method: "get",
       data
     })
+}
+
+export function GetPePd(data: any) {
+  return request({
+    url: "/api/services/app/EvalTable/GetPePd",
+    method: "get",
+    data
+  })
 }
 
 /** 保存 */

@@ -1,6 +1,6 @@
 <template>
   <el-row justify="end">
-    <el-button type="primary" m="2" @click="data.dialogVisible = true" v-if="!notShow">重置流程</el-button>
+    <el-button type="primary" m="2" @click="data.dialogVisible = true" v-if="!notShow" v-havedone>重置流程</el-button>
     <el-dialog v-model="data.dialogVisible" title="重置流程" width="30%">
       <el-form :inline="true">
         <el-form-item label="选择部门:">
@@ -41,6 +41,7 @@ import { useRoute } from "vue-router"
 
 import { GetUserByDeptName, ResetTask, GetDepartmentByName, GetUserByDepartmentId } from "./service"
 import getQuery from "@/utils/getQuery"
+import { getQueryParam } from "@/utils/index"
 
 const route = useRoute()
 

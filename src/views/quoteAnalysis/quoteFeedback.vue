@@ -863,7 +863,7 @@ let gradientTableMapResult = ref([])
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
-    if (_row && (_row.projectName === "销售毛利" || _row.projectName === "毛利率")) {
+    if (_row && _row.projectName === "毛利率") {
       return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,") + "%"
     }
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")

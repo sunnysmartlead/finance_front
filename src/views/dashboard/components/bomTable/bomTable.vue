@@ -41,9 +41,9 @@
         <el-input v-model="row.overallDimensionSize" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="materialName" label="材料名称" width="175" v-if="showColumn">
+    <el-table-column align="center" prop="structureMaterialName" label="材料名称" width="175" v-if="showColumn">
       <template #default="{ row }" v-if="isEdit">
-        <el-input v-model="row.materialName" />
+        <el-input v-model="row.structureMaterialName" />
       </template>
     </el-table-column>
     <el-table-column align="center" prop="weightNumber" label="重量" width="175" v-if="showColumn">
@@ -58,7 +58,7 @@
     </el-table-column>
     <el-table-column align="center" prop="isNewMouldProduct" label="是否新开模" width="175" v-if="showColumn">
       <template #default="{ row, $index }">
-        <el-select @change="(v) => onChange(v, $index, 2)" v-model="row.isNewMouldProduct" placeholder="是否新开模">
+        <el-select @change="(v) => onChange(v, $index, 2)" v-model="row.isNewMouldProduct"  disabled>
           <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
         </el-select>
       </template>

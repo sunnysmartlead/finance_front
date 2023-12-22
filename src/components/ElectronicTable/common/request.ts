@@ -136,6 +136,19 @@ export function GetBOMStructuralSingle(auditFlowId: number, solutionId: number):
   })
 }
 
+//结构单价下载附件
+export function DownloadEnclosure(id:number)
+{
+  return request({
+    url: "/api/services/app/ResourceEntering/DownloadEnclosure",
+    method: "get",
+    data: {
+      id
+    },
+    responseType:"blob"
+  })
+}
+
 // 电子单价复制信息获取接口
 export function ElectronicUnitPriceCopyingInformationAcquisition(auditFlowId: number, solutionId: number): any {
   return request({

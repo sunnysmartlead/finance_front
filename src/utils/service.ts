@@ -113,9 +113,9 @@ function createService() {
 /** 创建请求方法 */
 function createRequestFunction(service: AxiosInstance) {
   let loadingInstance: any = null
-  let userStorage = window.localStorage.getItem("user")
-  let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
   return function (config: AxiosRequestConfig) {
+    let userStorage = window.localStorage.getItem("user")
+    let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
     const configDefault = {
       headers: {
         // 携带 token

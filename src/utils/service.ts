@@ -4,6 +4,7 @@ import { ElMessage } from "element-plus"
 import { get } from "lodash-es"
 import { getToken } from "@/utils/cookies"
 import { ElLoading } from "element-plus"
+import {Base64} from 'js-base64'
 //export const baseDomain=import.meta.env.VITE_BASE_API
 export const baseDomain=import.meta.env.VITE_BASE_API//"https://localhost:44311/"
 /** 创建请求实例 */
@@ -112,12 +113,15 @@ function createService() {
 /** 创建请求方法 */
 function createRequestFunction(service: AxiosInstance) {
   let loadingInstance: any = null
+  let userStorage = window.localStorage.getItem("user")
+  let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
   return function (config: AxiosRequestConfig) {
     const configDefault = {
       headers: {
         // 携带 token
         Authorization: "Bearer " + getToken(),
-        "Content-Type": get(config, "headers.Content-Type", "application/json")
+        "Content-Type": get(config, "headers.Content-Type", "application/json"),
+        "UserId":Base64.encode(userInfo?.userId)
       },
       timeout: 300000,
       baseURL: import.meta.env.VITE_BASE_API,

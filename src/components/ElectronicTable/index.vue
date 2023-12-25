@@ -80,7 +80,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
-          <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} K/Y`"
+          <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} ${allColums?.standardMoneyYears?.[0]?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
             width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`" :formatter="formatThousandths">
             <template #default="{ row }">
               <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.rebateMoney[index].value"
@@ -130,7 +130,7 @@
       <div>
         <h5>本位币汇总：</h5>
         <el-row class="descriptions-box" v-for="c in allStandardMoney" :key="c?.kv">
-          <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}` }}</span>
+          <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}` }}</span>
           <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
             <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
               :label="yearItem.year + upDownEunm[yearItem.upDown]">

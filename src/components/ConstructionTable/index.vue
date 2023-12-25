@@ -169,7 +169,7 @@
               <el-table-column
                 v-for="(c, i) in item.structureMaterial[0]?.rebateMoney"
                 align="center"
-                :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
+                :label="`${c.kv} ${item?.structureMaterial[0]?.standardMoney?.[0]?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
                 width="150"
                 :key="`rebateMoney${i}`"
                 :prop="`rebateMoney.${i}.value`"

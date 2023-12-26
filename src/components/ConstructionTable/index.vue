@@ -30,7 +30,7 @@
             @selection-change="selectionChange($event, bomIndex)"
           >
             <el-table-column type="selection" width="55" v-if="isVertify" />
-            <el-table-column type="index" label="序号" width="80" fixed="left" />
+            <el-table-column type="index" label="序号" width="50" fixed="left" />
             <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
             <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
             <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
@@ -152,7 +152,7 @@
                 />
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="moq" label="MOQ" width="150">
+            <el-table-column prop="moq" label="MOQ" width="85">
               <template #default="{ row }">
                 <el-input-number
                   @mousewheel.native.prevent
@@ -207,7 +207,7 @@
               prop="fileId"
               label="附件"
               fixed="right"
-              width="150"
+              width="100"
               v-if="!isMergeEdit && item.superTypeName == '结构料'"
             >
               <template #default="{ row, $index }">

@@ -88,7 +88,7 @@ const formLabelWidth = "100px"
       <!-- <div class="title">
         <img src="@/assets/layout/logo-text-2.png" />
       </div> -->
-      <h1 style="text-align: center; width: 100%">报价核价系统</h1>
+      <h1 style="text-align: center; width: 100%">核报价系统</h1>
       <div class="content">
         <el-form ref="loginFormDom" :model="state.loginForm" :rules="state.loginRules" @keyup.enter="state.handleLogin">
           <el-form-item prop="username">

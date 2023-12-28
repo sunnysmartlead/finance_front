@@ -205,6 +205,7 @@ const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
     })
     if (!success) throw Error()
     ElMessage.success(`${label}成功`)
+    initFetch()
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

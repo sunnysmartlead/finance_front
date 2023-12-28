@@ -11,15 +11,15 @@
     <el-card >
       <el-table :data="platePart" border style="width: 100%">
         <el-table-column type="index" label="序号" width="80" />
-        <el-table-column prop="boardName" label="板部件名称">
+        <el-table-column prop="boardName" label="板部件名称" align="center">
         </el-table-column>
-        <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)">
+        <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)" align="center" :formatter="formatThousandths">
         </el-table-column>
-        <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)">
+        <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)" align="center" :formatter="formatThousandths">
         </el-table-column>
-        <el-table-column prop="boardSquare" label="板部件面积(mm^2)" >
+        <el-table-column prop="boardSquare" label="板部件面积(mm^2)" align="center" :formatter="formatThousandths">
         </el-table-column>
-        <el-table-column prop="stoneQuantity" label="拼板数量">
+        <el-table-column prop="stoneQuantity" label="拼板数量" align="center" :formatter="formatThousandths">
         </el-table-column>
       </el-table>
     </el-card>
@@ -53,6 +53,7 @@ import { sortBy } from "lodash";
 import { useRoute } from "vue-router"
 import useJump from "@/hook/useJump"
 import { GetBoardInfomation } from "@/api/processHoursEnter"
+import { formatThousandths } from "@/utils/number"
 
 const route = useRoute()
 const platePart: any = ref<any>([])
@@ -125,5 +126,8 @@ defineExpose({
 <style scoped lang="scss">
 .bomView {
   margin: 20px 0;
+  &__child {
+    margin-top: 10px;
+  }
 }
 </style>

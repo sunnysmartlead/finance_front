@@ -54,10 +54,11 @@
       <div style="color: #000000; font-weight: bold">
         <span>工序列表录入</span>
       </div>
-      <el-scrollbar wrap-style="padding:0 0 10px 0px" always :max-height="500">
+      <el-scrollbar always  wrap-style="padding:0 0 10px 0px;" @scroll="boxScroll" :max-height="500">
         <!-- 头部区 -->
         <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
-          <div class="u-flex u-row-left u-col-center u-text-center">
+<!-- :class="vertical?'':(fixedPosition?'fixed-column':'sticky-column')"         -->
+          <div class="u-flex u-row-left u-col-center u-text-center" >
             <div class="u-width-200 u-border u-height-60">
               <span>操作</span>
             </div>
@@ -270,14 +271,16 @@
           <div v-for="(dataItem, dataIndex) in dataArr" :key="dataIndex"
                class="u-flex u-row-left u-col-center u-text-center">
             <template v-if="dataIndex == dataArr.length - 1">
-              <div class="u-flex u-row-left u-col-center u-text-center">
+<!-- :class="vertical?'':(fixedPosition?'fixed-column':'sticky-column')"             -->
+              <div class="u-flex u-row-left u-col-center u-text-center" >
                 <div class="u-width-550 u-border u-p-t-5 u-p-b-5 u-font-bold">
                   <span>合计</span>
                 </div>
               </div>
             </template>
             <template v-else>
-              <div class="u-flex u-row-left u-col-center u-text-center">
+<!--  :class="vertical?'':(fixedPosition?'fixed-column':'sticky-column')"            -->
+              <div class="u-flex u-row-left u-col-center u-text-center"  >
                 <!-- 操作项 -->
                 <div class="u-width-200 u-flex u-row-around u-col-center u-border u-p-t-2 u-p-b-2">
                   <template v-if="currentEditIndex == dataIndex">
@@ -1062,7 +1065,22 @@ const uploadActionUrl = ref(uploadAction + "?AuditFlowId=" + auditFlowId + "&Sol
 onMounted(() => {
   initData()
 })
-
+const fixedPosition = ref(false);
+const vertical=ref(false);
+const boxScroll = (scroll) => {
+  //console.log("scroll",scroll);
+  if(scroll.scrollTop>0){
+    vertical.value=true;
+  }else{
+    vertical.value=false
+  }
+  if(scroll.scrollLeft/window.innerWidth>0.5){
+    fixedPosition.value = true;
+  } else {
+    fixedPosition.value = false;
+  }
+  //console.log("fixedPostion===",fixedPosition.value);
+}
 const initData = () => {
   getDeviceStatuEnmu();
   addFlag.value = false;
@@ -2684,13 +2702,12 @@ const compareSopData=(newExportItem:any)=>{
     //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
     if(oldSop[0].yearInt>newSop[newSop.length-1].yearInt){
       newSopItem= newSop[newSop.length-1];
-    }else {
-      newSopItem = newSop[newSop.length-1];
     }
     //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值
     if(newSop[0].yearInt>oldSop[oldSop.length-1].yearInt){
       newSopItem=newSop[0];
     }
+    console.log("=========newSopItem=====",newSopItem);
     for(let l=0;l<oldSop.length;l++){
       let oldItem= oldSop[l];
       if(newSopItem!=null){
@@ -2717,6 +2734,7 @@ const compareSopData=(newExportItem:any)=>{
       }
     };
     newExportItem.sopInfo = oldSop;
+    //console.log("newExportItem.sop",newExportItem.sopInfo);
     dataArr.value.unshift(newExportItem);
 }
 

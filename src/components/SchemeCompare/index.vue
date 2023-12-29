@@ -26,6 +26,7 @@
           <el-table-column prop="price_1" label="单价" align="center" :formatter="formatValue" />
           <el-table-column prop="count_1" label="数量" align="center" :formatter="formatValue" />
           <el-table-column prop="rate_1" label="汇率" align="center" />
+          <el-table-column prop="moqShareCount_1" label="MOQ分摊成本" align="center" />
           <el-table-column prop="sum_1" label="合计" align="center" :formatter="formatValue" />
         </el-table-column>
         <el-table-column prop="itemName2" label="项目2" align="center" />
@@ -33,6 +34,7 @@
           <el-table-column prop="price_2" label="单价" align="center" :formatter="formatValue" />
           <el-table-column prop="count_2" label="数量" align="center" :formatter="formatValue" />
           <el-table-column prop="rate_2" label="汇率" align="center" />
+          <el-table-column prop="moqShareCount_2" label="MOQ分摊成本" align="center" />
           <el-table-column prop="sum_2" label="合计" align="center" :formatter="formatValue" />
         </el-table-column>
         <el-table-column label="差异" align="center" :formatter="compareData" />

@@ -14,17 +14,23 @@
       </div>
       <div v-for="(item, bomIndex) in constructionBomList" :key="item.superTypeName">
         <el-card m="2" v-loading="item.loading">
-          <template #header >
+          <template #header>
             <div class="card-header">
               <span>{{ item.superTypeName }}</span>
               <span class="card-span" v-if="!isVertify">
-                未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span>
+                未提交的数量:{{ item.structureMaterial.filter((p: any) => !p.isSubmit).length }}</span
+              >
             </div>
           </template>
-          <el-table :ref="setTableRefs" :data="item.structureMaterial" style="width: 100%" :height="item.structureMaterial.length > 5 ? '75vh' : '46vh'"
-            @selection-change="selectionChange($event, bomIndex)">
+          <el-table
+            :ref="setTableRefs"
+            :data="item.structureMaterial"
+            style="width: 100%"
+            :height="item.structureMaterial.length > 5 ? '75vh' : '46vh'"
+            @selection-change="selectionChange($event, bomIndex)"
+          >
             <el-table-column type="selection" width="55" v-if="isVertify" />
-            <el-table-column type="index" label="序号" width="80" fixed="left" />
+            <el-table-column type="index" label="序号" width="50" fixed="left" />
             <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
             <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
             <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
@@ -38,31 +44,61 @@
             <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
             <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" fixed="left" />
             <el-table-column prop="materialsUseCount" label="项目物料的使用量">
-              <el-table-column align="center" :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :class-name="`column-class-${i}`"
-                v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount" prop="materialsUseCount"
-                :key="`materialsUseCount${i}`">
-                <el-table-column width="80" v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
+              <el-table-column
+                align="center"
+                :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
+                :class-name="`column-class-${i}`"
+                v-for="(c, i) in item.structureMaterial[0]?.materialsUseCount"
+                prop="materialsUseCount"
+                :key="`materialsUseCount${i}`"
+              >
+                <el-table-column
+                  width="80"
+                  v-for="(yearItem, iIndex) in c?.yearOrValueModes"
+                  :key="iIndex"
                   :prop="`materialsUseCount.${i}.yearOrValueModes.${iIndex}.value`"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" :formatter="formatDatas" />
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
+                  :formatter="formatDatas"
+                />
               </el-table-column>
             </el-table-column>
             <el-table-column prop="currency" label="币种" width="120">
               <template #default="scope">
                 <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
-                  <el-option v-for="item in exchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
-                    :value="item.exchangeRateKind" />
+                  <el-option
+                    v-for="item in exchangeSelectOptions"
+                    :key="item.id"
+                    :label="item.exchangeRateKind"
+                    :value="item.exchangeRateKind"
+                  />
                 </el-select>
               </template>
             </el-table-column>
             <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
-              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.systemiginalCurrency" align="center"
-                :class-name="`column-class-${i}`" :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" width="150" :key="`systemiginalCurrency${i}`">
-                <el-table-column v-for="(yearItem, iIndex) in c?.yearOrValueModes" :key="iIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="150">
+              <el-table-column
+                v-for="(c, i) in item.structureMaterial[0]?.systemiginalCurrency"
+                align="center"
+                :class-name="`column-class-${i}`"
+                :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
+                width="150"
+                :key="`systemiginalCurrency${i}`"
+              >
+                <el-table-column
+                  v-for="(yearItem, iIndex) in c?.yearOrValueModes"
+                  :key="iIndex"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
+                  width="150"
+                >
                   <template #default="scope">
-                    <el-input-number @mousewheel.native.prevent size="small" v-if="scope.row.isEdit"
-                      v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value" controls-position="right"
-                      :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index, 0)" />
+                    <el-input-number
+                      @mousewheel.native.prevent
+                      size="small"
+                      v-if="scope.row.isEdit"
+                      v-model="scope.row.systemiginalCurrency[i].yearOrValueModes[iIndex].value"
+                      controls-position="right"
+                      :min="0"
+                      @input="handleCalculation(scope.row, bomIndex, scope.$index, 0)"
+                    />
                     <span v-if="!scope.row.isEdit">{{
                       scope.row.systemiginalCurrency[i]?.yearOrValueModes[iIndex]?.value.toFixed(5)
                     }}</span>
@@ -71,39 +107,83 @@
               </el-table-column>
             </el-table-column>
             <el-table-column prop="inTheRate" label="年降率（%）">
-              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.inTheRate" align="center"
-                :class-name="`column-class-${i}`" :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`inTheRate${i}`"
+              <el-table-column
+                v-for="(c, i) in item.structureMaterial[0]?.inTheRate"
+                align="center"
+                :class-name="`column-class-${i}`"
+                :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
+                :key="`inTheRate${i}`"
+              >
+                <el-table-column
+                  v-for="(yearItem, yIndex) in c?.yearOrValueModes"
+                  :key="yIndex"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
+                  :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`"
+                  width="150"
+                  :formatter="filterinTheRate"
                 >
-                <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`" width="150" :formatter="filterinTheRate">
                   <template #default="scope">
-                    <el-input-number size="small" v-if="scope.row.isEdit" v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
-                      :min="0" @input="handleCalculation(scope.row, bomIndex, scope.$index, 1)" />
+                    <el-input-number
+                      size="small"
+                      v-if="scope.row.isEdit"
+                      v-model="scope.row.inTheRate[i].yearOrValueModes[yIndex].value"
+                      :min="0"
+                      @input="handleCalculation(scope.row, bomIndex, scope.$index, 1)"
+                    />
                   </template>
                 </el-table-column>
               </el-table-column>
             </el-table-column>
             <el-table-column prop="standardMoney" label="本位币">
-              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.standardMoney" align="center"
-                :class-name="`column-class-${i}`" :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`standardMoney${i}`">
-                <el-table-column v-for="(yearItem, yIndex) in c?.yearOrValueModes" :key="yIndex"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]" width="100"
-                  :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`" :formatter="filterStandardMoney" />
+              <el-table-column
+                v-for="(c, i) in item.structureMaterial[0]?.standardMoney"
+                align="center"
+                :class-name="`column-class-${i}`"
+                :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
+                :key="`standardMoney${i}`"
+              >
+                <el-table-column
+                  v-for="(yearItem, yIndex) in c?.yearOrValueModes"
+                  :key="yIndex"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
+                  width="100"
+                  :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`"
+                  :formatter="filterStandardMoney"
+                />
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="moq" label="MOQ" width="150">
+            <el-table-column prop="moq" label="MOQ" width="85">
               <template #default="{ row }">
-                <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
+                <el-input-number
+                  @mousewheel.native.prevent
+                  size="small"
+                  v-if="row.isEdit"
+                  v-model="row.moq"
+                  controls-position="right"
+                  :min="0"
+                />
                 <span v-if="!row.isEdit">{{ row.moq }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="rebateMoney" label="物料返利金额" width="150">
-              <el-table-column v-for="(c, i) in item.structureMaterial[0]?.rebateMoney" align="center"
-                :label="`${c.kv} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" width="150" :key="`rebateMoney${i}`" :prop="`rebateMoney.${i}.value`"
-                :formatter="formatThousandths">
+              <el-table-column
+                v-for="(c, i) in item.structureMaterial[0]?.rebateMoney"
+                align="center"
+                :label="`${c.kv} ${item?.structureMaterial[0]?.standardMoney?.[0]?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
+                width="150"
+                :key="`rebateMoney${i}`"
+                :prop="`rebateMoney.${i}.value`"
+                :formatter="formatThousandths"
+              >
                 <template #default="{ row }">
-                  <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.rebateMoney[i].value" controls-position="right"
-                    :min="0" />
+                  <el-input-number
+                    @mousewheel.native.prevent
+                    size="small"
+                    v-if="row.isEdit"
+                    v-model="row.rebateMoney[i].value"
+                    controls-position="right"
+                    :min="0"
+                  />
                 </template>
               </el-table-column>
             </el-table-column>
@@ -123,8 +203,42 @@
                 <span v-if="!row.isEdit">{{ row.remark }}</span>
               </template>
             </el-table-column>
+            <el-table-column
+              prop="fileId"
+              label="附件"
+              fixed="right"
+              width="100"
+              v-if="!isMergeEdit && item.superTypeName == '结构料'"
+            >
+              <template #default="{ row, $index }">
+                <!-- v-model:file-list="fileList[$index]" -->
+                <el-upload
+                  v-if="!isVertify"
+                  v-model:file-list="fileList[$index]"
+                  class="upload-demo"
+                  :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+                  :on-success="(val) => enclosure(val, row, $index)"
+                  :on-progress="handleGetUploadProgress"
+                  :on-error="handleUploadTemplateError"
+                  show-file-list
+                  :disabled="isVertify||row.isSubmit"
+                >
+                  <el-button type="primary" v-havedone :disabled="row.isSubmit" v-if="!isVertify">上传</el-button>
+                  <!-- <el-tag class="mx-1"  type="success" effect="light" v-if="row?.file">{{row.file?.fileName}}</el-tag> -->
+                </el-upload>
+                <div class="flex-container" v-if="isVertify">
+                  <el-button
+                    type="primary"
+                    :disabled="!row?.enclosureFileId"
+                    @click="UpDownloadEnclosure(row.id, row.file?.fileName)"
+                    >{{ row?.enclosureFileId ? "下载" : "未上传" }}</el-button
+                  >
+                  <el-tag class="mx-1" type="success" effect="light" v-if="row?.file">{{ row.file?.fileName }}</el-tag>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" />
-            <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit" >
+            <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit">
               <template #default="{ row }">
                 <el-input v-if="row.isEdit" type="textarea" v-model="row.modificationComments" />
               </template>
@@ -132,14 +246,31 @@
             <el-table-column prop="peopleName" label="确认人" v-else />
             <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
               <template #default="{ row, $index }">
-                <el-button link :disabled="row.isSubmit" @click="handleSubmit(row, 0, bomIndex, $index)" type="danger"
-                  :loading="row.loading">确认</el-button>
-                <el-button v-if="row.isEntering && !props.isMergeEdit" :disabled="row.isSubmit" link
-                  @click="handleSubmit(row, 1, bomIndex, $index)" type="warning" :loading="row.loading">
+                <el-button
+                  link
+                  :disabled="row.isSubmit"
+                  @click="handleSubmit(row, 0, bomIndex, $index)"
+                  type="danger"
+                  :loading="row.loading"
+                  >确认</el-button
+                >
+                <el-button
+                  v-if="row.isEntering && !props.isMergeEdit"
+                  :disabled="row.isSubmit"
+                  link
+                  @click="handleSubmit(row, 1, bomIndex, $index)"
+                  type="warning"
+                  :loading="row.loading"
+                >
                   提交
                 </el-button>
-                <el-button v-if="!row.isEdit" :disabled="row.isSubmit || row.loading"  link @click="handleEdit(row, true)"
-                  type="primary">
+                <el-button
+                  v-if="!row.isEdit"
+                  :disabled="row.isSubmit || row.loading"
+                  link
+                  @click="handleEdit(row, true)"
+                  type="primary"
+                >
                   修改
                 </el-button>
                 <el-button v-if="row.isEdit" link @click="handleEdit(row, false)">取消</el-button>
@@ -150,10 +281,15 @@
           <div>
             <h5>本位币汇总：</h5>
             <el-row class="descriptions-box" v-for="c in computeStandardMoney(item.structureMaterial)" :key="c?.kv">
-              <span class="descriptions-label">{{ `${formatThousandths(null, null, c.kv)} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}` }}</span>
+              <span class="descriptions-label">{{
+                `${formatThousandths(null, null, c.kv)} ${c?.yearOrValueModes?.[0]?.upDown === 0 ? "(K/Y)" : "(K/HY)"}`
+              }}</span>
               <el-descriptions direction="vertical" :column="c.yearOrValueModes.length" border>
-                <el-descriptions-item v-for="yearItem in c.yearOrValueModes" :key="yearItem.year"
-                  :label="yearItem.year + upDownEnum[yearItem.upDown]">
+                <el-descriptions-item
+                  v-for="yearItem in c.yearOrValueModes"
+                  :key="yearItem.year"
+                  :label="yearItem.year + upDownEnum[yearItem.upDown]"
+                >
                   {{ yearItem.value.toFixed(4) }}
                 </el-descriptions-item>
               </el-descriptions>
@@ -178,6 +314,7 @@ import {
   BomReview,
   StructureUnitPriceCopyingInformationAcquisition,
   PostStructuralMemberEnteringCopy,
+  DownloadEnclosure
 } from "../ElectronicTable/common/request"
 import { useRouter } from "vue-router"
 import InterfaceRequiredTime from "@/components/InterfaceRequiredTime/index.vue"
@@ -185,14 +322,16 @@ let Host = "StructPriceInput"
 import { getExchangeRate } from "@/views/demandApply/service"
 import getQuery from "@/utils/getQuery"
 // import { useUserStore } from "@/store/modules/user"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus"
 import { cloneDeep, debounce } from "lodash"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 import { map } from "lodash"
-import ModuleNumber from '@/components/ModuleNumber/index.vue'
-
+import ModuleNumber from "@/components/ModuleNumber/index.vue"
+import { downloadFileExcel } from "@/utils"
+import type { UploadProps, UploadUserFile } from "element-plus"
+import { handleGetUploadProgress, handleUploadTemplateError } from "@/utils/upload"
 const { auditFlowId, productId }: any = getQuery()
 const route = useRoute()
 const props = defineProps({
@@ -227,18 +366,55 @@ const data = reactive({
   construction,
   people,
   constructionId,
-  peopleId,
+  peopleId
 })
 
 const router = useRouter()
 
 const { closeSelectedTag } = useJump()
-
+let fileList = ref<UploadUserFile[][]>([])
 onBeforeMount(() => {
   fetchOptionsData()
   //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 
+//附件上传
+const enclosure: UploadProps["onSuccess"] = async (res: any, row: any, index: any) => {
+  if (!res.error) {
+    row.enclosureFileId = res.result.fileId
+    if (fileList.value[index].length == 2) fileList.value[index].splice(0, 1)
+    ElMessage.success("上传成功！")
+  } else {
+    ElMessage.error(res.error.message)
+  }
+}
+//附件下载
+const UpDownloadEnclosure = async (id: number, filename: string) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: "下载中",
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    const result: any = await DownloadEnclosure(id)
+    const blob = result
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = filename
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+    loading.close()
+  } catch {
+    loading.close()
+  }
+}
 onMounted(async () => {
   if (!auditFlowId || !productId) return
   if (props.isVertify) {
@@ -246,7 +422,7 @@ onMounted(async () => {
     toggleSelection() //数据反填
   } else {
     fetchInitData()
-    getRole()
+    //getRole()
   }
 })
 
@@ -290,24 +466,43 @@ const fetchInitData = async () => {
     tableLoading.value = true
     let result = []
     if (props.isMergeEdit) {
-      const res = (await StructureUnitPriceCopyingInformationAcquisition( auditFlowId, productId )) || {}
+      const res = (await StructureUnitPriceCopyingInformationAcquisition(auditFlowId, productId)) || {}
       result = res.result
     } else {
       const res = (await GetStructural({ auditFlowId, solutionId: productId })) || {}
       result = res.result
     }
     constructionBomList.value = result || []
+    await ReverseFillingEnclosure(constructionBomList.value)
     tableLoading.value = false
   } catch {
     tableLoading.value = false
   }
 }
 
+//反填附件
+const ReverseFillingEnclosure = async (result: any) => {
+  console.log(result, "9999")
+  result[0]?.structureMaterial?.forEach((p: any, index: number) => {
+    fileList.value[index] = []
+    if (p.file) {
+      fileList.value[index].push({
+        name: p.file.fileName ? p.file.fileName : "",
+        response: {
+          result: {
+            fileId: p.file.fileId
+          }
+        }
+      })
+    }
+  })
+}
+
 const formatDatas = (record: any, _row: any, cellValue: any) => {
   if (cellValue) {
     return (Number(cellValue).toFixed() + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
-    return ''
+    return ""
   }
 }
 
@@ -320,7 +515,6 @@ let SumCount = computed(() => {
   return count
 })
 
-
 // 确认结构料单价行数据
 const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, rowIndex: number) => {
   if (isSubmit) {
@@ -330,10 +524,10 @@ const handleSubmit = async (record: any, isSubmit: number, bomIndex: number, row
     })
     if (notPass) {
       ElMessageBox.confirm("当前行有本位币的金额为0，您确定还要提交嘛?", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    }).then(async () => await submitFun(record, isSubmit, bomIndex, rowIndex))
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(async () => await submitFun(record, isSubmit, bomIndex, rowIndex))
     } else await submitFun(record, isSubmit, bomIndex, rowIndex)
   } else {
     //确认
@@ -368,25 +562,22 @@ const SubmitJudge = async (record: any, isSubmit: number, bomIndex: number, rowI
   await submitFun(record, isSubmit, bomIndex, rowIndex)
 }
 
-const submitFun = async (
-  record: any,
-  isSubmit: number,
-  bomIndex: number,
-  iginalCurrencyIndex: number
-) => {
+const submitFun = async (record: any, isSubmit: number, bomIndex: number, iginalCurrencyIndex: number) => {
   const row = constructionBomList.value[bomIndex].structureMaterial[iginalCurrencyIndex]
   let { nodeInstanceId } = route.query
   const isNotPass = record.systemiginalCurrency?.some((item: any) => {
-    return item.yearOrValueModes.some((c: any) => {
-      return c?.value
-    }) && !record?.remark
+    return (
+      item.yearOrValueModes.some((c: any) => {
+        return c?.value
+      }) && !record?.remark
+    )
   })
   if (isNotPass && row.isEdited && row.isSystemiginal && !props.isMergeEdit) {
-    return ElMessage.warning(`请填写备注再${isSubmit ? '提交' : '确认'}`)
+    return ElMessage.warning(`请填写备注再${isSubmit ? "提交" : "确认"}`)
   } else if (row.isEdited && !row.peopleName && isSubmit) {
-    return ElMessage.warning('请先确认再提交！')
+    return ElMessage.warning("请先确认再提交！")
   } else if (props.isMergeEdit && !record.modificationComments) {
-    return ElMessage.warning(`请填写修改意见再${isSubmit ? '提交' : '确认'}`)
+    return ElMessage.warning(`请填写修改意见再${isSubmit ? "提交" : "确认"}`)
   }
   let isSuccess = false
   if (props.isMergeEdit) {
@@ -463,7 +654,7 @@ const safeParse = (val: any) => {
 //selectionChange 当选择项发生变化时会触发该事件
 const selectionChange = async (selection: any, index: number) => {
   const oldStorage = getSessionStorage(props.isMergeVertify ? MERGE_STORAGE_KEY : STORAGE_KEY)
-  const ids = map(selection, v => v.id)
+  const ids = map(selection, (v) => v.id)
 
   const oldStorageData = safeParse(oldStorage) || {}
   const storageData = {
@@ -483,6 +674,7 @@ const fetchConstructionInitData = async () => {
     if (!auditFlowId || !productId) return
     const { result } = await GetBOMStructuralSingle(auditFlowId, productId)
     constructionBomList.value = result.constructionDtos
+    await ReverseFillingEnclosure(constructionBomList.value)
     isAll.value = result.isAll
     return true
   } catch {
@@ -491,7 +683,7 @@ const fetchConstructionInitData = async () => {
 }
 
 const filterMultipleSelectionValue = (idData: any) => {
-  return map(idData, (v, key) => (map(idData[key], c => [...c])))?.flat(2)
+  return map(idData, (v, key) => map(idData[key], (c) => [...c]))?.flat(2)
 }
 
 const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
@@ -512,7 +704,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
     comment,
     opinion,
     nodeInstanceId,
-    structureUnitPriceId,
+    structureUnitPriceId
     // peopleId: data.peopleId
   })
 
@@ -523,7 +715,7 @@ const handleSetBomState = async ({ comment, opinion, nodeInstanceId }: any) => {
 defineExpose({
   getSelection: () => filterMultipleSelectionValue(multipleSelection.value)
 })
-watchEffect(() => { })
+watchEffect(() => {})
 </script>
 <style scoped lang="scss">
 .table-wrap {
@@ -566,6 +758,14 @@ watchEffect(() => { })
     border: 1px solid #f5f5f5;
     background-color: #f5f7fa;
   }
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+}
+.flex-container > * {
+  margin-bottom: 10px; /* 设置间隔大小 */
 }
 </style>
 

@@ -8,6 +8,9 @@
           :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }">
           <el-button type="primary"  class="upload-box" >上传bom成本</el-button>
         </el-upload>
+        <el-button type="primary" @click="EvalTableModel" class="upload-box"  v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(data.opinion) && !hideEdit">
+          下载核价表模版
+        </el-button>
         <el-upload style="max-width: 150px;" :action="$baseUrl + 'api/services/app/PriceEvaluation/EvalTableImport'"
           :on-success="handleEvalTableImportSuccess" :on-progress="handleGetUploadProgress"
           :on-error="handleUploadError" :data="{ gradientId: data.form.gradientId, solutionId: productId, auditFlowId }"
@@ -117,6 +120,7 @@ import {
   CreatePriceEvaluationTable,
   GetIsTradeCompliance,
   PriceEvaluationTableDownload,
+  GetEvalTableModel
 } from "../../service"
 import { getPriceEvaluationTable } from '../../../demandApply/service'
 import getQuery from "@/utils/getQuery"
@@ -138,6 +142,7 @@ import SchemeCompare from "@/components/SchemeCompare/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
 import { formatThousandths } from '@/utils/number'
 import { getPriceEvaluationStartData, getIsUplpadEvalTable } from "../../../demandApply/service"
+import { downloadFileExcel } from "@/utils"
 const bomTableRef = ref<any>()
 
 enum upDownEnum {
@@ -347,6 +352,17 @@ const handleFetchPriceEvaluationTableDownload = async () => {
     loading.close()
   } catch {
     loading.close()
+  }
+}
+
+//核价表模版下载
+const EvalTableModel=async()=>{
+  try {
+      const res: any = await GetEvalTableModel(null)
+      downloadFileExcel(res, "核价表模版")
+      ElMessage.success("下载成功！")
+  } catch (err:any) {
+    console.log(err, "[ 核价表模版下载 失败 ]")
   }
 }
 

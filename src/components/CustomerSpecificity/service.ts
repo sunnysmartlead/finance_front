@@ -19,3 +19,24 @@ export function getSorByAuditFlowId(auditFlowId: any) {
     }
   })
 }
+export function GetElectronBomDownload(auditFlowId: any,solutionId: any) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetStructureBom",
+    method: "get",
+    data: {
+      auditFlowId,
+      solutionId
+    }
+  })
+}
+
+export function GetStructureBomDownload(auditFlowId: any,solutionId: any) {
+  return request({
+    url: "/api/services/app/ProcessHoursEnter/GetStructureBom",
+    method: "get",
+    data: {
+      auditFlowId,
+      solutionId
+    }
+  })
+}

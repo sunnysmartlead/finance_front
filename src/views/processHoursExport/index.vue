@@ -819,6 +819,7 @@
       </el-table>
     </el-dialog>
     <el-dialog v-model="structuralDataDialogTableVisible" title="结构bom查看" width="60%" :close-on-click-modal="false">
+      <el-button type="primary" class="m-2" @click="GetStructureBomClick()" > 下载 </el-button>
       <el-table :data="structuralData" border style="width: 100%" height="500">
         <el-table-column prop="categoryName" label="物料大类" width="180"/>
         <el-table-column prop="typeName" label="物料种类" width="180"/>
@@ -838,6 +839,7 @@
     </el-dialog>
     <el-dialog v-model="FindElectronicBomByProcessOMDataDialogTableVisible" title="电子结构bom查看" width="60%"
                :close-on-click-modal="false">
+      <el-button type="primary" class="m-2" @click="GetElectronBomClick()" > 下载 </el-button>
       <el-table :data="electronicBomData" border style="width: 100%" height="500">
         <el-table-column prop="categoryName" label="物料大类" width="180"/>
         <el-table-column prop="typeName" label="物料种类" width="180"/>
@@ -896,7 +898,7 @@ import {
 } from '@/api/foundationHardware';
 import {random} from "lodash"
 import router from "@/router"
-import {getSorByAuditFlowId} from "@/components/CustomerSpecificity/service"
+import {getSorByAuditFlowId,GetElectronBomDownload,GetStructureBomDownload} from "@/components/CustomerSpecificity/service"
 import {CommonDownloadFile, GetStructionBom, GetElectronicBom} from "@/api/bom"
 import {round} from "lodash-es";
 
@@ -2357,6 +2359,54 @@ const sorDownloadFile = async () => {
   if (auditFlowId) {
     try {
       const {result}: any = (await getSorByAuditFlowId(auditFlowId)) || {}
+      let res: any = await CommonDownloadFile(result.sorFileId)
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = result.sorFileName
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
+}
+
+
+const GetElectronBomClick = async () => {
+  if (auditFlowId) {
+    try {
+      const {result}: any = (await GetElectronBomDownload(auditFlowId,productId)) || {}
+      let res: any = await CommonDownloadFile(result.sorFileId)
+      const blob = res
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = function () {
+        let url = URL.createObjectURL(new Blob([blob]))
+        let a = document.createElement("a")
+        document.body.appendChild(a) //此处增加了将创建的添加到body当中
+        a.href = url
+        a.download = result.sorFileName
+        a.target = "_blank"
+        a.click()
+        a.remove() //将a标签移除
+      }
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
+}
+const GetStructureBomClick = async () => {
+  if (auditFlowId) {
+    try {
+      const {result}: any = (await GetStructureBomDownload(auditFlowId,productId)) || {}
       let res: any = await CommonDownloadFile(result.sorFileId)
       const blob = res
       const reader = new FileReader()

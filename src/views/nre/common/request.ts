@@ -214,6 +214,16 @@ export function NreTableDownload(data: any) {
   })
 }
 
+//  初版NRE核价表模版下载
+export function FastDownloadNreTemplate(data: any) {
+    return request({
+      url: "/api/services/app/NrePricing/FastDownloadNreTemplate",
+      method: "get",
+      data,
+      responseType: "blob"
+    })
+  }
+
 //  Nre 品保部=>试验项目 产品开发部-NRE 下载
 export function GetExportOfProductDepartmentFeeForm(data: any) {
   return request({

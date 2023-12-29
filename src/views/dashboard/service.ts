@@ -344,6 +344,16 @@ export function PriceEvaluationTableDownload(data: any) {
   })
 }
 
+// 核价表模版下载
+export function GetEvalTableModel(data: any) {
+  return request({
+    url: "/api/services/app/PriceEvaluation/GetEvalTableModel",
+    method: "get",
+    data,
+    responseType: "blob",
+  })
+}
+
 // 设置是否客供
 export function SetIsCustomerSupply(data: any) {
   return request({

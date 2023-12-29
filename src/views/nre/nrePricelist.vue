@@ -3,6 +3,7 @@
     <el-row justify="end">
       <el-button type="primary" class="m-2" @click="handleFethNreTableDownload" v-if="!hideBtn">NRE核价表下载</el-button>
       <el-row  v-if="['EvalReason_Shj', 'EvalReason_Bnnj', 'EvalReason_Qtsclc'].includes(opinion)">
+        <el-button type="primary" class="m-2" @click="DownloadNreTemplate">NRE核价表模版下载</el-button>
         <el-upload
           :action="$baseUrl + 'api/services/app/NrePricing/FastUploadNreExecl'"
           :on-success="handleSuccess"
@@ -670,6 +671,7 @@ import {
   GetPricingFormDownload,
   FastSaveNreExecl,
   FastQueryNreExecl,
+  FastDownloadNreTemplate
 } from "./common/request"
 import { getMouldSummaries } from "./common/mouldSummaries"
 import getQuery from "@/utils/getQuery"
@@ -802,6 +804,22 @@ const handleFethNreTableDownload = async () => {
   } catch (err: any) {
     console.log(err, "[ NRE核价表下载 失败 ]")
   }
+}
+
+//NRE核价表模版下载
+const DownloadNreTemplate=async()=>{
+    try{
+      const res: any = await FastDownloadNreTemplate({
+      // Year: year,
+      AuditFlowId: auditFlowId,
+      SolutionId: productId
+      })
+      downloadFileExcel(res, "NRE核价表模版")
+      ElMessage.success("下载成功！")
+    }catch(err: any)
+    {
+      console.log(err, "[ NRE核价表模版下载 失败 ]")
+    }
 }
 
 // 修改

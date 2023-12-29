@@ -91,6 +91,8 @@
             <el-input v-else v-model="row.remark" />
           </template>
         </el-table-column>
+         <el-table-column prop="creatorUserName"  label="确认人">
+        </el-table-column>
         <el-table-column align="center"  label="操作" v-if="!isVertify" fixed="right">
           <template #default="{ $index }">
             <el-button @click="deleteExperimentItemsData($index)" type="danger" v-havedone>删除</el-button>
@@ -203,6 +205,7 @@ const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
     })
     if (!success) throw Error()
     ElMessage.success(`${label}成功`)
+    initFetch()
   } catch (err) {
     console.log(err, "[PostExperimentItems err]")
     // ElMessage.error("提交失败")

@@ -219,7 +219,8 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
   const notPass = platePart.value.some(item => {
     return !item.boardLenth || !item.boardWidth
   })
-  if (notPass) {
+
+  if (notPass || !platePart.value?.length) {
     loading.close()
     ElMessage.error("请填写完整表单信息！")
     return

@@ -45,14 +45,14 @@
         <p>单价汇总</p>
         <el-table :data="data.resa.unitPriceSum" border>
           <el-table-column label="产品名称" prop="product" />
-          <el-table-column label="价格" prop="price" />
+          <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
         </el-table>
         <!-- NRE报价汇总 -->
         <p>NRE报价汇总</p>
         <el-table :data="data.resa.nreUnitSumModels" border>
           <el-table-column label="产品名称" prop="product" />
-          <el-table-column label="核价金额" prop="cost" />
-          <el-table-column label="报价金额" prop="number" />
+          <el-table-column label="核价金额" prop="cost" :formatter="formatThousandths" />
+          <el-table-column label="报价金额" prop="number" :formatter="formatThousandths" />
         </el-table>
         <!-- nre -->
         <el-card v-if="data.resa.managerApprovalOfferNres">
@@ -101,9 +101,9 @@
           <p>专用设备</p>
           <el-table :data="data.resa.nre.devices" style="width: 100%" border max-height="500px">
             <el-table-column prop="deviceName" label="设备名称" />
-            <el-table-column prop="devicePrice" label="设备单价" />
+            <el-table-column prop="devicePrice" label="设备单价" :formatter="formatThousandths" />
             <el-table-column prop="number" label="设备数量" />
-            <el-table-column prop="equipmentMoney" label="设备金额" />
+            <el-table-column prop="equipmentMoney" label="设备金额" :formatter="formatThousandths" />
           </el-table>
         </el-card>
       </div>
@@ -114,10 +114,10 @@
           <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
             <el-table-column prop="name" label="样品阶段" />
             <el-table-column prop="pcs" label="需求量（pcs）" />
-            <el-table-column prop="cost" label="成本" />
-            <el-table-column prop="unitPrice" label="单价" />
-            <el-table-column prop="grossMargin" label="毛利率" />
-            <el-table-column prop="salesRevenue" label="销售收入" />
+            <el-table-column prop="cost" label="成本" :formatter="formatThousandths" />
+            <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandths" />
+            <el-table-column prop="grossMargin" label="毛利率" :formatter="formatThousandths" />
+            <el-table-column prop="salesRevenue" label="销售收入" :formatter="formatThousandths" />
           </el-table>
         </el-card>
       </div>
@@ -354,7 +354,14 @@ const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) =
 }
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
-  return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  if (typeof cellValue === "number") {
+    if (_row && _row.projectName === "毛利率") {
+      return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,") + "%"
+    }
+    return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return 0
+  }
 }
 
 const initFetch = async () => {

@@ -31,6 +31,13 @@
                     </template>
                   </el-table-column>
                   <el-table-column label="流转说明" prop="jumpDescription" />
+                  <el-table-column label="完成状态" prop="flowStatus">
+                     <template #default="scope">
+                        <el-tag class="ml-2" type="success" v-if="scope.row.flowStatus==0">正常</el-tag>
+                        <el-tag class="ml-2" type="warning" v-if="scope.row.flowStatus==1">超时</el-tag>
+                    </template>
+                     </el-table-column>
+                  <el-table-column label="要求完成时间" prop="requiredTime" :formatter="formatDate" />
                   <el-table-column label="跳转至流程">
                     <template #default="scope">
                       <el-button @click="clickToPage(scope.row, scopeP)">跳转</el-button>
@@ -55,6 +62,13 @@
                     </template>
                   </el-table-column>
                   <el-table-column label="流转说明" prop="jumpDescription" />
+                  <el-table-column label="完成状态" prop="flowStatus">
+                     <template #default="scope">
+                        <el-tag class="ml-2" type="success" v-if="scope.row.flowStatus==0">正常</el-tag>
+                        <el-tag class="ml-2" type="warning" v-if="scope.row.flowStatus==1">超时</el-tag>
+                    </template>
+                     </el-table-column>
+                  <el-table-column label="要求完成时间" prop="requiredTime" :formatter="formatDate" />
                   <el-table-column label="跳转至流程">
                     <template #default="scope">
                       <el-button @click="clickToPage(scope.row, scopeP)">跳转</el-button>
@@ -76,7 +90,7 @@
 import { ref, reactive, onBeforeMount, onMounted, watchEffect } from "vue"
 import { getAllAuditFlowInfos, getAuditFlowNewVersionByProjectName } from "./service"
 import type { FormInstance, FormRules } from "element-plus"
-
+import dayjs from "dayjs"
 import urlMap from "./constant"
 // import { useStore } from "vuex"
 import { useRouter } from "vue-router"
@@ -239,7 +253,15 @@ onMounted(async () => {
     console.log(error)
   }
 })
-watchEffect(() => {})
+const formatDate = (row: any, column: any) => {
+  // 获取单元格数据
+  let data = row[column.property]
+  if (data == null) {
+    return null
+  }
+  return dayjs(data).format("YYYY-MM-DD")
+}
+
 // 使用toRefs解构
 // let { } = { ...toRefs(data) }
 // defineExpose({

@@ -12,6 +12,21 @@
     z-index: 100;
     background-color: #ffffff !important;
   }
+  .fixed-column {
+    position: absolute; /*将第一列固定位置*/
+    top: 0;
+    left: 20; /*将其放置于最左侧*/
+    background-color: #f2f2f2; /*设置背景色*/
+    z-index: 1000;
+  }
+
+  .sticky-column {
+    position: sticky; /*将第一列固定位置*/
+    top: 0;
+    left: 0; /*将其放置于最左侧*/
+    background-color: #f2f2f2; /*设置背景色*/
+    z-index: 1000;
+  }
 
   /* start--去除webkit的默认样式--start */
   .u-fix-ios-appearance {

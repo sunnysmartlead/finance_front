@@ -571,8 +571,8 @@
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{
-                    amoutInterval(sumHardwareDeviceTotalCost(), 0)
-                  }}</span>
+                      amoutInterval(sumHardwareDeviceTotalCost(), 0)
+                    }}</span>
                   <span v-else>{{ amoutInterval(handleHardwareDeviceChange(null, dataIndex, null), 0) }}</span>
                 </div>
               </div>
@@ -2905,8 +2905,8 @@ const amoutInterval = function (a: number, b: number) {
     const num = amout.length - amout.indexOf(".") - 1
     return num < b
       ? `${amout}${Array(b - num)
-          .fill(0)
-          .join("")}`
+        .fill(0)
+        .join("")}`
       : amout
   }
   //如是整数，则动态补0
@@ -2962,8 +2962,6 @@ const compareSopData = (newExportItem: any) => {
   newSop.sort((a: any, b: any) => a.yearInt - b.yearInt)
   //如果新的数据来源年份最大值小于旧的数据年份最小值,那么将来源数据的最大值传入赋值
   if (oldSop[0].yearInt > newSop[newSop.length - 1].yearInt) {
-    newSopItem = newSop[newSop.length - 1]
-  } else {
     newSopItem = newSop[newSop.length - 1]
   }
   //如果新的数据来源年份最小值大于旧的数据年份最大值,那么将来源数据的最小值传入赋值

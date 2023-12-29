@@ -8,6 +8,21 @@
       <TrView />
       <ProductInfo :auditFlowId="data.auditFlowId" m="2" />
     </el-row>
+    <el-card >
+      <el-table :data="platePart" border style="width: 100%">
+        <el-table-column type="index" label="序号" width="80" />
+        <el-table-column prop="boardName" label="板部件名称" align="center">
+        </el-table-column>
+        <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)" align="center" :formatter="formatThousandths">
+        </el-table-column>
+        <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)" align="center" :formatter="formatThousandths">
+        </el-table-column>
+        <el-table-column prop="boardSquare" label="板部件面积(mm^2)" align="center" :formatter="formatThousandths">
+        </el-table-column>
+        <el-table-column prop="stoneQuantity" label="拼板数量" align="center" :formatter="formatThousandths">
+        </el-table-column>
+      </el-table>
+    </el-card>
     <el-card class="bomView__child">
       <el-button type="primary" @click="filterTableData">筛选涉及项</el-button>
       <h4>电子料</h4>
@@ -21,11 +36,12 @@
         <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" width="120" />
       </el-table>
     </el-card>
+
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, onBeforeMount, onMounted, watchEffect } from "vue"
+import { reactive, toRefs, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 import { GetElectronicBom, SetBomState } from "@/api/bom"
 import { ElMessage, ElMessageBox } from "element-plus"
 import CustomerSpecificity from "@/components/CustomerSpecificity/index.vue"
@@ -36,7 +52,11 @@ import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { sortBy } from "lodash";
 import { useRoute } from "vue-router"
 import useJump from "@/hook/useJump"
+import { GetBoardInfomation } from "@/api/processHoursEnter"
+import { formatThousandths } from "@/utils/number"
+
 const route = useRoute()
+const platePart: any = ref<any>([])
 
 const { closeSelectedTag } = useJump()
 
@@ -51,6 +71,16 @@ const data = reactive<any>({
   auditFlowId: auditFlowId,
   isFilter: false,
 })
+
+const queryBoardInfomation = async () => {
+  const { success, result }: any = (await GetBoardInfomation({
+    auditFlowId,
+    solutionId: productId
+  })) || {}
+  if (success && result?.length) {
+    platePart.value = result
+  }
+}
 
 const filterTableData = () => {
   data.isFilter = !data.isFilter
@@ -83,6 +113,7 @@ onMounted(async () => {
   // let resStruction: any = await GetStructionBom()
   let resElectronic: any = await GetElectronicBom({ auditFlowId,productId, solutionId:productId })
   data.electronicData = resElectronic.result
+  queryBoardInfomation()
   // data.structuralData = resStruction.result
 })
 watchEffect(() => {})
@@ -95,5 +126,8 @@ defineExpose({
 <style scoped lang="scss">
 .bomView {
   margin: 20px 0;
+  &__child {
+    margin-top: 10px;
+  }
 }
 </style>

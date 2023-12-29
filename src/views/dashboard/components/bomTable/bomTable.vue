@@ -1,23 +1,23 @@
 <template>
   <el-table :data="bomData" border height="500">
-    <el-table-column align="center" prop="superType" label="超级大种类" width="175">
+    <el-table-column align="center" prop="superType" label="超级大种类" width="175" fixed="left">
       <template #default="{ row }">
         <el-input v-model="row.superType" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="materialName" label="材料名称" width="175">
+    <el-table-column align="center" prop="materialName" label="材料名称" width="175" fixed="left">
       <template #default="{ row }">
         <el-input v-model="row.materialName" v-if="isEdit" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="isCustomerSupply" label="是否客供" width="175">
+    <el-table-column align="center" prop="isCustomerSupply" label="是否客供" width="120" fixed="left">
       <template #default="{ row, $index }">
         <el-select @change="(v) => onChange(v, $index, 1)" v-model="row.isCustomerSupply" placeholder="是否客供">
           <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
         </el-select>
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="typeName" label="物料种类" width="175">
+    <el-table-column align="center" prop="typeName" label="物料种类" width="175" fixed="left">
       <template #default="{ row }" v-if="isEdit">
         <el-input v-model="row.typeName" />
       </template>

@@ -1507,6 +1507,7 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   if (response.success) {
+    dataArr.value = ref<any>([])
     let exportListData = response.result ? response.result : []
     console.log("列表====", dataArr.value)
     console.log("导入的工时工序", exportListData)

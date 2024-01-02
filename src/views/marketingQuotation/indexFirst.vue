@@ -51,8 +51,8 @@
         <p>NRE报价汇总</p>
         <el-table :data="data.resa.nreUnitSumModels" border>
           <el-table-column label="产品名称" prop="product" />
-          <el-table-column label="核价金额" prop="cost" :formatter="formatThousandths" />
-          <el-table-column label="报价金额" prop="number" :formatter="formatThousandths" />
+          <el-table-column label="核价金额" prop="cost" :formatter="formatThousandths" align="right" />
+          <el-table-column label="报价金额" prop="number" :formatter="formatThousandths" align="right" />
         </el-table>
         <!-- nre -->
         <el-card v-if="data.resa.managerApprovalOfferNres">
@@ -75,10 +75,15 @@
                 {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column prop="salesRevenue" label="销售收入（千元）" :formatter="formatThousandths" />
-            <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" />
-            <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" />
-            <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" />
+            <el-table-column
+              prop="salesRevenue"
+              label="销售收入（千元）"
+              :formatter="formatThousandths"
+              align="right"
+            />
+            <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" align="right" />
+            <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" align="right" />
+            <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" align="right" />
             <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
           </el-table>
           <!-- nre汇总 -->
@@ -93,9 +98,9 @@
           >
             <el-table-column label="序号" type="index" />
             <el-table-column prop="formName" label="费用名称" />
-            <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" />
+            <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" align="right" />
             <el-table-column label="报价系数" prop="offerCoefficient" />
-            <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" />
+            <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" align="right" />
             <el-table-column label="备注" prop="remark" />
           </el-table>
           <p>专用设备</p>

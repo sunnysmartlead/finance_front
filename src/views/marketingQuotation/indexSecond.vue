@@ -125,16 +125,17 @@
           height="400px"
           :summary-method="getSummaries"
           show-summary
+          align="right"
         >
           <el-table-column type="index" />
           <el-table-column prop="formName" label="费用名称" />
-          <el-table-column prop="pricingMoney" label="核价金额" />
-          <el-table-column label="报价系数" prop="offerCoefficient">
+          <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" align="right" />
+          <el-table-column label="报价系数" prop="offerCoefficient" align="right">
             <!-- <template #default="scope">
               <el-input v-model="scope.row.offerCoefficient" type="number" />
             </template> -->
           </el-table-column>
-          <el-table-column prop="offerMoney" label="报价金额" />
+          <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" align="right" />
           <el-table-column label="备注" prop="remark">
             <!-- <template #default="scope">
               <el-input v-model="scope.row.remark" type="textarea" />
@@ -144,9 +145,9 @@
         <p>专用设备</p>
         <el-table :data="nre.devices" style="width: 100%" border height="250px">
           <el-table-column prop="deviceName" label="设备名称" />
-          <el-table-column prop="devicePrice" label="设备单价" />
-          <el-table-column prop="number" label="设备数量" />
-          <el-table-column prop="equipmentMoney" label="设备金额" />
+          <el-table-column prop="devicePrice" label="设备单价" :formatter="formatThousandths" align="right" />
+          <el-table-column prop="number" label="设备数量" align="right" />
+          <el-table-column prop="equipmentMoney" label="设备金额" :formatter="formatThousandths" align="right" />
         </el-table>
       </el-card>
       <el-card header="内部核价信息：" m="2">
@@ -189,7 +190,7 @@
         </el-table>
       </el-card>
       <el-card header="报价策略：" m="2">
-        <el-table :data="data.resa.biddingStrategySecondModelsGradent" border>
+        <el-table :data="data.resa.biddingStrategySecondModelsGradent" border align="right">
           <el-table-column type="index" width="100" />
           <el-table-column label="梯度" prop="gradient" />
           <el-table-column label="产品" prop="product" />
@@ -219,7 +220,7 @@
         </el-table>
       </el-card>
       <el-card header="报价策略-实际数量：" m="2">
-        <el-table :data="data.resa.biddingStrategySecondModelsAct" border>
+        <el-table :data="data.resa.biddingStrategySecondModelsAct" border align="right">
           <el-table-column type="index" width="100" />
           <el-table-column label="梯度" prop="gradient" />
           <el-table-column label="产品" prop="product" />
@@ -265,7 +266,7 @@
       <p>样品报价</p>
       <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
         <div mb-20px>{{ sample.solutionName }}</div>
-        <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">
+        <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px" align="right">
           <el-table-column prop="name" label="样品阶段" />
           <el-table-column prop="pcs" label="需求量（pcs）" />
           <el-table-column prop="cost" label="成本" :formatter="formatThousandths" />
@@ -642,7 +643,12 @@ const selectVersion = async (row: any) => {
   }
 }
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
-  return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  if (Number(cellValue) && typeof Number(cellValue).toFixed === "function") {
+    return (Number(cellValue).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return cellValue
+  }
+  // return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
 }
 onBeforeMount(() => {
   if (data.userInfo.userJobs === "总经理") {

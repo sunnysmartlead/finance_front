@@ -5,7 +5,7 @@
       <div>
         <!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
         <el-button @click="handleSubmit" type="primary">提交</el-button>-->
-        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" v-havedone />
+        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" ElMessageBoxMessage="必须先保存数据再提交，数据是否已保存？" v-havedone />
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">

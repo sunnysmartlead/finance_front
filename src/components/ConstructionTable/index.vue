@@ -12,6 +12,9 @@
       <div class="card-div" v-if="!isVertify">
         <span class="card-span"> 总未提交数量:{{ SumCount }}</span>
       </div>
+      <div class="card-div" v-if="isVertify">
+        <span class="card-span">总的提交数量:{{totalNumber}}&nbsp;&nbsp;&nbsp;&nbsp;已经提交的数量:{{numberOfSubmissions}}</span>
+      </div>
       <div v-for="(item, bomIndex) in constructionBomList" :key="item.superTypeName">
         <el-card m="2" v-loading="item.loading">
           <template #header>
@@ -359,7 +362,8 @@ const multipleSelection = ref<any>()
 const peopleId = ref<any[]>([])
 const people = ref<any[]>([])
 const isAll = ref(false)
-
+const totalNumber = ref(0)
+const numberOfSubmissions = ref(0)
 const data = reactive({
   auditFlowId,
   productId,
@@ -676,6 +680,8 @@ const fetchConstructionInitData = async () => {
     constructionBomList.value = result.constructionDtos
     await ReverseFillingEnclosure(constructionBomList.value)
     isAll.value = result.isAll
+    totalNumber.value = result.totalNumber
+    numberOfSubmissions.value = result.numberOfSubmissions
     return true
   } catch {
     return false

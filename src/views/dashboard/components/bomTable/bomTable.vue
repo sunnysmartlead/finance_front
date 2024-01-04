@@ -89,7 +89,7 @@
       prop="materialPrice"
       label="材料单价（原币）"
       width="175"
-      :formatter="formatThousandths"
+      :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }" v-if="isEdit">
         <el-input-number @mousewheel.native.prevent controls-position="right" :min="0" v-model="row.materialPrice" />
@@ -100,7 +100,7 @@
         <el-input v-model="row.currencyText" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="exchangeRate" label="汇率" width="175" :formatter="formatThousandths">
+    <el-table-column align="center" prop="exchangeRate" label="汇率" width="175" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -116,7 +116,7 @@
       prop="materialPriceCyn"
       label="材料单价（人民币）"
       width="175"
-      :formatter="formatThousandths"
+      :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }">
         <el-input-number
@@ -133,7 +133,7 @@
       prop="totalMoneyCyn"
       label="合计金额（人民币）- bom成本"
       width="175"
-      :formatter="formatThousandths"
+      :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }">
         <el-input-number
@@ -150,7 +150,7 @@
       prop="totalMoneyCynNoCustomerSupply"
       label="合计金额（人民币）- 不含客供"
       width="175"
-      :formatter="formatThousandths"
+      :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }">
         <el-input-number
@@ -162,7 +162,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="loss" label="损耗" width="175" :formatter="formatThousandths">
+    <el-table-column align="center" prop="loss" label="损耗" width="175" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -178,7 +178,7 @@
       prop="materialCost"
       label="材料成本（含损耗）"
       width="175"
-      :formatter="formatThousandths"
+      :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }">
         <el-input-number
@@ -256,7 +256,7 @@
 </template>
 <script lang="ts" setup>
 import { PropType, ref, h } from "vue"
-import { formatThousandths } from "@/utils/number"
+import { formatThousandths,formatThousandthsIndex } from "@/utils/number"
 var showColumn = ref<boolean>(false)
 const props = defineProps({
   bomData: {

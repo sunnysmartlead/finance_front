@@ -13,9 +13,11 @@ import "element-plus/dist/index.css"
 import "element-plus/theme-chalk/dark/css-vars.css"
 import "@/styles/index.scss"
 import ResetProcess from "@/components/ResetProcess/index.vue" // 重置流程组件
+import OperationList from "@/components/OperationList/index.vue" // 操作记录组件
 
 const app = createApp(App)
 app.component("ResetProcess", ResetProcess)
+app.component("OperationList", OperationList)
 
 app.config.globalProperties.$baseUrl = import.meta.env.VITE_BASE_API
 /** element-plus 组件完整引入 */

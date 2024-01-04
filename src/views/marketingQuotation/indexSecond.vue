@@ -280,6 +280,7 @@
         </el-table>
       </el-card>
     </el-card>
+    <!-- <OperationList /> -->
     <!-- 总经理审批 -->
     <el-row justify="end" style="margin-top: 20px" v-if="data.pageType === 1">
       <el-button type="primary" @click="save" v-havedone>保存</el-button>
@@ -312,6 +313,7 @@ import { ElLoading } from "element-plus"
 import { useRoute } from "vue-router"
 import { CommonDownloadFile } from "@/api/bom"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
+
 import { GetPicture3DByAuditFlowId, getProductByAuditFlowId } from "../processImport/service"
 import { getSorByAuditFlowId } from "@/components/CustomerSpecificity/service"
 import { downloadFile, getAuditFlowVersion } from "../trAudit/service"

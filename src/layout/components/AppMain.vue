@@ -17,9 +17,9 @@ const key = computed(() => {
           <keep-alive :include="['quoteAnalysis', 'indexSecond', 'bidWinningConfirmation', 'zbWatch']">
             <component :is="Component" :key="key" />
           </keep-alive>
+          <OperationList />
         </transition>
       </router-view>
-      <OperationList />
     </el-scrollbar>
   </section>
 </template>

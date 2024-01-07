@@ -42,9 +42,9 @@ import { useRoute } from "vue-router"
 import { GetUserByDeptName, ResetTask, GetDepartmentByName, GetUserByDepartmentId } from "./service"
 import getQuery from "@/utils/getQuery"
 import { getQueryParam } from "@/utils/index"
-
+import useJump from "@/hook/useJump"
 const route = useRoute()
-
+const { closeSelectedTag } = useJump()
 const loading = ref(false)
 let { nodeInstanceId, showBtn } = getQuery()
 const dpartName = ref("")
@@ -129,12 +129,15 @@ const remoteMethod = async (query: string) => {
 }
 const onSubmit = async () => {
   if (nodeInstanceId && data.userId) {
-    let res = await ResetTask({
+    const { success } = await ResetTask({
       nodeInstanceId,
       targetUserId: data.userId
     })
-    ElMessage.success("重置成功")
-    console.log(res.data)
+    if (success) {
+      data.dialogVisible=false
+      ElMessage.success("重置成功")
+      closeSelectedTag(route.path)
+    }
   }
 }
 </script>

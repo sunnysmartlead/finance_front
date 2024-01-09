@@ -42,13 +42,13 @@
       </div>
       <div v-if="!data.resa.issample">
         <!-- 单价汇总 -->
-        <p>单价汇总</p>
+        <h4>单价汇总</h4>
         <el-table :data="data.resa.unitPriceSum" border>
           <el-table-column label="产品名称" prop="product" />
           <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
         </el-table>
         <!-- NRE报价汇总 -->
-        <p>NRE报价汇总</p>
+        <h4>NRE报价汇总</h4>
         <el-table :data="data.resa.nreUnitSumModels" border>
           <el-table-column label="产品名称" prop="product" />
           <el-table-column label="核价金额" prop="cost" :formatter="formatThousandths" align="right" />
@@ -56,7 +56,7 @@
         </el-table>
         <!-- nre -->
         <el-card v-if="data.resa.managerApprovalOfferNres">
-          <p>报价毛利率测算-实际数量</p>
+          <h4>报价毛利率测算-实际数量</h4>
           <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
             <el-table-column prop="solutionName" label="方案名" />
             <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" />
@@ -113,7 +113,7 @@
         </el-card>
       </div>
       <div v-else>
-        <p>样品报价</p>
+        <h4>样品报价</h4>
         <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
           <span>{{ sample.solutionName }}</span>
           <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px">

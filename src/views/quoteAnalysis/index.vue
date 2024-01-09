@@ -800,6 +800,7 @@ const selectVersion = async (row: any) => {
     /**
      * 根据版本号查询该版本数据
      */
+    debugger
     let res = await getStatementAnalysisBoardSecond({
       auditFlowId,
       version: row.version,
@@ -1282,6 +1283,9 @@ const downLoad = async () => {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })
+  /**
+   * 如果是版本加载的数据，那么下载只需要版本号和ntime,solutionTables字段传的是未保存的当前数据
+   */
   if (versionChosen && solutionTables.length === 0) {
     try {
       let res: any = await PostDownloadMessageSecond({

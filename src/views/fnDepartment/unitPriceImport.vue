@@ -8,6 +8,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="search">搜索</el-button>
+            <el-button type="primary" @click="EvalTableModel">单价库模版下载</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -68,7 +69,7 @@
       </el-table-column>
       <el-table-column :label="col.name" :prop="col.key" v-for="col in unitCols2" :key="col.key" width="150" />
     </el-table>
-    <el-row justify="end" style="margin-top: 10px;">
+    <el-row justify="end" style="margin-top: 10px">
       <el-pagination
         background
         layout="prev, pager, next"
@@ -83,12 +84,12 @@
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
 import type { UploadProps } from "element-plus"
-import { ElMessageBox } from "element-plus"
+import { ElMessageBox, ElMessage, ElLoading } from "element-plus"
 import { unitCols, unitCols2 } from "./constant"
-import { getUInitPrice } from "./service"
+import { getUInitPrice, UnitPriceLibraryTemplateDownload } from "./service"
 import { filter } from "lodash"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
-
+import { downloadFileExcel } from "@/utils"
 const data = reactive<any>({
   loading: false,
   tableData: [],
@@ -122,6 +123,19 @@ const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
       type: "warning",
       confirmButtonText: "OK"
     })
+  }
+}
+
+
+
+//核价表模版下载
+const EvalTableModel=async()=>{
+  try {
+      const res: any = await UnitPriceLibraryTemplateDownload(null)
+      downloadFileExcel(res, "单价库模版")
+      ElMessage.success("下载成功！")
+  } catch (err:any) {
+    console.log(err, "[ 单价库模版下载 失败 ]")
   }
 }
 // const downLoadTemplate = async () => {
@@ -168,7 +182,6 @@ onMounted(() => {
 const formatDatas = (record: any, _row: any, cellValue: any) => {
   return cellValue.toFixed(2)
 }
-
 </script>
 <style lang="scss" scoped>
 .unitPrice-import {

@@ -41,7 +41,17 @@ export function getUInitPrice(data: UnitPage) {
   return request({
     url: "/api/services/app/UnitPriceLibrary/GetGainUInitPriceForm",
     method: "get",
-    data
+    data,
+  })
+}
+/** 单价库模版下载*/
+export function UnitPriceLibraryTemplateDownload(data: any)
+{
+  return request({
+    url: "/api/services/app/UnitPriceLibrary/UnitPriceLibraryTemplateDownload",
+    method: "get",
+    data,
+    responseType: "blob"
   })
 }
 

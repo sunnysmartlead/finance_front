@@ -74,7 +74,7 @@
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
-      <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
+      <el-button type="primary" @click="dialogVisibleR=true" v-havedone>不报价</el-button>
       <el-button type="primary" @click="submitProcess(true)" v-havedone>提交流程</el-button>
     </el-button-group>
     <div>
@@ -548,6 +548,19 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="dialogVisibleR" title="不报价填写" width="30%" :before-close="handleClose">
+      <el-form>
+        <el-form-item label="备注">
+          <el-input type="textarea" rows="4" v-model="refuseText" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisibleR = false">取消</el-button>
+          <el-button type="primary" @click="refuseConfirm"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -780,6 +793,23 @@ const planListArrChange = async (val) => {
     data.allRes = res.result
   } catch (error) {
     fullscreenLoading.value = false
+  }
+}
+
+const dialogVisibleR = ref(false)
+const refuseText = ref("")
+const handleClose = () => {
+  refuseText.value = ""
+}
+const refuseConfirm = () => {
+  if (!refuseText.value) {
+    ElMessage({
+      type: "warning",
+      message: "请填写备注"
+    })
+    return false
+  } else {
+    postOffer(false)
   }
 }
 /**
@@ -1831,7 +1861,7 @@ const submitProcess = async (isOffer: boolean) => {
   //   }
   // ]
   let FangAnres: any = await SubmitNode({
-    comment: "",
+    comment: isOffer ? "" : refuseText.value,
     nodeInstanceId,
     financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
   })

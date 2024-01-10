@@ -1833,7 +1833,7 @@ const submitProcess = async (isOffer: boolean) => {
   let FangAnres: any = await SubmitNode({
     comment: "",
     nodeInstanceId,
-    financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0]
+    financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
   })
   if (FangAnres.success) {
     ElMessage({

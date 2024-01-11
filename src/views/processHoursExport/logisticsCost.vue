@@ -127,7 +127,7 @@
               <el-table-column label="单PCS总物流成本" align="center">
                 <template #default="scope">
                   <div>
-                    <span>{{ scope.row.transportPrice?Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount * 1000 / scope.row.moon)).toFixed(2):'0.00' }}</span>
+                    <span>{{ Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount * 1000 / scope.row.moon)).toFixed(2)}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -458,13 +458,6 @@ const pcsPriceChange = (value: any, index: any, item: any,cardIndex:number) => {
   console.log("单片价格变化", value);
   console.log("当前下表",cardIndex);
   console.log(`index===${index}`,item.value)
-/*
-  if (null !=  item && undefined != item) {
-    item.transportPrice = ((item.row.freightPrice +item.row.storagePrice)/(item.row.yearMountCount / item.row.yearMountCount)).toFixed(2)
-  }
-*/
-
-
   if(cardIndex==0&&index==0){
     cardData.value.map(function(cardItem:any){
       if(cardItem.logisticscostList!=null&&cardItem.logisticscostList.length>0){
@@ -562,6 +555,20 @@ const saveTableData = () => {
     auditFlowId: queryParam.value.AuditFlowId,
     solutionId: queryParam.value.SolutionId,
     logisticscostList: JSON.parse(JSON.stringify(cardData.value))
+  }
+  console.log(param.logisticscostList.length)
+  console.log(param.logisticscostList.length)
+  console.log(param.logisticscostList.value)
+  if (null != param.logisticscostList && param.logisticscostList.length > 0) {
+    for (let a = 0; a < param.logisticscostList.length; a++) {
+      if (null != param.logisticscostList[a].logisticscostList && param.logisticscostList[a].logisticscostList.length>0){
+        for (let b= 0;b< param.logisticscostList[a].logisticscostList.length;b++){
+          param.logisticscostList[a].logisticscostList[b].transportPrice = Number(param.logisticscostList[a].logisticscostList[b].packagingPrice + (param.logisticscostList[a].logisticscostList[b].freightPrice +param.logisticscostList[a].logisticscostList[b].storagePrice) / (param.logisticscostList[a].logisticscostList[b].yearMountCount * 1000 / param.logisticscostList[a].logisticscostList[b].moon)).toFixed(2)
+        }
+
+      }
+
+    }
   }
   createProcess(param).then((response: any) => {
     console.log("新增响应", response)

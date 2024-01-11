@@ -121,7 +121,6 @@
     </el-card>
     <!-- nre -->
     <h3>NRE</h3>
-
     <!-- {
         "solutionName": null,
         "index": null,
@@ -140,13 +139,14 @@
         "offerMoney": "报价金额",
         "remark": "备注"
       }, -->
+    123
     <el-table :data="data.resa.nres" style="width: 100%" border height="400px">
       <el-table-column prop="solutionName" label="" />
       <el-table-column prop="index" label="" />
-      <el-table-column prop="costName" label="" />
-      <el-table-column prop="pricingMoney" label="" />
-      <el-table-column prop="offerCoefficient" label="" />
-      <el-table-column prop="offerMoney" label="" />
+      <el-table-column prop="costName" label="" :formatter="formatThousandths" />
+      <el-table-column prop="pricingMoney" label="" :formatter="formatThousandths" />
+      <el-table-column prop="offerCoefficient" label="" :formatter="formatThousandths" />
+      <el-table-column prop="offerMoney" label="" :formatter="formatThousandths" />
       <el-table-column prop="remark" label="" />
     </el-table>
     <!-- <el-card v-for="(nre, index) in data.resa.nres" :key="index">
@@ -874,7 +874,11 @@ const formatMarketingQuotationDatas = (record: any, _row: any, cellValue: any) =
 }
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
-  return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  if (Number(cellValue) && typeof Number(cellValue).toFixed === "function") {
+    return (Number(cellValue).toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return cellValue
+  }
 }
 
 const typeMapGetText = (key: any, id: any) => {

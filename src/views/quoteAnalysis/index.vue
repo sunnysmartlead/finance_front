@@ -74,7 +74,7 @@
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
       <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
-      <el-button type="primary" @click="postOffer(false)" v-havedone>不报价</el-button>
+      <el-button type="primary" @click="dialogVisibleR=true" v-havedone>不报价</el-button>
       <el-button type="primary" @click="submitProcess(true)" v-havedone>提交流程</el-button>
     </el-button-group>
     <div>
@@ -548,6 +548,19 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="dialogVisibleR" title="不报价填写" width="30%" :before-close="handleClose">
+      <el-form>
+        <el-form-item label="备注">
+          <el-input type="textarea" rows="4" v-model="refuseText" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisibleR = false">取消</el-button>
+          <el-button type="primary" @click="refuseConfirm"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -782,6 +795,23 @@ const planListArrChange = async (val) => {
     fullscreenLoading.value = false
   }
 }
+
+const dialogVisibleR = ref(false)
+const refuseText = ref("")
+const handleClose = () => {
+  refuseText.value = ""
+}
+const refuseConfirm = () => {
+  if (!refuseText.value) {
+    ElMessage({
+      type: "warning",
+      message: "请填写备注"
+    })
+    return false
+  } else {
+    postOffer(false)
+  }
+}
 /**
  * 加载之前的版本
  */
@@ -800,6 +830,7 @@ const selectVersion = async (row: any) => {
     /**
      * 根据版本号查询该版本数据
      */
+    debugger
     let res = await getStatementAnalysisBoardSecond({
       auditFlowId,
       version: row.version,
@@ -1282,6 +1313,9 @@ const downLoad = async () => {
       solutionTables.push(planMap[item.value as keyof Object])
     }
   })
+  /**
+   * 如果是版本加载的数据，那么下载只需要版本号和ntime,solutionTables字段传的是未保存的当前数据
+   */
   if (versionChosen && solutionTables.length === 0) {
     try {
       let res: any = await PostDownloadMessageSecond({
@@ -1827,9 +1861,9 @@ const submitProcess = async (isOffer: boolean) => {
   //   }
   // ]
   let FangAnres: any = await SubmitNode({
-    comment: "",
+    comment: isOffer ? "" : refuseText.value,
     nodeInstanceId,
-    financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0]
+    financeDictionaryDetailId: isOffer ? baseProcessType[1].val : baseProcessType[0].val
   })
   if (FangAnres.success) {
     ElMessage({

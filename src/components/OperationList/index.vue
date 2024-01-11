@@ -1,11 +1,13 @@
 <template>
-  <el-card>
+  <el-card v-if="auditFlowId" style="margin-top: 20px">
     <div style="background-color: #ffffff">
-      <el-table :data="tableData">
-        <el-table-column prop="userName" label="操作用户名" width="100" fixed="left" />
-        <el-table-column prop="nodeName" label="工作流节点名称" width="80" fixed="left" />
-        <el-table-column prop="displayName" label="流转意见" width="80" fixed="left" />
-        <el-table-column prop="comment" label="审批评论" width="80" fixed="left" />
+      <el-table :data="tableData" height="300px">
+        <el-table-column prop="userName" label="用户名称" width="200" />
+        <el-table-column prop="userDepartmentName" label="用户部门" width="200" />
+        <el-table-column prop="nodeName" label="工作流节点名称" width="200" />
+        <el-table-column prop="displayName" label="流转意见" />
+        <el-table-column prop="comment" label="审批评论" />
+        <el-table-column prop="creationTime" label="创建时间" />
       </el-table>
     </div>
   </el-card>
@@ -13,22 +15,24 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue"
 import { getInstanceHistoryById } from "./service"
+import getQuery from "@/utils/getQuery"
+
 import { formatDateTime } from "@/utils"
 
 const tableData = ref<any[]>([])
-const editLogFlag = ref(false)
+const { auditFlowId } = getQuery()
 
 export interface LogListAPI {
   onRefresh: () => void
 }
 
-const props = defineProps({
-  auditFlowId: Number
-})
-
 onMounted(async () => {
-  let res = await getInstanceHistoryById(props.auditFlowId)
-  tableData.value = res.data.items
+  if (auditFlowId) {
+    let res: any = await getInstanceHistoryById(auditFlowId)
+    res?.result.items.forEach((item: any) => {
+      tableData.value.push(item)
+    })
+  }
 })
 </script>
 

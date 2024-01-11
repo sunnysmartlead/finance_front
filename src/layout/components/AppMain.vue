@@ -19,6 +19,7 @@ const key = computed(() => {
           </keep-alive>
         </transition>
       </router-view>
+      <OperationList :key="key" />
     </el-scrollbar>
   </section>
 </template>

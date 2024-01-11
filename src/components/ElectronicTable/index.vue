@@ -5,10 +5,14 @@
     </el-row>
     <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
     <el-card class="table-wrap" v-loading="tableLoading">
-      <template #header v-if="!isVertify">
-        <div class="card-header">
+      <template #header >
+        <div class="card-header" v-if="!isVertify">
           <span>电子料单价录入界面</span>
           <span class="card-span"> 未提交的数量:{{ electronicBomList?.filter((p) => !p.isSubmit)?.length }}</span>
+        </div>
+        <div class="card-header" v-if="isVertify">
+          <span>电子料单价审核界面</span>
+          <span class="card-span"> 总的提交数量:{{totalNumber}}&nbsp;&nbsp;&nbsp;&nbsp;已经提交的数量:{{numberOfSubmissions}}</span>
         </div>
       </template>
       <el-table :data="electronicBomList" :height="electronicBomList?.length > 5 ? '75vh' : '46vh'"
@@ -199,6 +203,8 @@ const allColums = reactive<any>({
   rebateMoneyYears: [] // 物料返利金额
 })
 const isAll = ref(false)
+const totalNumber = ref(0)
+const numberOfSubmissions = ref(0)
 const multipleTableRef = ref<InstanceType<any>>()
 const multipleSelection = ref<any>()
 const exchangeSelectOptions = ref<any>([])
@@ -373,6 +379,8 @@ const fetchElectronicInitData = async () => {
     tableLoading.value = false
     electronicBomList.value = electronicDtos
     isAll.value = result.isAll
+    totalNumber.value = result.totalNumber
+    numberOfSubmissions.value = result.numberOfSubmissions
   }, 500)
 }
 
@@ -536,7 +544,10 @@ defineExpose({
   color: red;
   font-weight: bold;
 }
-
+.card-span-1 {
+  color: black;
+  font-weight: bold;
+}
 .descriptions {
   &-box {
     width: 100%;

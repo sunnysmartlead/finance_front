@@ -92,6 +92,10 @@ const props = defineProps({
   title: {
     type: String,
     default: "流程确认"
+  },
+   ElMessageBoxMessage:{
+    type:String,
+    default:"您确定要提交嘛?"
   }
 })
 
@@ -105,7 +109,7 @@ onMounted(() => {
 })
 
 const handleEnter = (opinion: string, label: string) => {
-  ElMessageBox.confirm("您确定要提交嘛?", "提示", {
+  ElMessageBox.confirm(props.ElMessageBoxMessage, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning"

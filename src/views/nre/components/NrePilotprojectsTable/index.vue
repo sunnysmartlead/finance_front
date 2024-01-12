@@ -279,7 +279,7 @@ onBeforeMount(() => {
 onMounted(() => {
   auditFlowId = Number(auditFlowId)
   productId = Number(productId)
-  if (!auditFlowId && !productId) return
+  if (!auditFlowId || !productId) return
   initFetch()
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })

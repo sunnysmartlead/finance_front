@@ -10,7 +10,7 @@ export const LXconstantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "零星报价部分",
-      hidden: true
+      hidden: false
     },
     children: [
       {

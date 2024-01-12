@@ -1288,7 +1288,8 @@ const selectVersion = async (row: any) => {
       let res = await getStatementAnalysisBoardSecond({
         auditFlowId,
         version: versionChosen.version,
-        ntype: 1
+        ntype: 1,
+        ntime: versionChosen.ntime
       })
       data.allRes = res.result
     } else {

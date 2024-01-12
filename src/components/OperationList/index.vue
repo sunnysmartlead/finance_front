@@ -1,5 +1,5 @@
 <template>
-  <el-card v-if="auditFlowId" style="margin-top: 20px">
+  <el-card v-if="auditFlowId" style="margin-top: 80px">
     <div style="background-color: #ffffff">
       <el-table :data="tableData" height="300px">
         <el-table-column prop="userName" label="用户名称" width="200" />

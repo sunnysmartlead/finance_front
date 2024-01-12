@@ -330,31 +330,54 @@ const handleFetchPriceEvaluationTableDownload = async () => {
     text: '下载中',
     background: 'rgba(0, 0, 0, 0.7)',
   })
+   const baseDomain=import.meta.env.VITE_BASE_API
+   var path=baseDomain+`api/services/app/PriceEvaluation/PriceEvaluationTableDownload?AuditFlowId=${auditFlowId}&SolutionId=${productId}&GradientId=${data.form.gradientId}`
+   console.log("path",path);
+   window.open(path)
+  //window.location.href=baseDomain+`api/services/app/PriceEvaluation/PriceEvaluationTableDownload?AuditFlowId='${auditFlowId}'&SolutionId='${productId}'&GradientId='${data.form.gradientId}'`
+  //=984")
   try {
-    const result: any = await PriceEvaluationTableDownload({
-      AuditFlowId: auditFlowId,
-      SolutionId: productId,
-      GradientId: data.form.gradientId,
-    })
-    const blob = result
-    const reader = new FileReader()
-    reader.readAsDataURL(blob)
-    reader.onload = function () {
-      let url = URL.createObjectURL(new Blob([blob]))
-      let a = document.createElement("a")
-      document.body.appendChild(a) //此处增加了将创建的添加到body当中
-      a.href = url
-      a.download = '产品核价表.xlsx'
-      a.target = "_blank"
-      a.click()
-      a.remove() //将a标签移除
-    }
-    loading.close()
+    // const result: any = await PriceEvaluationTableDownload({
+    //   AuditFlowId: auditFlowId,
+    //   SolutionId: productId,
+    //   GradientId: data.form.gradientId,
+    // }).then(p=>{
+    //   debugger
+
+    //   console.log("全部",p.data.FileDownloadName)
+    // })
+    //const filename = getFilenameFromResponse(result); // 调用获取文件名的函数
+
+    // console.log("文件名称",filename)
+    // const blob = result
+    // const reader = new FileReader()
+    // reader.readAsDataURL(blob)
+    // reader.onload = function () {
+    //   let url = URL.createObjectURL(new Blob([blob]))
+    //   let a = document.createElement("a")
+    //   document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    //   a.href = url
+    //   a.download = '产品核价表.xlsx'
+    //   a.target = "_blank"
+    //   a.click()
+    //   a.remove() //将a标签移除
+    // }
+    // loading.close()
   } catch {
     loading.close()
   }
+  loading.close()
 }
-
+function getFilenameFromResponse(response:any) {
+  debugger
+  console.log(response)
+  const contentDisposition = response.headers['content-disposition'];
+  const match = contentDisposition.match(/filename="(.+)"/);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return 'unknown'; // 如果没有获取到文件名，则返回 unknown
+}
 //核价表模版下载
 const EvalTableModel=async()=>{
   try {

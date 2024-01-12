@@ -1,26 +1,43 @@
 <template>
   <div class="demand-apply" v-loading="state.tableLoading">
     <el-row justify="end" v-if="!isDisabled" v-havedone>
-      <el-button @click="save(refForm, false)" type="primary">保存</el-button>
-      <el-button @click="save(refForm, true)" type="primary">提交</el-button>
+      <el-button @click="save(false)" type="primary">保存</el-button>
+      <el-button @click="save(true)" type="primary">提交</el-button>
     </el-row>
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="引用核报价流程:" prop="quoteAuditFlowId"
-            v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)">
-              <el-select v-model="state.quoteAuditFlowId" remote-show-suffix reserve-keyword filterable
-                placeholder="Select" remote :remote-method="fetchWorkflowOvered" style="width: 300px" @change="handleSelectProcess">
-                <el-option v-for="item in projectOptions" :disabled="!opinion" :key="item.id"
-                  :label="`${item.title} （流程号：${item.id}）`" :value="item.id" />
+            <el-form-item
+              label="引用核报价流程:"
+              prop="quoteAuditFlowId"
+              v-if="['EvalReason_Ffabg', 'EvalReason_Qtyylc'].includes(state.opinion)"
+            >
+              <el-select
+                v-model="state.quoteAuditFlowId"
+                remote-show-suffix
+                reserve-keyword
+                filterable
+                placeholder="Select"
+                remote
+                :remote-method="fetchWorkflowOvered"
+                style="width: 300px"
+                @change="handleSelectProcess"
+              >
+                <el-option
+                  v-for="item in projectOptions"
+                  :disabled="!opinion"
+                  :key="item.id"
+                  :label="`${item.title} （流程号：${item.id}）`"
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="标题:" prop="title">
-              <el-input v-model="state.quoteForm.title" :disabled="notEdit">
+              <el-input v-model="state.quoteForm.title" :disabled="notEdit" placeholder="可自动生成">
                 <template #append v-if="!isDisabled">
                   <el-button @click="generateTitle" v-havedone>自动生成</el-button>
                 </template>
@@ -62,19 +79,34 @@
       <!-- 项目信息 -->
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
-           <el-col :span="6">
+          <el-col :span="6">
             <el-form-item label="项目名称:" prop="projectName">
-              <el-input v-model="state.quoteForm.projectName" @change="generateTitle" :disabled="notEdit" />
+              <el-input
+                v-model="state.quoteForm.projectName"
+                @change="generateTitle"
+                :disabled="notEdit"
+                placeholder="项目名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="直接客户名称:" prop="directCustomerName">
-              <el-input v-model="state.quoteForm.directCustomerName" @change="generateTitle" :disabled="notEdit" />
+              <el-input
+                v-model="state.quoteForm.directCustomerName"
+                @change="generateTitle"
+                :disabled="notEdit"
+                placeholder="直接客户名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="客户性质:" prop="customerNature">
-              <el-input v-model="state.quoteForm.customerNature" @change="generateTitle" :disabled="notEdit" />
+              <el-input
+                v-model="state.quoteForm.customerNature"
+                @change="generateTitle"
+                :disabled="notEdit"
+                placeholder="客户性质"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -84,79 +116,70 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="终端客户性质:" prop="endCustomerNature">
-               <el-input v-model="state.quoteForm.endCustomerNature" placeholder="终端客户名称" :disabled="notEdit" />
+              <el-input v-model="state.quoteForm.endCustomerNature" placeholder="终端客户名称" :disabled="notEdit" />
             </el-form-item>
           </el-col>
-           <el-col :span="6">
+          <el-col :span="6">
             <el-form-item label="零部件类型:" prop="componentType">
               <el-select v-model="state.quoteForm.componentType" placeholder="零部件类型" :disabled="notEdit">
-                <el-option v-for="item in state.terminalNatureOptions" :key="item.id" :label="item.displayName"
-                  :value="item.id" />
+                <el-option
+                  v-for="item in state.componentTypeOptions"
+                  :key="item.id"
+                  :label="item.displayName"
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
-
-        </el-row>
-
-        <el-row v-if="state.quoteForm.priceEvalType == 'PriceEvalType_Quantity'">
           <el-col :span="6">
-            <el-form-item label="是否包含样品核价:" prop="updateFrequency">
-              <el-select v-model="state.quoteForm.isHasSample" placeholder="是否包含样品核价" :disabled="notEdit">
-                <el-option :value="true" label="是" />
-                <el-option :value="false" label="否" />
-              </el-select>
-            </el-form-item>
+            {{ DataListMapper }}
           </el-col>
         </el-row>
-        <div v-if="state.quoteForm.isHasSample || state.quoteForm.priceEvalType == 'PriceEvalType_Sample'">
-          <div class="demand-apply__btn-container" v-if="!isDisabled">
-            <el-button type="primary" class="demand-apply__add-btn" @click="addSpecimen" v-havedone>新增</el-button>
-          </div>
-          <el-row>
-            <el-table :data="specimenData" border style="width: 600px">
-              <el-table-column prop="name" label="样品阶段" width="250">
-                <template #default="{ row }">
-                  <el-select v-model="row.name" placeholder="样品阶段" :disabled="notEdit">
-                    <!-- <el-option :value="0" label="A样" />
-                    <el-option :value="1" label="B样" />
-                    <el-option :value="2" label="C样" />
-                    <el-option :value="3" label="其他" /> -->
-                    <el-option v-for="item in state.isSpecimenOptions" :key="item.id" :label="item.displayName"
-                      :value="item.id" />
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="pcs" label="需求量(pcs)" width="250">
-                <template #default="{ row }">
-                  <el-input v-model="row.pcs" :disabled="notEdit" />
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" fixed="right">
-                <template #default="{ $index }" v-if="!isDisabled">
-                  <el-button @click="deleteSpecimen($index)" type="danger" :disabled="specimenData.length === 1"
-                    v-havedone>
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-row>
-        </div>
-        <h6 />
+        <el-row :gutter="20"> </el-row>
       </el-card>
+      <div>
+        <div class="demand-apply__btn-container" v-if="!isDisabled">
+          <el-button type="primary" class="demand-apply__add-btn" @click="addColumn" v-havedone>新增</el-button>
+        </div>
+        <el-row>
+          <el-table :data="state.quoteForm.lxDataListDtos" border>
+            <el-table-column prop="listNameDisplayName" label="" width="250"> </el-table-column>
+
+            <el-table-column
+              :label="'数据' + (index + 1)"
+              v-for="(item, index) in state.quoteForm.lxDataListDtos[0].data.length"
+              :key="index"
+              width="200"
+            >
+              <template #header>
+                <span class="header-icon"> {{ "数据" + (index + 1) }} </span>
+                <el-popconfirm title="确定删除嘛?" @Confirm="DelColumn(index)">
+                  <template #reference>
+                    <el-button :style="{ margin: '0 0 0 30px' }" text type="danger" bg
+                      >X 删除该列</el-button
+                    >
+                  </template>
+                </el-popconfirm>
+              </template>
+              <template #default="{ row }">
+                <el-input v-model="row.data[index]"> </el-input>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+      </div>
     </el-form>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onMounted, toRefs, watch, computed } from "vue"
-import { productTypeMap, YearListItem, updateFrequency } from "./data.type"
+import { LXRequirementEntDto } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
-import { saveApplyInfo, priceEvaluationStartSave, getExchangeRate, getPriceEvaluationStartData, GetQuoteVersion, getWorkflowOvered, priceEvaluationStart } from "./service"
+//录入  查询
+import { LXRequirementEnt, QueryLXRequirementEnt } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import type { FormInstance, FormRules } from "element-plus"
 import { ElMessage, ElLoading } from "element-plus"
@@ -167,8 +190,10 @@ import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
 import { CountryTypeEnum } from "./common/util"
 import { debounce } from "lodash"
+import { List } from "@element-plus/icons-vue/dist/types"
+import { el } from "element-plus/es/locale"
 
-let { right, opinion } = getQuery()
+let { right, opinion, auditFlowId } = getQuery()
 
 let userStorage = window.localStorage.getItem("user")
 let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
@@ -176,34 +201,47 @@ const kvPricingData = ref<any>([])
 const shareCountTable = ref<any>([])
 const isFirstShow = ref(false)
 const state = reactive<any>({
-
   quoteForm: {
-    shareCount: [],
-    countryType: "", // 国家类型
-    isHasNre: false,
-    isHasGradient: false,
-    title: "" as any, //标题
+    title: "" as string, //标题
     drafter: "", //拟稿人
     drafterNumber: null, //拟稿人工号
     draftingDepartment: "", //拟稿部门
     draftingCompany: "", //拟稿公司
     draftDate: new Date(), //拟稿日期
     number: "", //单据编号
-
-    ProjectName:"",//项目名称
-
-
+    ProjectName: "", //项目名称
+    componentType: null, //销售类型
+    lxDataListDtos: [
+      {
+        /**
+         *数据
+         */
+        data: [], //
+        /**
+         *Id
+         */
+        id: 0, //
+        listName: "",
+        /**
+         *列名称注释
+         */
+        listNameDisplayName: "",
+        /**
+         *零星报价需求录入主表Id
+         */
+        requirementEntryId: 0
+      }
+    ]
   },
-
-
+  componentTypeOptions: []
 })
+
 //自动生成标题
 const generateTitle = () => {
   let { quoteForm } = state
   let nowDate = dayjs(quoteForm.draftDate ? quoteForm.draftDate : new Date()).format("YYYY-MM-DD")
   let userDepartment = quoteForm.draftingDepartment
-  let title = `${nowDate + userDepartment}关于${quoteForm.customerName + quoteForm.projectName + "第" + state.quoteForm.quoteVersion + "版"
-    }的核价报价申请`
+  let title = `${nowDate + userDepartment}关于${state.quoteForm.projectName}的项目变更核报价申请`
   state.quoteForm.title = title
 }
 
@@ -214,7 +252,34 @@ const setNumber = () => {
   let number = "BJHJ-ZL" + nowDate + "-001"
   quoteForm.number = number
 }
-
+//添加
+const addColumn = () => {
+  state.quoteForm.lxDataListDtos.forEach((item: any, index: number) => {
+    let count = item.data.length
+    if (count === 15) {
+      ElMessage({
+        type: "success",
+        message: "已经最大列了"
+      })
+      throw new Error("已经最大列了") //报错，就跳出循环
+    }
+    item.data.push("")
+  })
+}
+//删除列
+const DelColumn = (index: number) => {
+  state.quoteForm.lxDataListDtos.forEach((item: any, inde: number) => {
+    if(item.data.length==1)
+    {
+      ElMessage({
+        type: "success",
+        message: "最后一列不可删除"
+      })
+      throw new Error("最后一列不可删除") //报错，就跳出循环
+    }
+    item.data.splice(index, 1)
+  })
+}
 const init = async (tempAuditFlowId?: any) => {
   let query = getQuery() || {}
   state.quoteForm.projectName = query.projectName ? query.projectName + "" : ""
@@ -227,17 +292,47 @@ const init = async (tempAuditFlowId?: any) => {
   state.tableLoading = true
   isFirstShow.value = false
   state.tableLoading = false
+  let componentType: any = await getDictionaryAndDetail("ComponentType") //销售类型
+  state.componentTypeOptions = componentType?.result?.financeDictionaryDetailList
   //生成单据编号
   setNumber()
+  //查询数据
+  var rowData: any = await QueryLXRequirementEnt({ auditFlowId: auditFlowId })
+  if (!rowData.success) {
+    ElMessage({
+      type: "error",
+      message: "查询错误"
+    })
+  } else {
+    var data = rowData.result
+    if (data.id) {
+      state.quoteForm = data
+    } else {
+      state.quoteForm.lxDataListDtos = data?.lxDataListDtos
+    }
+  }
 }
 
+const save = debounce(async (isSubmit: boolean) => {
+  state.quoteForm.isSubmit = isSubmit
+  const { success }: any = await LXRequirementEnt(state.quoteForm)
+  if (!success) {
+    ElMessage({
+      type: "error",
+      message: "添加错误"
+    })
+  } else {
+    ElMessage({
+      type: "success",
+      message: "添加成功"
+    })
+    init()
+  }
+}, 300)
+
 onMounted(() => {
-
   init()
-
 })
-
-
 </script>
 
 <style lang="scss" scoped>

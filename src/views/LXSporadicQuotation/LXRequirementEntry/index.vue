@@ -37,7 +37,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="标题:" prop="title">
-              <el-input v-model="state.quoteForm.title" :disabled="notEdit" placeholder="可自动生成">
+              <el-input v-model="state.quoteForm.title" :disabled="!canDo" placeholder="可自动生成">
                 <template #append v-if="!isDisabled">
                   <el-button @click="generateTitle" v-havedone>自动生成</el-button>
                 </template>
@@ -84,7 +84,7 @@
               <el-input
                 v-model="state.quoteForm.projectName"
                 @change="generateTitle"
-                :disabled="notEdit"
+                :disabled="!canDo"
                 placeholder="项目名称"
               />
             </el-form-item>
@@ -94,7 +94,7 @@
               <el-input
                 v-model="state.quoteForm.directCustomerName"
                 @change="generateTitle"
-                :disabled="notEdit"
+                :disabled="!canDo"
                 placeholder="直接客户名称"
               />
             </el-form-item>
@@ -104,24 +104,24 @@
               <el-input
                 v-model="state.quoteForm.customerNature"
                 @change="generateTitle"
-                :disabled="notEdit"
+                :disabled="!canDo"
                 placeholder="客户性质"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="终端客户名称:" prop="endCustomerName">
-              <el-input v-model="state.quoteForm.endCustomerName" placeholder="终端客户名称" :disabled="notEdit" />
+              <el-input v-model="state.quoteForm.endCustomerName" placeholder="终端客户名称" :disabled="!canDo" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="终端客户性质:" prop="endCustomerNature">
-              <el-input v-model="state.quoteForm.endCustomerNature" placeholder="终端客户名称" :disabled="notEdit" />
+              <el-input v-model="state.quoteForm.endCustomerNature" placeholder="终端客户名称" :disabled="!canDo" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="零部件类型:" prop="componentType">
-              <el-select v-model="state.quoteForm.componentType" placeholder="零部件类型" :disabled="notEdit">
+              <el-select v-model="state.quoteForm.componentType" placeholder="零部件类型" :disabled="!canDo">
                 <el-option
                   v-for="item in state.componentTypeOptions"
                   :key="item.id"
@@ -139,7 +139,7 @@
       </el-card>
       <div>
         <div class="demand-apply__btn-container" v-if="!isDisabled">
-          <el-button type="primary" class="demand-apply__add-btn" @click="addColumn" v-havedone>新增</el-button>
+          <el-button type="primary" class="demand-apply__add-btn" @click="addColumn" :disabled="!canDo">新增</el-button>
         </div>
         <el-row>
           <el-table :data="state.quoteForm.lxDataListDtos" border>
@@ -155,7 +155,7 @@
                 <span class="header-icon"> {{ "数据" + (index + 1) }} </span>
                 <el-popconfirm title="确定删除嘛?" @Confirm="DelColumn(index)">
                   <template #reference>
-                    <el-button :style="{ margin: '0 0 0 30px' }" text type="danger" bg
+                    <el-button :style="{ margin: '0 0 0 30px' }" text type="danger" bg :disabled="!canDo"
                       >X 删除该列</el-button
                     >
                   </template>
@@ -168,6 +168,24 @@
           </el-table>
         </el-row>
       </div>
+      <el-col :span="6">
+        <h5></h5>
+        <el-form-item prop="sorFile">
+          <el-upload
+            v-model:file-list="fileList"
+            :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+            :on-success="handleSuccess"
+            :on-error="handleUploadError"
+            multiple
+            :on-progress="handleGetUploadProgress"
+            show-file-list
+            :disabled="!canDo"
+            :limit="1"
+          >
+            <el-button>上传附件核价表</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-col>
     </el-form>
   </div>
 </template>
@@ -194,7 +212,7 @@ import { List } from "@element-plus/icons-vue/dist/types"
 import { el } from "element-plus/es/locale"
 
 let { right, opinion, auditFlowId } = getQuery()
-
+const fileList = ref<UploadUserFile[]>([])
 let userStorage = window.localStorage.getItem("user")
 let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
 const kvPricingData = ref<any>([])
@@ -211,6 +229,7 @@ const state = reactive<any>({
     number: "", //单据编号
     ProjectName: "", //项目名称
     componentType: null, //销售类型
+    enclosureId: 0, //上传附件核价表id
     lxDataListDtos: [
       {
         /**
@@ -235,6 +254,30 @@ const state = reactive<any>({
   },
   componentTypeOptions: []
 })
+
+//整个页面是否可以编辑
+const props = defineProps({
+  isDisabled: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const canDo = computed(() => {
+  return right !== "1"
+})
+
+//上传附件
+const handleSuccess: UploadProps["onSuccess"] = (res: any) => {
+  let { quoteForm } = state
+  if (res.success) {
+    quoteForm.enclosureId = fileList.value.map((item: any) => item.response.result.fileId)?.[0]
+    ElMessage({
+      message: "上传成功",
+      type: "success"
+    })
+  }
+}
 
 //自动生成标题
 const generateTitle = () => {
@@ -269,8 +312,7 @@ const addColumn = () => {
 //删除列
 const DelColumn = (index: number) => {
   state.quoteForm.lxDataListDtos.forEach((item: any, inde: number) => {
-    if(item.data.length==1)
-    {
+    if (item.data.length == 1) {
       ElMessage({
         type: "success",
         message: "最后一列不可删除"
@@ -307,14 +349,28 @@ const init = async (tempAuditFlowId?: any) => {
     var data = rowData.result
     if (data.id) {
       state.quoteForm = data
+      await ReverseFillingEnclosure(state.quoteForm)
     } else {
       state.quoteForm.lxDataListDtos = data?.lxDataListDtos
     }
   }
 }
 
+//反填附件
+const ReverseFillingEnclosure = async (result: any) => {
+  fileList.value.push({
+    name: result.file.fileName ? result.file.fileName : "",
+    response: {
+      result: {
+        fileId: result.file?.fileId
+      }
+    }
+  })
+}
+
 const save = debounce(async (isSubmit: boolean) => {
   state.quoteForm.isSubmit = isSubmit
+  state.quoteForm.auditFlowId = auditFlowId
   const { success }: any = await LXRequirementEnt(state.quoteForm)
   if (!success) {
     ElMessage({

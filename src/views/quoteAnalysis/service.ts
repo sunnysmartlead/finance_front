@@ -177,7 +177,7 @@ export function PostIsOfferSecondOnlySave(data: any): any {
  * @param data
  * @returns
  */
-export function getStatementAnalysisBoardSecond(data: { auditFlowId?: number; version?: number; ntype?: number }): any {
+export function getStatementAnalysisBoardSecond(data: any): any {
   return request({
     url: "/api/services/app/AnalyseBoardSecond/getStatementAnalysisBoardSecond",
     method: "get",

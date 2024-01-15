@@ -217,7 +217,7 @@
         >
           <template #default="scope">
             <div>
-              {{ formatThousandths(null, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
+              {{ formatThousandths(scope.row, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
             </div>
           </template>
         </el-table-column>
@@ -431,7 +431,7 @@
         <div v-for="item in data.allRes.projectBoard" :key="item.title">
           <p>{{ item.title }}</p>
           <el-table :data="item.projectBoardModels" border>
-            <el-table-column label="产品" prop="projectName" />
+            <el-table-column label="产品" prop="projectName"/>
             <el-table-column
               label="目标价（内部）"
               width="300"
@@ -863,7 +863,7 @@ let gradientTableMapResult = ref([])
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
-    if (_row && _row.projectName === "毛利率") {
+    if (_record && _record.projectName === "毛利率") {
       return (cellValue.toFixed(2) + "%").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
     }
     return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
@@ -1288,7 +1288,8 @@ const selectVersion = async (row: any) => {
       let res = await getStatementAnalysisBoardSecond({
         auditFlowId,
         version: versionChosen.version,
-        ntype: 1
+        ntype: 1,
+        ntime: versionChosen.ntime
       })
       data.allRes = res.result
     } else {

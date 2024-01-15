@@ -107,6 +107,11 @@
                   </div>
                 </template>
               </el-table-column>
+<!--   月需求计算公式
+         月需求 = 年度模组数量*1000/年度
+             年度模组数量:yearMountCount
+             年度:moon
+            -->
               <el-table-column label="月需求量" align="center">
                 <template #default="scope">
                   <div>
@@ -117,6 +122,12 @@
                   </div>
                 </template>
               </el-table-column>
+              <!--   单PCS运输费
+            单PCS运输费 =（运费+仓储费）/月需求量
+             运费:freightPrice
+             仓储费:storagePrice
+             月需求量:yearMountCount *1000/moon
+            -->
               <el-table-column label="单PCS运输费" align="center">
                 <template #default="scope">
                   <div>
@@ -124,6 +135,11 @@
                   </div>
                 </template>
               </el-table-column>
+              <!--   单PCS总物流成本
+            单PCS运输费 =单PCS包装价格+单PCS运输费
+             单PCS运输费:(freightPrice + storagePrice)/(1000*yearMountCount/moon)
+             单PCS包装价格:packagingPrice
+            -->
               <el-table-column label="单PCS总物流成本" align="center">
                 <template #default="scope">
                   <div>

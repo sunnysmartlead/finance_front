@@ -69,7 +69,8 @@ const handleSetBomState = async ({ comment, opinion }: any) => {
     auditFlowId,
     opinionDescription: opinionDescription.value,
     financeDictionaryDetailIds: ['HjkbSelect_Yes'],
-    nodeInstanceId
+    nodeInstanceId,
+    comment:comment
   })
   if (res.success) {
     closeSelectedTag(route.path)

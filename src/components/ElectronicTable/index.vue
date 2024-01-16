@@ -18,12 +18,12 @@
       <el-table :data="electronicBomList" :height="electronicBomList?.length > 5 ? '75vh' : '46vh'"
         @selection-change="selectionChange" ref="multipleTableRef">
         <el-table-column type="selection" width="55" v-if="isVertify" />
-        <el-table-column prop="categoryName" label="物料大类" width="100" fixed="left" />
-        <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
-        <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
-        <el-table-column prop="sapItemName" label="材料名称" width="120" fixed="left" />
-        <el-table-column prop="assemblyQuantity" label="装配数量" width="80" fixed="left" />
-        <el-table-column prop="materialsUseCount" label="项目物料的使用量">
+        <el-table-column prop="categoryName" label="物料大类" width="100" fixed="left"  align="center"/>
+        <el-table-column prop="typeName" label="物料种类" width="80" fixed="left"  align="center"/>
+        <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left"  align="center"/>
+        <el-table-column prop="sapItemName" label="材料名称" width="120" fixed="left"  align="center"/>
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="80" fixed="left"  align="center"/>
+        <el-table-column prop="materialsUseCount" label="项目物料的使用量"  align="center">
           <el-table-column align="center" :class-name="`column-class-${index}`"
             v-for="(item, index) in allColums?.materialsUseCountYears" prop="materialsUseCount" :label="`${item.kv} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
             :key="`materialsUseCount${index}`">
@@ -32,7 +32,7 @@
               :label="yearItem.year + upDownEunm[yearItem.upDown]" :formatter="formatDatas" />
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="currency" label="币种" width="100">
+        <el-table-column prop="currency" label="币种" width="100"  align="center">
           <template #default="scope">
             <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
               <el-option v-for="item in exchangeSelectOptions" :key="item.id" :label="item.exchangeRateKind"
@@ -40,12 +40,12 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
+        <el-table-column prop="systemiginalCurrency" label="系统单价（原币）"  align="center">
           <el-table-column v-for="(item, index) in allColums?.systemiginalCurrencyYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" width="150"
             :key="`systemiginalCurrency${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150">
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150" align="center">
               <template #default="{ row, $index }">
                 <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit"
                   v-model="row.systemiginalCurrency[index].yearOrValueModes[iIndex].value" controls-position="right"
@@ -57,11 +57,11 @@
             </el-table-column>
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="inTheRate" label="年降率（%）">
+        <el-table-column prop="inTheRate" label="年降率（%）"  align="center">
           <el-table-column v-for="(item, index) in allColums?.inTheRateYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`inTheRate${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="150" align="center"
               :prop="`inTheRate.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterinTheRate">
               <template #default="{ row, $index }">
                 <el-input-number size="small" v-if="row.isEdit"
@@ -70,20 +70,20 @@
             </el-table-column>
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="standardMoney" label="本位币">
+        <el-table-column prop="standardMoney" label="本位币"  align="center">
           <el-table-column v-for="(item, index) in allColums?.standardMoneyYears" align="center"
             :class-name="`column-class-${index}`" :label="`${item.kv} ${item?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`" :key="`standardMoney${index}`">
             <el-table-column v-for="(yearItem, iIndex) in item?.yearOrValueModes" :key="iIndex"
-              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="100"
+              :label="yearItem.year + upDownEunm[yearItem.upDown]" width="100" align="center"
               :prop="`standardMoney.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterStandardMoney" />
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="moq" label="MOQ" width="150">
+        <el-table-column prop="moq" label="MOQ" width="120"  align="center">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="rebateMoney" label="物料返利金额" width="120">
+        <el-table-column prop="rebateMoney" label="物料返利金额" width="120"  align="center">
           <el-table-column v-for="(item, index) in allColums?.rebateMoneyYears" align="center" :label="`${item.kv} ${allColums?.standardMoneyYears?.[0]?.yearOrValueModes?.[0]?.upDown === 0 ? '(K/Y)' : '(K/HY)'}`"
             width="150" :key="`rebateMoney${index}`" :prop="`rebateMoney.${index}.value`" :formatter="formatThousandths">
             <template #default="{ row }">
@@ -92,7 +92,7 @@
             </template>
           </el-table-column>
         </el-table-column>
-        <el-table-column label="物料管制状态" width="130">
+        <el-table-column label="物料管制状态" width="130"  align="center">
           <template #default="{ row }">
             <el-select v-model="row.materialControlStatus" :disabled="row.isSubmit">
               <el-option label="ECCN" value="ECCN" />
@@ -102,19 +102,19 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="备注" width="150">
+        <el-table-column label="备注" width="150"  align="center">
           <template #default="{ row }">
             <el-input type="textarea" v-if="row.isEdit" v-model="row.remark" />
             <span v-if="!row.isEdit">{{ row.remark }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" />
-        <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit">
+        <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit"  align="center"/>
+        <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit"  align="center">
           <template #default="{ row }">
             <el-input v-if="row.isEdit" type="textarea" v-model="row.modificationComments" />
           </template>
         </el-table-column>
-        <el-table-column prop="peopleName" label="确认人" v-else />
+        <el-table-column prop="peopleName" label="确认人" v-else  align="center"/>
         <el-table-column label="操作" fixed="right" v-if="!isVertify" width="180">
           <template #default="{ row, $index }">
             <el-button link :disabled="row.isSubmit" :loading="row.loading" @click="handleSubmit(row, 0, $index)"

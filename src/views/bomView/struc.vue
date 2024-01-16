@@ -18,12 +18,12 @@
         <el-table-column prop="categoryName" label="物料大类"  width="130" fixed="left" />
       <el-table-column prop="typeName" label="物料种类"  width="130"  fixed="left" />
       <el-table-column prop="isInvolveItem" label="是否涉及" width="80"  fixed="left" />
-      <el-table-column prop="drawingNumName" label="图号名称"  width="130"  fixed="left" />
-      <el-table-column prop="sapItemNum" label="物料编号"  width="130"  fixed="left" />
-      <el-table-column prop="assemblyQuantity" label="装配数量" width="120"  fixed="left" />
+      <el-table-column prop="drawingNumName" label="图号名称"  width="180"  fixed="left" />
+      <el-table-column prop="sapItemNum" label="物料编号"  width="180"  fixed="left" />
+      <el-table-column prop="assemblyQuantity" label="装配数量" width="80"  fixed="left" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"/>
       <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="100" />
       <el-table-column prop="materialName" label="材料名称"  width="130" />
-      <el-table-column prop="weightNumber" label="重量" width="100" />
+      <el-table-column prop="weightNumber" label="重量" width="80" />
       <el-table-column prop="moldingProcess" label="成型工艺"  width="130" />
       <el-table-column prop="isNewMouldProduct" label="是否新开模" width="80" />
       <el-table-column prop="secondaryProcessingMethod" label="二次加工方法"  width="130" />
@@ -49,7 +49,7 @@ import getQuery from "@/utils/getQuery"
 import useJump from "@/hook/useJump"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { useRoute } from "vue-router"
-
+import { formatThousandths,formatThousandthsIndex} from "@/utils/number"
 const route = useRoute()
 
 const { closeSelectedTag } = useJump()

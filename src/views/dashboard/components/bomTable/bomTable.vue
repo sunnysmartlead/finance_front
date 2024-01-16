@@ -27,7 +27,7 @@
         <el-input v-model="row.categoryName" />
       </template>
     </el-table-column>
-    <el-table-column class="more-oprate" align="center" prop="assemblyCount" width="175" label="装配数量">
+    <el-table-column class="more-oprate" align="center" prop="assemblyCount" width="175" label="装配数量" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #header>
         <span class="header-icon"> 装配数量 </span>
         <el-button text bg @click="showColumn = !showColumn">{{ !showColumn ? "+" : "-" }}</el-button>

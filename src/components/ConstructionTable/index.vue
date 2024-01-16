@@ -32,20 +32,20 @@
             :height="item.structureMaterial.length > 5 ? '75vh' : '46vh'"
             @selection-change="selectionChange($event, bomIndex)"
           >
-            <el-table-column type="selection" width="55" v-if="isVertify" />
-            <el-table-column type="index" label="序号" width="50" fixed="left" />
-            <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" />
-            <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" />
-            <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" />
-            <el-table-column prop="drawingNumName" label="图号名称" width="100" fixed="left" />
-            <el-table-column prop="overallDimensionSize" label="外形尺寸" width="80" />
-            <el-table-column prop="materialName" label="材料" width="80" />
-            <el-table-column prop="weightNumber" label="重量g" width="80" />
-            <el-table-column prop="moldingProcess" label="成型工艺" width="80" />
-            <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="80" />
-            <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="80" />
-            <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" />
-            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" fixed="left" />
+            <el-table-column type="selection" width="55" v-if="isVertify"/>
+            <el-table-column type="index" label="序号" width="50" fixed="left" align="center"/>
+            <el-table-column prop="categoryName" label="物料大类" width="80" fixed="left" align="center"/>
+            <el-table-column prop="typeName" label="物料种类" width="80" fixed="left" align="center"/>
+            <el-table-column prop="sapItemNum" label="物料编号" width="80" fixed="left" align="center"/>
+            <el-table-column prop="drawingNumName" label="图号名称" width="100" fixed="left" align="center"/>
+            <el-table-column prop="overallDimensionSize" label="外形尺寸" width="80" align="center"/>
+            <el-table-column prop="materialName" label="材料" width="80" align="center"/>
+            <el-table-column prop="weightNumber" label="重量g" width="80" align="center"/>
+            <el-table-column prop="moldingProcess" label="成型工艺" width="80" align="center"/>
+            <el-table-column prop="secondaryProcessingMethod" label="二次加工方法" width="80" align="center"/>
+            <el-table-column prop="surfaceTreatmentMethod" label="表面处理" width="80" align="center"/>
+            <el-table-column prop="dimensionalAccuracyRemark" label="关键尺寸精度及重要要求" width="100" align="center"/>
+            <el-table-column prop="assemblyQuantity" :formatter="formatThousandths" label="装配数量" fixed="left" align="center"/>
             <el-table-column prop="materialsUseCount" label="项目物料的使用量">
               <el-table-column
                 align="center"
@@ -65,7 +65,7 @@
                 />
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="currency" label="币种" width="120">
+            <el-table-column prop="currency" label="币种" width="100" align="center">
               <template #default="scope">
                 <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
                   <el-option
@@ -77,7 +77,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="systemiginalCurrency" label="系统单价（原币）">
+            <el-table-column prop="systemiginalCurrency" label="系统单价（原币）" align="center">
               <el-table-column
                 v-for="(c, i) in item.structureMaterial[0]?.systemiginalCurrency"
                 align="center"
@@ -90,7 +90,7 @@
                   v-for="(yearItem, iIndex) in c?.yearOrValueModes"
                   :key="iIndex"
                   :label="yearItem.year + upDownEnum[yearItem.upDown]"
-                  width="150"
+                  width="150" align="center"
                 >
                   <template #default="scope">
                     <el-input-number
@@ -109,7 +109,7 @@
                 </el-table-column>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="inTheRate" label="年降率（%）">
+            <el-table-column prop="inTheRate" label="年降率（%）" align="center">
               <el-table-column
                 v-for="(c, i) in item.structureMaterial[0]?.inTheRate"
                 align="center"
@@ -123,7 +123,7 @@
                   :label="yearItem.year + upDownEnum[yearItem.upDown]"
                   :prop="`inTheRate.${i}.yearOrValueModes.${yIndex}.value`"
                   width="150"
-                  :formatter="filterinTheRate"
+                  :formatter="filterinTheRate" align="center"
                 >
                   <template #default="scope">
                     <el-input-number
@@ -137,7 +137,7 @@
                 </el-table-column>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="standardMoney" label="本位币">
+            <el-table-column prop="standardMoney" label="本位币" align="center">
               <el-table-column
                 v-for="(c, i) in item.structureMaterial[0]?.standardMoney"
                 align="center"
@@ -151,11 +151,11 @@
                   :label="yearItem.year + upDownEnum[yearItem.upDown]"
                   width="100"
                   :prop="`standardMoney.${i}.yearOrValueModes.${yIndex}.value`"
-                  :formatter="filterStandardMoney"
+                  :formatter="filterStandardMoney" align="center"
                 />
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="moq" label="MOQ" width="85">
+            <el-table-column prop="moq" label="MOQ" width="85" align="center">
               <template #default="{ row }">
                 <el-input-number
                   @mousewheel.native.prevent
@@ -168,7 +168,7 @@
                 <span v-if="!row.isEdit">{{ row.moq }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="rebateMoney" label="物料返利金额" width="150">
+            <el-table-column prop="rebateMoney" label="物料返利金额" width="150" align="center">
               <el-table-column
                 v-for="(c, i) in item.structureMaterial[0]?.rebateMoney"
                 align="center"
@@ -190,7 +190,7 @@
                 </template>
               </el-table-column>
             </el-table-column>
-            <el-table-column label="物料管制状态" width="130">
+            <el-table-column label="物料管制状态" width="130" align="center">
               <template #default="{ row }">
                 <el-select v-model="row.materialControlStatus" :disabled="row.isSubmit">
                   <el-option label="ECCN" value="ECCN" />
@@ -200,7 +200,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="备注" width="150">
+            <el-table-column label="备注" width="150" align="center">
               <template #default="{ row }">
                 <el-input type="textarea" v-if="row.isEdit" v-model="row.remark" />
                 <span v-if="!row.isEdit">{{ row.remark }}</span>
@@ -211,7 +211,7 @@
               label="附件"
               fixed="right"
               width="100"
-              v-if="!isMergeEdit && item.superTypeName == '结构料'"
+              v-if="!isMergeEdit && item.superTypeName == '结构料'" align="center"
             >
               <template #default="{ row, $index }">
                 <!-- v-model:file-list="fileList[$index]" -->
@@ -240,14 +240,14 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" />
-            <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit">
+            <el-table-column prop="modifierName" label="修改人" v-if="isMergeEdit" align="center"/>
+            <el-table-column prop="modificationComments" width="150" label="修改意见" v-if="isMergeEdit" align="center">
               <template #default="{ row }">
                 <el-input v-if="row.isEdit" type="textarea" v-model="row.modificationComments" />
               </template>
             </el-table-column>
-            <el-table-column prop="peopleName" label="确认人" v-else />
-            <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160">
+            <el-table-column prop="peopleName" label="确认人" v-else  align="center"/>
+            <el-table-column label="操作" fixed="right" v-if="!isVertify" width="160" align="center">
               <template #default="{ row, $index }">
                 <el-button
                   link

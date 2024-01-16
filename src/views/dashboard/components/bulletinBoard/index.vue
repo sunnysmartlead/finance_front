@@ -473,6 +473,8 @@ const getPricingPanelProfit = async () => {
     })
     const val = result?.items?.map((val: any) => formatThousandths(null, null, val?.proportion) || 0)
     console.log(val, "getPricingPanelProfit")
+    const names = result?.items?.map((item:any) => item.name);
+    costChartData.xAxis.data=names
     costChart.setOption({
       ...costChartData,
       series: costChartData.series.map((_, index) => {
@@ -480,7 +482,7 @@ const getPricingPanelProfit = async () => {
           ...costChartData.series[index],
           data: val
         }
-      })
+      }),
     })
     console.log(result.items, "核价看板-利润分布图")
   } catch (err: any) {

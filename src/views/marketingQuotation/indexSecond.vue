@@ -196,10 +196,10 @@
           <el-table-column label="产品" prop="product" />
           <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
           <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
-          <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+          <!-- <el-table-column label="价格" prop="price" :formatter="formatThousandths" /> -->
           <el-table-column label="价格" prop="price">
             <template #default="{ row }">
-              <span>{{ formatThousandths(null, null, row.price) }}</span>
+              <span font-bold>{{ formatThousandths(null, null, row.price) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Sop年毛利率" prop="sopGrossMargin">

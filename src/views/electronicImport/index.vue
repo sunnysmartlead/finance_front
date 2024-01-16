@@ -66,11 +66,11 @@
       </el-row>
 
       <el-table :data="data.tableData" border style="width: 100%">
-        <el-table-column prop="categoryName" label="物料大类" width="180" align="center"/>
-        <el-table-column prop="typeName" label="物料种类" width="180" align="center"/>
-        <el-table-column prop="isInvolveItem" label="是否涉及" width="80" align="center"/>
+        <el-table-column prop="categoryName" label="物料大类" width="200" align="center"/>
+        <el-table-column prop="typeName" label="物料种类" width="300" align="center"/>
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="120" align="center"/>
         <el-table-column prop="sapItemNum" label="物料编号" width="180" align="center"/>
-        <el-table-column prop="sapItemName" label="材料名称" width="280" align="center"/>
+        <el-table-column prop="sapItemName" label="材料名称" width="500" align="center"/>
         <el-table-column prop="assemblyQuantity" label="装配数量" width="180" align="center"/>
         <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" align="center"/>
       </el-table>

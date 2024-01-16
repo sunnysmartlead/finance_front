@@ -838,7 +838,7 @@
           </el-table-column>
           <el-table-column prop="目标价" label="目标价">
             <template #default="{ row }">
-              <el-input v-model="row.targetPrice" :disabled="!canDo" />
+              <el-input-number  controls-position="right" v-model="row.targetPrice" :disabled="!canDo" />
             </template>
           </el-table-column>
           <el-table-column prop="currency" label="报价币种">

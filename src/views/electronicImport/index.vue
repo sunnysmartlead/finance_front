@@ -21,33 +21,33 @@
     <el-card>
       <el-button :style="{ margin: '10px' }" type="primary" @click="addPlatePart" :disabled="!data.canDo">新增</el-button>
       <el-table :data="platePart" border style="width: 100%">
-        <el-table-column type="index" width="50" />
-        <el-table-column prop="boardName" label="板部件名称">
+        <el-table-column type="index" width="50" align="center"/>
+        <el-table-column prop="boardName" label="板部件名称" align="center">
           <template #default="{ row }">
             <el-input v-model="row.boardName" placeholder="请录入板部件名称" />
           </template>
         </el-table-column>
-        <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)" >
+        <el-table-column prop="boardLenth"  width="175" label="板部件长(mm)" align="center">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.boardLenth" controls-position="right" :min="0" placeholder="请录入板部件长" />
+            <el-input-number @mousewheel.native.prevent v-model="row.boardLenth" controls-position="right" :min="0" placeholder="请录入板部件长"/>
           </template>
         </el-table-column>
-        <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)">
+        <el-table-column prop="boardWidth" width="175" label="板部件宽(mm)" align="center">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent v-model="row.boardWidth" controls-position="right" :min="0" placeholder="请录入板部件宽" />
           </template>
         </el-table-column>
-        <el-table-column prop="boardSquare" label="板部件面积(mm^2)" >
+        <el-table-column prop="boardSquare" label="板部件面积(mm^2)" align="center">
           <template #default="{ row }">
             <!-- <el-input-number @mousewheel.native.prevent v-model="row.sapItemNum" placeholder="请录入板部件面积" /> -->
           </template>
         </el-table-column>
-        <el-table-column prop="stoneQuantity" label="拼板数量" >
+        <el-table-column prop="stoneQuantity" label="拼板数量" align="center">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent :min="0" v-model="row.stoneQuantity" :precision="0" placeholder="请录入拼板数量" />
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" align="center">
           <template #default="{ $index }">
             <el-button type="danger" @click="deletePlatePart($index)">删除</el-button>
           </template>
@@ -66,13 +66,13 @@
       </el-row>
 
       <el-table :data="data.tableData" border style="width: 100%">
-        <el-table-column prop="categoryName" label="物料大类" width="180" />
-        <el-table-column prop="typeName" label="物料种类" width="180" />
-        <el-table-column prop="isInvolveItem" label="是否涉及" width="80" />
-        <el-table-column prop="sapItemNum" label="物料编号" width="180" />
-        <el-table-column prop="sapItemName" label="材料名称" width="280" />
-        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" />
-        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" />
+        <el-table-column prop="categoryName" label="物料大类" width="180" align="center"/>
+        <el-table-column prop="typeName" label="物料种类" width="180" align="center"/>
+        <el-table-column prop="isInvolveItem" label="是否涉及" width="80" align="center"/>
+        <el-table-column prop="sapItemNum" label="物料编号" width="180" align="center"/>
+        <el-table-column prop="sapItemName" label="材料名称" width="280" align="center"/>
+        <el-table-column prop="assemblyQuantity" label="装配数量" width="180" align="center"/>
+        <el-table-column prop="encapsulationSize" label="封装（需要体现PAD的数量）" align="center"/>
       </el-table>
     </el-card>
 

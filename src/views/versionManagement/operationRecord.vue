@@ -337,7 +337,6 @@ const getSORFileName = async () => {
 onMounted(async () => {
   init()
   getSORFileName()
-  debugger
   let { result } = await GetTimeliness({ auditFlowId: auditFlowId })
   if (result) {
     Timeliness.values = result.data
@@ -348,12 +347,12 @@ onMounted(async () => {
 const init = async () => {
   const { result } = await GetAuditFlowOperateReocrd({ flowId: auditFlowId })
   data.operationRecordData = result
-  if (data.operationRecordData.length) {
-    data.operationRecordData.forEach((item: any) => {
-      item.classify = nameMap[item.processName as keyof typeof nameMap]?.classify
-      item.title = nameMap[item.processName as keyof typeof nameMap]?.title
-    })
-  }
+  // if (data.operationRecordData.length) {
+  //   data.operationRecordData.forEach((item: any) => {
+  //     item.classify = nameMap[item.processName as keyof typeof nameMap]?.classify
+  //     item.title = nameMap[item.processName as keyof typeof nameMap]?.title
+  //   })
+  // }
   await sortChange()
 }
 

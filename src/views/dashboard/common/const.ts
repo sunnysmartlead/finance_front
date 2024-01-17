@@ -8,7 +8,7 @@ export const percentageCostChartData = {
   },
   tooltip: {
     trigger: "item",
-    formatter: "{a} <br/>{b} : {c} ({d}%)"
+    formatter: "{a} <br/> {b} , 值:{c};百分比:({d}%)"
   },
   legend: {
     orient: "vertical",
@@ -17,10 +17,11 @@ export const percentageCostChartData = {
   },
   label: {
     alignTo: "edge",
-    formatter: (item: any) => {
-      // console.log(item, "itemitem")
-      return `${item.name}: ${(item.value * 100).toFixed(2)}%`
-    },
+    // formatter: (item: any) => {
+    //   // console.log(item, "itemitem")
+    //   return `${item.name}: 值: ${(item.value * 1).toFixed(2)} 百分比:{d}%`
+    // },
+    formatter: "{b}:{c}: ({d}%)",
     minMargin: 5,
     edgeDistance: 10,
     lineHeight: 15,
@@ -70,11 +71,11 @@ export const costChartData = {
   xAxis: {
     type: "category",
     splitLine: { show: false },
-    data: ["bom成本", "损耗成本", "制造成本", "物流成本", "质量成本","MOQ分摊成本","其他成本","利润"],
-    axisLabel:{
-      interval:0,
-      rotate:0,
-      margin:10
+    data: ["bom成本", "损耗成本", "制造成本", "物流成本", "质量成本", "MOQ分摊成本", "其他成本", "利润"],
+    axisLabel: {
+      interval: 0,
+      rotate: 0,
+      margin: 10
     }
   },
   yAxis: {
@@ -95,7 +96,7 @@ export const costChartData = {
       backgroundStyle: {
         color: "rgba(180, 180, 180, 0.2)"
       },
-      data: [0, 0, 0, 0, 0, 0, 0,0]
+      data: [0, 0, 0, 0, 0, 0, 0, 0]
     }
   ]
 }

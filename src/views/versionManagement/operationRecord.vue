@@ -34,7 +34,7 @@
       >
         <el-table-column prop="projectName" label="项目名称" />
         <el-table-column type="index" label="信息流" width="150" />
-        <el-table-column prop="classify" label="分类" />
+        <el-table-column prop="typeName" label="分类" />
         <el-table-column prop="title" label="任务标题" />
         <el-table-column prop="processName" label="界面名称" />
         <el-table-column label="节点状态">
@@ -43,7 +43,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="version" label="版本" />
-        <el-table-column prop="userName" label="责任人" />
+        <el-table-column prop="userName" label="责任人" width="150">
+          <template #default="scope">
+            <el-tooltip :content="scope.row.userName" placement="top" effect="light">
+              {{ scope.row.userName.length>15?scope.row.userName.substr(0, 15) + "...":scope.row.userName }}
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column label="开始日期">
           <template #default="scope">
             {{ fomatterDat1e(scope.row.auditFlowOperateTimes[scope.row.auditFlowOperateTimes.length - 1]?.startTime) }}
@@ -176,10 +182,10 @@ const downTrFile = async () => {
 const arraySpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
   // 合并行  产品名字相同合并、我是合并第三列，所以合判断columnIndex是否等于2
   // if (columnIndex === 2) {
-  //   if (rowIndex === 0 || row.classify != data.operationRecordData[rowIndex - 1].classify) {
+  //   if (rowIndex === 0 || row.typeName != data.operationRecordData[rowIndex - 1].typeName) {
   //     let rowspan = 0
   //     data.operationRecordData.forEach((element: any) => {
-  //       if (element.classify === row.classify) {
+  //       if (element.typeName === row.typeName) {
   //         rowspan++
   //       }
   //     })
@@ -224,55 +230,55 @@ const sortChange = async () => {
   // arr.push(
   //   data.operationRecordData.filter((p: any) => p.classify == undefined || p.classify == null || p.classify == "")
   // )
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "需求录入"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "核价需求审批&方案录入"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "主方案审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "需求录入"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "核价需求审批&方案录入"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "主方案审核"))
 
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "上传电子BOM"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "电子BOM审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "上传结构BOM"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "结构BOM审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "电子单价录入"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "电子单价审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "结构单价录入"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "结构单价审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "BOM成本审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "查看初版BOM成本"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "工序工时添加"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "COB/其他制造成本录入"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "物流成本录入"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "上传电子BOM"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "电子BOM审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "上传结构BOM"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "结构BOM审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "电子单价录入"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "电子单价审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "结构单价录入"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "结构单价审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "BOM成本审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "查看初版BOM成本"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "工序工时添加"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "COB/其他制造成本录入"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "物流成本录入"))
 
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "模具费用"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "模具费审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "可靠性实验费"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "可靠性实验费审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "EMC实验费"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "EMC实验费审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "手板件/差旅费/其他费用"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "模具费用"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "模具费审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "可靠性实验费"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "可靠性实验费审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "EMC实验费"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "EMC实验费审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "手板件/差旅费/其他费用"))
 
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "贸易合规判定"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "贸易不合规判定"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "核价看板"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "项目部课长审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "财务审核"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "项目部长查看核价表"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "核心器件成本、NRE费用拆分"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "贸易合规判定"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "贸易不合规判定"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "核价看板"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "项目部课长审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "财务审核"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "项目部长查看核价表"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "核心器件成本、NRE费用拆分"))
 
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "报价分析"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "总经理审批"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "报价单"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "报价审批表"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "报价反馈"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "财务中标确认"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "总经理中标查看"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "报价分析"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "总经理审批"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "报价单"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "报价审批表"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "报价反馈"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "财务中标确认"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "总经理中标查看"))
 
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "核价表归档"))
-  arr.push(data.operationRecordData.filter((p: any) => p.title == "报价审批表、报价单归档"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "核价表归档"))
+  // arr.push(data.operationRecordData.filter((p: any) => p.title == "报价审批表、报价单归档"))
 
-  arr.push(
-    data.operationRecordData.filter((p: any) => p.classify == undefined || p.classify == null || p.classify == "")
-  )
-  data.operationRecordData = arr.flat(Infinity)
+  // arr.push(
+  //   data.operationRecordData.filter((p: any) => p.classify == undefined || p.classify == null || p.classify == "")
+  // )
+  // data.operationRecordData = arr.flat(Infinity)
   getOrderNumber()
 }
 
@@ -304,11 +310,11 @@ const getOrderNumber = () => {
   data.OrderObj = {}
   data.operationRecordData.forEach(function (element: any, index: any) {
     element.rowIndex = index
-    if (data.OrderObj[element.classify]) {
-      data.OrderObj[element.classify].push(index)
+    if (data.OrderObj[element.typeName]) {
+      data.OrderObj[element.typeName].push(index)
     } else {
-      data.OrderObj[element.classify] = []
-      data.OrderObj[element.classify].push(index)
+      data.OrderObj[element.typeName] = []
+      data.OrderObj[element.typeName].push(index)
     }
   }, this)
 
@@ -348,7 +354,7 @@ const init = async () => {
       item.title = nameMap[item.processName as keyof typeof nameMap]?.title
     })
   }
-  // await sortChange()
+  await sortChange()
 }
 
 const tableRowClassName = ({ row, rowIndex }: { row: any; rowIndex: number }) => {

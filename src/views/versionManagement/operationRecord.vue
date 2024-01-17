@@ -31,45 +31,46 @@
         :row-class-name="tableRowClassName"
         @cell-mouse-leave="cellMouseLeave"
         @cell-mouse-enter="cellMouseEnter"
+        height="800"
       >
-        <el-table-column prop="projectName" label="项目名称" />
-        <el-table-column type="index" label="信息流" width="150" />
-        <el-table-column prop="typeName" label="分类" />
-        <el-table-column prop="title" label="任务标题" />
-        <el-table-column prop="processName" label="界面名称" />
-        <el-table-column label="节点状态">
+        <el-table-column prop="projectName" label="项目名称" align="center"/>
+        <el-table-column type="index" label="信息流" width="70" align="center"/>
+        <el-table-column prop="typeName" label="分类" align="center"/>
+        <el-table-column prop="title" label="任务标题" align="center"/>
+        <el-table-column prop="processName" label="界面名称" align="center"/>
+        <el-table-column label="节点状态" align="center">
           <template #default="scope">
             <el-tag :type="istype(scope.row.processState)">{{ isAccomplish(scope.row.processState) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="version" label="版本" />
-        <el-table-column prop="userName" label="责任人" width="150">
+        <el-table-column prop="version" label="版本" width="60" align="center"/>
+        <el-table-column prop="userName" label="责任人" width="150" align="center">
           <template #default="scope">
             <el-tooltip :content="scope.row.userName" placement="top" effect="light">
               {{ scope.row.userName.length>15?scope.row.userName.substr(0, 15) + "...":scope.row.userName }}
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="开始日期">
+        <el-table-column label="开始日期" align="center">
           <template #default="scope">
             {{ fomatterDat1e(scope.row.auditFlowOperateTimes[scope.row.auditFlowOperateTimes.length - 1]?.startTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="重置时间" prop="resetTime" :formatter="fomatterDate">
+        <el-table-column label="重置时间" prop="resetTime" :formatter="fomatterDate" align="center">
           <!-- <template #default="{ row }">
             {{ formatDateTime(row.versionBasicInfo.resetTime || "") }}
           </template> -->
         </el-table-column>
-        <el-table-column prop="requiredTime" label="期望日期" :formatter="fomatterDate" />
-        <el-table-column prop="roleName" label="修改人角色" />
-        <el-table-column label="更新时间">
+        <el-table-column prop="requiredTime" label="期望日期" :formatter="fomatterDate" align="center"/>
+        <el-table-column prop="roleName" label="修改人角色" width="200" align="center"/>
+        <el-table-column label="更新时间" align="center">
           <template #default="scope">
             {{
               fomatterDat1e(scope.row.auditFlowOperateTimes[scope.row.auditFlowOperateTimes.length - 1]?.lastModifyTime)
             }}
           </template>
         </el-table-column>
-        <el-table-column label="以往记录">
+        <el-table-column label="以往记录" align="center">
           <template #default="scope">
             <el-popover placement="right" :width="400" trigger="click">
               <template #reference>
@@ -126,6 +127,7 @@ const onSubmit = async () => {
     ElMessage.error("保存失败")
   }
 }
+
 
 const fomatterDate = (_record: any, _: any, val: any) => {
   return formatDateTime(val)
@@ -337,7 +339,6 @@ const getSORFileName = async () => {
 onMounted(async () => {
   init()
   getSORFileName()
-  debugger
   let { result } = await GetTimeliness({ auditFlowId: auditFlowId })
   if (result) {
     Timeliness.values = result.data
@@ -348,12 +349,12 @@ onMounted(async () => {
 const init = async () => {
   const { result } = await GetAuditFlowOperateReocrd({ flowId: auditFlowId })
   data.operationRecordData = result
-  if (data.operationRecordData.length) {
-    data.operationRecordData.forEach((item: any) => {
-      item.classify = nameMap[item.processName as keyof typeof nameMap]?.classify
-      item.title = nameMap[item.processName as keyof typeof nameMap]?.title
-    })
-  }
+  // if (data.operationRecordData.length) {
+  //   data.operationRecordData.forEach((item: any) => {
+  //     item.classify = nameMap[item.processName as keyof typeof nameMap]?.classify
+  //     item.title = nameMap[item.processName as keyof typeof nameMap]?.title
+  //   })
+  // }
   await sortChange()
 }
 

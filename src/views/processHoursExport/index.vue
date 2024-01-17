@@ -2984,16 +2984,19 @@ const compareSopData = (newExportItem: any) => {
         }
       ]
       let oldYearIndex = oldItem.yearInt
-      //console.log("=====l==="+l+"=========oldYearIndex=="+oldYearIndex);
       innerFor: for (let j = 0; j < newSop.length; j++) {
         let newItem = newSop[j]
+        console.log(newItem.yearInt + "               "+  oldYearIndex  + "            "+j)
         let newYearIndex = newItem.yearInt ? newItem.yearInt : "----"
-        //console.log("=====j==="+j+"=========newYearIndex=="+newYearIndex);
         if (newYearIndex === oldYearIndex) {
           oldItem.issues = newItem.issues
-          break innerFor
+          continue ;
+        }if (newItem.yearInt<oldYearIndex) {
+          oldItem.issues = newSop[newSop.length - 1].issues
+          continue ;
         }
       }
+
     }
   }
   newExportItem.sopInfo = oldSop

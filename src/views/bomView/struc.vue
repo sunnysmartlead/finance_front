@@ -15,13 +15,13 @@
       <h4>结构料</h4>
       <!-- <el-button type="primary" @click="jumpToImport(2)" style="float: right; margin: 10px 0">结构料导入</el-button> -->
       <el-table :data="data.structuralData" border style="width: 100%" height="500">
-        <el-table-column prop="categoryName" label="物料大类"  width="130" fixed="left" align="center"/>
+        <el-table-column prop="categoryName" label="物料大类"  width="210" fixed="left" align="center"/>
       <el-table-column prop="typeName" label="物料种类"  width="130"  fixed="left" align="center"/>
       <el-table-column prop="isInvolveItem" label="是否涉及" width="80"  fixed="left" align="center"/>
-      <el-table-column prop="drawingNumName" label="图号名称"  width="180"  fixed="left" align="center"/>
+      <el-table-column prop="drawingNumName" label="图号名称"  width="210"  fixed="left" align="center"/>
       <el-table-column prop="sapItemNum" label="物料编号"  width="180"  fixed="left" align="center"/>
       <el-table-column prop="assemblyQuantity" label="装配数量" width="80"  fixed="left" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"/>
-      <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="100" align="center"/>
+      <el-table-column prop="overallDimensionSize" label="外形尺寸mm" width="120" align="center"/>
       <el-table-column prop="materialName" label="材料名称"  width="130" align="center"/>
       <el-table-column prop="weightNumber" label="重量" width="80" align="center"  :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 2)"/>
       <el-table-column prop="moldingProcess" label="成型工艺"  width="130" align="center"/>

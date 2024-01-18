@@ -1,9 +1,9 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
   <div>
-    <el-card mb-20px>
-      <h4 mb-20px>已保存的方案版本</h4>
-      <div mb-20px>
+    <el-card mb-10px>
+      <h4 mb-10px>已保存的方案版本</h4>
+      <div mb-10px>
         <el-table :data="versionList" border max-height="300px">
           <el-table-column type="selection" width="55" />
           <el-table-column label="版本号" width="200" align="center" prop="version" />
@@ -23,9 +23,10 @@
           </el-table-column>
         </el-table>
       </div>
-
-      <p>请选择报价方案组合：</p>
-      <el-button type="primary" @click="addNewPlan" mb-20px float-right>新增方案</el-button>
+      <el-row :gutter="20">
+           <p>请选择报价方案组合：</p>
+           <el-button type="primary" @click="addNewPlan" ml-auto float-right>新增方案</el-button>
+      </el-row>
       <el-table :data="planList" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" align="center" />
         <el-table-column label="报价模组" width="200" align="center">
@@ -55,10 +56,12 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-button type="primary" my-20px float-right v-loading.fullscreen.lock="fullscreenLoading" @click="comfirmPlans"
-        >确定</el-button
+      <el-row :gutter="20">
+          <h4 mt-20px>方案组合</h4>
+          <el-button type="primary" mt-20px ml-auto v-loading.fullscreen.lock="fullscreenLoading" @click="comfirmPlans"
+      >确定</el-button
       >
-      <h4 mt-100px>方案组合</h4>
+      </el-row>
       <div v-for="(plan, index) in planListArr" :key="index" mt="20px">
         <el-descriptions :title="`方案${index + 1}`" :column="1" border>
           <template #extra>

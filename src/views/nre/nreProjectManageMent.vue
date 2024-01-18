@@ -37,7 +37,7 @@
             <el-input-number @mousewheel.native.prevent v-model="row.quantity" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="费用" prop="cost" width="100">
+        <el-table-column label="费用" prop="cost" width="200">
           <template #default="{ row }">
             {{ row.unitPrice * row.quantity }}
           </template>
@@ -103,7 +103,7 @@
             <el-input-number @mousewheel.native.prevent v-model="row.skyCount" :min="0" controls-position="right" @change="calculateCost(row)" />
           </template>
         </el-table-column>
-        <el-table-column label="费用" width="175">
+        <el-table-column label="费用" width="225">
           <template #default="{ row }">
             {{ row.peopleCount * row.costSky * row.skyCount }}
           </template>

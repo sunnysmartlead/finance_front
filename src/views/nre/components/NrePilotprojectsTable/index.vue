@@ -24,7 +24,7 @@
           </el-row>
         </template>
         <el-table :data="data.laboratoryFeeModels" border :summary-method="getLaboratoryFeeSummaries" show-summary
-          height="70vh">
+          max-height="70vh">
           <el-table-column type="index" width="50" />
           <el-table-column label="试验项目（根据与客户协定项目）" width="180">
             <template #default="{ row, $index }">

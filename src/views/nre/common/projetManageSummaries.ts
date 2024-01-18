@@ -54,13 +54,14 @@ export const getOtherCostSummaries = (param: RestsCostSummaryMethodProps) => {
 
     const values = data.map((item) => Number(item.cost))
     if (!values.every((value) => Number.isNaN(value)) && index === 2) {
-      sums[index] = `¥ ${values.reduce((prev, curr) => {
+      const total  = values.reduce((prev, curr) => {
         if (!Number.isNaN(curr)) {
           return prev + curr
         } else {
           return prev
         }
-      }, 0)}`
+      }, 0)
+      sums[index] = `¥ ${formatThousandths(null, null, total)}`
     } else {
       sums[index] = ""
     }
@@ -84,23 +85,25 @@ export const getTravelCostSummaries = (param: any) => {
     }
     const values = data.map((item: any) => Number(item.costSky))
     if (!values.every((value: any) => Number.isNaN(value)) && index === 3) {
-      sums[index] = `¥ ${values.reduce((prev: any, curr: any) => {
+      const total = values.reduce((prev: any, curr: any) => {
         if (!Number.isNaN(curr)) {
           return prev + curr
         } else {
           return prev
         }
-      }, 0)}`
+      }, 0)
+      sums[index] = `¥ ${formatThousandths(null, null, total)}`
     }
     const valuesC = data.map((item: any) => Number(item.cost))
     if (!valuesC.every((value: any) => Number.isNaN(value)) && index === 5) {
-      sums[index] = `¥ ${valuesC.reduce((prev: any, curr: any) => {
+      const total = valuesC.reduce((prev: any, curr: any) => {
         if (!Number.isNaN(curr)) {
           return prev + curr
         } else {
           return prev
         }
-      }, 0)}`
+      }, 0)
+      sums[index] = `¥ ${formatThousandths(null, null, total)}`
     }
   })
 

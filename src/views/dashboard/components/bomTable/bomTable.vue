@@ -213,7 +213,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="moqShareCount" label="MOQ分摊成本" width="175" :formatter="formatThousandths">
+    <el-table-column align="center" prop="moqShareCount" label="MOQ分摊成本" width="175"  :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -235,7 +235,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="availableInventory" label="可用库存" width="175">
+    <el-table-column align="center" prop="availableInventory" label="可用库存" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent

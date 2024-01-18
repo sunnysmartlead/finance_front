@@ -58,7 +58,7 @@
                 </div>
                 <div class="u-m-t-10">
                   <el-table :data="dataItem.listBomEnter" border style="color: #000000" max-height="400px">
-                    <el-table-column label="年份" align="center">
+                    <el-table-column label="年份" align="center"  width="100">
                       <template #default="scope">
                         <span>{{ scope.row.year }}</span>
                       </template>
@@ -165,7 +165,7 @@
                     <el-table-column label="备注" align="center" width="200">
                       <template #default="scope">
                         <!-- <span>{{ scope.row.remark }}</span> -->
-                        <el-input type="textarea" autosize v-model="scope.row.remark" placeholder="请输入备注内容" />
+                        <el-input type="textarea" :autosize="{ minRows: 1, maxRows: 1 }" v-model="scope.row.remark" placeholder="请输入备注内容" />
                       </template>
                     </el-table-column>
                   </el-table>
@@ -266,7 +266,7 @@
               </div>
               <div class="u-border u-text-center u-width-200 u-p-t-5 u-p-b-5"
                    v-for="(yearItem, yearIndex) in project.modelCountYearList" :key="yearIndex">
-                <span>{{ yearItem.quantity }}</span>
+                <span>{{ formatThousandths(null,null,yearItem.quantity) }}</span>
               </div>
             </div>
           </div>
@@ -285,6 +285,7 @@ import router from "@/router";
 import ElectronicTable from "@/components/comTable/index.vue"
 import ConstructionTable from "@/components/cobconstructionVTable/index.vue"
 import {GetPriceEvaluationStartData} from "@/api/processHoursEnter";
+import { formatThousandths } from "@/utils/number"
 //路径上的参数
 const queryParam = ref({
   AuditFlowId: undefined,

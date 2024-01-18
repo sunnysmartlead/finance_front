@@ -155,7 +155,7 @@
                 />
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="moq" label="MOQ" width="85" align="center">
+            <el-table-column prop="moq" label="MOQ" width="150" align="center" :formatter="formatThousandths">
               <template #default="{ row }">
                 <el-input-number
                   @mousewheel.native.prevent
@@ -165,7 +165,7 @@
                   controls-position="right"
                   :min="0"
                 />
-                <span v-if="!row.isEdit">{{ row.moq }}</span>
+                <!-- <span v-if="!row.isEdit">{{ row.moq }}</span> -->
               </template>
             </el-table-column>
             <el-table-column prop="rebateMoney" label="物料返利金额" width="150" align="center">

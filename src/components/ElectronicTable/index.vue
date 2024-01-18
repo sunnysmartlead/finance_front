@@ -78,7 +78,7 @@
               :prop="`standardMoney.${index}.yearOrValueModes.${iIndex}.value`" :formatter="filterStandardMoney" />
           </el-table-column>
         </el-table-column>
-        <el-table-column prop="moq" label="MOQ" width="120"  align="center">
+        <el-table-column prop="moq" label="MOQ" width="120"  align="center" :formatter="formatThousandths">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent size="small" v-if="row.isEdit" v-model="row.moq" controls-position="right" :min="0" />
           </template>
@@ -171,7 +171,6 @@ import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
 import { map } from "lodash"
 import useJump from "@/hook/useJump"
-
 const router = useRouter()
 
 const { closeSelectedTag } = useJump()
@@ -391,6 +390,7 @@ const formatThousandths = (_record: any, _row: any, cellValue: any) => {
     return 0
   }
 }
+
 
 // 提交电子料单价行数据
 const handleSubmit = async (record: ElectronicDto, isSubmit: number, index: number) => {

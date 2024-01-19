@@ -85,7 +85,7 @@
       <h3>NRE</h3>
       <el-card v-for="(nre, index) in data.allRes.nres" :key="index">
         <p>{{ nre.solutionName }}</p>
-        <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
+        <p v-if="nre.solutionName!='汇总'">线体数量：{{ nre.numberLine }} 共线分摊率：{{ nre.collinearAllocationRate }}%</p>
         <el-table
           :data="nre.models"
           style="width: 100%"
@@ -95,16 +95,15 @@
           show-summary
           table-layout="auto"
         >
-          <el-table-column label="序号" type="index" width="80" align="center" />
-          <el-table-column prop="formName" label="费用名称" width="200" align="center" />
+          <el-table-column label="序号" type="index"  align="center" />
+          <el-table-column prop="formName" label="费用名称"  align="center" />
           <el-table-column
             prop="pricingMoney"
             label="核价金额"
             :formatter="formatThousandths"
-            width="200"
-            align="right"
+            align="center"
           />
-          <el-table-column label="报价系数" width="200" align="center">
+          <el-table-column label="报价系数" align="center">
             <template #default="scope">
               <el-input-number
                 @mousewheel.native.prevent
@@ -121,8 +120,7 @@
             prop="offerMoney"
             label="报价金额"
             :formatter="formatThousandths"
-            width="200"
-            align="right"
+           align="center"
           />
           <el-table-column label="备注" align="center">
             <template #default="scope">
@@ -141,16 +139,14 @@
           <el-table-column
             prop="devicePrice"
             label="设备单价"
-            width="200"
-            align="right"
+            align="center"
             :formatter="formatThousandths"
           />
           <el-table-column prop="number" label="设备数量" width="200" align="center" />
           <el-table-column
             prop="equipmentMoney"
             label="设备金额"
-            width="200"
-            align="right"
+            align="center"
             :formatter="formatThousandths"
           />
         </el-table>
@@ -167,7 +163,7 @@
               <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row, index, scope.$index)" />
             </template>
           </el-table-column>
-          <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="right" />
+          <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="center" />
           <el-table-column prop="unitPrice" label="单价" width="200" align="center">
             <template #default="scope">
               <el-input-number
@@ -200,7 +196,7 @@
           :key="item.gross"
           :formatter="toFixedTwo"
           width="150"
-          align="right"
+          align="center"
         >
           <template #default="scope">
             <div>{{ scope.row.grossValues[index].grossvalue.toFixed(2) }}</div>
@@ -216,7 +212,7 @@
           :label="item.grossMargin + '%'"
           :key="index"
           width="150"
-          align="right"
+          align="center"
         >
           <template #default="scope">
             <div>
@@ -228,36 +224,36 @@
       <p>报价毛利率测算-阶梯数量</p>
       <el-card class="card">
         <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
-          <el-table-column label="梯度" prop="gradient" />
-          <el-table-column label="产品" prop="product" />
-          <el-table-column label="目标价（内部）" width="300">
-            <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" />
-            <el-table-column label="毛利率">
+          <el-table-column label="梯度" prop="gradient" align="center" />
+          <el-table-column label="产品" prop="product" align="center" />
+          <el-table-column label="目标价（内部）" width="300" align="center" >
+            <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" align="center" />
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.interiorGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column label="目标价（客户）">
-            <el-table-column label="单价" width="150" prop="clientPrice" :formatter="formatThousandths" />
-            <el-table-column label="毛利率">
+          <el-table-column label="目标价（客户）" align="center" >
+            <el-table-column label="单价" prop="clientPrice" :formatter="formatThousandths" align="center" />
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.clientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="增加客供料毛利率">
+            <el-table-column label="增加客供料毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.clientClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="剔除分摊费用毛利率">
+            <el-table-column label="剔除分摊费用毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.clientNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column label="本次报价">
-            <el-table-column label="单价" width="150">
+          <el-table-column label="本次报价" align="center" >
+            <el-table-column label="单价" width="150" align="center" >
               <template #default="scope">
                 <el-input v-model="scope.row.thisQuotationPrice">
                   <template #append>
@@ -266,45 +262,45 @@
                 </el-input>
               </template>
             </el-table-column>
-            <el-table-column label="毛利率">
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.thisQuotationGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="增加客供料毛利率">
+            <el-table-column label="增加客供料毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.thisQuotationClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="剔除分摊费用毛利率">
+            <el-table-column label="剔除分摊费用毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.thisQuotationNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column label="上轮报价">
-            <el-table-column label="单价" width="150" prop="lastRoundPrice" :formatter="formatThousandths">
+          <el-table-column label="上轮报价" align="center" >
+            <el-table-column label="单价"  prop="lastRoundPrice" :formatter="formatThousandths" align="center" >
               <!-- <template #default="scope">
               <el-input v-model="scope.row.lastRoundPrice" />
             </template> -->
             </el-table-column>
-            <el-table-column label="毛利率">
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.lastRoundGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="增加客供料毛利率">
+            <el-table-column label="增加客供料毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.lastRoundClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="剔除分摊费用毛利率">
+            <el-table-column label="剔除分摊费用毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.lastRoundNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column width="140" label="操作">
+          <el-table-column width="140" label="操作" align="center" >
             <template #default="{ row }">
               <el-row justify="end" m="2">
                 <el-button @click="openDialog(row, 1)" type="primary">年份维度对比</el-button>
@@ -316,50 +312,51 @@
       <el-card class="card" v-for="(item, index) in data.allRes.quotedGrossMargins" :key="index">
         <p>{{ item.project }}</p>
         <el-table :data="item.quotedGrossMarginActualList" border>
-          <el-table-column label="产品" prop="product" />
+          <el-table-column label="产品" prop="product" align="center" />
           <el-table-column
             label="单车产品数量"
             prop="carNum"
             v-if="index !== data.allRes.quotedGrossMargins.length - 1"
+            align="center"
           />
-          <el-table-column label="目标价（内部）" width="300">
-            <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" />
-            <el-table-column label="毛利率">
+          <el-table-column label="目标价（内部）" align="center" >
+            <el-table-column label="单价" prop="interiorPrice" :formatter="formatThousandths" width="80" align="center"/>
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.interiorGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="增加客供料毛利率">
+            <el-table-column label="增加客供料毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.interiorClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <el-table-column label="毛利率剔除NRE分摊费用毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.interiorNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column label="目标价（客户）">
-            <el-table-column label="单价" width="150" prop="clientPrice" :formatter="formatThousandths" />
-            <el-table-column label="毛利率">
+          <el-table-column label="目标价（客户）" align="center" >
+            <el-table-column label="单价"   prop="clientPrice" :formatter="formatThousandths" width="80"/>
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.clientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="增加客供料毛利率">
+            <el-table-column label="增加客供料毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.clientClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <el-table-column label="毛利率剔除NRE分摊费用毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.clientNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column label="本次报价">
-            <el-table-column label="单价" width="150">
+          <el-table-column label="本次报价" align="center" >
+            <el-table-column label="单价" width="150" align="center">
               <template #default="scope">
                 <el-input v-model="scope.row.thisQuotationPrice">
                   <template #append>
@@ -373,23 +370,23 @@
                 </el-input>
               </template>
             </el-table-column>
-            <el-table-column label="毛利率">
+            <el-table-column label="毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.thisQuotationGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="增加客供料毛利率">
+            <el-table-column label="增加客供料毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.thisQuotationClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column label="毛利率剔除NRE分摊费用毛利率">
+            <el-table-column label="毛利率剔除NRE分摊费用毛利率" align="center" >
               <template #default="{ row }">
                 {{ `${row.thisQuotationNreGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column width="140" label="操作">
+          <el-table-column width="140" label="操作" align="center" >
             <template #default="{ row }">
               <el-row justify="end" m="2">
                 <el-button @click="openDialog(row, 2, item.quotedGrossMarginActualList)" type="primary"
@@ -405,13 +402,13 @@
         <div v-for="item in data.allRes.projectBoard" :key="item.title">
           <p>{{ item.title }}</p>
           <el-table :data="item.projectBoardModels" border>
-            <el-table-column label="产品" prop="projectName" />
+            <el-table-column label="产品" prop="projectName" align="center"/>
             <el-table-column
               label="目标价（内部）"
               width="300"
               prop="interiorTarget"
               :formatter="formatThousandths"
-              align="right"
+              align="center"
             >
               <template #default="{ row }">
                 <div v-if="row.projectName !== '毛利率'">
@@ -421,7 +418,7 @@
                 <!-- <div v-else>{{ row.interiorTarget}}%</div> -->
               </template>
             </el-table-column>
-            <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right">
+            <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="center">
               <template #default="{ row }">
                 <div v-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.clientTarget) }}
@@ -430,7 +427,7 @@
                 <!-- <div v-else>{{ row.clientTarget}}%</div> -->
               </template>
             </el-table-column>
-            <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right">
+            <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="center">
               <template #default="{ row }">
                 <div v-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.offer) }}
@@ -439,7 +436,7 @@
                 <!-- <div v-else>{{ row.offer}}%</div> -->
               </template>
             </el-table-column>
-            <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right">
+            <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="center">
               <template #default="{ row }">
                 <div v-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.oldOffer) }}
@@ -466,9 +463,9 @@
     <el-dialog v-model="dialogVisible" title="年份维度对比">
       <h4>数量K</h4>
       <el-table :data="yearDimension.numk" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="数量K" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="数量K" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -476,9 +473,9 @@
       </el-table>
       <h4>单价</h4>
       <el-table :data="yearDimension.prices" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="单价" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="单价" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -486,9 +483,9 @@
       </el-table>
       <h4>销售成本</h4>
       <el-table :data="yearDimension.sellingCost" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="销售成本" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="销售成本" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -496,9 +493,9 @@
       </el-table>
       <h4>单位平均成本</h4>
       <el-table :data="yearDimension.averageCost" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="单位平均成本" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="单位平均成本" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -506,9 +503,9 @@
       </el-table>
       <h4>销售收入</h4>
       <el-table :data="yearDimension.salesRevenue" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="销售收入" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="销售收入" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -516,9 +513,9 @@
       </el-table>
       <h4>销售毛利（千元）</h4>
       <el-table :data="yearDimension.salesMargin" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="销售毛利（千元）" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="销售毛利（千元）" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -526,9 +523,9 @@
       </el-table>
       <h4>佣金</h4>
       <el-table :data="yearDimension.commission" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="佣金" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="佣金" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)} ` }}</div>
           </template>
@@ -536,9 +533,9 @@
       </el-table>
       <h4>毛利率</h4>
       <el-table :data="yearDimension.grossMargin" style="width: 100%" border max-height="300px">
-        <el-table-column label="序号" type="index" width="100" />
-        <el-table-column label="年份" prop="key" />
-        <el-table-column label="毛利率" prop="value">
+        <el-table-column label="序号" type="index" width="100" align="center"/>
+        <el-table-column label="年份" prop="key" align="center"/>
+        <el-table-column label="毛利率" prop="value" align="center">
           <template #default="{ row }">
             <div>{{ `${row.value.toFixed(2)}% ` }}</div>
           </template>

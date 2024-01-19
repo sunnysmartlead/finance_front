@@ -42,11 +42,17 @@
       </div>
       <div style="margin: 20px 0; float: right" v-if="data.isShowBtn">
         <el-button class="m-2" type="primary" @click="downLoadSOR">SOR下载</el-button>
-        <el-button class="m-2" type="primary" @click="downLoad3DExploded">3D爆炸图下载</el-button>
+        <el-button class="m-2" type="primary" @click="downLoad3DExploded" :disabled="isdirectSpeed"
+          >3D爆炸图下载</el-button
+        >
         <el-button class="m-2" type="primary" @click="downTrFile">TR-主方案下载</el-button>
         <el-button type="primary" @click="jumpToAnalysis">点击查看报价分析看板</el-button>
-        <el-button class="m-2" type="primary" @click="jumpToElec">点击查看电子料返利金额</el-button>
-        <el-button class="m-2" type="primary" @click="jumpToStru">点击查看结构料返利金额</el-button>
+        <el-button class="m-2" type="primary" @click="jumpToElec" :disabled="isdirectSpeed"
+          >点击查看电子料返利金额</el-button
+        >
+        <el-button class="m-2" type="primary" @click="jumpToStru" :disabled="isdirectSpeed"
+          >点击查看结构料返利金额</el-button
+        >
         <el-button class="m-2" @click="toNREPriceList" type="primary">在线预览NRE核价表</el-button>
         <el-button class="m-2" @click="toProductPriceList" type="primary">在线预览核价表</el-button>
       </div>
@@ -334,6 +340,7 @@ import {
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
+import { GetPriceEvaluationStartData } from "@/api/processHoursEnter"
 
 const router = useRouter()
 const query = useJump()
@@ -347,6 +354,7 @@ let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的版本
 
 let fullscreenLoading = ref(false)
+
 /**
  * 数据部分
  */
@@ -361,6 +369,7 @@ const data = reactive<any>({
   },
   motionMessageSop: [],
   isShowBtn: false,
+  isdirectSpeed: false,
   sor: {
     sorFileName: "",
     fileId: null
@@ -679,6 +688,22 @@ onMounted(async () => {
     data.pageType = 3 // 财务中标确认
   }
   initFetch()
+  await GetPriceEvaluationStartData({ auditFlowId: auditFlowId }).then((res: any) => {
+    console.log("项目走量数据", res)
+    if (res.success) {
+      let arr = ["EvalReason_Shj", "EvalReason_Qtsclc", "EvalReason_Bnnj"]
+      if (arr.includes(res.result.opinion)) {
+        //快速核价流程
+        data.isdirectSpeed = true
+      }
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "数据加载失败!"
+      })
+      return
+    }
+  })
 })
 const jumpToAnalysis = () => {
   jumpPage("/quoteAnalysis/index", {

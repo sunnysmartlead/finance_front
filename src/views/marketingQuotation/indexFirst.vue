@@ -87,10 +87,11 @@
             <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
           </el-table>
           <!-- nre汇总 -->
-          <p>线体数量：{{ data.resa.nre.numberLine }} 共线分摊率：{{ data.resa.nre.collinearAllocationRate }}</p>
+          <!-- <p>线体数量：{{ data.resa.nre.numberLine }} 共线分摊率：{{ data.resa.nre.collinearAllocationRate }}</p> -->
+          <h4>NRE汇总</h4>
           <el-table
             :data="data.resa.nre.models"
-            style="width: 100%"
+            style="width: 100%;margin-top:25px"
             border
             max-height="500px"
             :summary-method="getSummaries"

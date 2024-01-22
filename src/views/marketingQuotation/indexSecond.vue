@@ -123,7 +123,7 @@
       <h3>NRE</h3>
       <el-card v-for="(nre, index) in data.resa.nres" :key="index">
         <p>{{ nre.solutionName }}</p>
-        <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p>
+        <!-- <p>线体数量：{{ nre.numberLine }} 共线分摊率：：{{ nre.collinearAllocationRate }}</p> -->
         <el-table
           :data="nre.models"
           style="width: 100%"

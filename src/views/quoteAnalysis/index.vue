@@ -316,7 +316,7 @@
           <el-table-column
             label="单车产品数量"
             prop="carNum"
-            v-if="index !== data.allRes.quotedGrossMargins.length - 1"
+            v-if="index !== data.allRes?.quotedGrossMargins?.length - 1"
             align="center"
           />
           <el-table-column label="目标价（内部）" align="center" >

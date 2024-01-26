@@ -21,7 +21,7 @@
         :on-progress="handleGetUploadProgress"
         :on-error="handleUploadError"
       >
-        <el-button type="primary" :disabled="!data.canDo">结构料上传</el-button>
+        <el-button type="primary" :disabled="!data.canDo" v-havedone>结构料上传</el-button>
       </el-upload>
       <el-upload
         :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"

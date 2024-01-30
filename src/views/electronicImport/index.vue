@@ -60,6 +60,7 @@
           :on-error="handleUploadError"
           show-file-list
           :on-progress="handleGetUploadProgress"
+          :disabled="!data.canDo"
         >
           <el-button :style="{ margin: '15px' }" type="primary" :disabled="!data.canDo" v-havedone>电子料上传</el-button>
         </el-upload>
@@ -228,7 +229,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
     const params = {
       auditFlowId: Number(auditFlowId),
       solutionId,
-      electronicBomDtos: map(data.tableData, (item: any) => ({ ...item, fileId: fileId.value || item.fileId })),
+      electronicBomDtos: map(data.tableData, (item: any) => ({ ...item,elcFileId: fileId.value || item.fileId,fileId: fileId.value || item.fileId })),
       boardDtos: map(platePart.value, item => ({...item, auditFlowId, solutionId })),
       comment,
       opinion,

@@ -128,7 +128,7 @@ watch(
   }
 )
 
-const data = reactive({
+const data = reactive<any>({
   activeIndex: 0,
   productList: [],
   tableData: [],
@@ -234,6 +234,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
       comment,
       opinion,
       nodeInstanceId,
+      elcFileId: fileId.value || data.tableData[0]?.fileId,
     }
     const { success }: any = await SaveBoard(params)
     setTimeout(async () => {

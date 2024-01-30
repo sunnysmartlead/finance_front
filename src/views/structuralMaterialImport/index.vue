@@ -314,6 +314,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
       comment,
       opinion,
       nodeInstanceId,
+      stuFileId: fileId.value || data.tableData[0]?.fileId,
     }
     let res: any = await SaveStructionBom(params)
     await SaveProductDevelopmentInput(params)

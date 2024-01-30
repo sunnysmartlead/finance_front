@@ -20,6 +20,7 @@
         show-file-list
         :on-progress="handleGetUploadProgress"
         :on-error="handleUploadError"
+        :disabled="!data.canDo"
       >
         <el-button type="primary" :disabled="!data.canDo" v-havedone>结构料上传</el-button>
       </el-upload>
@@ -27,6 +28,7 @@
         :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
         :on-success="handleSuccess3D"
         show-file-list
+        :disabled="!data.canDo"
       >
         <el-button class="gap" type="primary" :disabled="!data.canDo">附件上传：3D爆炸图</el-button>
       </el-upload>
@@ -308,7 +310,7 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
       ...data.logisticsForm,
       auditFlowId,
       solutionId: productId,
-      structureBomDtos: map(data.tableData, item => ({ ...item, fileId: fileId.value || item.fileId })),
+      structureBomDtos: map(data.tableData, item => ({ ...item,  stuFileId: fileId.value || item.fileId,fileId: fileId.value || item.fileId })),
       comment,
       opinion,
       nodeInstanceId,

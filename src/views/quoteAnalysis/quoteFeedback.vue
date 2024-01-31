@@ -617,7 +617,8 @@ import {
   PostIsOfferSecondOnlySave,
   GeCatalogue,
   GetSoltionGradPriceList,
-  PostQuotationFeedback
+  PostQuotationFeedback,
+  GetDownloadListSaveNoQuotation
 } from "./service"
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
@@ -1812,6 +1813,10 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
     nodeInstanceId,
     financeDictionaryDetailId: opinion
   })
+  //拒绝接受报价直接归档
+  if(submitType.value ==='EvalFeedback_Bjsbzc'){
+    await GetDownloadListSaveNoQuotation(auditFlowId)
+  }
   if (res.success) {
     ElMessage({
       type: "success",

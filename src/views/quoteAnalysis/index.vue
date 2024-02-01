@@ -142,7 +142,7 @@
             align="center"
             :formatter="formatThousandths"
           />
-          <el-table-column prop="number" label="设备数量" width="200" align="center" />
+          <el-table-column prop="number" label="设备数量" width="200" align="center" :formatter="formatThousandths"/>
           <el-table-column
             prop="equipmentMoney"
             label="设备金额"
@@ -160,7 +160,7 @@
           <el-table-column prop="name" label="样品阶段" width="200" align="center" />
           <el-table-column prop="pcs" label="需求量（pcs）" width="200" align="center">
             <template #default="scope">
-              <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row, index, scope.$index)" />
+              <el-input v-model="scope.row.pcs" type="number" @change="pcsChange(scope.row, index, scope.$index)" :input-style="{'text-align': 'center'}"/>
             </template>
           </el-table-column>
           <el-table-column prop="cost" label="成本" :formatter="formatThousandths" width="200" align="center" />
@@ -1950,4 +1950,9 @@ defineExpose({
   ...toRefs(data)
 })
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.Inputcenter
+{
+  text-align: center;
+}
+</style>

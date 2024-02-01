@@ -53,21 +53,20 @@
           >
         </template>
       </el-popover>
-
     </el-button-group>
     <el-upload
-        v-model:file-list="fileList"
-        :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
-        :on-success="handleSuccess"
-        :on-error="handleUploadError"
-        :limit="1"
-        :on-progress="handleGetUploadProgress"
-        show-file-list
-        style="float: right"
-      >
-        <!-- <el-button type='primary' :disabled="submitType!=='EvalFeedback_Js'">文件上传</el-button> -->
-        <el-button type='primary'>文件上传</el-button>
-      </el-upload>
+      v-model:file-list="fileList"
+      :action="$baseUrl + 'api/services/app/FileCommonService/UploadFile'"
+      :on-success="handleSuccess"
+      :on-error="handleUploadError"
+      :limit="1"
+      :on-progress="handleGetUploadProgress"
+      show-file-list
+      style="float: right"
+    >
+      <!-- <el-button type='primary' :disabled="submitType!=='EvalFeedback_Js'">文件上传</el-button> -->
+      <el-button type="primary">文件上传</el-button>
+    </el-upload>
     <!-- nre -->
     <div v-if="data.allRes.nres">
       <h3>NRE</h3>
@@ -431,7 +430,7 @@
         <div v-for="item in data.allRes.projectBoard" :key="item.title">
           <p>{{ item.title }}</p>
           <el-table :data="item.projectBoardModels" border>
-            <el-table-column label="产品" prop="projectName"/>
+            <el-table-column label="产品" prop="projectName" />
             <el-table-column
               label="目标价（内部）"
               width="300"
@@ -1746,9 +1745,14 @@ const setSubmitType = (type: string) => {
  * 同意提交流程
  */
 const agreeConfirm = async () => {
+  /**如果是拒绝报价 */
+  if (submitType.value === "EvalFeedback_Bjsbzc") {
+    await GetDownloadListSaveNoQuotation(auditFlowId)
+  }
   /**
    * 保存数据需要确认
    */
+
   let res = await SubmitNode({
     comment: confirmText.value,
     nodeInstanceId,
@@ -1806,24 +1810,6 @@ const toMarketingApproval = () => {
       auditFlowId
     }
   })
-}
-const handleSubmit = async ({ comment, opinion, nodeInstanceId }: any) => {
-  let res: any = await SubmitNode({
-    comment,
-    nodeInstanceId,
-    financeDictionaryDetailId: opinion
-  })
-  //拒绝接受报价直接归档
-  if(submitType.value ==='EvalFeedback_Bjsbzc'){
-    await GetDownloadListSaveNoQuotation(auditFlowId)
-  }
-  if (res.success) {
-    ElMessage({
-      type: "success",
-      message: "操作成功"
-    })
-    // postOffer
-  }
 }
 
 onBeforeMount(() => {

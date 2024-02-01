@@ -58,7 +58,7 @@
           :total="data.selfTabletotal" background @current-change="(val) => changeCurrent(val, data.selfTableParams)" />
       </el-row>
     </el-card>
-    <LogList ref="logListRef" :type="14" />
+    <LogList ref="logListRef" :type="13" />
   </div>
 </template>
 

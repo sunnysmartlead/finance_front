@@ -505,3 +505,21 @@ export function PostQuotationApproved(data: any) {
     data
   })
 }
+
+/**
+ *
+ * @param data 不报价归档文件列表保存
+
+
+
+ * @returns
+ */
+ export function GetDownloadListSaveNoQuotation(auditFlow) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadListSaveNoQuotation",
+    method: "get",
+    data: {
+      auditFlow
+    }
+  })
+}

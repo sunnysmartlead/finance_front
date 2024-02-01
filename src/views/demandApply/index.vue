@@ -2340,6 +2340,7 @@ const changeProjectName = async (val: string) => {
   if (result) {
     state.quoteForm.quoteVersion = result
   }
+  generateTitle();
   console.log(findItem)
 }
 
@@ -2426,7 +2427,8 @@ const init = async (tempAuditFlowId?: any) => {
       state.quoteForm.sopTime = dayjs(sopTime).format("YYYY")
       pcsTableData.value = viewDataRes.result.pcs.filter((item: any) => item.pcsType == 0) //终端走量（PCS）
       yearChange(viewDataRes.result.projectCycle)
-      viewDataRes.result.projectCode && changeProjectName(viewDataRes.result.projectCode)
+      //viewDataRes.result.projectCode
+      // && changeProjectName(viewDataRes.result.projectCode)
       productTableData.value = viewDataRes.result.productInformation
       shareCountTable.value = viewDataRes.result.shareCount
       gradientModelTable.value = viewDataRes.result.gradientModel

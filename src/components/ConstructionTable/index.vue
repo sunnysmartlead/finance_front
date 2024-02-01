@@ -67,7 +67,7 @@
             </el-table-column>
             <el-table-column prop="currency" label="币种" width="100" align="center">
               <template #default="scope">
-                <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种">
+                <el-select v-if="scope.row.isEdit" v-model="scope.row.currency" placeholder="选择币种" @change="handleCalculation(scope.row, bomIndex, scope.$index, 0)">
                   <el-option
                     v-for="item in exchangeSelectOptions"
                     :key="item.id"

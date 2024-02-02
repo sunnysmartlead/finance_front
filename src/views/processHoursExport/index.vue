@@ -2568,6 +2568,9 @@ const sorDownloadFile = async () => {
   if (auditFlowId) {
     try {
       const { result }: any = (await getSorByAuditFlowId(auditFlowId)) || {}
+      console.log(result)
+      console.log(result)
+      console.log(result)
       let res: any = await CommonDownloadFile(result.sorFileId)
       const blob = res
       const reader = new FileReader()
@@ -2592,7 +2595,10 @@ const GetElectronBomClick = async () => {
   if (auditFlowId) {
     try {
       const { result }: any = (await GetElectronBomDownload(auditFlowId, productId)) || {}
-      let res: any = await CommonDownloadFile(result.sorFileId)
+      console.log(result)
+      console.log(result)
+      console.log(result)
+      let res: any = await CommonDownloadFile(result.id)
       const blob = res
       const reader = new FileReader()
       reader.readAsDataURL(blob)
@@ -2601,7 +2607,7 @@ const GetElectronBomClick = async () => {
         let a = document.createElement("a")
         document.body.appendChild(a) //此处增加了将创建的添加到body当中
         a.href = url
-        a.download = result.sorFileName
+        a.download = result.name
         a.target = "_blank"
         a.click()
         a.remove() //将a标签移除
@@ -2615,7 +2621,10 @@ const GetStructureBomClick = async () => {
   if (auditFlowId) {
     try {
       const { result }: any = (await GetStructureBomDownload(auditFlowId, productId)) || {}
-      let res: any = await CommonDownloadFile(result.sorFileId)
+      console.log(await GetStructureBomDownload(auditFlowId, productId))
+      console.log(result)
+      console.log(result)
+      let res: any = await CommonDownloadFile(result.id)
       const blob = res
       const reader = new FileReader()
       reader.readAsDataURL(blob)
@@ -2624,7 +2633,7 @@ const GetStructureBomClick = async () => {
         let a = document.createElement("a")
         document.body.appendChild(a) //此处增加了将创建的添加到body当中
         a.href = url
-        a.download = result.sorFileName
+        a.download = result.name
         a.target = "_blank"
         a.click()
         a.remove() //将a标签移除

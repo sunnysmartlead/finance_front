@@ -516,7 +516,7 @@ export function PostQuotationApproved(data: any) {
  */
  export function GetDownloadListSaveNoQuotation(auditFlow) {
   return request({
-    url: "/api/services/app/AnalyseBoardSecond/GetDownloadListSaveNoQuotation",
+    url: "/api/services/app/AnalyseBoardSecond/GetDownloadListSave",
     method: "get",
     data: {
       auditFlow

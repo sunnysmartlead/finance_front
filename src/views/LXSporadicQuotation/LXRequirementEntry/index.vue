@@ -146,13 +146,13 @@
             <el-table-column prop="listNameDisplayName" label="" width="250"> </el-table-column>
 
             <el-table-column
-              :label="'数据' + (index + 1)"
+              :label="'零件' + (index + 1)"
               v-for="(item, index) in state.quoteForm.lxDataListDtos[0].data.length"
               :key="index"
               width="200"
             >
               <template #header>
-                <span class="header-icon"> {{ "数据" + (index + 1) }} </span>
+                <span class="header-icon"> {{ "零件" + (index + 1) }} </span>
                 <el-popconfirm title="确定删除嘛?" @Confirm="DelColumn(index)">
                   <template #reference>
                     <el-button :style="{ margin: '0 0 0 30px' }" text type="danger" bg :disabled="!canDo"

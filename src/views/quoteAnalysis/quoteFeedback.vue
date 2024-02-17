@@ -32,7 +32,7 @@
       <el-button type="primary" @click="setSubmitType(`EvalFeedback_Js`)" v-havedone :disabled="!isSubmit"
         >接受报价</el-button
       >
-      <el-popover placement="top-start" :width="200" trigger="hover" content="接受此价，不用再次报价/重新核价">
+      <el-popover placement="top-start" :width="200" trigger="hover" content="不接受此价，不用再次报价/重新核价">
         <template #reference>
           <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjsbzc`)" v-havedone :disabled="!isSubmit"
             >不接受报价</el-button

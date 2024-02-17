@@ -158,7 +158,7 @@
           <el-table-column prop="equipmentMoney" label="设备金额" :formatter="formatThousandths" align="right" />
         </el-table>
       </el-card>
-      <el-card header="内部核价信息：" m="2">
+      <el-card header="内部核价成本明细：" m="2">
         <el-table :data="data.resa.pricingMessageSecondModels" border align="center">
           <el-table-column label="序号" type="index" width="50" />
           <el-table-column label="梯度" prop="gradient" width="100" />
@@ -197,10 +197,10 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <el-card header="报价策略：" m="2">
+      <el-card header="梯度报价信息：" m="2">
         <el-table :data="data.resa.biddingStrategySecondModelsGradent" border align="right">
-          <el-table-column type="index" width="100" />
-          <el-table-column label="梯度" prop="gradient" />
+          <el-table-column type="index" label="序号" width="50" />
+          <el-table-column label="梯度" prop="gradient" width="100"/>
           <el-table-column label="产品" prop="product" />
           <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
           <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />
@@ -232,10 +232,10 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <el-card header="报价策略-实际数量：" m="2">
+      <el-card header="实际报价策略：" m="2">
         <el-table :data="data.resa.biddingStrategySecondModelsAct" border align="right">
-          <el-table-column type="index" width="100" />
-          <el-table-column label="梯度" prop="gradient" />
+          <el-table-column type="index"  label="序号" width="50" />
+          <el-table-column label="梯度" prop="gradient"  width="100"/>
           <el-table-column label="产品" prop="product" />
           <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" />
           <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" />

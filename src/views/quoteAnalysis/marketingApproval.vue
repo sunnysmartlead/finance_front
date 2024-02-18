@@ -306,7 +306,8 @@ import {
   GetQuotationList,
   GetQuotation,
   GetDownloadAuditQuotationExcel,
-  PostQuotationApproved
+  PostQuotationApproved,
+  PostQuotationApprovedSave
 } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { ElLoading } from "element-plus"
@@ -829,7 +830,7 @@ const downLoadTable = async () => {
 const save = async () => {
   try {
     // let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
-    let res: any = await PostQuotationApproved({ ...data.resa, version: versionChosen.version })
+    let res: any = await PostQuotationApprovedSave({ ...data.resa, version: version })
 
     console.log(res)
     if (res.success) {

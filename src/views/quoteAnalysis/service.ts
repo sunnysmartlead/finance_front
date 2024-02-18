@@ -505,6 +505,18 @@ export function PostQuotationApproved(data: any) {
     data
   })
 }
+/**
+ *
+ * @param data 报价审批表保存(新加)
+ * @returns
+ */
+ export function PostQuotationApprovedSave(data: any) {
+  return request({
+    url: "/api/services/app/AnalyseBoardSecond/PostQuotationApprovedSave",
+    method: "post",
+    data
+  })
+}
 
 /**
  *

@@ -151,7 +151,7 @@
           </el-table-column>
         </el-table>
         <p>专用设备</p>
-        <el-table :data="nre.devices" style="width: 100%" border height="250px">
+        <el-table :data="nre.devices" style="width: 100%" border max-height="250px">
           <el-table-column prop="deviceName" label="设备名称" align="center"/>
           <el-table-column prop="devicePrice" label="设备单价" :formatter="formatThousandths" align="center" />
           <el-table-column prop="number" label="设备数量" align="center" />
@@ -164,36 +164,36 @@
           <el-table-column label="梯度" prop="gradient" width="100" align="center"/>
           <el-table-column label="方案名称" prop="solutionName" width="180" align="center"/>
           <el-table-column label="BOM成本" align="center">
-            <el-table-column label="SOP年成本" prop="bomSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="bomfull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="bomSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="bomfull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="生产成本" align="center">
-            <el-table-column label="SOP年成本" prop="scSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="scfull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="scSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="scfull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="良损率、良损成本" align="center">
-            <el-table-column label="SOP年成本" prop="lsSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="lsfull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="lsSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="lsfull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="运费" align="center">
-            <el-table-column label="SOP年成本" prop="yfSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="yffull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="yfSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="yffull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="MOQ分摊成本" align="center">
-            <el-table-column label="SOP年成本" prop="moqSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="moqfull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="moqSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="moqfull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="质量成本" align="center">
-            <el-table-column label="SOP年成本" prop="quSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="qufull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="quSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="qufull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="分摊成本" align="center">
-            <el-table-column label="SOP年成本" prop="ftSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="ftfull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="ftSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="ftfull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
           <el-table-column label="总成本" align="center">
-            <el-table-column label="SOP年成本" prop="allSop" width="100" :formatter="formatThousandths" />
-            <el-table-column label="全生命周期成本" prop="allfull" width="100" :formatter="formatThousandths" />
+            <el-table-column label="SOP年成本" prop="allSop" width="100" :formatter="formatThousandths" align="right"/>
+            <el-table-column label="全生命周期成本" prop="allfull" width="100" :formatter="formatThousandths" align="right"/>
           </el-table-column>
         </el-table>
       </el-card>
@@ -279,7 +279,7 @@
       <p>样品报价</p>
       <el-card v-for="sample in data.resa.sampleOffer" :key="sample.solutionName">
         <div mb-20px>{{ sample.solutionName }}</div>
-        <el-table :data="sample.onlySampleModels" style="width: 100%" border height="500px" align="center">
+        <el-table :data="sample.onlySampleModels" style="width: 100%" border max-height="500px" align="center">
           <el-table-column prop="name" label="样品阶段" align="center"/>
           <el-table-column prop="pcs" label="需求量（pcs）" align="center"/>
           <el-table-column prop="cost" label="成本" :formatter="formatThousandths" align="center"/>

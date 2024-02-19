@@ -254,7 +254,7 @@
     <!-- 样品 -->
     <p>样品报价</p>
 
-    <el-table :data="data.resa.samples" style="width: 100%" border height="500px" :show-header="false">
+    <el-table :data="data.resa.samples" style="width: 100%" border max-height="500px" :show-header="false">
       <!-- <el-table-column prop="solutionName" label="方案名" />
       <el-table-column prop="solutionName" label="样品阶段" />
       <el-table-column prop="pcs" label="需求量（pcs）" />

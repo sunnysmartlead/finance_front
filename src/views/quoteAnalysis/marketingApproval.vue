@@ -188,36 +188,36 @@
         <el-table-column label="梯度" prop="gradient" width="100" align="center"/>
         <el-table-column label="方案名称" prop="solutionName" width="180" align="center"/>
         <el-table-column label="BOM成本" align="center">
-          <el-table-column label="SOP年成本" prop="bomSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="bomfull" width="100" />
+          <el-table-column label="SOP年成本" prop="bomSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="bomfull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="生产成本" align="center">
-          <el-table-column label="SOP年成本" prop="scSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="scfull" width="100" />
+          <el-table-column label="SOP年成本" prop="scSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="scfull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="良损率、良损成本" align="center">
-          <el-table-column label="SOP年成本" prop="lsSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="lsfull" width="100" />
+          <el-table-column label="SOP年成本" prop="lsSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="lsfull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="运费" align="center">
-          <el-table-column label="SOP年成本" prop="yfSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="yffull" width="100" />
+          <el-table-column label="SOP年成本" prop="yfSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="yffull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="MOQ分摊成本" align="center">
-          <el-table-column label="SOP年成本" prop="moqSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="moqfull" width="100" />
+          <el-table-column label="SOP年成本" prop="moqSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="moqfull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="质量成本" align="center">
-          <el-table-column label="SOP年成本" prop="quSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="qufull" width="100" />
+          <el-table-column label="SOP年成本" prop="quSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="qufull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="分摊成本" align="center">
-          <el-table-column label="SOP年成本" prop="ftSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="ftfull" width="100" />
+          <el-table-column label="SOP年成本" prop="ftSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="ftfull" width="100" align="center"/>
         </el-table-column>
         <el-table-column label="总成本" align="center">
-          <el-table-column label="SOP年成本" prop="allSop" width="100" />
-          <el-table-column label="全生命周期成本" prop="allfull" width="100" />
+          <el-table-column label="SOP年成本" prop="allSop" width="100" align="center"/>
+          <el-table-column label="全生命周期成本" prop="allfull" width="100" align="center"/>
         </el-table-column>
       </el-table>
     </el-card>

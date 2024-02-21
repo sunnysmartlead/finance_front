@@ -21,7 +21,7 @@ export function getSorByAuditFlowId(auditFlowId: any) {
 }
 export function GetElectronBomDownload(auditFlowId: any,solutionId: any) {
   return request({
-    url: "/api/services/app/ProcessHoursEnter/GetStructureBom",
+    url: "/api/services/app/ProcessHoursEnter/GetElectronBom",
     method: "get",
     data: {
       auditFlowId,

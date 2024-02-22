@@ -101,7 +101,7 @@
           <el-table-column type="index" width="100" label="序号" align="center"/>
           <el-table-column prop="gradient" label="梯度" align="center"/>
           <el-table-column prop="key" label="年份" align="center"/>
-          <el-table-column prop="value" label="走量" align="center"/>
+          <el-table-column prop="value" label="走量(K)" align="center"/>
         </el-table>
         <el-table :data="data.resa.sops" border max-height="400px">
           <el-table-column type="index" width="100" label="序号" align="center"/>
@@ -232,8 +232,12 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <el-card header="实际报价策略：" m="2">
-        <el-table :data="data.resa.biddingStrategySecondModelsAct" border align="right" max-height="400px">
+      <!-- style=" background-color: #F5F5DC;"
+      :body-style="{background:'#FFDCC4'}"
+      :header-cell-style="headerCellStyle" :row-style="rowstyle"
+       -->
+      <el-card header="实际报价策略：" m="2"  >
+        <el-table :data="data.resa.biddingStrategySecondModelsAct" border align="right" max-height="400px"  >
           <el-table-column type="index"  label="序号" width="50" align="center"/>
           <el-table-column label="梯度" prop="gradient"  width="100" align="center"/>
           <el-table-column label="产品" prop="product" align="center"/>
@@ -356,6 +360,19 @@ let versionList = reactive<any[]>([])
 let versionChosen: any = null // 选中的版本
 
 let fullscreenLoading = ref(false)
+const rowstyle = ({ row, rowIndex }:any) => {
+    return {
+      backgroundColor: '#FFDCC4',
+    }
+}
+
+const headerCellStyle = ({ row, column, rowIndex, columnIndex }:any) => {
+    return {
+      backgroundColor: '#FFDCC4'
+    }
+
+}
+
 
 /**
  * 数据部分

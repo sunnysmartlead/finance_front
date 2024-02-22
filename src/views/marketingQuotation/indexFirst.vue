@@ -45,7 +45,8 @@
         <h4>单价汇总</h4>
         <el-table :data="data.resa.unitPriceSum" border>
           <el-table-column label="产品名称" prop="product" />
-          <el-table-column label="价格" prop="price" :formatter="formatThousandths" />
+          <el-table-column label="价格(CNY)" prop="price" :formatter="formatThousandths" />
+          <el-table-column label="价格(USD)" prop="priceUSD" :formatter="formatThousandths" />
         </el-table>
         <!-- NRE报价汇总 -->
         <h4>NRE报价汇总</h4>

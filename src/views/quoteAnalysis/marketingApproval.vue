@@ -61,7 +61,7 @@
         <el-input v-model="data.resa.developmentPlan" />
       </el-descriptions-item>
       <el-descriptions-item label="SOP时间">
-        <el-input v-model="data.resa.sopTime" />
+        <el-input type="number"  v-model="data.resa.sopTime" />
       </el-descriptions-item>
       <el-descriptions-item label="项目生命周期">
         <el-input v-model="data.resa.projectCycle" />

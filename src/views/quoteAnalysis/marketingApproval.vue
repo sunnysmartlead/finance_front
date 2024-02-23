@@ -90,7 +90,7 @@
         <el-table-column type="index" width="100" label="序号" align="center"/>
         <el-table-column prop="gradient" label="梯度" align="center"/>
         <el-table-column prop="key" label="年份" align="center"/>
-        <el-table-column prop="value" label="走量" align="center"/>
+        <el-table-column prop="value" label="走量(K)" align="center"/>
       </el-table>
       <el-table :data="data.resa.sop" border>
         <el-table-column type="index" width="100" label="序号" align="center"/>
@@ -829,7 +829,11 @@ const downLoadTable = async () => {
 const save = async () => {
   try {
     // let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
-    let res: any = await PostQuotationApprovedSave({ ...data.resa, version: version })
+    if (!versionChosen) {
+        ElMessage.warning("请先选择数据")
+        return false
+      }
+    let res: any = await PostQuotationApprovedSave({ ...data.resa, version: versionChosen.version })
 
     console.log(res)
     if (res.success) {

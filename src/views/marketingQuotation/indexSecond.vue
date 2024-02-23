@@ -57,6 +57,7 @@
         >
         <el-button class="m-2" @click="toNREPriceList" type="primary">在线预览NRE核价表</el-button>
         <el-button class="m-2" @click="toProductPriceList" type="primary">在线预览核价表</el-button>
+        <el-button class="m-2" @click="BjfkFileDownload" type="primary" v-if="(['/marketingQuotation/confirmWinningBid','/marketingQuotation/bidWinningConfirmation'].find(p=>p===route.path))">报价反馈文件下载</el-button>
       </div>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="直接客户名称">
@@ -413,7 +414,8 @@ import {
   GetAcceptanceBid,
   GetBidView,
   PostManagerApprovalOfferTwoSave,
-  GetQuotationFeedbackManagerApprovalOfferTwo
+  GetQuotationFeedbackManagerApprovalOfferTwo,
+  BjfkFileId
 } from "./service"
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
@@ -465,26 +467,26 @@ const data = reactive<any>({
     fileId: null
   },
   resa: {
-    date: "2023-09-13T01:04:17.6054181+08:00",
-    recordNumber: "BJHJ-ZL20230831-001",
+    date: "",
+    recordNumber: "",
     versions: 0,
     offerForm: null,
     sampleQuotationType: null,
-    directCustomerName: "理想",
+    directCustomerName: "",
     clientNature: null,
-    terminalCustomerName: "理想",
+    terminalCustomerName: "",
     terminalClientNature: null,
     developmentPlan: null,
-    sopTime: 2024,
-    projectCycle: 3,
-    forSale: "SalesType_ForTheDomesticMarket",
-    modeOfTrade: "TradeMethodDDU",
-    paymentMethod: "月结60天",
+    sopTime: 0,
+    projectCycle: 0,
+    forSale: "",
+    modeOfTrade: "",
+    paymentMethod: "",
     quoteCurrency: null,
     exchangeRate: 0,
     motionMessage: [
       {
-        messageName: "25K/Y",
+        messageName: "",
         sop: [
           {
             year: 0,
@@ -495,7 +497,7 @@ const data = reactive<any>({
         ]
       },
       {
-        messageName: "35K/Y",
+        messageName: "",
         sop: [
           {
             year: 0,
@@ -516,27 +518,27 @@ const data = reactive<any>({
     sops: [
       {
         id: 0,
-        year: "2031上半年",
+        year: "",
         motion: 0.0,
         annualDeclineRate: 0.0,
-        annualRebateRequirements: 1.0,
-        oneTimeDiscountRate: 1.0,
-        commissionRate: 2.0
+        annualRebateRequirements: 0,
+        oneTimeDiscountRate: 0,
+        commissionRate: 0
       }
     ],
 
-    projectName: "流程测试OK，测试数据1",
+    projectName: "",
     nres: [
       {
-        solutionName: "NRE AR0820",
+        solutionName: "",
         solutionId: 0,
         auditFlowId: 0,
         models: [
           {
             auditFlowId: 0,
             solutionId: null,
-            formName: "手板件费",
-            pricingMoney: 4000,
+            formName: "",
+            pricingMoney: 0,
             offerCoefficient: 0,
             offerMoney: 0,
             remark: null,
@@ -545,7 +547,7 @@ const data = reactive<any>({
             deletionTime: null,
             lastModificationTime: null,
             lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6239762+08:00",
+            creationTime: "",
             creatorUserId: null,
             id: 0
           }
@@ -555,15 +557,15 @@ const data = reactive<any>({
         collinearAllocationRate: 0
       },
       {
-        solutionName: "NRE 汇总",
+        solutionName: "",
         solutionId: 0,
         auditFlowId: 0,
         models: [
           {
             auditFlowId: 0,
             solutionId: null,
-            formName: "手板件费",
-            pricingMoney: 4000,
+            formName: "",
+            pricingMoney: 0,
             offerCoefficient: 0,
             offerMoney: 0,
             remark: null,
@@ -572,7 +574,7 @@ const data = reactive<any>({
             deletionTime: null,
             lastModificationTime: null,
             lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:19.6242865+08:00",
+            creationTime: "",
             creatorUserId: null,
             id: 0
           }
@@ -584,16 +586,16 @@ const data = reactive<any>({
     ],
     sampleOffer: [
       {
-        solutionName: "AR0820",
+        solutionName: "",
         auditFlowId: 0,
         solutionId: 0,
         onlySampleModels: [
           {
             auditFlowId: 0,
             solutionId: 0,
-            name: "SampleName_A",
-            pcs: 200,
-            cost: 1866.5904956533819,
+            name: "",
+            pcs: 0,
+            cost: 0,
             unitPrice: 0,
             grossMargin: 0,
             salesRevenue: 0,
@@ -602,7 +604,7 @@ const data = reactive<any>({
             deletionTime: null,
             lastModificationTime: null,
             lastModifierUserId: null,
-            creationTime: "2023-09-13T01:04:22.8913946+08:00",
+            creationTime: "",
             creatorUserId: null,
             id: 0
           }
@@ -611,99 +613,99 @@ const data = reactive<any>({
     ],
     componenSocondModels: [
       {
-        coreComponent: "Sensor",
+        coreComponent: "",
         type: null,
         remark: null,
         specifications: [
           {
-            solutionname: "AR0820",
-            specification: "12"
+            solutionname: "",
+            specification: ""
           }
         ]
       },
       {
-        coreComponent: "Lens",
+        coreComponent: "",
         type: null,
         remark: null,
         specifications: [
           {
-            solutionname: "AR0820",
-            specification: "12"
+            solutionname: "",
+            specification: ""
           }
         ]
       },
       {
-        coreComponent: "ISP",
+        coreComponent: "",
         type: null,
         remark: null,
         specifications: [
           {
-            solutionname: "AR0820",
-            specification: "12"
+            solutionname: "",
+            specification: ""
           }
         ]
       },
       {
-        coreComponent: "串行芯片",
+        coreComponent: "",
         type: null,
         remark: null,
         specifications: [
           {
-            solutionname: "AR0820",
-            specification: "12"
+            solutionname: "",
+            specification: ""
           }
         ]
       },
       {
-        coreComponent: "线缆",
+        coreComponent: "",
         type: null,
         remark: null,
         specifications: [
           {
-            solutionname: "AR0820",
-            specification: "12"
+            solutionname: "",
+            specification: ""
           }
         ]
       }
     ],
     pricingMessageSecondModels: [
       {
-        solutionName: "延锋科技前装车内1M-舱内",
-        gradientId: 599,
-        solutionId: 664,
-        gradient: "2664.9",
-        bomSop: 370.34, //BOM成本 sop
-        bomfull: 368.58, //全生命周期成本
-        scSop: 94.95, //  生产成本 sop
-        scfull: 99.92, //生产成本 全生命周期成本
-        lsSop: 16.72, // sop  良损率、良损成本
-        lsfull: 9.42, //良损率、良损成本 全生命周期成本
-        yfSop: 0.23, // 运费 sop
-        yffull: 0.23, //运费 全生命周期成本
-        moqSop: 0.01, // MOQ分摊成本 sop
-        moqfull: 0.06, //MOQ分摊成本 全生命周期成本
-        quSop: 2.79, //  质量成本 sop
-        qufull: 1.84, //质量成本 全生命周期成本
-        ftSop: 0.81, // 分摊成本 sop
-        ftfull: 1.24, //分摊成本 全生命周期成本
-        allSop: 485.85, //  总成本 sop
-        allfull: 481.28 //总成本 全生命周期成本
+        solutionName: "",
+        gradientId: 0,
+        solutionId: 0,
+        gradient: "",
+        bomSop: 0, //BOM成本 sop
+        bomfull: 0, //全生命周期成本
+        scSop: 0, //  生产成本 sop
+        scfull: 0, //生产成本 全生命周期成本
+        lsSop: 0, // sop  良损率、良损成本
+        lsfull: 0, //良损率、良损成本 全生命周期成本
+        yfSop: 0, // 运费 sop
+        yffull: 0, //运费 全生命周期成本
+        moqSop: 0, // MOQ分摊成本 sop
+        moqfull: 0, //MOQ分摊成本 全生命周期成本
+        quSop: 0, //  质量成本 sop
+        qufull: 0, //质量成本 全生命周期成本
+        ftSop: 0, // 分摊成本 sop
+        ftfull: 0, //分摊成本 全生命周期成本
+        allSop: 0, //  总成本 sop
+        allfull: 0 //总成本 全生命周期成本
       }
     ],
     biddingStrategySecondModels: [
       {
-        gradientId: 599,
-        gradient: "2664.9k/y",
+        gradientId: 0,
+        gradient: "",
         productId: 0,
-        product: "延锋科技前装车内1M",
-        sopCost: 1669950.5306498313, //Sop年成本
-        fullLifeCyclecost: 6551899.356798569, //全生命周期成本
-        price: 1111, //价格
+        product: "",
+        sopCost: 0, //Sop年成本
+        fullLifeCyclecost: 0, //全生命周期成本
+        price: 0, //价格
 
-        sopGrossMargin: 40.41033099014627, //SOP年毛利率
-        totallifeCyclegrossMargin: 40.37, //
-        clientGrossMargin: -44.58, //增加客供料毛利率
-        nreGrossMargin: 40.4 //剔除分摊费用毛利率
+        sopGrossMargin: 0, //SOP年毛利率
+        totallifeCyclegrossMargin: 0, //
+        clientGrossMargin: 0, //增加客供料毛利率
+        nreGrossMargin: 0 //剔除分摊费用毛利率
       }
     ]
   },
@@ -962,6 +964,32 @@ const downLoadSOR = async () => {
     a.remove() //将a标签移除
   }
 }
+
+//报价反馈文件下载
+const BjfkFileDownload=async ()=>{
+  if (!versionChosen) {
+      ElMessage.warning("请先选择数据")
+      return false
+  }
+  const { result }: any = (await BjfkFileId(auditFlowId,versionChosen.version)) || {}
+  if (!result.productld) return false
+   let res: any = await CommonDownloadFile(result.productld)
+  const blob = res
+  const reader = new FileReader()
+  reader.readAsDataURL(blob)
+  reader.onload = function () {
+    let url = URL.createObjectURL(new Blob([blob]))
+    let a = document.createElement("a")
+    document.body.appendChild(a) //此处增加了将创建的添加到body当中
+    a.href = url
+    a.download = result.solutionName
+    a.target = "_blank"
+    a.click()
+    a.remove() //将a标签移除
+  }
+}
+
+
 
 // TR主方案下载
 const downTrFile = async () => {

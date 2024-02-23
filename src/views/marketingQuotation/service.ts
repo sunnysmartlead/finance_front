@@ -142,3 +142,16 @@ export function GetQuotationFeedbackManagerApprovalOfferTwo(data: any): any {
     data
   })
 }
+
+//报价反馈文件Id
+export function BjfkFileId(auditFlowId:number,version:number)
+  {
+    return request({
+      url: "/api/services/app/AnalyseBoardSecond/BjfkFileId",
+      method: "get",
+      data: {
+        auditFlowId,
+        version
+      }
+  })
+}

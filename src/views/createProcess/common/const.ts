@@ -38,7 +38,7 @@ export const PROCESS_EUNM = [
     ]
   },
   {
-    title: "快速核价流程-RFQ",
+    title: "快速核价流程-引用",
     children: [
       {
         name: "非方案变更",
@@ -51,7 +51,7 @@ export const PROCESS_EUNM = [
     ]
   },
   {
-    title: "快速核价流程-已定点",
+    title: "快速核价流程-直接上传",
     children: [
       {
         name: "售后件",

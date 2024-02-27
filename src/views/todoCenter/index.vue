@@ -46,8 +46,9 @@
                 </el-table>
               </template>
             </el-table-column>
-            <el-table-column label="流程ID" prop="auditFlowId" />
+            <el-table-column label="流程ID" prop="auditFlowId" width="200px"/>
             <el-table-column label="流程标题" prop="auditFlowTitle" />
+            <el-table-column label="流程类型" prop="auditFlowType" />
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="已办/查看" name="check">
@@ -77,8 +78,9 @@
                 </el-table>
               </template>
             </el-table-column>
-            <el-table-column label="流程ID" prop="auditFlowId" />
+            <el-table-column label="流程ID" prop="auditFlowId" width="200px"/>
             <el-table-column label="流程标题" prop="auditFlowTitle" />
+            <el-table-column label="流程类型" prop="auditFlowType" />
           </el-table>
         </el-tab-pane>
       </el-tabs>

@@ -40,7 +40,7 @@ const createFlow = (id: string) => {
 .div-card {
   margin: 10px;
   .card {
-    width: 200px;
+    width: 220px;
     flex-direction: column;
   }
   .card:hover {

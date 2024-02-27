@@ -236,18 +236,21 @@ const handleSubmit = async ({ comment, opinion, nodeInstanceId, label }: any) =>
       nodeInstanceId,
       elcFileId: fileId.value || data.tableData[0]?.fileId,
     }
-    const { success }: any = await SaveBoard(params)
-    setTimeout(async () => {
-      let res: any = {}
-      if (success) {
+    const { success }: any = await SaveBoard(params).then(async(p:any)=>{
+       let res: any = {}
+      if (p.success) {
         res = await SaveElectronicBom(params)
       }
       loading.close()
+
       if (res.success) {
         ElMessage.success(`${label} 成功！`)
       }
-    }, 1000)
+    })
   } catch (error) {
+    loading.close()
+  }finally
+  {
     loading.close()
   }
 }

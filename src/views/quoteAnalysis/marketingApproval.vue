@@ -829,11 +829,11 @@ const downLoadTable = async () => {
 const save = async () => {
   try {
     // let res: any = await PostQuotationApprovedMarketingSave({ ...data.resa, version: versionChosen.version })
-    if (!versionChosen) {
+    if (!versionChosen&&!version) {
         ElMessage.warning("请先选择数据")
         return false
       }
-    let res: any = await PostQuotationApprovedSave({ ...data.resa, version: versionChosen.version })
+    let res: any = await PostQuotationApprovedSave({ ...data.resa, version: versionChosen?.version||version })
 
     console.log(res)
     if (res.success) {

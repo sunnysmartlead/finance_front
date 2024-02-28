@@ -61,11 +61,14 @@
       :on-error="handleUploadError"
       :limit="1"
       :on-progress="handleGetUploadProgress"
+      :before-upload="beforeupload"
       show-file-list
       style="float: right"
+      ref="upload"
+      v-havedone
     >
       <!-- <el-button type='primary' :disabled="submitType!=='EvalFeedback_Js'">文件上传</el-button> -->
-      <el-button type="primary">文件上传</el-button>
+      <el-button type="primary" >文件上传</el-button>
     </el-upload>
     <!-- nre -->
     <div v-if="data.allRes.nres">
@@ -593,7 +596,7 @@
 import { ref, reactive, toRefs, onBeforeMount, onMounted, watchEffect, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import * as echarts from "echarts"
-import { ElMessage, ElLoading } from "element-plus"
+import { ElMessage, ElLoading,UploadInstance } from "element-plus"
 // import debounce from "lodash/debounce"
 import getQuery from "@/utils/getQuery"
 import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
@@ -1729,13 +1732,27 @@ const toFixedTwo = (_recoed: any, _row: any, val: any) => {
   if (typeof val === "number" && val > 0) return val.toFixed(2)
   return val
 }
+
+const beforeupload=(rawFile: any)=>{
+  if(!versionChosen)
+  {
+    ElMessage.warning("请先加载数据")
+     return false
+  }
+}
+
 const setSubmitType = (type: string) => {
-  if (!isSave) {
-    ElMessage.warning("保存后再执行")
+  if(!versionChosen)
+  {
+    ElMessage.warning("请先加载数据")
+     return false
+  }
+ if (type === "EvalFeedback_Js" && !data.allRes.productId) {
+    ElMessage.warning("上传完文件后再执行")
     return false
   }
-  if (type === "EvalFeedback_Js" && !data.allRes.productId) {
-    ElMessage.warning("上传完文件后再执行")
+  if (!isSave) {
+    ElMessage.warning("保存后再执行")
     return false
   }
   submitType.value = type
@@ -1749,24 +1766,31 @@ const agreeConfirm = async () => {
   if (submitType.value === "EvalFeedback_Bjsbzc") {
     await GetDownloadListSaveNoQuotation(auditFlowId)
   }
+  //先保存数据 然后再提交流程
   /**
    * 保存数据需要确认
    */
-
-  let res = await SubmitNode({
-    comment: confirmText.value,
-    nodeInstanceId,
-    financeDictionaryDetailId: submitType.value
+  save(false).then(async(p:any)=>{
+    let res = await SubmitNode({
+      comment: confirmText.value,
+      nodeInstanceId,
+      financeDictionaryDetailId: submitType.value
+    })
+    if (res.success) {
+      ElMessage.success("操作成功")
+      opinionVisible.value = false
+    }
   })
-  if (res.success) {
-    ElMessage.success("操作成功")
-    opinionVisible.value = false
-  }
 }
 /**
  * 报价反馈提交
  */
-const save = async () => {
+const save = async (ismessage:boolean=true) => {
+  if(!versionChosen)
+  {
+    ElMessage.warning("请先加载数据")
+     return
+  }
   versionMapSubmit[versionChosen.version] = true
   let saveData = {
     ...data.allRes,
@@ -1779,7 +1803,7 @@ const save = async () => {
   delete saveData.message
   delete saveData.mes
   let res: any = await PostQuotationFeedback(saveData)
-  if (res.success) {
+  if (res.success&&ismessage) {
     isSave = true
     ElMessage({
       type: "success",

@@ -41,7 +41,7 @@
       </el-popover>
       <el-popover placement="top-start" :width="200" trigger="hover" content="不接受此价，但接受降价，不用重新核价">
         <template #reference>
-          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjsdjsjj`)" v-havedone :disabled="!isSubmit">
+          <el-button type="primary" @click="setSubmitType(`EvalFeedback_Bjsdjsjj`)" v-havedone :disabled="!isSubmit|| versionChosen.ntime>=3">
             不接受此价（接受降价）</el-button
           >
         </template>

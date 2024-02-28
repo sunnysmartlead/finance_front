@@ -64,7 +64,7 @@
         <el-input type="number"  v-model="data.resa.sopTime" />
       </el-descriptions-item>
       <el-descriptions-item label="项目生命周期">
-        <el-input v-model="data.resa.projectCycle" />
+        <el-input type="number" v-model="data.resa.projectCycle" />
       </el-descriptions-item>
       <el-descriptions-item label="销售类型">
         <!-- {{ data.resa.forSale }} -->

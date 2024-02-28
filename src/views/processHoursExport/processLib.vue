@@ -17,7 +17,7 @@
               :show-file-list="false"
                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed"
                      :headers="AuthorizationdDta"
-                :action="uploadAction" :limit="1">
+                :action="uploadAction" >
             <template #trigger>
               <el-button type="primary">工序库导入</el-button>
             </template>
@@ -149,6 +149,7 @@ import { GetListAll, getProcessDetail, createProcess, exportProcess,
       updateProcess, deleteProcess, uploadAction,getProcessLog,saveProcessLog } from "@/api/process"
 import {deleteFoundationEmc} from "@/api/foundationEmc";
 import {getToken} from "@/utils/cookies";
+import { error } from "console";
 const queryForm = reactive({
   processName:''
 })
@@ -227,7 +228,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     }else{
       ElMessage({
         type: 'error',
-        message: '导入失败',
+        message: response?.error?.message,
        })
     }
 }
@@ -240,7 +241,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     console.log("uploadFiles", uploadFiles);
     ElMessage({
         type: 'error',
-        message: '导入失败',
+        message: error?.message,
     })
 }
 

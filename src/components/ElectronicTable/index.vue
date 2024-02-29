@@ -4,6 +4,9 @@
       <ProcessVertifyBox :onSubmit="handleSetBomState" processType="electronicBomProcessType" />
     </el-row>
     <InterfaceRequiredTime v-if="!isVertify" :ProcessIdentifier="Host" />
+    <el-row justify="end">
+      <ModuleNumber m="2" />
+    </el-row>
     <el-card class="table-wrap" v-loading="tableLoading">
       <template #header >
         <div class="card-header" v-if="!isVertify">
@@ -169,8 +172,10 @@ import { cloneDeep, debounce } from "lodash"
 import { useRouter } from "vue-router"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import { setSessionStorage, getSessionStorage, removeSessionStorage } from "@/utils/seeionStrorage"
+import ModuleNumber from "@/components/ModuleNumber/index.vue"
 import { map } from "lodash"
 import useJump from "@/hook/useJump"
+
 const router = useRouter()
 
 const { closeSelectedTag } = useJump()

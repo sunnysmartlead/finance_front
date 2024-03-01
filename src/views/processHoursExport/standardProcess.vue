@@ -93,7 +93,7 @@
                             <el-input v-model="data.dialogAddProcessForm.standardProcessName"></el-input>
                         </el-form-item>
                         <el-form-item label="选择文件" label-width="150px">
-                            <el-upload   style="width: 100%;" ref="upload" :action="uploadAction" :limit="1"
+                            <el-upload   style="width: 100%;" ref="upload" :action="uploadAction"
                                 :show-file-list="showUploadFile"
                                 :on-remove="onFileRemove"
                                 :on-error="uploadErrror"
@@ -225,7 +225,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     } else {
         ElMessage({
             type: "error",
-            message: '导入失败'
+            message: response?.error?.message,
         })
         return;
     }
@@ -241,7 +241,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
     showUploadFile.value=false;
     ElMessage({
         type: "error",
-        message: '导入失败'
+        message: error?.message,
     })
     return;
 }

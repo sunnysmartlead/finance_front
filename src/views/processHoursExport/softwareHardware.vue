@@ -19,8 +19,7 @@
           <div class="u-flex u-row-left u-col-center">
             <div class="u-m-r-20">
               <el-upload class="upload-demo" ref="upload" accept=".xls,.xlsx" :show-file-list="false"
-                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"  :headers="AuthorizationdDta"
-                :limit="1">
+                :on-error="uploadErrror" :on-success="uploadSuccess" :on-exceed="handleExceed" :action="uploadAction"  :headers="AuthorizationdDta">
                 <template #trigger>
                   <el-button type="primary">软硬件导入</el-button>
                 </template>
@@ -519,7 +518,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   } else {
     ElMessage({
       type: 'error',
-      message: '导入失败',
+      message: response?.error?.message,
     })
   }
 }
@@ -559,7 +558,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
   console.log("uploadFiles", uploadFiles);
   ElMessage({
     type: 'error',
-    message: '导入失败',
+    message:  error?.message,
   })
 }
 

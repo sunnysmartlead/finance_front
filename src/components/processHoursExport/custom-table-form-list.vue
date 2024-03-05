@@ -146,7 +146,7 @@
                 <div class="u-flex u-row-left u-col-center  u-text-center">
                     <!-- 序号 -->
                     <div class="u-width-150 u-border u-p-t-b-5">
-                        <span>{{ dataIndex }}</span>
+                        <span>{{ dataIndex+1 }}</span>
                     </div>
                     <!-- 工序序号 -->
                     <div class="u-width-150 u-border  u-p-t-b-5">

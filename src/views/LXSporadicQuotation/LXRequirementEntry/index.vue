@@ -8,7 +8,7 @@
       <!-- 拟稿人信息 -->
       <el-card class="demand-apply__card">
         <el-row :gutter="20">
-          <el-col :span="24">
+          <!-- <el-col :span="24">
             <el-form-item
               label="引用核报价流程:"
               prop="quoteAuditFlowId"
@@ -34,7 +34,7 @@
                 />
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="24">
             <el-form-item label="标题:" prop="title">
               <el-input v-model="state.quoteForm.title" :disabled="!canDo" placeholder="可自动生成">
@@ -208,10 +208,11 @@ import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
 import { CountryTypeEnum } from "./common/util"
 import { debounce } from "lodash"
-import { List } from "@element-plus/icons-vue/dist/types"
-import { el } from "element-plus/es/locale"
 
+import useJump from "@/hook/useJump"
+const { closeSelectedTag } = useJump()
 let { right, opinion, auditFlowId } = getQuery()
+let route = useRoute()
 const fileList = ref<UploadUserFile[]>([])
 let userStorage = window.localStorage.getItem("user")
 let userInfo: any = userStorage ? JSON.parse(userStorage) : {}
@@ -230,6 +231,7 @@ const state = reactive<any>({
     ProjectName: "", //项目名称
     componentType: null, //销售类型
     enclosureId: 0, //上传附件核价表id
+    opinion:"",
     lxDataListDtos: [
       {
         /**
@@ -252,7 +254,8 @@ const state = reactive<any>({
       }
     ]
   },
-  componentTypeOptions: []
+  componentTypeOptions: [],
+  opinion,
 })
 
 //整个页面是否可以编辑
@@ -354,6 +357,7 @@ const init = async (tempAuditFlowId?: any) => {
       state.quoteForm.lxDataListDtos = data?.lxDataListDtos
     }
   }
+
 }
 
 //反填附件
@@ -369,9 +373,11 @@ const ReverseFillingEnclosure = async (result: any) => {
 }
 
 const save = debounce(async (isSubmit: boolean) => {
+  let {nodeInstanceId } = route.query
   state.quoteForm.isSubmit = isSubmit
   state.quoteForm.auditFlowId = auditFlowId
-  const { success }: any = await LXRequirementEnt(state.quoteForm)
+  state.quoteForm.opinion=state.opinion||state.quoteForm.opinion
+  const { success }: any = await LXRequirementEnt({...state.quoteForm,nodeInstanceId})
   if (!success) {
     ElMessage({
       type: "error",
@@ -382,7 +388,7 @@ const save = debounce(async (isSubmit: boolean) => {
       type: "success",
       message: "添加成功"
     })
-    init()
+    closeSelectedTag(route.path)
   }
 }, 300)
 

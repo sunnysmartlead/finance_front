@@ -76,6 +76,13 @@ const urlMap = {
   QuotationApprovalForm: { path: "/quoteAnalysis/marketingApproval", query: {} }, //系统生成报价审批表报价单
   ExternalQuotation: { path: "/quoteAnalysis/quoteForm", query: {} }, //系统生成对外报价单
   QuoteFeedback: { path: "/quoteAnalysis/quoteFeedback", query: {} }, //（报价反馈）
-  QuoteApproval: { path: "/marketingQuotation/indexFirst", query: {} } //"审批报价策略与核价表  总经理报价审批界面 2从1直接跳转过去，非直接进去 "
+  QuoteApproval: { path: "/marketingQuotation/indexFirst", query: {} }, //"审批报价策略与核价表  总经理报价审批界面 2从1直接跳转过去，非直接进去 "
+
+  //零星报价
+  PricingDemandInputLX:{ path: "/LXRequirementEntry/index", query: {} }, //核价需求录入-LX
+  ReviewQuotationStrategyLX:{ path: "/LXReviewQuotationStrategy/index", query: {} }, //审核报价策略之LX
+  QuotationApprovalFormLX:{path: "/LXQuotationReviewForm/index", query: {}},//报价审批表之LX
+  ViewQuotationApprovalFormLX:{path: "/LXViewQuotationReviewForm/index", query: {}},//查看报价审批表之LX
+  ArchiveEndLX:{path: "/LXFiled/index", query: {}},//归档之LX
 }
 export default urlMap

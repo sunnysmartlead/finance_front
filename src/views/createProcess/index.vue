@@ -8,12 +8,14 @@
       </template>
       <el-row>
         <template :span="4" v-for="item in PROCESS_EUNM" :key="item.title">
-        <el-card shadow="hover" class="card"  :header="item.title" m="2">
-          <template v-for="c in item.children">
-            <el-button @click="createFlow(c.id)" :disabled="!c.id" type="primary" m="2">{{ c.name }}</el-button>
-          </template>
-        </el-card>
-      </template>
+          <el-card shadow="hover" class="card" :header="item.title" m="2">
+            <template v-for="c in item.children">
+              <el-button @click="createFlow(c.id, c?.to)" :disabled="!c.id" type="primary" m="2">{{
+                c.name
+              }}</el-button>
+            </template>
+          </el-card>
+        </template>
       </el-row>
     </el-card>
   </div>
@@ -26,15 +28,23 @@ import { PROCESS_EUNM } from "./common/const"
 
 const hueRotate = 10
 
-const createFlow = (id: string) => {
-  router.push({
-    path: "/demandApply/index",
-    query: {
-      opinion: id
-    }
-  })
+const createFlow = (id: string, to: string) => {
+  if (to) {
+      router.push({
+      path: to,
+      query: {
+        opinion: id
+      }
+    })
+  } else {
+    router.push({
+      path: "/demandApply/index",
+      query: {
+        opinion: id
+      }
+    })
+  }
 }
-
 </script>
 <style scoped lang="scss">
 .div-card {

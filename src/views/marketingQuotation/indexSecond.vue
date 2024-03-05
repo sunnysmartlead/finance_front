@@ -321,6 +321,7 @@
             </template>
           </el-table-column> -->
           <el-table-column label="价格" prop="price" :formatter="formatThousandths" align="center" />
+          <el-table-column label="实际数量" prop="actualQuantity" :formatter="formatThousandths" align="center" />
           <el-table-column label="销售收入" prop="salesRevenue" :formatter="formatThousandths" align="center" />
           <el-table-column label="销售成本" prop="sellingCost" :formatter="formatThousandths" align="center" />
           <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" /> -->

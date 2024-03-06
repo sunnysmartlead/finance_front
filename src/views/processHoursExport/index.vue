@@ -61,7 +61,7 @@
       <div style="color: #000000; font-weight: bold">
         <span>工序列表录入</span>
       </div>
-      <el-scrollbar wrap-style="padding:0 0 10px 0px" always :max-height="500">
+      <el-scrollbar wrap-style="padding:0 0 10px 0px;margin:0 0 20px 0" always :max-height="500">
         <!-- 头部区 -->
         <div class="u-flex u-row-left u-col-center u-text-center u-head-stop">
           <div style="position: sticky !important; left: 0px; z-index: 2; background: #fff">
@@ -1522,7 +1522,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
       for (let k = 0; k < exportListData.length; k++) {
-        let newExportItem = JSON.parse(JSON.stringify(exportListData[k]))
+        let newExportItem = JSON.parse(JSON.stringify(exportListData[exportListData.length-k-1]))
         compareSopData(newExportItem)
       }
     } else {
@@ -2776,7 +2776,7 @@ const confirmSelectStandardProcess = () => {
   standardProcessLoading.value = true
   if (dataArr.value.length > 0) {
     for (let k = 0; k < pList.length; k++) {
-      let newExportItem = JSON.parse(JSON.stringify(pList[k]))
+      let newExportItem = JSON.parse(JSON.stringify(pList[pList.length-k-1]))
       compareSopData(newExportItem)
     }
   } else {

@@ -2419,7 +2419,7 @@ const init = async (tempAuditFlowId?: any) => {
   setNumber()
   if (tempAuditFlowId || query.auditFlowId) {
     // 查看
-    let viewDataRes: any = await getPriceEvaluationStartData(tempAuditFlowId || query.auditFlowId)
+    let viewDataRes: any = await getPriceEvaluationStartData(tempAuditFlowId || query.auditFlowId,Boolean(tempAuditFlowId))
     if (viewDataRes.result) {
       isEdit = true
       state.quoteForm = viewDataRes.result
@@ -2474,11 +2474,10 @@ const init = async (tempAuditFlowId?: any) => {
       state.tableLoading = false
       isFirstShow.value = true
     }, 500)
-    if(tempAuditFlowId)//如果是引用流程
-    {
-       state.quoteForm.draftDate=new Date()//拟稿日期获取当前日期
-       state.quoteForm.quoteVersion=state.quoteForm.quoteVersion+1//项目版本号获取之前版本号+1
-    }
+    // if(tempAuditFlowId)//如果是引用流程
+    // {
+    //    state.quoteForm.draftDate=new Date()//拟稿日期获取当前日期
+    // }
   }
   setTimeout(() => {
     isFirstShow.value = true

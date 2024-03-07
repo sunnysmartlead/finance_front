@@ -36,12 +36,13 @@ export function getPriceEvaluationTable(data: any) {
   })
 }
 
-export function getPriceEvaluationStartData(auditFlowId: any) {
+export function getPriceEvaluationStartData(auditFlowId: any,isQuote:boolean=false) {
   return request({
     url: "/api/services/app/PriceEvaluation/GetPriceEvaluationStartData",
     method: "get",
     data: {
-      auditFlowId
+      auditFlowId,
+      isQuote
     }
   })
 }

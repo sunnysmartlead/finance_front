@@ -22,3 +22,12 @@ export const formatThousandthsNoFixed = (_record: any, _row: any, cellValue: any
     return 0
   }
 }
+//两位小数
+export const TwoDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
+{
+  if (cellValue) {
+    return Number(cellValue).toFixed(2) + ""
+  } else {
+    return 0
+  }
+}

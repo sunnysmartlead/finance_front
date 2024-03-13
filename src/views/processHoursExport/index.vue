@@ -1467,6 +1467,34 @@ const handleSaveData = () => {
 // }
 
 const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
+  let processHoursEnterUphList= JSON.parse(JSON.stringify(UPHData.value))
+   for (let a = 0; a < processHoursEnterUphList.length; a++) {
+    if (!isCOB.value) {
+      if (processHoursEnterUphList[a].smtuph == null||processHoursEnterUphList[a].smtuph == 0 || processHoursEnterUphList[a].zcuph == null||processHoursEnterUphList[a].zcuph == 0) {
+        ElMessage({
+          type: "error",
+          message: "uph不能为空或者为0"
+        })
+        return
+      }
+    }
+    {
+      if (
+        processHoursEnterUphList[a].smtuph == null ||
+        processHoursEnterUphList[a].smtuph == 0 ||
+        processHoursEnterUphList[a].zcuph == null ||
+        processHoursEnterUphList[a].zcuph == 0 ||
+        processHoursEnterUphList[a].cobuph == null||
+        processHoursEnterUphList[a].cobuph == 0
+      ) {
+        ElMessage({
+          type: "error",
+          message: "uph不能为空或者为0"
+        })
+        return
+      }
+    }
+  }
   let param = {
     auditFlowId: auditFlowId,
     solutionId: productId,

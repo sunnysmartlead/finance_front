@@ -62,6 +62,12 @@ export const costChartData = {
     subtext: "",
     left: "center"
   },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
   grid: {
     left: "3%",
     right: "10%",
@@ -83,6 +89,7 @@ export const costChartData = {
   },
   series: [
     {
+      //barWidth: '100%',
       type: "bar",
       showBackground: true,
       stack: "Total",

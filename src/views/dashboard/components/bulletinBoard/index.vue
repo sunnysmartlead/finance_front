@@ -140,7 +140,7 @@ import otherCostTable from "../otherCostTable/index.vue"
 import useJump from "@/hook/useJump"
 import SchemeCompare from "@/components/SchemeCompare/index.vue"
 import TrDownLoad from "@/components/TrDownLoad/index.vue"
-import { formatThousandths } from '@/utils/number'
+import { formatThousandths,TwoDecimalPlaces } from '@/utils/number'
 import { getPriceEvaluationStartData, getIsUplpadEvalTable } from "../../../demandApply/service"
 import { downloadFileExcel } from "@/utils"
 const bomTableRef = ref<any>()
@@ -471,7 +471,9 @@ const getPricingPanelProfit = async () => {
       UpDown: upDown,
       GradientId: data.form.gradientId,
     })
-    const val = result?.items?.map((val: any) => formatThousandths(null, null, val?.proportion) || 0)
+    var val = result?.items?.map((val: any) => TwoDecimalPlaces(null, null, val?.proportion) || 0)
+    //val=[1014.13,10,10,10,10,10,10,-1066.46]
+    console.log(val,"val");
     console.log(val, "getPricingPanelProfit")
     const names = result?.items?.map((item:any) => item.name);
     costChartData.xAxis.data=names

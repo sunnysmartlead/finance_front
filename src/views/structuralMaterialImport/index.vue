@@ -66,7 +66,16 @@
           </el-input>
         </el-form-item>
         <el-form-item label="FOV" prop="fov">
-          <el-input v-model="data.logisticsForm.fov" oninput="value=value.replace(/[^0-9.]/g,'')" />
+          <el-input v-model="data.logisticsForm.fov" oninput="value=value.replace(/[^0-9.]/g,'')" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="HFOV" prop="fov">
+          <el-input v-model="data.logisticsForm.hfov" oninput="value=value.replace(/[^0-9.]/g,'')" />
+        </el-form-item>
+        <el-form-item label="VFOV" prop="fov">
+          <el-input v-model="data.logisticsForm.vfov" oninput="value=value.replace(/[^0-9.]/g,'')" />
+        </el-form-item>
+        <el-form-item label="DFOV" prop="fov">
+          <el-input v-model="data.logisticsForm.dfov" oninput="value=value.replace(/[^0-9.]/g,'')" />
         </el-form-item>
         <h6>外包装体积</h6>
         <el-form-item label="外包装长" prop="outerPackagingLength">

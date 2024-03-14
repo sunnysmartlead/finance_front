@@ -31,3 +31,12 @@ export const TwoDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
     return 0
   }
 }
+//0位小数千分位
+export const ZeroDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
+{
+  if (cellValue) {
+    return Number(cellValue).toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, ($0, $1) => {return $1 + ",";}).replace(/\.$/, "")
+  } else {
+    return 0
+  }
+}

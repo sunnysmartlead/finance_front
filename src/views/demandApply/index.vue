@@ -219,15 +219,15 @@
               </template>
             </el-table-column>
             <el-table-column v-for="(year, index) in state.yearCols" :label="year + yearNote(index)"
-              :key="`pcsTableData-${year}-${index}`" width="175" :prop="`pcsYearList[${index}].quantity`">
+              :key="`pcsTableData-${year}-${index}`" width="175" :prop="`pcsYearList[${index}].quantity`" align="right">
               <template #default="{ row }">
                 <el-input-number @mousewheel.native.prevent controls-position="right"
                   v-model="row.pcsYearList[index].quantity" :disabled="notEdit" :min="0" />
               </template>
             </el-table-column>
-            <el-table-column prop="rowSum" label="合计">
+            <el-table-column prop="rowSum" label="合计" align="right">
               <template #default="{ row }">
-                {{ formatThousandths(null, null, row.rowSum) }}
+                {{ ZeroDecimalPlaces(null, null, row.rowSum) }}
               </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="85">
@@ -259,15 +259,15 @@
               </template>
             </el-table-column>
             <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-              :key="`interiorPcsTableData-${year}-${index}`" width="150" :prop="`pcsYearList[${index}].quantity`">
+              :key="`interiorPcsTableData-${year}-${index}`" width="150" :prop="`pcsYearList[${index}].quantity`" align="right">
               <template #default="{ row }">
-                {{ formatThousandths(null, null, row.pcsYearList?.[index]?.quantity) }}
+                {{ ZeroDecimalPlaces(null, null, row.pcsYearList?.[index]?.quantity) }}
                 <!-- <el-input v-model="row.pcsYearList[index].quantity" @change="pcsYearQuantitySum(row, index)" /> -->
               </template>
             </el-table-column>
-            <el-table-column prop="rowSum" label="合计" width="150">
+            <el-table-column prop="rowSum" label="合计" width="150" align="right">
               <template #default="{ row }">
-                {{ formatThousandths(null, null, row.rowSum) }}
+                {{ ZeroDecimalPlaces(null, null, row.rowSum) }}
               </template>
             </el-table-column>
             <!-- <el-table-column label="操作" fixed="right">
@@ -357,12 +357,12 @@
                 </template>
               </el-table-column>
               <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-                :key="`${Findex}-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`">
+                :key="`${Findex}-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`" align="right">
                 <template #default="{ row }">
-                  {{ formatThousandths(null, null, row.modelCountYearList?.[index]?.quantity) }}
+                  {{ ZeroDecimalPlaces(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
               </el-table-column>
-              <el-table-column label="模组总量" width="180">
+              <el-table-column label="模组总量" width="180" align="right">
                 <template #default="{ row }">
                   {{ price(row) }}
                 </template>
@@ -402,8 +402,8 @@
             <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" /> -->
             <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
               :key="`moduleTableTotal-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`"
-              :formatter="formatThousandths" />
-            <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="formatThousandths" />
+              :formatter="ZeroDecimalPlaces" align="right"/>
+            <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="ZeroDecimalPlaces" align="right"/>
           </el-table>
           <h6 />
           <el-form-item label="是否分梯度核价：">
@@ -453,14 +453,14 @@
                 </template>
               </el-table-column>
               <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-                :key="`gradientModelTable-${year}-${index}`" width="180">
+                :key="`gradientModelTable-${year}-${index}`" width="180" align="right">
                 <template #default="{ row }">
-                  {{ formatThousandths(null, null, row.gradientModelYear?.[index]?.count) }}
+                  {{ ZeroDecimalPlaces(null, null, row.gradientModelYear?.[index]?.count) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="rowSum" label="合计" width="150">
+              <el-table-column prop="rowSum" label="合计" width="150" align="right">
                 <template #default="{ row }">
-                  {{ formatThousandths(null, null, getRowSum(row, "gradientModelYear", "count")) }}
+                  {{ ZeroDecimalPlaces(null, null, getRowSum(row, "gradientModelYear", "count")) }}
                 </template>
               </el-table-column>
             </el-table>
@@ -476,25 +476,25 @@
           </el-table-column>
           <el-table-column label="客户年降率(%)">
             <template #default="{ row, $index }">
-              <el-input-number v-model="row.annualDeclineRate" :disabled="!canDo || $index === 0" :min="0" />
+              <el-input-number v-model="row.annualDeclineRate" :disabled="!canDo || $index === 0" :min="0" :precision="1"/>
             </template>
           </el-table-column>
           <el-table-column label="年度返利要求(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.annualRebateRequirements"
-                :disabled="!canDo" :min="0" />
+                :disabled="!canDo" :min="0" :precision="1"/>
             </template>
           </el-table-column>
           <el-table-column label="一次性折让率(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.oneTimeDiscountRate"
-                :disabled="!canDo" :min="0" />
+                :disabled="!canDo" :min="0" :precision="1"/>
             </template>
           </el-table-column>
           <el-table-column label="年度佣金比例(%)">
             <template #default="{ row }">
               <el-input-number v-model="row.commissionRate"
-                :disabled="!canDo" :min="0" />
+                :disabled="!canDo" :min="0" :precision="1"/>
             </template>
           </el-table-column>
         </el-table>
@@ -1003,7 +1003,7 @@ import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
 import { CountryTypeEnum } from "./common/util"
 import { debounce } from "lodash"
-
+import { ZeroDecimalPlaces } from "@/utils/number"
 let { right, opinion } = getQuery()
 
 //整个页面是否可以编辑
@@ -1206,7 +1206,7 @@ const getPcsTableDatSummaries = (param: any) => {
             return prev
           }
         }, 0)
-        .toFixed(2)
+        .toFixed(0)
         .replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")}`
     } else {
       sums[index] = ""
@@ -1990,7 +1990,7 @@ const price = (row: any) => {
   row.modelCountYearList?.forEach((item: any) => {
     modelTotal += Number(item.quantity || 0)
   })
-  return formatThousandths(null, null, modelTotal)
+  return ZeroDecimalPlaces(null, null, modelTotal)
 }
 
 const productChange = (_value: string) => {

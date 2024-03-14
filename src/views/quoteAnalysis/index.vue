@@ -17,7 +17,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template #default="scope">
-              <el-button @click="selectVersion(scope.row)" type="primary">加载该版本</el-button>
+              <el-button @click="selectVersion(scope.row)" type="primary">⑤ 加载该版本</el-button>
               <el-button @click="deleteVersion(scope.row)" type="danger" :disabled="!scope.row.isFirst">删除</el-button>
             </template>
           </el-table-column>
@@ -25,7 +25,7 @@
       </div>
       <el-row :gutter="20">
            <p>请选择报价方案组合：</p>
-           <el-button type="primary" @click="addNewPlan" ml-auto float-right>新增方案</el-button>
+           <el-button type="primary" @click="addNewPlan" ml-auto float-right>① 新增方案</el-button>
       </el-row>
       <el-table :data="planList" border max-height="300px">
         <el-table-column label="序号" type="index" width="100" align="center" />
@@ -59,13 +59,13 @@
       <el-row :gutter="20">
           <h4 mt-20px>方案组合</h4>
           <el-button type="primary" mt-20px ml-auto v-loading.fullscreen.lock="fullscreenLoading" @click="comfirmPlans"
-      >确定</el-button
+      >② 确定</el-button
       >
       </el-row>
       <div v-for="(plan, index) in planListArr" :key="index" mt="20px">
         <el-descriptions :title="`方案${index + 1}`" :column="1" border>
           <template #extra>
-            <el-button type="primary" @click="planListArrChange(index)">选择该方案</el-button>
+            <el-button type="primary" @click="planListArrChange(index)">③ 选择该方案</el-button>
             <el-button type="danger" @click="deletePlanListArr(index)">删除方案</el-button>
           </template>
           <el-descriptions-item label="产品" v-for="item in plan" :key="item.id">
@@ -76,9 +76,9 @@
     </el-card>
     <el-button type="primary" @click="downLoad">成本信息表下载</el-button>
     <el-button-group style="float: right">
-      <el-button type="primary" @click="postOffer(true)" v-havedone>报价</el-button>
+      <el-button type="primary" @click="postOffer(true)" v-havedone>⑦ 报价</el-button>
       <el-button type="primary" @click="dialogVisibleR=true" v-havedone>不报价</el-button>
-      <el-button type="primary" @click="submitProcess(true)" v-havedone>提交流程</el-button>
+      <el-button type="primary" @click="submitProcess(true)" v-havedone>⑧ 提交流程</el-button>
     </el-button-group>
     <div>
       <!-- nre -->
@@ -456,8 +456,8 @@
           <div :id="'revenueGrossMarginChart' + 'shiji'" class="h-400px" />
         </div>
       </el-card>
-      <el-button @click="save" type="primary" float-right my-20px>保存</el-button>
-      <el-button @click="toMarketingApproval" type="primary" float-right my-20px mr-20px>生成审批表</el-button>
+      <el-button @click="save" type="primary" float-right my-20px>④ 保存</el-button>
+      <el-button @click="toMarketingApproval" type="primary" float-right my-20px mr-20px>⑥ 生成审批表</el-button>
     </div>
 
     <el-dialog v-model="dialogVisible" title="年份维度对比">

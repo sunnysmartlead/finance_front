@@ -11,35 +11,35 @@
         :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost', '', 5)" show-summary
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" v-if="isVertify" />
-        <el-table-column type="index" label="序号" width="70" />
-        <el-table-column label="模具费用" prop="modelName" width="180" />
-        <el-table-column label="模穴数" width="150" prop="moldCavityCount" :formatter="formatThousandths">
+        <el-table-column type="index" label="序号" width="70"  align="center"/>
+        <el-table-column label="模具费用" prop="modelName" width="180" align="center"/>
+        <el-table-column label="模穴数" width="150" prop="moldCavityCount" :formatter="formatThousandths" align="right">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.moldCavityCount" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="模次数" width="150" prop="modelNumber"  :formatter="formatThousandths">
+        <el-table-column label="模次数" width="150" prop="modelNumber"  :formatter="formatThousandths" align="right">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.modelNumber" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" width="180" prop="count" :formatter="formatThousandths">
+        <el-table-column label="数量" width="180" prop="count" :formatter="formatThousandths" align="right">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.count" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="单价" width="180" prop="unitPrice" :formatter="formatThousandths">
+        <el-table-column label="单价" width="180" prop="unitPrice" :formatter="formatThousandths" align="right">
           <template #default="{ row }">
             <el-input-number @mousewheel.native.prevent v-if="!isVertify && row.isEdit" :disabled="row.isSubmit" v-model="row.unitPrice" :min="0" controls-position="right" />
           </template>
         </el-table-column>
-        <el-table-column label="金额" prop="cost" width="180" :formatter="formatThousandths" />
-        <el-table-column label="备注" prop="remark" width="180">
+        <el-table-column label="金额" prop="cost" width="180" :formatter="formatThousandths" align="right"/>
+        <el-table-column label="备注" prop="remark" width="180" align="left">
           <template #default="{ row }">
             <el-input v-if="!isVertify && row.isEdit" v-model="row.remark" :disabled="row.isSubmit" />
           </template>
         </el-table-column>
-        <el-table-column label="提交人" prop="peopleName" width="180" />
+        <el-table-column label="提交人" prop="peopleName" width="180" align="center"/>
         <el-table-column label="操作" v-if="!isVertify" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link v-if="!row.isSubmit && !row.isEdit" :disabled="row.isSubmit" @click="handleEdit(row)"

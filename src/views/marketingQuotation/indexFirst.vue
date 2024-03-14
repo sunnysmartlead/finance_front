@@ -55,6 +55,8 @@
           <el-table-column label="产品名称" prop="product" />
           <el-table-column label="核价金额" prop="cost" :formatter="formatThousandths" align="right" />
           <el-table-column label="报价金额" prop="number" :formatter="formatThousandths" align="right" />
+          <el-table-column label="汇率" prop="exchangeRate" :formatter="formatThousandths" align="right" />
+          <el-table-column label="报价金额(USD)" prop="numberUSD" :formatter="formatThousandths" align="right" />
         </el-table>
         <!-- nre -->
         <el-card v-if="data.resa.managerApprovalOfferNres">

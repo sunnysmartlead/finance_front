@@ -219,13 +219,13 @@
               </template>
             </el-table-column>
             <el-table-column v-for="(year, index) in state.yearCols" :label="year + yearNote(index)"
-              :key="`pcsTableData-${year}-${index}`" width="175" :prop="`pcsYearList[${index}].quantity`" align="right">
+              :key="`pcsTableData-${year}-${index}`" width="175" :prop="`pcsYearList[${index}].quantity`" align="right" header-align="center">
               <template #default="{ row }">
                 <el-input-number @mousewheel.native.prevent controls-position="right"
                   v-model="row.pcsYearList[index].quantity" :disabled="notEdit" :min="0" />
               </template>
             </el-table-column>
-            <el-table-column prop="rowSum" label="合计" align="right">
+            <el-table-column prop="rowSum" label="合计" align="right" header-align="center">
               <template #default="{ row }">
                 {{ ZeroDecimalPlaces(null, null, row.rowSum) }}
               </template>
@@ -259,13 +259,13 @@
               </template>
             </el-table-column>
             <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-              :key="`interiorPcsTableData-${year}-${index}`" width="150" :prop="`pcsYearList[${index}].quantity`" align="right">
+              :key="`interiorPcsTableData-${year}-${index}`" width="150" :prop="`pcsYearList[${index}].quantity`" align="right" header-align="center">
               <template #default="{ row }">
                 {{ ZeroDecimalPlaces(null, null, row.pcsYearList?.[index]?.quantity) }}
                 <!-- <el-input v-model="row.pcsYearList[index].quantity" @change="pcsYearQuantitySum(row, index)" /> -->
               </template>
             </el-table-column>
-            <el-table-column prop="rowSum" label="合计" width="150" align="right">
+            <el-table-column prop="rowSum" label="合计" width="150" align="right" header-align="center">
               <template #default="{ row }">
                 {{ ZeroDecimalPlaces(null, null, row.rowSum) }}
               </template>
@@ -357,12 +357,12 @@
                 </template>
               </el-table-column>
               <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-                :key="`${Findex}-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`" align="right">
+                :key="`${Findex}-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`" align="right" header-align="center">
                 <template #default="{ row }">
                   {{ ZeroDecimalPlaces(null, null, row.modelCountYearList?.[index]?.quantity) }}
                 </template>
               </el-table-column>
-              <el-table-column label="模组总量" width="180" align="right">
+              <el-table-column label="模组总量" width="180" align="right" header-align="center">
                 <template #default="{ row }">
                   {{ price(row) }}
                 </template>
@@ -402,8 +402,8 @@
             <el-table-column label="单车产品数量" prop="singleCarProductsQuantity" width="180" /> -->
             <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
               :key="`moduleTableTotal-${year}-${index}`" width="180" :prop="`modelCountYearList.${index}.quantity`"
-              :formatter="ZeroDecimalPlaces" align="right"/>
-            <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="ZeroDecimalPlaces" align="right"/>
+              :formatter="ZeroDecimalPlaces" align="right" header-align="center"/>
+            <el-table-column label="模组总量" prop="sumQuantity" width="180" :formatter="ZeroDecimalPlaces" align="right" header-align="center"/>
           </el-table>
           <h6 />
           <el-form-item label="是否分梯度核价：">
@@ -453,12 +453,12 @@
                 </template>
               </el-table-column>
               <el-table-column :label="year + yearNote(index)" v-for="(year, index) in state.yearCols"
-                :key="`gradientModelTable-${year}-${index}`" width="180" align="right">
+                :key="`gradientModelTable-${year}-${index}`" width="180" align="right" header-align="center">
                 <template #default="{ row }">
                   {{ ZeroDecimalPlaces(null, null, row.gradientModelYear?.[index]?.count) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="rowSum" label="合计" width="150" align="right">
+              <el-table-column prop="rowSum" label="合计" width="150" align="right" header-align="center">
                 <template #default="{ row }">
                   {{ ZeroDecimalPlaces(null, null, getRowSum(row, "gradientModelYear", "count")) }}
                 </template>

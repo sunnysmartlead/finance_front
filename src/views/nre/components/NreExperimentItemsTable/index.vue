@@ -1,7 +1,10 @@
 <template>
   <div style="padding: 0 10px">
     <!-- <VertifyBox :onSubmit="handleVertify" /> -->
-    <ProcessVertifyBox :onSubmit="isVertify?NREToExamineFun:submit"  :processType="isVertify?'baseProcessType':'confirmProcessType'"/>
+    <ProcessVertifyBox
+      :onSubmit="isVertify ? NREToExamineFun : submit"
+      :processType="isVertify ? 'baseProcessType' : 'confirmProcessType'"
+    />
     <InterfaceRequiredTime :ProcessIdentifier="Host" />
     <el-card class="margin-top">
       <template #header>
@@ -39,8 +42,8 @@
         :summary-method="getQaTestDepartmentsSummaries"
         show-summary
       >
-        <el-table-column align="center"  type="index" label="序号" width="80" />
-        <el-table-column align="center" prop="projectName"  label="试验项目（根据与客户协定项目）" width="180">
+        <el-table-column align="center" type="index" label="序号" width="80" />
+        <el-table-column align="center" prop="projectName" label="试验项目（根据与客户协定项目）" width="180">
           <template #default="{ row, $index }">
             <SelectSearch
               v-if="!isVertify"
@@ -50,7 +53,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="是否指定第三方" width="180">
+        <el-table-column align="center" label="是否指定第三方" width="180">
           <template #default="{ row }">
             <el-select :disabled="isVertify" v-model="row.isThirdParty">
               <el-option :value="true" label="是" />
@@ -58,42 +61,65 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" />
-        <el-table-column align="center"  label="调整系数" width="180">
+        <el-table-column align="center" label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" />
+        <el-table-column align="center" label="调整系数" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
-            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
+            <el-input-number
+              @mousewheel.native.prevent
+              v-else
+              :min="0"
+              controls-position="right"
+              v-model="row.adjustmentCoefficient"
+            />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="计价单位" prop="unit" width="180" />
-        <el-table-column align="center"  label="时间-摸底" width="180">
+        <el-table-column align="center" label="计价单位" prop="unit" width="180" />
+        <el-table-column align="center" label="时间-摸底" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countBottomingOut }}</span>
-            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
+            <el-input-number
+              @mousewheel.native.prevent
+              v-else
+              :min="0"
+              controls-position="right"
+              v-model="row.countBottomingOut"
+            />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="时间-DV" width="180">
+        <el-table-column align="center" label="时间-DV" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countDV }}</span>
-            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countDV" />
+            <el-input-number
+              @mousewheel.native.prevent
+              v-else
+              :min="0"
+              controls-position="right"
+              v-model="row.countDV"
+            />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="时间-PV" width="180">
+        <el-table-column align="center" label="时间-PV" width="180">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.countPV }}</span>
-            <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countPV" />
+            <el-input-number
+              @mousewheel.native.prevent
+              v-else
+              :min="0"
+              controls-position="right"
+              v-model="row.countPV"
+            />
           </template>
         </el-table-column>
-        <el-table-column align="center"  label="总费用" prop="allCost" width="180" :formatter="formatThousandths" />
-        <el-table-column align="center"  label="备注">
+        <el-table-column align="right" header-align="center" label="总费用" prop="allCost" width="180" :formatter="formatThousandths" />
+        <el-table-column align="center" label="备注">
           <template #default="{ row }">
             <span v-if="isVertify">{{ row.remark }}</span>
             <el-input v-else v-model="row.remark" />
           </template>
         </el-table-column>
-         <el-table-column prop="creatorUserName"  label="确认人">
-        </el-table-column>
-        <el-table-column align="center"  label="操作" v-if="!isVertify" fixed="right">
+        <el-table-column prop="creatorUserName" label="确认人"> </el-table-column>
+        <el-table-column align="center" label="操作" v-if="!isVertify" fixed="right">
           <template #default="{ $index }">
             <el-button @click="deleteExperimentItemsData($index)" type="danger" v-havedone>删除</el-button>
           </template>
@@ -128,7 +154,7 @@ import { designScheme } from "@/views/demandApplyAudit"
 import ProcessVertifyBox from "@/components/ProcessVertifyBox/index.vue"
 import useJump from "@/hook/useJump"
 import { useRoute } from "vue-router"
-import { formatThousandths } from '@/utils/number'
+import { formatThousandths } from "@/utils/number"
 
 const { closeSelectedTag } = useJump()
 const route = useRoute()
@@ -137,7 +163,7 @@ let Host = "NreInputTest"
 let { auditFlowId, productId }: any = getQuery()
 
 const props = defineProps({
-  isVertify: Boolean,
+  isVertify: Boolean
 })
 
 console.log(props, "props")
@@ -193,7 +219,7 @@ const addExperimentItemsData = () => {
 
 const submit = async ({ comment, opinion, nodeInstanceId, label }: any) => {
   try {
-    const isSubmit: boolean=true
+    const isSubmit: boolean = true
     const { success } = await PostExperimentItems({
       auditFlowId,
       solutionId: productId,
@@ -216,7 +242,7 @@ const NREToExamineFun = async ({ comment, opinion, nodeInstanceId, label }: any)
   try {
     const { success } = await NREToExamine({
       auditFlowId,
-      nreCheckType:2,
+      nreCheckType: 2,
       opinionDescription: comment,
       opinion,
       nodeInstanceId
@@ -259,7 +285,6 @@ const handleDownLoadExcel = async () => {
   }
 }
 
-
 // NRE实验费模板上传
 const handleSuccess: UploadProps["onSuccess"] = async (res: any) => {
   if (!res.error) {
@@ -301,9 +326,12 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
-  auditFlowId = Number(auditFlowId)
-  productId = Number(productId)
-  initFetch()
+  if (Number(auditFlowId) && Number(productId)) {
+    auditFlowId = Number(auditFlowId)
+    productId = Number(productId)
+    initFetch()
+  }
+
   //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
 </script>

@@ -28,13 +28,13 @@
         <el-button type="primary" @click="addTableData('handPieceCostModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.handPieceCost" border
-        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
-        <el-table-column prop="partName" label="手板件名称"  align="center"/>
-        <el-table-column prop="partNumber" label="料号"  align="center"/>
-        <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="quantity" label="数量" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="partName" label="手板件名称"  align="left"/>
+        <el-table-column prop="partNumber" label="料号"  align="center" width="175"/>
+        <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandths"  align="right" width="175"/>
+        <el-table-column prop="quantity" label="数量" :formatter="formatThousandths"  align="right" width="175"/>
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="right"/>
         <el-table-column prop="remark" label="备注"  align="center"/>
         <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit"  align="center">
           <template #default="{ row, $index }">
@@ -46,7 +46,7 @@
       </el-table>
       <h6>修改项：</h6>
       <el-table :data="data.handPieceCostModifyDtos" border
-        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '手板件费用', null, 'quantity')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
         <el-table-column prop="partName" label="手板件名称"   align="center">
           <template #default="{ row }">
@@ -68,7 +68,7 @@
             <el-input-number @mousewheel.native.prevent v-model="row.quantity" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="right"/>
         <el-table-column prop="remark" label="备注"  align="center">
           <template #default="{ row }">
             <el-input v-model="row.remark" />
@@ -92,13 +92,13 @@
           v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.mouldInventory" border :summary-method="(val: any) => getMouldSummaries(val, '模具费用')"
-        show-summary>
+        show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
-        <el-table-column prop="modelName" label="模具名称"  align="center"/>
-        <el-table-column prop="moldCavityCount" label="模穴数" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandthsNoFixed"  align="center"/>
-        <el-table-column prop="count" label="数量" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="modelName" label="模具名称"  align="left"/>
+        <el-table-column prop="moldCavityCount" label="模穴数" :formatter="formatThousandths"  align="right" width="175"/>
+        <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandthsNoFixed"  align="right" width="175"/>
+        <el-table-column prop="count" label="数量" :formatter="formatThousandths"  align="right" width="175"/>
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="right" />
         <el-table-column prop="remark" label="备注"  align="center"/>
         <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit"  align="center">
           <template #default="{ row, $index }">
@@ -110,7 +110,7 @@
       </el-table>
       <h6>修改项：</h6>
       <el-table :data="data.mouldInventoryModifyDtos" border
-        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '模具费用', 'cost')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
         <el-table-column prop="modelName" label="模具名称"  align="center">
           <template #default="{ row }">
@@ -132,7 +132,7 @@
             <el-input-number @mousewheel.native.prevent v-model="row.count" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="right"/>
         <el-table-column prop="remark" label="备注"  align="center">
           <template #default="{ row }">
             <el-input v-model="row.remark" />
@@ -154,21 +154,21 @@
           v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.laboratoryFeeModels" style="width: 100%" border
-        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
-        <el-table-column prop="projectName" label="试验项目"  align="center"/>
-        <el-table-column prop="isThirdParty" label="是否指定第三方"  align="center">
+        <el-table-column prop="projectName" label="试验项目"   align="left"/>
+        <el-table-column prop="isThirdParty" label="是否指定第三方"  align="center" width="130">
           <template #default="{ row }">
             {{ row.isThirdParty ? "是" : "否" }}
           </template>
         </el-table-column>
-        <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandths"  align="center"/>
-        <el-table-column label="计数-摸底" prop="countBottomingOut" :formatter="formatThousandths"  align="center"/>
-        <el-table-column label="计数-DV" prop="countDV" :formatter="formatThousandths"  align="center"/>
-        <el-table-column label="计数-PV" prop="countPV" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="allCost" label="总费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="unitPrice" label="单价" :formatter="formatThousandths"  align="right" width="135"/>
+        <el-table-column label="计数-摸底" prop="countBottomingOut" :formatter="formatThousandths"  align="right" width="135"/>
+        <el-table-column label="计数-DV" prop="countDV" :formatter="formatThousandths"  align="right" width="135"/>
+        <el-table-column label="计数-PV" prop="countPV" :formatter="formatThousandths"  align="right" width="135"/>
+        <el-table-column prop="allCost" label="总费用" :formatter="formatThousandths"  align="right" width="125"/>
         <el-table-column prop="remark" label="备注"  align="center"/>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit"  align="center">
+        <el-table-column label="操作" fixed="right" width="110" v-if="!hideEdit"  align="center" >
           <template #default="{ row, $index }">
             <el-button link @click="handleEdit(row, $index, 'experimentalExpensesModifyDtos')" type="primary">
               修改
@@ -178,14 +178,14 @@
       </el-table>
       <h6>修改项：</h6>
       <el-table :data="data.experimentalExpensesModifyDtos" border
-        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '实验费用', 'allCost')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50" />
-        <el-table-column prop="projectName" label="试验项目"  width="175"  align="center">
+        <el-table-column prop="projectName" label="试验项目"     align="center">
           <template #default="{ row }">
             <el-input v-model="row.projectName" />
           </template>
         </el-table-column>
-        <el-table-column prop="isThirdParty" label="是否指定第三方"  width="180"  align="center">
+        <el-table-column prop="isThirdParty" label="是否指定第三方"  width="130"  align="center">
           <template #default="{ row }">
             <el-select v-model="row.isThirdParty">
               <el-option :value="true" label="是" />
@@ -193,33 +193,33 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="unitPrice" label="单价"  width="175"  align="center">
+        <el-table-column prop="unitPrice" label="单价"  width="135"  align="center">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.unitPrice" controls-position="right" :min="0" size="small"/>
           </template>
         </el-table-column>
-        <el-table-column prop="countBottomingOut" width="175" label="计数-摸底"  align="center">
+        <el-table-column prop="countBottomingOut" width="135" label="计数-摸底"  align="center">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.countBottomingOut" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.countBottomingOut" controls-position="right" :min="0" size="small"/>
           </template>
         </el-table-column>
-        <el-table-column prop="countDV" width="175" label="计数-DV"  align="center">
+        <el-table-column prop="countDV" width="135" label="计数-DV"  align="center">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.countDV" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.countDV" controls-position="right" :min="0" size="small"/>
           </template>
         </el-table-column>
-        <el-table-column prop="countPV" width="175" label="计数-PV"  align="center">
+        <el-table-column prop="countPV" width="135" label="计数-PV"  align="center">
           <template #default="{ row }">
-            <el-input-number @mousewheel.native.prevent v-model="row.countPV" controls-position="right" :min="0" />
+            <el-input-number @mousewheel.native.prevent v-model="row.countPV" controls-position="right" :min="0" size="small"/>
           </template>
         </el-table-column>
-        <el-table-column prop="allCost" label="总费用" width="150" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="remark" width="220" label="备注"  align="center">
+        <el-table-column prop="allCost" label="总费用" width="125" :formatter="formatThousandths"  align="right"/>
+        <el-table-column prop="remark"  label="备注"  align="center">
           <template #default="{ row }">
             <el-input v-model="row.remark" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit"  align="center">
+        <el-table-column label="操作" fixed="right" width="110" v-if="!hideEdit"  align="center">
           <template #default="{ row, $index }">
             <el-button link @click="handleAddExperimentalFeeModificationItem(row)" type="primary"> 确认 </el-button>
             <el-button type="danger" link @click="handleDelExperimentalFeeModificationItem(row.id, $index)">
@@ -238,12 +238,12 @@
         <el-button type="primary" @click="addTableData('toolingCostsModifyDtos')" v-if="!hideEdit">新增</el-button>
       </el-row>
       <el-table :data="data.toolingCost" style="width: 100%" border
-        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
-        <el-table-column prop="workName" label="工装名称"  align="center"/>
-        <el-table-column prop="toolingCount" label="工装数量" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="unitPriceOfTooling" label="工装单价" :formatter="formatThousandths"  align="center"/>
-        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="workName" label="工装名称"  align="left"/>
+        <el-table-column prop="toolingCount" label="工装数量" :formatter="formatThousandths"  align="right" width="175"/>
+        <el-table-column prop="unitPriceOfTooling" label="工装单价" :formatter="formatThousandths"  align="right" width="175"/>
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="right" width="175"/>
         <el-table-column prop="remark" label="备注"  align="center"/>
         <el-table-column label="操作" fixed="right" width="160" v-if="!hideEdit"  align="center">
           <template #default="{ row, $index }">
@@ -253,7 +253,7 @@
       </el-table>
       <h6>修改项：</h6>
       <el-table :data="data.toolingCostsModifyDtos" border
-        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary>
+        :summary-method="(val: any) => getMouldSummaries(val, '工装费用', 'cost')" show-summary :header-cell-style="{'text-align': 'center'}">
         <el-table-column type="index" width="50"  align="center"/>
         <el-table-column prop="workName" label="工装名称"  align="center">
           <template #default="{ row }">
@@ -270,7 +270,7 @@
             <el-input-number @mousewheel.native.prevent v-model="row.unitPriceOfTooling" controls-position="right" :min="0" />
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="center"/>
+        <el-table-column prop="cost" label="费用" :formatter="formatThousandths"  align="right" width="175"/>
         <el-table-column prop="remark" label="备注"  align="center">
           <template #default="{ row }">
             <el-input v-model="row.remark" />

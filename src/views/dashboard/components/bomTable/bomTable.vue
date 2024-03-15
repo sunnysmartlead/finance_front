@@ -27,7 +27,7 @@
         <el-input v-model="row.categoryName" />
       </template>
     </el-table-column>
-    <el-table-column class="more-oprate" align="center" prop="assemblyCount" width="175" label="装配数量" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
+    <el-table-column class="more-oprate" align="right" prop="assemblyCount" width="175" label="装配数量" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #header>
         <span class="header-icon"> 装配数量 </span>
         <el-button text bg @click="showColumn = !showColumn">{{ !showColumn ? "+" : "-" }}</el-button>
@@ -100,7 +100,7 @@
         <el-input v-model="row.currencyText" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="exchangeRate" label="汇率" width="175" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
+    <el-table-column align="right" header-align="center" prop="exchangeRate" label="汇率" width="175" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -112,7 +112,8 @@
       </template>
     </el-table-column>
     <el-table-column
-      align="center"
+      align="right"
+      header-align="center"
       prop="materialPriceCyn"
       label="材料单价（人民币）"
       width="175"
@@ -129,10 +130,11 @@
       </template>
     </el-table-column>
     <el-table-column
-      align="center"
+      align="right"
+      header-align="center"
       prop="totalMoneyCyn"
       label="合计金额（人民币）- bom成本"
-      width="175"
+      width="220"
       :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }">
@@ -146,10 +148,11 @@
       </template>
     </el-table-column>
     <el-table-column
-      align="center"
+      align="right"
+      header-align="center"
       prop="totalMoneyCynNoCustomerSupply"
       label="合计金额（人民币）- 不含客供"
-      width="175"
+      width="220"
       :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)"
     >
       <template #default="{ row }">
@@ -162,7 +165,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="loss" label="损耗" width="175" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
+    <el-table-column align="right" header-align="center" prop="loss" label="损耗" width="175" :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -174,7 +177,8 @@
       </template>
     </el-table-column>
     <el-table-column
-      align="center"
+      align="right"
+      header-align="center"
       prop="materialCost"
       label="材料成本（含损耗）"
       width="175"
@@ -191,7 +195,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column align="center" prop="inputCount" label="投入量" width="175" :formatter="formatThousandths">
+    <el-table-column align="right" header-align="center" prop="inputCount" label="投入量" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -202,7 +206,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="purchaseCount" label="采购量" width="175" :formatter="formatThousandths">
+    <el-table-column align="right"  header-align="center" prop="purchaseCount" label="采购量" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -213,7 +217,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="moqShareCount" label="MOQ分摊成本" width="175"  :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
+    <el-table-column align="right" header-align="center" prop="moqShareCount" label="MOQ分摊成本" width="175"  :formatter="(_record, _row,cellValue) => formatThousandthsIndex(_record, _row,cellValue, 5)">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -224,7 +228,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="moq" label="MOQ" width="175" :formatter="formatThousandths">
+    <el-table-column align="right" header-align="center" prop="moq" label="MOQ" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent
@@ -235,7 +239,7 @@
         />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="availableInventory" label="可用库存" width="175" :formatter="formatThousandths">
+    <el-table-column align="right" header-align="center" prop="availableInventory" label="可用库存" width="175" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number
           @mousewheel.native.prevent

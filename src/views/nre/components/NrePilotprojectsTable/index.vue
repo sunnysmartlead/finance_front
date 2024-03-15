@@ -26,14 +26,14 @@
         <el-table :data="data.laboratoryFeeModels" border :summary-method="getLaboratoryFeeSummaries" show-summary
           max-height="70vh">
           <el-table-column type="index" width="50" />
-          <el-table-column label="试验项目（根据与客户协定项目）" width="180">
+          <el-table-column label="试验项目（根据与客户协定项目）" width="240" align="center">
             <template #default="{ row, $index }">
               <span v-if="isVertify">{{ row.projectName }}</span>
               <SelectSearch v-else :request="GetFoundationEmc"
                 :onChange="(record: any) => handleChangeData(record, $index)" v-model="row.projectName" />
             </template>
           </el-table-column>
-          <el-table-column label="是否指定第三方" width="150">
+          <el-table-column label="是否指定第三方" width="150" align="center">
             <template #default="{ row }">
               <el-select v-model="row.isThirdParty" :disabled="isVertify">
                 <el-option :value="true" label="是" />
@@ -41,33 +41,33 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" />
-          <el-table-column label="调整系数" width="180" :formatter="formatThousandths">
+          <el-table-column label="单价" prop="unitPrice" width="175" :formatter="formatThousandths" align="center"/>
+          <el-table-column label="调整系数" width="180" :formatter="formatThousandths" align="center">
             <template #default="{ row }">
               <span v-if="isVertify">{{ row.adjustmentCoefficient }}</span>
               <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.adjustmentCoefficient" />
             </template>
           </el-table-column>
-          <el-table-column label="单位" prop="unit" width="180" />
-          <el-table-column label="时间-摸底" width="180">
+          <el-table-column label="单位" prop="unit" width="180" align="center"/>
+          <el-table-column label="时间-摸底" width="180" align="center">
             <template #default="{ row }">
               <span v-if="isVertify">{{ row.countBottomingOut }}</span>
               <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countBottomingOut" />
             </template>
           </el-table-column>
-          <el-table-column label="时间-DV" width="180">
+          <el-table-column label="时间-DV" width="180" align="center">
             <template #default="{ row }">
               <span v-if="isVertify">{{ row.countDV }}</span>
               <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countDV" />
             </template>
           </el-table-column>
-          <el-table-column label="时间-PV" width="180">
+          <el-table-column label="时间-PV" width="180" align="center">
             <template #default="{ row }">
               <span v-if="isVertify">{{ row.countPV }}</span>
               <el-input-number @mousewheel.native.prevent v-else :min="0" controls-position="right" v-model="row.countPV" />
             </template>
           </el-table-column>
-          <el-table-column label="总费用" prop="allCost" width="150"  :formatter="formatThousandths" />
+          <el-table-column label="总费用" prop="allCost" width="150"  :formatter="formatThousandths" align="right" header-align="center"/>
           <el-table-column label="备注" width="180">
             <template #default="{ row }">
               <span v-if="isVertify">{{ row.remark }}</span>

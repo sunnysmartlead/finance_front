@@ -7,7 +7,7 @@
         <el-input v-if="isEdit" v-model="row.itemName" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="total" width="175" label="总费用" :formatter="formatThousandths">
+    <el-table-column align="right" header-align="center" prop="total" width="175" label="总费用" :formatter="formatThousandths">
       <template #default="{ row }">
         <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0" v-model="row.total" />
       </template>
@@ -18,12 +18,12 @@
         <span v-else>{{ row.yearCount }} 年</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="count" label="分摊数量" :formatter="formatThousandthsNoFixed">
+    <el-table-column align="right" header-align="center" prop="count" label="分摊数量" :formatter="formatThousandthsNoFixed">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.count" />
       </template>
     </el-table-column>
-    <el-table-column align="center" prop="cost" label="单颗成本" :formatter="formatThousandths" />
+    <el-table-column align="right" header-align="center" prop="cost" label="单颗成本" :formatter="formatThousandths" />
     <el-table-column align="center" prop="note" label="备注">
       <template #default="{ row }">
         <el-input v-if="isEdit" v-model="row.note" />
@@ -38,10 +38,10 @@
     </el-table-column>
     <el-table-column align="center" label="操作" width="120" v-if="!hideEdit">
       <template #default="{ row, $index }">
-        <el-row>
+        <!-- <el-row> -->
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
           <el-button type="primary" v-if="isEdit" @click="onDelete($index)" link>删除</el-button>
-        </el-row>
+        <!-- </el-row> -->
       </template>
     </el-table-column>
   </el-table>

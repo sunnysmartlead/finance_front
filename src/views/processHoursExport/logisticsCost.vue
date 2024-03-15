@@ -112,7 +112,7 @@
              年度模组数量:yearMountCount
              年度:moon
             -->
-              <el-table-column label="月需求量" align="center">
+              <el-table-column label="月需求量" align="right" header-align="center">
                 <template #default="scope">
                   <div>
                     <span v-if="null != scope.row.yearMountCount && undefined != scope.row.yearMountCount"
@@ -128,7 +128,7 @@
              仓储费:storagePrice
              月需求量:yearMountCount *1000/moon
             -->
-              <el-table-column label="单PCS运输费" align="center">
+              <el-table-column label="单PCS运输费" align="right" header-align="center">
                 <template #default="scope">
                   <div>
                     <span>{{((scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount *1000 / scope.row.moon)).toFixed(2)}}</span>
@@ -140,7 +140,7 @@
              单PCS运输费:(freightPrice + storagePrice)/(1000*yearMountCount/moon)
              单PCS包装价格:packagingPrice
             -->
-              <el-table-column label="单PCS总物流成本" align="center">
+              <el-table-column label="单PCS总物流成本" align="right" header-align="center">
                 <template #default="scope">
                   <div>
                     <span>{{ Number(scope.row.packagingPrice + (scope.row.freightPrice +scope.row.storagePrice)/(scope.row.yearMountCount * 1000 / scope.row.moon)).toFixed(2)}}</span>

@@ -13,17 +13,17 @@
         </el-input>
       </template>
     </el-table-column>
-    <el-table-column align="center"  prop="qualityCost" label="质量成本（MAX）" :formatter="toFixed">
+    <el-table-column align="right"  header-align="center" prop="qualityCost" label="质量成本（MAX）" :formatter="toFixed">
       <template #default="{ row }">
         <el-input-number @mousewheel.native.prevent v-if="isEdit" controls-position="right" :min="0" v-model="row.qualityCost" />
       </template>
     </el-table-column>
-    <el-table-column align="center"  label="操作" width="200" v-if="!hideEdit">
+    <el-table-column align="center"  label="操作"   v-if="!hideEdit">
       <template #default="{ row, $index }">
-        <el-row>
+        <!-- <el-row> -->
           <el-button type="primary" v-if="!isEdit" @click="onEdit(row)" link>修改</el-button>
           <el-button type="primary" v-if="isEdit" @click="onDelete($index)" link>删除</el-button>
-        </el-row>
+        <!-- </el-row> -->
       </template>
     </el-table-column>
   </el-table>

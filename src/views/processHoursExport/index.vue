@@ -5,7 +5,12 @@
       <div>
         <!--        <el-button @click="handleSaveData" type="primary">保存</el-button>
         <el-button @click="handleSubmit" type="primary">提交</el-button>-->
-        <ProcessVertifyBox :onSubmit="handleSubmit" processType="confirmProcessType" ElMessageBoxMessage="必须先保存数据再提交，数据是否已保存？" v-havedone />
+        <ProcessVertifyBox
+          :onSubmit="handleSubmit"
+          processType="confirmProcessType"
+          ElMessageBoxMessage="必须先保存数据再提交，数据是否已保存？"
+          v-havedone
+        />
       </div>
     </div>
     <div class="u-p-t-10 u-p-b-10 u-flex u-flex-wrap u-row-left u-col-center">
@@ -571,8 +576,8 @@
                 </template>
                 <div class="u-width-150 u-border u-p-t-5 u-p-b-5">
                   <span v-if="dataIndex == dataArr.length - 1">{{
-                      amoutInterval(sumHardwareDeviceTotalCost(), 0)
-                    }}</span>
+                    amoutInterval(sumHardwareDeviceTotalCost(), 0)
+                  }}</span>
                   <span v-else>{{ amoutInterval(handleHardwareDeviceChange(null, dataIndex, null), 0) }}</span>
                 </div>
               </div>
@@ -1467,34 +1472,6 @@ const handleSaveData = () => {
 // }
 
 const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
-  let processHoursEnterUphList= JSON.parse(JSON.stringify(UPHData.value))
-   for (let a = 0; a < processHoursEnterUphList.length; a++) {
-    if (!isCOB.value) {
-      if (processHoursEnterUphList[a].smtuph == null||processHoursEnterUphList[a].smtuph == 0 || processHoursEnterUphList[a].zcuph == null||processHoursEnterUphList[a].zcuph == 0) {
-        ElMessage({
-          type: "error",
-          message: "uph不能为空或者为0"
-        })
-        return
-      }
-    }
-    {
-      if (
-        processHoursEnterUphList[a].smtuph == null ||
-        processHoursEnterUphList[a].smtuph == 0 ||
-        processHoursEnterUphList[a].zcuph == null ||
-        processHoursEnterUphList[a].zcuph == 0 ||
-        processHoursEnterUphList[a].cobuph == null||
-        processHoursEnterUphList[a].cobuph == 0
-      ) {
-        ElMessage({
-          type: "error",
-          message: "uph不能为空或者为0"
-        })
-        return
-      }
-    }
-  }
   let param = {
     auditFlowId: auditFlowId,
     solutionId: productId,
@@ -1507,6 +1484,39 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
       console.log("提交参数", param)
     }) // 保存
   } else {
+    let processHoursEnterUphList = JSON.parse(JSON.stringify(UPHData.value))
+    for (let a = 0; a < processHoursEnterUphList.length; a++) {
+      if (!isCOB.value) {
+        if (
+          processHoursEnterUphList[a].smtuph == null ||
+          processHoursEnterUphList[a].smtuph == 0 ||
+          processHoursEnterUphList[a].zcuph == null ||
+          processHoursEnterUphList[a].zcuph == 0
+        ) {
+          ElMessage({
+            type: "error",
+            message: "uph不能为空或者为0"
+          })
+          return
+        }
+      }
+      {
+        if (
+          processHoursEnterUphList[a].smtuph == null ||
+          processHoursEnterUphList[a].smtuph == 0 ||
+          processHoursEnterUphList[a].zcuph == null ||
+          processHoursEnterUphList[a].zcuph == 0 ||
+          processHoursEnterUphList[a].cobuph == null ||
+          processHoursEnterUphList[a].cobuph == 0
+        ) {
+          ElMessage({
+            type: "error",
+            message: "uph不能为空或者为0"
+          })
+          return
+        }
+      }
+    }
     handleSubmitOption(param).then((response: any) => {
       console.log("提交响应", response)
       if (response.success) {
@@ -1550,7 +1560,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     //showUploadFile.value=true;
     if (dataArr.value.length > 0) {
       for (let k = 0; k < exportListData.length; k++) {
-        let newExportItem = JSON.parse(JSON.stringify(exportListData[exportListData.length-k-1]))
+        let newExportItem = JSON.parse(JSON.stringify(exportListData[exportListData.length - k - 1]))
         compareSopData(newExportItem)
       }
     } else {
@@ -2804,7 +2814,7 @@ const confirmSelectStandardProcess = () => {
   standardProcessLoading.value = true
   if (dataArr.value.length > 0) {
     for (let k = 0; k < pList.length; k++) {
-      let newExportItem = JSON.parse(JSON.stringify(pList[pList.length-k-1]))
+      let newExportItem = JSON.parse(JSON.stringify(pList[pList.length - k - 1]))
       compareSopData(newExportItem)
     }
   } else {
@@ -2943,8 +2953,8 @@ const amoutInterval = function (a: number, b: number) {
     const num = amout.length - amout.indexOf(".") - 1
     return num < b
       ? `${amout}${Array(b - num)
-        .fill(0)
-        .join("")}`
+          .fill(0)
+          .join("")}`
       : amout
   }
   //如是整数，则动态补0
@@ -3023,17 +3033,17 @@ const compareSopData = (newExportItem: any) => {
       let oldYearIndex = oldItem.yearInt
       innerFor: for (let j = 0; j < newSop.length; j++) {
         let newItem = newSop[j]
-        console.log(newItem.yearInt + "               "+  oldYearIndex  + "            "+j)
+        console.log(newItem.yearInt + "               " + oldYearIndex + "            " + j)
         let newYearIndex = newItem.yearInt ? newItem.yearInt : "----"
         if (newYearIndex === oldYearIndex) {
           oldItem.issues = newItem.issues
-          continue ;
-        }if (newItem.yearInt<oldYearIndex) {
+          continue
+        }
+        if (newItem.yearInt < oldYearIndex) {
           oldItem.issues = newSop[newSop.length - 1].issues
-          continue ;
+          continue
         }
       }
-
     }
   }
   newExportItem.sopInfo = oldSop

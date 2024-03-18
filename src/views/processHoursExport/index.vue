@@ -1126,6 +1126,7 @@ import {
 } from "@/components/CustomerSpecificity/service"
 import { CommonDownloadFile, GetStructionBom, GetElectronicBom } from "@/api/bom"
 import { round } from "lodash-es"
+import { el } from "element-plus/es/locale"
 
 const tempData: any = {
   id: 0,
@@ -1417,7 +1418,7 @@ const handleSaveData = () => {
         })
         return false
       }
-    }
+    }else
     {
       if (
         param.processHoursEnterUphList[a].smtuph == null ||
@@ -1495,11 +1496,11 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
         ) {
           ElMessage({
             type: "error",
-            message: "uph不能为空或者为0"
+            message: "uph不能为空或者为0/虽然不是0但是未保存"
           })
           return
         }
-      }
+      }else
       {
         if (
           processHoursEnterUphList[a].smtuph == null ||
@@ -1511,7 +1512,7 @@ const handleSubmit = ({ comment, opinion, nodeInstanceId }: any) => {
         ) {
           ElMessage({
             type: "error",
-            message: "uph不能为空或者为0"
+            message: "uph不能为空或者为0/虽然不是0但是未保存"
           })
           return
         }

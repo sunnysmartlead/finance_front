@@ -48,7 +48,6 @@
           :on-success="uploadSuccess"
           :on-exceed="handleExceed"
           :action="uploadActionUrl"
-          :limit="1"
         >
           <template #trigger>
             <el-button type="primary">工序工时导入</el-button>
@@ -1544,6 +1543,7 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 }
 
 const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+  debugger
   if (response.success) {
     dataArr.value = ref<any>([])
     let exportListData = response.result ? response.result : []
@@ -1575,7 +1575,7 @@ const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
   } else {
     ElMessage({
       type: "error",
-      message: "导入失败"
+      message: response?.error?.message
     })
   }
 }
@@ -1585,7 +1585,7 @@ const uploadErrror = (error: Error, uploadFile: any, uploadFiles: any) => {
   console.log("uploadFiles", uploadFiles)
   ElMessage({
     type: "error",
-    message: "导入失败"
+    message: error?.message
   })
 }
 //下载模板

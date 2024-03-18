@@ -1126,7 +1126,6 @@ import {
 } from "@/components/CustomerSpecificity/service"
 import { CommonDownloadFile, GetStructionBom, GetElectronicBom } from "@/api/bom"
 import { round } from "lodash-es"
-import { el } from "element-plus/es/locale"
 
 const tempData: any = {
   id: 0,

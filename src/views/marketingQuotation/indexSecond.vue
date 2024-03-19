@@ -106,11 +106,11 @@
         </el-table>
         <el-table :data="data.resa.sops" border max-height="400px">
           <el-table-column type="index" width="100" label="序号" align="center" />
-          <el-table-column prop="year" label="年份" align="center" />
-          <el-table-column prop="annualDeclineRate" label="年降率(%)" align="center" />
-          <el-table-column prop="annualRebateRequirements" label="年度返利要求(%)" align="center" />
-          <el-table-column prop="oneTimeDiscountRate" label="一次性折让(%)" align="center" />
-          <el-table-column prop="commissionRate" label="年度佣金比例(%)" align="center" />
+          <el-table-column prop="year" label="年份" align="center" :formatter="OneDecimalPlaces"/>
+          <el-table-column prop="annualDeclineRate" label="年降率(%)" align="center" :formatter="OneDecimalPlaces"/>
+          <el-table-column prop="annualRebateRequirements" label="年度返利要求(%)" align="center" :formatter="OneDecimalPlaces"/>
+          <el-table-column prop="oneTimeDiscountRate" label="一次性折让(%)" align="center" :formatter="OneDecimalPlaces"/>
+          <el-table-column prop="commissionRate" label="年度佣金比例(%)" align="center" :formatter="OneDecimalPlaces"/>
         </el-table>
       </el-card>
       <!-- 核心部件 -->
@@ -152,62 +152,62 @@
           </el-table-column>
         </el-table>
         <p>专用设备</p>
-        <el-table :data="nre.devices" style="width: 100%" border max-height="250px">
+        <el-table :data="nre.devices" style="width: 100%" border max-height="250px" :header-cell-style="{'text-align': 'center'}">
           <el-table-column prop="deviceName" label="设备名称" align="center" />
-          <el-table-column prop="devicePrice" label="设备单价" :formatter="formatThousandths" align="center" />
-          <el-table-column prop="number" label="设备数量" align="center" />
-          <el-table-column prop="equipmentMoney" label="设备金额" :formatter="formatThousandths" align="center" />
+          <el-table-column prop="devicePrice" label="设备单价" :formatter="formatThousandths" align="right" />
+          <el-table-column prop="number" label="设备数量" :formatter="formatThousandths" align="center" />
+          <el-table-column prop="equipmentMoney" label="设备金额" :formatter="formatThousandths" align="right" />
         </el-table>
       </el-card>
       <el-card header="内部核价成本明细：" m="2">
-        <el-table :data="data.resa.pricingMessageSecondModels" border align="center" max-height="400px">
+        <el-table :data="data.resa.pricingMessageSecondModels" border align="center" max-height="400px" :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="序号" type="index" width="50" align="center" />
           <el-table-column label="梯度" prop="gradient" width="100" align="center" />
-          <el-table-column label="方案名称" prop="solutionName" width="180" align="center" />
+          <el-table-column label="方案名称" prop="solutionName" width="180" align="left" />
           <el-table-column label="BOM成本" align="center">
             <el-table-column
               label="SOP年成本"
               prop="bomSop"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
             <el-table-column
               label="全生命周期成本"
               prop="bomfull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="生产成本" align="center">
-            <el-table-column label="SOP年成本" prop="scSop" width="100" :formatter="formatThousandths" align="center" />
+            <el-table-column label="SOP年成本" prop="scSop" width="100" :formatter="formatThousandths" align="right" />
             <el-table-column
               label="全生命周期成本"
               prop="scfull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="良损率、良损成本" align="center">
-            <el-table-column label="SOP年成本" prop="lsSop" width="100" :formatter="formatThousandths" align="center" />
+            <el-table-column label="SOP年成本" prop="lsSop" width="100" :formatter="formatThousandths" align="right" />
             <el-table-column
               label="全生命周期成本"
               prop="lsfull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="运费" align="center">
-            <el-table-column label="SOP年成本" prop="yfSop" width="100" :formatter="formatThousandths" align="center" />
+            <el-table-column label="SOP年成本" prop="yfSop" width="100" :formatter="formatThousandths" align="right" />
             <el-table-column
               label="全生命周期成本"
               prop="yffull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="MOQ分摊成本" align="center">
@@ -216,34 +216,34 @@
               prop="moqSop"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
             <el-table-column
               label="全生命周期成本"
               prop="moqfull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="质量成本" align="center">
-            <el-table-column label="SOP年成本" prop="quSop" width="100" :formatter="formatThousandths" align="center" />
+            <el-table-column label="SOP年成本" prop="quSop" width="100" :formatter="formatThousandths" align="right" />
             <el-table-column
               label="全生命周期成本"
               prop="qufull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="分摊成本" align="center">
-            <el-table-column label="SOP年成本" prop="ftSop" width="100" :formatter="formatThousandths" align="center" />
+            <el-table-column label="SOP年成本" prop="ftSop" width="100" :formatter="formatThousandths" align="right" />
             <el-table-column
               label="全生命周期成本"
               prop="ftfull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
           <el-table-column label="总成本" align="center">
@@ -252,52 +252,52 @@
               prop="allSop"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
             <el-table-column
               label="全生命周期成本"
               prop="allfull"
               width="100"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
           </el-table-column>
         </el-table>
       </el-card>
       <el-card header="梯度报价信息：" m="2">
-        <el-table :data="data.resa.biddingStrategySecondModelsGradent" border align="right" max-height="400px">
+        <el-table :data="data.resa.biddingStrategySecondModelsGradent" border align="right" max-height="400px" :header-cell-style="{'text-align': 'center'}">
           <el-table-column type="index" label="序号" width="50" align="center" />
           <el-table-column label="梯度" prop="gradient" width="100" align="center" />
-          <el-table-column label="产品" prop="product" align="center" />
-          <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" align="center" />
+          <el-table-column label="产品" prop="product" align="left" />
+          <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" align="right" />
           <el-table-column
             label="全生命周期成本"
             prop="fullLifeCyclecost"
             :formatter="formatThousandths"
-            align="center"
+            align="right"
           />
           <!-- <el-table-column label="价格" prop="price" :formatter="formatThousandths" /> -->
-          <el-table-column label="价格" prop="price" align="center">
+          <el-table-column label="价格" prop="price" align="right">
             <template #default="{ row }">
               <span font-bold>{{ formatThousandths(null, null, row.price) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Sop年毛利率" prop="sopGrossMargin" align="center">
+          <el-table-column label="Sop年毛利率" prop="sopGrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin" align="center">
+          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="增加客供料毛利率" prop="clientGrossMargin" align="center">
+          <el-table-column label="增加客供料毛利率" prop="clientGrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin" align="center">
+          <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
             </template>
@@ -309,43 +309,43 @@
       :header-cell-style="headerCellStyle" :row-style="rowstyle"
        -->
       <el-card header="实际报价策略：" m="2"  >
-        <el-table :data="data.resa.biddingStrategySecondModelsAct" border align="right" max-height="400px"  >
+        <el-table :data="data.resa.biddingStrategySecondModelsAct" border align="right" max-height="400px"  :header-cell-style="{'text-align': 'center'}">
           <el-table-column type="index"  label="序号" width="50" align="center"/>
           <el-table-column label="梯度" prop="gradient"  width="100" align="center"/>
-          <el-table-column label="产品" prop="product" align="center"/>
-          <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" align="center"/>
-          <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" align="center"/>
+          <el-table-column label="产品" prop="product" align="left"/>
+          <el-table-column label="Sop年成本" prop="sopCost" :formatter="formatThousandths" align="right"/>
+          <el-table-column label="全生命周期成本" prop="fullLifeCyclecost" :formatter="formatThousandths" align="right"/>
           <!-- <el-table-column label="毛利率" prop="grossMargin">
             <template #default="{ row }">
               {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column> -->
-          <el-table-column label="价格" prop="price" :formatter="formatThousandths" align="center" />
-          <el-table-column label="实际数量" prop="actualQuantity" :formatter="formatThousandths" align="center" />
-          <el-table-column label="销售收入" prop="salesRevenue" :formatter="formatThousandths" align="center" />
-          <el-table-column label="销售成本" prop="sellingCost" :formatter="formatThousandths" align="center" />
+          <el-table-column label="价格" prop="price" :formatter="formatThousandths" align="right" />
+          <el-table-column label="实际数量" prop="actualQuantity" :formatter="formatThousandths" align="right" />
+          <el-table-column label="销售收入(千元)" prop="salesRevenue" :formatter="ZeroDecimalPlaces" align="right" />
+          <el-table-column label="销售成本(千元)" prop="sellingCost" :formatter="ZeroDecimalPlaces" align="right" />
           <!-- <el-table-column label="佣金" prop="commission" :formatter="formatThousandths" /> -->
           <!-- <el-table-column label="含佣金毛利率" prop="grossMarginCommission ">
             <template #default="{ row }">
               {{ `${row.grossMarginCommission?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column> -->
-          <el-table-column label="Sop年毛利率" prop="sopGrossMargin" align="center">
+          <el-table-column label="Sop年毛利率" prop="sopGrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.sopGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin" align="center">
+          <el-table-column label="全生命周期毛利率" prop="totallifeCyclegrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.totallifeCyclegrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="增加客供料毛利率" prop="clientGrossMargin" align="center">
+          <el-table-column label="增加客供料毛利率" prop="clientGrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.clientGrossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin" align="center">
+          <el-table-column label="剔除分摊费用毛利率" prop="nreGrossMargin" align="right">
             <template #default="{ row }">
               {{ `${row.nreGrossMargin?.toFixed(2) || 0} %` }}
             </template>
@@ -366,7 +366,7 @@
               {{ `${row.grossMargin?.toFixed(2) || 0} %` }}
             </template>
           </el-table-column>
-          <el-table-column prop="salesRevenue" label="销售收入" :formatter="formatThousandths" align="center" />
+          <el-table-column prop="salesRevenue" label="销售收入(元)" :formatter="formatThousandths" align="center" />
         </el-table>
       </el-card>
     </el-card>
@@ -421,6 +421,7 @@ import {
 import { GeCatalogue, SubmitNode } from "../quoteAnalysis/service"
 import getQuery from "@/utils/getQuery"
 import { GetPriceEvaluationStartData } from "@/api/processHoursEnter"
+import {OneDecimalPlaces,ZeroDecimalPlaces} from "@/utils/number"
 
 const router = useRouter()
 const query = useJump()

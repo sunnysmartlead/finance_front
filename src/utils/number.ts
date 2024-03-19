@@ -40,3 +40,13 @@ export const ZeroDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
     return 0
   }
 }
+//1位小数千分位
+export const OneDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
+{
+  if (cellValue) {
+    return Number(cellValue).toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, ($0, $1) => {return $1 + ",";}).replace(/\.$/, "")
+  } else {
+    return 0
+  }
+}
+

@@ -43,15 +43,15 @@
       <div v-if="!data.resa.issample">
         <!-- 单价汇总 -->
         <h4>单价汇总</h4>
-        <el-table :data="data.resa.unitPriceSum" border>
+        <el-table :data="data.resa.unitPriceSum" border :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="产品名称" prop="product" />
-          <el-table-column label="价格(CNY)" prop="price" :formatter="formatThousandths" />
-          <el-table-column label="汇率" prop="exchangeRate" :formatter="formatThousandths" />
-          <el-table-column label="价格(USD)" prop="priceUSD" :formatter="formatThousandths" />
+          <el-table-column label="价格(CNY)" prop="price" :formatter="formatThousandths" align="right"/>
+          <el-table-column label="汇率" prop="exchangeRate" :formatter="formatThousandths" align="right"/>
+          <el-table-column label="价格(USD)" prop="priceUSD" :formatter="formatThousandths" align="right"/>
         </el-table>
         <!-- NRE报价汇总 -->
         <h4>NRE报价汇总</h4>
-        <el-table :data="data.resa.nreUnitSumModels" border>
+        <el-table :data="data.resa.nreUnitSumModels" border :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="产品名称" prop="product" />
           <el-table-column label="核价金额" prop="cost" :formatter="formatThousandths" align="right" />
           <el-table-column label="报价金额" prop="number" :formatter="formatThousandths" align="right" />
@@ -61,20 +61,20 @@
         <!-- nre -->
         <el-card v-if="data.resa.managerApprovalOfferNres">
           <h4>报价毛利率测算-实际数量</h4>
-          <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px">
+          <el-table :data="data.resa.managerApprovalOfferNres" style="width: 100%" border max-height="500px" :header-cell-style="{'text-align': 'center'}">
             <el-table-column prop="solutionName" label="方案名" align="center"/>
-            <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" align="center"/>
-            <el-table-column prop="offerGrossMargin" label="本次报价-毛利率" align="center">
+            <el-table-column prop="offerUnitPrice" label="本次报价-单价" :formatter="formatThousandths" align="right"/>
+            <el-table-column prop="offerGrossMargin" label="本次报价-毛利率" align="right">
               <template #default="{ row }">
                 {{ `${row.offerGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率" align="center">
+            <el-table-column prop="offerClientGrossMargin" label="本次报价增加客供料毛利率" align="right">
               <template #default="{ row }">
                 {{ `${row.offerClientGrossMargin?.toFixed(2)} %` }}
               </template>
             </el-table-column>
-            <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率" align="center">
+            <el-table-column prop="offerNreGrossMargin" label="本次报价剔除NRE分摊费用毛利率" align="right">
               <template #default="{ row }">
                 {{ `${row.offerNreGrossMargin?.toFixed(2)} %` }}
               </template>
@@ -83,11 +83,11 @@
               prop="salesRevenue"
               label="销售收入（千元）"
               :formatter="formatThousandths"
-              align="center"
+              align="right"
             />
-            <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" align="center" />
-            <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" align="center" />
-            <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" align="center" />
+            <el-table-column prop="sellingCost" label="销售成本（千元）" :formatter="formatThousandths" align="right" />
+            <el-table-column prop="sopCost" label="SOP成本" :formatter="formatThousandths" align="right" />
+            <el-table-column prop="fullCost" label="全生命周期成本" :formatter="formatThousandths" align="right" />
             <!-- <el-table-column prop="equipmentMoney" label="设备金额" /> -->
           </el-table>
           <!-- nre汇总 -->
@@ -100,12 +100,13 @@
             max-height="500px"
             :summary-method="getSummaries"
             show-summary
+            :header-cell-style="{'text-align': 'center'}"
           >
             <el-table-column label="序号" type="index" align="center"/>
             <el-table-column prop="formName" label="费用名称" align="center"/>
-            <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" align="center" />
-            <el-table-column label="报价系数" prop="offerCoefficient" align="center"/>
-            <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" align="center" />
+            <el-table-column prop="pricingMoney" label="核价金额" :formatter="formatThousandths" align="right" />
+            <el-table-column label="报价系数" prop="offerCoefficient" align="center"  :formatter="formatThousandths"/>
+            <el-table-column prop="offerMoney" label="报价金额" :formatter="formatThousandths" align="right" />
             <el-table-column label="备注" prop="remark" align="center"/>
           </el-table>
           <p>专用设备</p>

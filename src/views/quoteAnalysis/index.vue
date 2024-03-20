@@ -135,7 +135,7 @@
           </el-table-column>
         </el-table>
         <p>专用设备</p>
-        <el-table :data="nre.devices" border max-height="250px">
+        <el-table :data="nre.devices" border max-height="250px" :header-cell-style="{'text-align': 'center'}">
           <el-table-column prop="deviceName" label="设备名称" width="200" align="center" />
           <el-table-column
             prop="devicePrice"
@@ -156,7 +156,7 @@
       <h3>样品报价</h3>
       <el-card v-for="(sample, index) in data.allRes.sampleOffer" :key="sample.solutionName">
         <p>{{ sample.solutionName }}</p>
-        <el-table :data="sample.onlySampleModels" border max-height="500px">
+        <el-table :data="sample.onlySampleModels" border max-height="500px" :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="序号" type="index" width="80" align="center" />
           <el-table-column prop="name" label="样品阶段" width="200" align="center" />
           <el-table-column prop="pcs" label="需求量（pcs）" width="200" align="center">
@@ -312,7 +312,7 @@
       </el-card>
       <el-card class="card" v-for="(item, index) in data.allRes.quotedGrossMargins" :key="index">
         <p>{{ item.project }}</p>
-        <el-table :data="item.quotedGrossMarginActualList" border>
+        <el-table :data="item.quotedGrossMarginActualList" border :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="产品" prop="product" align="center" />
           <el-table-column
             label="单车产品数量"
@@ -402,7 +402,7 @@
       <el-card class="card">
         <div v-for="item in data.allRes.projectBoard" :key="item.title">
           <p>{{ item.title }}</p>
-          <el-table :data="item.projectBoardModels" border>
+          <el-table :data="item.projectBoardModels" border :header-cell-style="{'text-align': 'center'}">
             <el-table-column label="产品" prop="projectName" align="center"/>
             <el-table-column
               label="目标价（内部）"

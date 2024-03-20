@@ -230,7 +230,7 @@
     <div v-if="data.allRes.gradientQuotedGrossMargins">
       <p>报价毛利率测算-阶梯数量</p>
       <el-card class="card">
-        <el-table :data="data.allRes.gradientQuotedGrossMargins" border>
+        <el-table :data="data.allRes.gradientQuotedGrossMargins" border :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="梯度" prop="gradient" />
           <el-table-column label="产品" prop="product" />
           <el-table-column label="目标价（内部）" width="300">
@@ -336,7 +336,7 @@
     <div v-if="data.allRes.quotedGrossMargins">
       <el-card class="card" v-for="(item, index) in data.allRes.quotedGrossMargins" :key="index">
         <p>{{ item.project }}</p>
-        <el-table :data="item.quotedGrossMarginActualList" border>
+        <el-table :data="item.quotedGrossMarginActualList" border :header-cell-style="{'text-align': 'center'}">
           <el-table-column label="产品" prop="product" />
           <el-table-column label="单车产品数量" prop="carNum" />
           <el-table-column label="目标价（内部）" width="300">
@@ -433,7 +433,7 @@
       <el-card class="card">
         <div v-for="item in data.allRes.projectBoard" :key="item.title">
           <p>{{ item.title }}</p>
-          <el-table :data="item.projectBoardModels" border>
+          <el-table :data="item.projectBoardModels" border :header-cell-style="{'text-align': 'center'}">
             <el-table-column label="产品" prop="projectName" />
             <el-table-column
               label="目标价（内部）"

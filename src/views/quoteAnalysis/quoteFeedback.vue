@@ -220,7 +220,7 @@
         >
           <template #default="scope">
             <div>
-              {{ formatThousandths(scope.row, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
+              {{ ["销售成本","返利后销售收入","销售毛利","佣金"].includes(scope.row?.projectName)? ZeroDecimalPlaces(scope.row, scope.row, scope.row.grossMarginList[index].grossMarginNumber):formatThousandths(scope.row, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
             </div>
           </template>
         </el-table-column>
@@ -439,12 +439,12 @@
               label="目标价（内部）"
               width="300"
               prop="interiorTarget"
-              :formatter="formatThousandths"
+              :formatter="ZeroOrformatThousandths"
               align="right"
             />
-            <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right" />
-            <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right" />
-            <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right" />
+            <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="ZeroOrformatThousandths" align="right" />
+            <el-table-column label="本次报价" prop="offer" :formatter="ZeroOrformatThousandths" align="right" />
+            <el-table-column label="上轮报价" prop="oldOffer" :formatter="ZeroOrformatThousandths" align="right" />
           </el-table>
         </div>
 
@@ -625,7 +625,7 @@ import {
 } from "./service"
 import { calculateRate, getQuotationFeedback } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
-
+import {ZeroDecimalPlaces} from "@/utils/number"
 const fileList = ref<any[]>([])
 //报价反馈
 //标识符：QuoteFeedback
@@ -867,6 +867,21 @@ let gradientTableMapResult = ref([])
 
 const formatThousandths = (_record: any, _row: any, cellValue: any) => {
   if (typeof cellValue === "number") {
+    if (_record && _record.projectName === "毛利率") {
+      return (cellValue.toFixed(2) + "%").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+    }
+    return (cellValue.toFixed(2) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+  } else {
+    return 0
+  }
+}
+
+const ZeroOrformatThousandths = (_record: any, _row: any, cellValue: any) => {
+  if (typeof cellValue === "number") {
+    if(_record &&["销售成本","销售收入","销售毛利","佣金"].includes(_record?.projectName))
+    {
+       return (cellValue.toFixed(0) + "").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
+    }
     if (_record && _record.projectName === "毛利率") {
       return (cellValue.toFixed(2) + "%").replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
     }

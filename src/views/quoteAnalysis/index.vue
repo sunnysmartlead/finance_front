@@ -217,7 +217,7 @@
         >
           <template #default="scope">
             <div>
-              {{ formatThousandths(null, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
+              {{ ["销售成本","返利后销售收入","销售毛利","佣金"].includes(scope.row?.projectName)? ZeroDecimalPlaces(null, scope.row, scope.row.grossMarginList[index].grossMarginNumber):formatThousandths(null, scope.row, scope.row.grossMarginList[index].grossMarginNumber) }}
             </div>
           </template>
         </el-table-column>
@@ -412,7 +412,10 @@
               align="right"
             >
               <template #default="{ row }">
-                <div v-if="row.projectName !== '毛利率'">
+                <div v-if='["销售成本","销售收入","销售毛利","佣金"].includes(row?.projectName)'>
+                  {{ ZeroDecimalPlaces(null, null, row.clientTarget)}}
+                </div>
+                <div v-else-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.interiorTarget) }}
                 </div>
                 <div v-else>{{ row.interiorTarget?.toFixed(2) }}%</div>
@@ -421,7 +424,10 @@
             </el-table-column>
             <el-table-column label="目标价（客户）" prop="clientTarget" :formatter="formatThousandths" align="right">
               <template #default="{ row }">
-                <div v-if="row.projectName !== '毛利率'">
+                 <div v-if='["销售成本","销售收入","销售毛利","佣金"].includes(row?.projectName)'>
+                  {{ ZeroDecimalPlaces(null, null, row.clientTarget)}}
+                </div>
+                <div v-else-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.clientTarget) }}
                 </div>
                 <div v-else>{{ row.clientTarget?.toFixed(2) }}%</div>
@@ -430,7 +436,10 @@
             </el-table-column>
             <el-table-column label="本次报价" prop="offer" :formatter="formatThousandths" align="right">
               <template #default="{ row }">
-                <div v-if="row.projectName !== '毛利率'">
+                <div v-if='["销售成本","销售收入","销售毛利","佣金"].includes(row?.projectName)'>
+                  {{ ZeroDecimalPlaces(null, null, row.clientTarget)}}
+                </div>
+                <div v-else-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.offer) }}
                 </div>
                 <div v-else>{{ row.offer?.toFixed(2) }}%</div>
@@ -439,7 +448,10 @@
             </el-table-column>
             <el-table-column label="上轮报价" prop="oldOffer" :formatter="formatThousandths" align="right">
               <template #default="{ row }">
-                <div v-if="row.projectName !== '毛利率'">
+                <div v-if='["销售成本","销售收入","销售毛利","佣金"].includes(row?.projectName)'>
+                  {{ ZeroDecimalPlaces(null, null, row.clientTarget)}}
+                </div>
+                <div v-else-if="row.projectName !== '毛利率'">
                   {{ formatThousandths(null, null, row.oldOffer) }}
                 </div>
                 <div v-else>{{ row.oldOffer?.toFixed(2) }}%</div>
@@ -592,7 +604,7 @@ import {
   PostIsOfferSecondDelete
 } from "./service"
 import { getProductByAuditFlowId } from "@/views/productList/service"
-
+import {ZeroDecimalPlaces} from "@/utils/number"
 /**
  * 路由对象
  */

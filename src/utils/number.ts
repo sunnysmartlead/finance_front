@@ -22,11 +22,11 @@ export const formatThousandthsNoFixed = (_record: any, _row: any, cellValue: any
     return 0
   }
 }
-//两位小数
+//两位小数千分位
 export const TwoDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
 {
   if (cellValue) {
-    return Number(cellValue).toFixed(2) + ""
+    return (Number(cellValue).toFixed(2)).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
     return 0
   }
@@ -35,7 +35,7 @@ export const TwoDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
 export const ZeroDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
 {
   if (cellValue) {
-    return Number(cellValue).toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, ($0, $1) => {return $1 + ",";}).replace(/\.$/, "")
+    return (Number(cellValue).toFixed(0)).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
     return 0
   }
@@ -44,7 +44,7 @@ export const ZeroDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
 export const OneDecimalPlaces =(_record: any, _row: any, cellValue: any)=>
 {
   if (cellValue) {
-    return Number(cellValue).toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, ($0, $1) => {return $1 + ",";}).replace(/\.$/, "")
+    return Number(cellValue).toFixed(1).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, "$&,")
   } else {
     return 0
   }

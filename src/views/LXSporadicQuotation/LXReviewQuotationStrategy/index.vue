@@ -1,9 +1,110 @@
 <template>
   <div class="demand-apply">
-    <el-button-group float-right>
+    <el-row justify="end" v-if="!isDisabled" v-havedone>
       <el-button type="primary" @click="dialogVisible = true">同意</el-button>
       <el-button type="danger" @click="dialogVisibleR = true"> 退回</el-button>
-    </el-button-group>
+    </el-row>
+    <el-row>
+      <el-button type="primary" @click="ViewPriceList">查看核价表</el-button>
+    </el-row>
+    <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
+      <!-- 项目信息 -->
+      <el-card class="demand-apply__card">
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="项目名称:" prop="projectName">
+              <el-input
+                v-model="state.quoteForm.projectName"
+                @change="generateTitle"
+                :disabled="!canDo"
+                placeholder="项目名称"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="直接客户名称:" prop="directCustomerName">
+              <el-input
+                v-model="state.quoteForm.directCustomerName"
+                @change="generateTitle"
+                :disabled="!canDo"
+                placeholder="直接客户名称"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="客户性质:" prop="customerNature">
+              <el-input
+                v-model="state.quoteForm.customerNature"
+                @change="generateTitle"
+                :disabled="!canDo"
+                placeholder="客户性质"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="终端客户名称:" prop="endCustomerName">
+              <el-input v-model="state.quoteForm.endCustomerName" placeholder="终端客户名称" :disabled="!canDo" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="终端客户性质:" prop="endCustomerNature">
+              <el-input v-model="state.quoteForm.endCustomerNature" placeholder="终端客户名称" :disabled="!canDo" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="零部件类型:" prop="componentType">
+              <el-select v-model="state.quoteForm.componentType" placeholder="零部件类型" :disabled="!canDo">
+                <el-option
+                  v-for="item in state.componentTypeOptions"
+                  :key="item.id"
+                  :label="item.displayName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            {{ DataListMapper }}
+          </el-col>
+        </el-row>
+        <el-row :gutter="20"> </el-row>
+      </el-card>
+      <div>
+        <!-- <div class="demand-apply__btn-container" v-if="!isDisabled">
+          <el-button type="primary" class="demand-apply__add-btn" @click="addColumn" :disabled="!canDo">新增</el-button>
+        </div> -->
+        <el-row>
+          <el-table :data="state.quoteForm.lxDataListDtos" border :show-header="false" :span-method="arraySpanMethod"  style="width: 100%">
+            <el-table-column prop="bjclu" label="" width="250" align="center">
+               <template #default>
+                <span>报价策略</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="listNameDisplayName" label="" width="250"> </el-table-column>
+            <el-table-column
+              :label="'零件' + (index + 1)"
+              v-for="(item, index) in state.quoteForm.lxDataListDtos[0].data.length"
+              :key="index"
+              width="200"
+            >
+              <template #header>
+                <span class="header-icon"> {{ "零件" + (index + 1) }} </span>
+                <el-popconfirm title="确定删除嘛?" @Confirm="DelColumn(index)">
+                  <template #reference>
+                    <el-button :style="{ margin: '0 0 0 30px' }" text type="danger" bg :disabled="!canDo"
+                      >X 删除该列</el-button
+                    >
+                  </template>
+                </el-popconfirm>
+              </template>
+              <template #default="{ row }">
+                <el-input v-model="row.data[index]"> </el-input>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+      </div>
+    </el-form>
     <el-dialog v-model="dialogVisible" title="审批意见" width="30%" :before-close="handleClose">
       <el-input type="textarea" rows="4" v-model="confirmText" />
       <template #footer>
@@ -26,16 +127,19 @@
         </span>
       </template>
     </el-dialog>
-    审批报价策略
+    <!-- 审批报价策略 -->
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { ElMessage } from "element-plus"
+import { ElMessage,ElLoading } from "element-plus"
 import { SubmitNode } from "@/api/WorkFlows"
 import useJump from "@/hook/useJump"
 import getQuery from "@/utils/getQuery"
+import { getDictionaryAndDetail } from "@/api/dictionary"
+import { DownloadFile } from "@/api/File"
+import { QueryLXRequirementEnt,DownloadQueryLXManagerApproval } from "./service"
 const { closeSelectedTag } = useJump()
 const dialogVisible = ref(false)
 const dialogVisibleR = ref(false)
@@ -44,8 +148,48 @@ const router = useRouter()
 const route = useRoute()
 const confirmText = ref("")
 
-const { auditFlowId, nodeInstanceId } = getQuery()
+const { auditFlowId, opinion, nodeInstanceId } = getQuery()
 
+const state = reactive<any>({
+  quoteForm: {
+    title: "" as string, //标题
+    drafter: "", //拟稿人
+    drafterNumber: null, //拟稿人工号
+    draftingDepartment: "", //拟稿部门
+    draftingCompany: "", //拟稿公司
+    draftDate: new Date(), //拟稿日期
+    number: "", //单据编号
+    ProjectName: "", //项目名称
+    componentType: null, //销售类型
+    enclosureId: 0, //上传附件核价表id
+    opinion: "",
+    lxDataListDtos: [
+      {
+        /**
+         *数据
+         */
+        data: [], //
+        /**
+         *Id
+         */
+        id: 0, //
+        listName: "",
+        /**
+         *列名称注释
+         */
+        listNameDisplayName: "",
+        /**
+         *零星报价需求录入主表Id
+         */
+        requirementEntryId: 0
+      }
+    ]
+  },
+  componentTypeOptions: [],
+  opinion,
+  OrderIndexArr: [],
+  OrderObj: {}
+})
 const refuseConfirm = async () => {
   if (refuseText.value) {
     await SubmitNode({
@@ -79,7 +223,138 @@ const agreeConfirm = async () => {
     dialogVisible.value = false
   }
 }
+
+
+const arraySpanMethod = ({
+  row,
+  column,
+  rowIndex,
+  columnIndex,
+}: any) => {
+  if (columnIndex === 0) {
+      for (var i = 0; i <state.OrderIndexArr.length; i++) {
+      var element = state.OrderIndexArr[i]
+      for (var j = 0; j < element.length; j++) {
+        var item = element[j]
+        if (rowIndex == item) {
+          if (j == 0) {
+            return {
+              rowspan: element.length,
+              colspan: 1
+            }
+          } else if (j != 0) {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+const init = async (tempAuditFlowId?: any) => {
+  let query = getQuery() || {}
+  let componentType: any = await getDictionaryAndDetail("ComponentType") //销售类型
+  state.componentTypeOptions = componentType?.result?.financeDictionaryDetailList
+  //查询数据
+  var rowData: any = await QueryLXRequirementEnt({ auditFlowId: auditFlowId })
+  if (!rowData.success) {
+    ElMessage({
+      type: "error",
+      message: "查询错误"
+    })
+  } else {
+    var data = rowData.result
+    if (data.id) {
+      state.quoteForm = data
+    } else {
+      state.quoteForm.lxDataListDtos = data?.lxDataListDtos
+    }
+  }
+  await getOrderNumber()
+}
+const getOrderNumber = () => {
+  state.OrderObj = {}
+  state.quoteForm.lxDataListDtos.forEach(function (element: any, index: any) {
+    element.rowIndex = index
+    if (state.OrderObj[element.typeName]) {
+      state.OrderObj[element.typeName].push(index)
+    } else {
+      state.OrderObj[element.typeName] = []
+      state.OrderObj[element.typeName].push(index)
+    }
+  }, this)
+
+  for (var k in state.OrderObj) {
+    if (state.OrderObj[k].length > 1) {
+      state.OrderIndexArr.push(state.OrderObj[k])
+    }
+  }
+}
+
+//查看核价比哦啊
+const ViewPriceList=async()=>{
+  const loading = ElLoading.service({
+    lock: true,
+    text: "下载中",
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    //下载上传的核价表
+    const fileId=state.quoteForm?.file?.fileId
+    const result: any = await DownloadFile({fileId})
+    const blob = result
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onload = function () {
+      let url = URL.createObjectURL(new Blob([blob]))
+      let a = document.createElement("a")
+      document.body.appendChild(a) //此处增加了将创建的添加到body当中
+      a.href = url
+      a.download = state.quoteForm?.file?.fileName
+      a.target = "_blank"
+      a.click()
+      a.remove() //将a标签移除
+    }
+    loading.close()
+  } catch {
+    loading.close()
+  }
+}
+
+onMounted(() => {
+  init()
+})
 </script>
 
 <style lang="scss" scoped>
+.demand-apply {
+  padding: 10px;
+
+  &__step {
+    margin: 20px 0;
+    height: 400px;
+  }
+
+  &__card {
+    margin: 10px 0;
+  }
+
+  &__mass-production-table {
+    margin: 20px 0;
+  }
+
+  &__btn-container {
+    height: 60px;
+    position: relative;
+  }
+
+  &__add-btn {
+    position: absolute;
+    right: 0px;
+    top: 15px;
+  }
+}
 </style>

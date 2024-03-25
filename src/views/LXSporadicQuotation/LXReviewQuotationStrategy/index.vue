@@ -98,7 +98,7 @@
                 </el-popconfirm>
               </template>
               <template #default="{ row }">
-                <el-input v-model="row.data[index]"> </el-input>
+                <el-input v-model="row.data[index]" :disabled='disabled'> </el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -131,7 +131,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
+import { reactive, onBeforeMount, onMounted, watchEffect, ref,defineProps } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage,ElLoading } from "element-plus"
 import { SubmitNode } from "@/api/WorkFlows"
@@ -189,6 +189,12 @@ const state = reactive<any>({
   opinion,
   OrderIndexArr: [],
   OrderObj: {}
+})
+const props = defineProps({
+  disabled: {
+    type:Boolean,
+    default:true
+  }
 })
 const refuseConfirm = async () => {
   if (refuseText.value) {

@@ -162,7 +162,17 @@
                 </el-popconfirm>
               </template>
               <template #default="{ row }">
-                <el-input v-model="row.data[index]"> </el-input>
+                <div v-if="['零件名称','备注'].includes(row.listNameDisplayName)">
+                   <el-input v-model="row.data[index]"> </el-input>
+                </div>
+                <div v-else-if="['毛利率'].includes(row.listNameDisplayName)">
+                   <el-input v-model="row.data[index]" type="number">
+                     <template #append>%</template>
+                    </el-input>
+                </div>
+                <div v-else>
+                   <el-input v-model="row.data[index]" type="number"> </el-input>
+                </div>
               </template>
             </el-table-column>
           </el-table>

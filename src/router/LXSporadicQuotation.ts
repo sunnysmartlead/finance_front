@@ -10,7 +10,7 @@ export const LXconstantRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: "零星报价部分",
-      hidden: true
+      hidden: false
     },
     children: [
       {
@@ -37,20 +37,20 @@ export const LXconstantRoutes: Array<RouteRecordRaw> = [
           title: "零星报价部分--报价审核表"
         }
       },
-      {
-        path: "/LXViewQuotationReviewForm/index",
-        component: () => import("@/views/LXSporadicQuotation/LXViewQuotationReviewForm/index.vue"),
-        name: "LXViewQuotationReviewForm",
-        meta: {
-          title: "零星报价部分--查看报价审核表"
-        }
-      },
+      // {
+      //   path: "/LXViewQuotationReviewForm/index",
+      //   component: () => import("@/views/LXSporadicQuotation/LXViewQuotationReviewForm/index.vue"),
+      //   name: "LXViewQuotationReviewForm",
+      //   meta: {
+      //     title: "零星报价部分--查看报价审核表"
+      //   }
+      // },
       {
         path: "/LXFiled/index",
         component: () => import("@/views/LXSporadicQuotation/LXFiled/index.vue"),
         name: "LXFiled",
         meta: {
-          title: "零星报价部分--查看报价审核表"
+          title: "归档"
         }
       }
     ]

@@ -72,12 +72,12 @@ export const PROCESS_EUNM = [
     children: [
       {
         name: "推广样品",
-        id: "",// EvalReason_Tgyp
+        id: "EvalReason_Tgyp",// EvalReason_Tgyp
         to:"/LXRequirementEntry/index"
       },
       {
         name: "其他零星报价",
-        id: "", // EvalReason_Qtlxbj
+        id: "EvalReason_Qtlxbj", // EvalReason_Qtlxbj
         to:"/LXRequirementEntry/index"
       }
     ]

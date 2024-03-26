@@ -19,3 +19,12 @@ export function DownloadQueryLXManagerApproval(data: any) {
     data
   })
 }
+
+/** 审核报价策略 提交 */
+export function ReviewQuotationStrategy(data: any): any {
+  return request({
+    url: "/api/services/app/RequirementEntry/ReviewQuotationStrategy",
+    method: "post",
+    data
+  })
+}

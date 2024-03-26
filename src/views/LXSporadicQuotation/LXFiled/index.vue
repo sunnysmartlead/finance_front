@@ -1,85 +1,101 @@
 <template>
-  <div class="demand-apply">
-    <el-button-group float-right>
-      <el-button type="primary" @click="dialogVisible = true">同意</el-button>
-      <el-button type="danger" @click="dialogVisibleR = true"> 退回</el-button>
-    </el-button-group>
-    <el-dialog v-model="dialogVisible" title="审批意见" width="30%" :before-close="handleClose">
-      <el-input type="textarea" rows="4" v-model="confirmText" />
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="agreeConfirm"> 确认 </el-button>
-        </span>
-      </template>
-    </el-dialog>
-    <el-dialog v-model="dialogVisibleR" title="退回" width="30%" :before-close="handleClose">
-      <el-form>
-        <el-form-item label="退回原因">
-          <el-input type="textarea" rows="4" v-model="refuseText" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisibleR = false">取消</el-button>
-          <el-button type="primary" @click="refuseConfirm"> 确认 </el-button>
-        </span>
-      </template>
-    </el-dialog>
-    归档
+  <div>
+    <el-card header="归档">
+      <el-table :data="data.tableData" max-height="75vh" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" />
+        <el-table-column type="index" label="序号" />
+        <el-table-column prop="fileName" label="归档文件名称" />
+        <el-table-column prop="productName" label="零件名称" />
+        <el-table-column prop="quoteProjectName" label="核报价项目名称" />
+        <!-- <el-table-column prop="myProperty" label="表明名" /> -->
+        <el-table-column label="操作" width="120">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="DownClick(row)">下载</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-row m="2" justify="end">
+        <el-button type="primary" @click="handleDownload" v-loading.fullscreen.lock="fullscreenLoading">
+          批量下载
+        </el-button>
+      </el-row>
+    </el-card>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { reactive, onBeforeMount, onMounted, watchEffect, ref } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { GetDownloadList, PostPigeonholeDownloads, GetPigeonholeDownload } from "./service"
+import { PigeonholeDownloadTableModel } from "./data.type"
 import { ElMessage } from "element-plus"
-import { SubmitNode } from "@/api/WorkFlows"
-import useJump from "@/hook/useJump"
+import { downloadFileZip, downloadFileExcel } from "@/utils"
 import getQuery from "@/utils/getQuery"
-const { closeSelectedTag } = useJump()
-const dialogVisible = ref(false)
-const dialogVisibleR = ref(false)
-const refuseText = ref("")
-const router = useRouter()
-const route = useRoute()
-const confirmText = ref("")
 
-const { auditFlowId, nodeInstanceId } = getQuery()
+const { auditFlowId }: any = getQuery()
 
-const refuseConfirm = async () => {
-  if (refuseText.value) {
-    await SubmitNode({
-      comment: refuseText.value,
-      nodeInstanceId,
-      financeDictionaryDetailId: "YesOrNo_No"
-    })
-    ElMessage.success("操作成功")
-    dialogVisibleR.value = false
-    closeSelectedTag(route.path)
-  } else {
-    ElMessage.warning("退回原因必填！")
+//console.log('1-开始创建组件-setup')
+const init = async () => {
+  if (auditFlowId) {
+    const res: any = await GetDownloadList({ auditFlowId })
+    data.tableData = res.result || []
   }
 }
 
+const fullscreenLoading = ref(false)
 /**
- * 同意提交流程
+ * 数据部分
  */
-const agreeConfirm = async () => {
-  /**
-   * 保存数据需要确认
-   */
-  let res = await SubmitNode({
-    comment: confirmText.value,
-    nodeInstanceId,
-    financeDictionaryDetailId: "YesOrNo_Yes"
-  })
-  if (res.success) {
-    ElMessage.success("操作成功")
-    closeSelectedTag(route.path)
-    dialogVisible.value = false
+const data = reactive({
+  tableData: [] as PigeonholeDownloadTableModel[]
+})
+
+const multipleSelection = ref<PigeonholeDownloadTableModel[]>([])
+
+onBeforeMount(() => {
+  //console.log('2.组件挂载页面之前执行----onBeforeMount')
+})
+
+onMounted(() => {
+  init()
+  //console.log('3.-组件挂载到页面之后执行-------onMounted')
+})
+
+watchEffect(() => {})
+
+const handleSelectionChange = (val: PigeonholeDownloadTableModel[]) => {
+  multipleSelection.value = val
+  console.log(val, "val")
+}
+
+const handleDownload = async () => {
+  const ids = multipleSelection.value.map((item) => item.id) || []
+  if (!ids.length) {
+    return ElMessage.warning("请选择不少于一项归档项！")
+  }
+  try {
+    fullscreenLoading.value = true
+    console.log(ids)
+    let res = await PostPigeonholeDownloads(ids)
+    downloadFileZip(res, "归档")
+    fullscreenLoading.value = false
+    // ElMessage.success("下载成功")
+  } catch (error) {
+    console.error(error)
+    fullscreenLoading.value = false
+  }
+}
+const DownClick = async (row: PigeonholeDownloadTableModel) => {
+  try {
+    fullscreenLoading.value = true
+    const id = row.id
+    console.log(row, "row", row.id, "row.id")
+    let res = await GetPigeonholeDownload({ id })
+    downloadFileExcel(res, row.fileName + "")
+    fullscreenLoading.value = false
+  } catch (error) {
+    console.error(error)
+    fullscreenLoading.value = false
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
+<style scoped lang="scss"></style>

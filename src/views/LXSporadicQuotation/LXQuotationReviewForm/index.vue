@@ -5,7 +5,7 @@
       <el-button type="danger" @click="dialogVisibleR = true"> 退回</el-button>
     </el-row>
     <el-row>
-      <el-button type="primary" @click="ViewPriceList">查看核价表</el-button>
+      <el-button type="primary" @click="ViewPriceList">下载核价表</el-button>
       <el-button type="primary" @click="DownloadTheQuotationReviewForm">下载报价审核表</el-button>
     </el-row>
     <el-form :model="state.quoteForm" ref="refForm" :rules="rules">
@@ -119,12 +119,11 @@
 import { reactive, onBeforeMount, onMounted, watchEffect, ref,defineProps } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage,ElLoading } from "element-plus"
-import { SubmitNode } from "@/api/WorkFlows"
 import useJump from "@/hook/useJump"
 import getQuery from "@/utils/getQuery"
 import { getDictionaryAndDetail } from "@/api/dictionary"
 import { DownloadFile } from "@/api/File"
-import { QueryLXManagerApproval,DownloadQueryLXManagerApproval } from "./service"
+import { QueryLXManagerApproval,DownloadQueryLXManagerApproval,ReviewQuotationStrategy } from "./service"
 const { closeSelectedTag } = useJump()
 const dialogVisible = ref(false)
 const dialogVisibleR = ref(false)
@@ -164,10 +163,10 @@ const props = defineProps({
 })
 const refuseConfirm = async () => {
   if (refuseText.value) {
-    await SubmitNode({
+    await ReviewQuotationStrategy({
       comment: refuseText.value,
       nodeInstanceId,
-      financeDictionaryDetailId: "YesOrNo_No"
+      opinion: "YesOrNo_No"
     })
     ElMessage.success("操作成功")
     dialogVisibleR.value = false
@@ -183,10 +182,10 @@ const agreeConfirm = async () => {
   /**
    * 保存数据需要确认
    */
-  let res = await SubmitNode({
+  let res = await ReviewQuotationStrategy({
     comment: confirmText.value,
     nodeInstanceId,
-    financeDictionaryDetailId: "YesOrNo_Yes"
+    opinion: "YesOrNo_Yes"
   })
   if (res.success) {
     ElMessage.success("操作成功")

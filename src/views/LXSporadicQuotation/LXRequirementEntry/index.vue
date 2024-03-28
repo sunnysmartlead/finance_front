@@ -162,16 +162,16 @@
                 </el-popconfirm>
               </template>
               <template #default="{ row }">
-                <div v-if="['零件名称','备注'].includes(row.listNameDisplayName)">
-                   <el-input v-model="row.data[index]"> </el-input>
+                <div v-if="['零件名称', '备注'].includes(row.listNameDisplayName)">
+                  <el-input v-model="row.data[index]"> </el-input>
                 </div>
                 <div v-else-if="['毛利率'].includes(row.listNameDisplayName)">
-                   <el-input v-model="row.data[index]" type="number">
-                     <template #append>%</template>
-                    </el-input>
+                  <el-input v-model="row.data[index]" type="number">
+                    <template #append>%</template>
+                  </el-input>
                 </div>
                 <div v-else>
-                   <el-input v-model="row.data[index]" type="number"> </el-input>
+                  <el-input v-model="row.data[index]" type="number"> </el-input>
                 </div>
               </template>
             </el-table-column>
@@ -205,14 +205,13 @@ import { LXRequirementEntDto } from "./data.type"
 import getQuery from "@/utils/getQuery"
 import { useRoute, useRouter } from "vue-router"
 import type { UploadProps, UploadUserFile } from "element-plus"
+import { ElMessage, ElLoading } from "element-plus"
 import _, { uniq, map, cloneDeep } from "lodash"
 //录入  查询
 import { LXRequirementEnt, QueryLXRequirementEnt } from "./service"
 import { getDictionaryAndDetail } from "@/api/dictionary"
-import type { FormInstance, FormRules } from "element-plus"
-import { ElMessage, ElLoading } from "element-plus"
+
 import { SearchDepartMentPerson } from "@/components/SearchDepartMentPerson"
-import { handleGetUploadProgress, handleUploadError } from "@/utils/upload"
 import { GetAllProjectSelf } from "@/views/financeDepartment/common/request"
 import { getCountryLibraryList } from "@/api/countrylibrary"
 import dayjs from "dayjs"
@@ -241,7 +240,7 @@ const state = reactive<any>({
     ProjectName: "", //项目名称
     componentType: null, //销售类型
     enclosureId: 0, //上传附件核价表id
-    opinion:"",
+    opinion: "",
     lxDataListDtos: [
       {
         /**
@@ -265,7 +264,7 @@ const state = reactive<any>({
     ]
   },
   componentTypeOptions: [],
-  opinion,
+  opinion
 })
 
 //整个页面是否可以编辑
@@ -315,7 +314,8 @@ const addColumn = () => {
     if (count === 15) {
       ElMessage({
         type: "success",
-        message: "已经最大列了"
+        message: "已经最大列了",
+        grouping: true,
       })
       throw new Error("已经最大列了") //报错，就跳出循环
     }
@@ -328,7 +328,8 @@ const DelColumn = (index: number) => {
     if (item.data.length == 1) {
       ElMessage({
         type: "success",
-        message: "最后一列不可删除"
+        message: "最后一列不可删除",
+        grouping: true,
       })
       throw new Error("最后一列不可删除") //报错，就跳出循环
     }
@@ -367,7 +368,6 @@ const init = async (tempAuditFlowId?: any) => {
       state.quoteForm.lxDataListDtos = data?.lxDataListDtos
     }
   }
-
 }
 
 //反填附件
@@ -383,22 +383,37 @@ const ReverseFillingEnclosure = async (result: any) => {
 }
 
 const save = debounce(async (isSubmit: boolean) => {
-  let {nodeInstanceId } = route.query
-  state.quoteForm.isSubmit = isSubmit
-  state.quoteForm.auditFlowId = auditFlowId
-  state.quoteForm.opinion=state.opinion||state.quoteForm.opinion
-  const { success }: any = await LXRequirementEnt({...state.quoteForm,nodeInstanceId})
-  if (!success) {
-    ElMessage({
-      type: "error",
-      message: "添加错误"
-    })
-  } else {
-    ElMessage({
-      type: "success",
-      message: "添加成功"
-    })
-    closeSelectedTag(route.path)
+  const loading = ElLoading.service({
+    lock: true,
+    text: "下载中",
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    let { nodeInstanceId } = route.query
+    state.quoteForm.isSubmit = isSubmit
+    state.quoteForm.auditFlowId = auditFlowId
+    state.quoteForm.opinion = state.opinion || state.quoteForm.opinion
+    const { success }: any = await LXRequirementEnt({ ...state.quoteForm, nodeInstanceId })
+    if (!success) {
+      ElMessage({
+        type: "error",
+        message: "添加错误"
+      })
+      loading.close()
+    } else {
+      ElMessage({
+        type: "success",
+        message: "添加成功"
+      })
+      loading.close()
+      closeSelectedTag(route.path)
+    }
+  } catch (error) {
+     loading.close()
+  }
+  finally
+  {
+     loading.close()
   }
 }, 300)
 

@@ -70,7 +70,8 @@ const notShowRoutes = [
   "/fnDepartment/grossProfitMargin",
   "/unitPriceImport/index",
   "/fnDepartment/rateEntry",
-  "/engineeringParameters/followLineTangent"
+  "/engineeringParameters/followLineTangent",
+  "/LXFiled/index"
 ]
 let notShow = computed(() => {
   if (showBtn === "false") {
